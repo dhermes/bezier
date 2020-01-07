@@ -83,21 +83,7 @@ Miscellany
    the ``bezier-wheels`` `project`_.
 -  Replacing ``pypy`` with ``pypy3`` in testing as the only non-CPython
    "unofficially supported" runtime. (This is part of the drop in support for
-   Python 2.7.) Unfortunately the currently (as of August 2019) released
-   versions of ``pypy3`` are not currently working with ``numpy >= 1.16``
-   (see `numpy/numpy#12740 <https://github.com/numpy/numpy/issues/12740>`__)
-   so the ``numpy == 1.15.4`` version is a pinned dependency.
-
-   -  Specifying the NumPy version in ``setup.py`` based on
-      ``implementation_name``
-      (`7e9046d <https://github.com/dhermes/bezier/commit/7e9046dc9dbe6f448238141221c5a7dff497d8d4>`__).
-   -  Add ``_pypy_speedup.c`` built with Cython 0.29.11 because the latest
-      Cython (0.29.14 as of December 2019) corresponds to the versions of NumPy
-      that are incompatible with PyPy
-      (`7813e41 <https://github.com/dhermes/bezier/commit/7813e41f7666fa36fbb4a7daf0aa45c2d2bee87f>`__).
-   -  Pinning to ``numpy==1.15.4`` and ``scipy==1.2.0`` in wheelhouse for
-      pre-built Docker container
-      (`7634779 <https://github.com/dhermes/bezier/commit/763477958c73a4eb6ce0f89b6b37887c66c10706>`__).
+   Python 2.7.)
 
 -  Added ``nox -s validate_functional_test_cases`` session to ensure that
    functional test cases always adhere to the JSON schema.

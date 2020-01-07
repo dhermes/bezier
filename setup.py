@@ -46,11 +46,8 @@ building of extension modules.
 """.format(
     NO_EXTENSIONS_ENV
 )
-REQUIREMENTS = ()
-EXTRAS_REQUIRE = {
-    ':implementation_name == "pypy"': ["numpy == 1.15.4"],
-    ':implementation_name == "cpython"': ["numpy >= 1.17.0"],
-}
+REQUIREMENTS = ("numpy == 1.18.1",)
+EXTRAS_REQUIRE = {}
 DESCRIPTION = (
     u"Helper for B\u00e9zier Curves, Triangles, and Higher Order Objects"
 )

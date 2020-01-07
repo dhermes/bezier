@@ -33,16 +33,16 @@ DEPS = {
     "docutils": "docutils",
     "flake8": "flake8",
     "flake8-import-order": "flake8-import-order",
-    "jsonschema": "jsonschema >= 3.0.2",
+    "jsonschema": "jsonschema >= 3.2.0",
     "lcov_cobertura": "lcov_cobertura",
     "matplotlib": "matplotlib >= 3.1.2",
-    "numpy": "numpy >= 1.17.4",
+    "numpy": "numpy >= 1.18.1",
     "pycobertura": "pycobertura",
     "Pygments": "Pygments",
     "pylint": "pylint >= 2.4.4",
-    "pytest": "pytest >= 5.3.0",
+    "pytest": "pytest >= 5.3.2",
     "pytest-cov": "pytest-cov",
-    "scipy": "scipy >= 1.3.3",
+    "scipy": "scipy >= 1.4.1",
     "seaborn": "seaborn >= 0.9.0",
 }
 BASE_DEPS = (DEPS["numpy"], DEPS["pytest"])
@@ -131,11 +131,6 @@ def update_generated(session, check):
 
     pyx_file = get_path("src", "python", "bezier", "_speedup.pyx")
     session.run("cython", pyx_file)
-
-    # Special handling for PyPy
-    session.install("Cython == 0.29.11")
-    output_file_pypy = get_path("src", "python", "bezier", "_pypy_speedup.c")
-    session.run("cython", "--output-file", output_file_pypy, pyx_file)
 
     command = get_path("scripts", "clean_cython.py")
     c_glob = get_path("src", "python", "bezier", "*.c")
