@@ -4,7 +4,7 @@ jobs:
   build:
     working_directory: /var/code/bezier/
     docker:
-      - image: dhermes/bezier:support-3.8
+      - image: dhermes/bezier:latest
     environment:
       MATPLOTLIBRC: tests
     steps:
