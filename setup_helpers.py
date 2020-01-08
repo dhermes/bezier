@@ -23,7 +23,6 @@ import setuptools
 import setuptools.command.build_ext
 
 
-IS_PYPY = sys.implementation.name == "pypy"
 DEBUG_ENV = "DEBUG"
 WHEEL_ENV = "BEZIER_WHEEL"
 """Environment variable used to indicate a wheel is being built.
@@ -90,10 +89,6 @@ FORTRAN_INCLUDE_DIR = os.path.join("src", "fortran", "include")
 FORTRAN_SOURCE_FILENAME = os.path.join("src", "fortran", "{}.f90")
 OBJECT_FILENAME = os.path.join("src", "fortran", "{}.o")
 SPEEDUP_FILENAME = os.path.join("src", "python", "bezier", "_speedup.c")
-if IS_PYPY:
-    SPEEDUP_FILENAME = os.path.join(
-        "src", "python", "bezier", "_pypy_speedup.c"
-    )
 
 
 def gfortran_search_path(library_dirs):

@@ -1,6 +1,6 @@
 # NumPy is required for building `bezier` from source.
-numpy >= 1.17.0
+numpy >= 1.18.1
 # Sphinx and related are required for building documentation.
-Sphinx >= 2.1.2
+Sphinx >= 2.3.1
 sphinx-docstring-typing >= 0.0.4
 sphinx_rtd_theme >= 0.4.3

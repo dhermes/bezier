@@ -15,8 +15,8 @@
 set -e -x
 
 # Avoid adding ``multibuild`` as a ``git`` submodule.
-MB_COMMON_UTILS="https://raw.githubusercontent.com/matthew-brett/multibuild/master/common_utils.sh"
-MB_OSX_UTILS="https://raw.githubusercontent.com/matthew-brett/multibuild/master/osx_utils.sh"
+MB_COMMON_UTILS="https://raw.githubusercontent.com/matthew-brett/multibuild/devel/common_utils.sh"
+MB_OSX_UTILS="https://raw.githubusercontent.com/matthew-brett/multibuild/devel/osx_utils.sh"
 
 if [[ -z "${PY_VERSION}" ]]; then
     echo "PY_VERSION environment variable should be set by the caller."

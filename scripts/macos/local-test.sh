@@ -42,6 +42,8 @@ if [[ "${PY_VERSION}" == "3.6" ]]; then
     export PY_BIN_DIR="${PREFIX}/3.6/bin"
 elif [[ "${PY_VERSION}" == "3.7" ]]; then
     export PY_BIN_DIR="${PREFIX}/3.7/bin"
+elif [[ "${PY_VERSION}" == "3.8" ]]; then
+    export PY_BIN_DIR="${PREFIX}/3.8/bin"
 else
     echo "Unexpected version: ${PY_VERSION}"
     exit 1

@@ -30,7 +30,7 @@ NUMPY_MESSAGE = """\
 Error: NumPy needs to be installed first. It can be installed via:
 
 $ python    -m pip install numpy
-$ python3.7 -m pip install numpy
+$ python3.8 -m pip install numpy
 $ # OR
 $ conda install numpy
 """
@@ -46,11 +46,8 @@ building of extension modules.
 """.format(
     NO_EXTENSIONS_ENV
 )
-REQUIREMENTS = ()
-EXTRAS_REQUIRE = {
-    ':implementation_name == "pypy"': ["numpy == 1.15.4"],
-    ':implementation_name == "cpython"': ["numpy >= 1.17.0"],
-}
+REQUIREMENTS = ("numpy >= 1.18.1",)
+EXTRAS_REQUIRE = {}
 DESCRIPTION = (
     u"Helper for B\u00e9zier Curves, Triangles, and Higher Order Objects"
 )
@@ -137,6 +134,9 @@ def setup():
             "Programming Language :: Python :: 3",
             "Programming Language :: Python :: 3.6",
             "Programming Language :: Python :: 3.7",
+            "Programming Language :: Python :: 3.8",
+            "Programming Language :: Python :: Implementation :: CPython",
+            "Programming Language :: Python :: Implementation :: PyPy",
         ],
         cmdclass={"build_ext": setup_helpers.BuildFortranThenExt},
     )
