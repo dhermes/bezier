@@ -8,9 +8,9 @@ RUN python3.8 -m pip install --no-cache-dir \
   "py == 1.8.1" \
   "virtualenv == 16.7.9"
 
-# Install `gfortran` (for Fortran extensions), `libatlas-base-dev`,
-# `libblas-dev`, `liblapack-dev` (for SciPy) and `lcov` for
-# Fortran code coverage.
+# Install `gfortran` (for building the Fortran code used by the binary
+# extension), `libatlas-base-dev`, `libblas-dev`, `liblapack-dev` (for SciPy)
+# and `lcov` for Fortran code coverage.
 RUN apt-get update \
   && apt-get install -y --no-install-recommends \
     gfortran \

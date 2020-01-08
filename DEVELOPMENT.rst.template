@@ -57,9 +57,9 @@ variable:
 Using ``distutils`` and ``numpy.distutils`` to compile Fortran is not
 "fully-supported" (i.e. the tooling is ad-hoc). As a result, there is a
 decent amount of code in ``setup.py``, ``setup_helpers.py``,
-``setup_helpers_macos.py`` and ``setup_helpers_windows.py`` to specify the build
-process. To make sure these are working as expected, it's possible to
-track **how** extensions are being installed. To actually make sure the
+``setup_helpers_macos.py`` and ``setup_helpers_windows.py`` to specify the
+build process. To make sure these are working as expected, it's possible to
+track **how** the extension is being installed. To actually make sure the
 correct compiler commands are invoked, provide a filename as the
 ``BEZIER_JOURNAL`` environment variable and then the commands invoked will
 be written there:
@@ -69,7 +69,7 @@ be written there:
    $ BEZIER_JOURNAL=$(pwd)/journal.txt python setup.py build_ext --inplace
 
 The ``nox`` session ``check_journal`` uses this journaling option to verify
-the commands used to compile the extensions in Linux on `CircleCI`_, in
+the commands used to compile the extension in Linux on `CircleCI`_, in
 macOS on `Travis CI`_ and in Windows on `AppVeyor`_.
 
 As the build complexity grows, it may make more sense to transition the steps
@@ -78,12 +78,12 @@ out of Python and into `CMake`_, `SCons`_ or another build tool.
 .. _CMake: https://cmake.org
 .. _SCons: http://scons.org
 
-To explicitly disable the building of extensions, the ``BEZIER_NO_EXTENSIONS``
-environment variable can be used:
+To explicitly disable the building of the extension, the
+``BEZIER_NO_EXTENSION`` environment variable can be used:
 
 .. code-block:: console
 
-   $ BEZIER_NO_EXTENSIONS=True .../bin/python -m pip install .
+   $ BEZIER_NO_EXTENSION=True .../bin/python -m pip install .
 
 This environment variable is actually used for the ``nox -s docs`` session
 to emulate the `RTD`_ build environment (where no Fortran compiler is
@@ -119,7 +119,7 @@ We recommend using `Nox`_ to run unit tests:
    $ nox -s  unit  # Run all versions
 
 However, `pytest`_ can be used directly (though it won't
-manage dependencies or build extensions):
+manage dependencies or build the binary extension):
 
 .. code-block:: console
 
@@ -446,8 +446,8 @@ On Travis CI, Matthew Brett's `multibuild`_ is used to install "official"
 python.org CPython binaries for macOS. Then tests are run in 64-bit
 mode (NumPy has `discontinued`_ 32-bit support).
 
-On AppVeyor, all extensions are built and tested with both 32-bit and 64-bit
-Python binaries.
+On AppVeyor, the binary extension is built and tested with both 32-bit and
+64-bit Python binaries.
 
 .. _CircleCI: https://circleci.com/gh/dhermes/bezier
 .. _Travis CI: https://travis-ci.org/dhermes/bezier
@@ -532,7 +532,7 @@ This project uses environment variables for building the
 - ``BEZIER_JOURNAL``: If set to a path on the filesystem, all compiler
   commands executed while building the binary extension will be logged to
   the journal file
-- ``BEZIER_NO_EXTENSIONS``: If set, this will indicate that only the pure
+- ``BEZIER_NO_EXTENSION``: If set, this will indicate that only the pure
   Python package should be built and installed (i.e. without the binary
   extension).
 - ``BEZIER_WHEEL``: Indicates that the source is being built into a wheel.

@@ -65,8 +65,8 @@ BAD_JOURNAL = "Saving journal failed with {!r}."
 JOURNAL_ENV = "BEZIER_JOURNAL"
 """Environment variable to specify a text file for saving compiler commands.
 
-Can be used to determine how extension modules were compiled. This can be
-useful, for example, to track changes across different systems or simple
+Can be used to determine how the binary extension was compiled. This can be
+useful, for example, to track changes across different systems or simply
 to make sure the build is occurring as expected.
 """
 QUADPACK_DIR = "quadpack"

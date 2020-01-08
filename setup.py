@@ -37,14 +37,14 @@ $ conda install numpy
 MISSING_F90_MESSAGE = """\
 No Fortran 90 compiler found.
 
-Skipping Fortran extension speedups.
+Skipping Fortran speedups via binary extension module.
 """
-NO_EXTENSIONS_ENV = "BEZIER_NO_EXTENSIONS"
+NO_EXTENSION_ENV = "BEZIER_NO_EXTENSION"
 NO_SPEEDUPS_MESSAGE = """\
 The {} environment variable has been used to explicitly disable the
-building of extension modules.
+building of the binary extension module.
 """.format(
-    NO_EXTENSIONS_ENV
+    NO_EXTENSION_ENV
 )
 REQUIREMENTS = ("numpy >= 1.18.1",)
 EXTRAS_REQUIRE = {}
@@ -70,7 +70,7 @@ def require_numpy():
 
 
 def extension_modules():
-    if NO_EXTENSIONS_ENV in os.environ:
+    if NO_EXTENSION_ENV in os.environ:
         print(NO_SPEEDUPS_MESSAGE, file=sys.stderr)
         return []
 
