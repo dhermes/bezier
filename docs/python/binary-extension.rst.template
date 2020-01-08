@@ -37,7 +37,7 @@ The C headers for ``libbezier`` will be included in the installed package
    import bezier
 
 
-   class Path(object):
+   class Path:
        """This class is a hack for Windows.
 
        It wraps a simple string but prints / repr-s it with Windows
