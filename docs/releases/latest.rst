@@ -66,7 +66,8 @@ Documentation
 
 -  Updating install instructions to show how to disable the binary extension
    via ``BEZIER_NO_EXTENSION``
-   (`6262594 <https://github.com/dhermes/bezier/commit/626259493997a9d83924d100900189f32b87e6c5>`__).
+   (`6262594 <https://github.com/dhermes/bezier/commit/626259493997a9d83924d100900189f32b87e6c5>`__,
+   `00c1e61 <https://github.com/dhermes/bezier/commit/00c1e619688b93a6a079288be40153a9157fa6c5>`__).
    Fixed `#147 <https://github.com/dhermes/bezier/issues/147>`__.
 -  Adding "Citation" section to landing page
    (`9885063 <https://github.com/dhermes/bezier/commit/9885063a2e3795e0bec35a4fc1574dc294d359e0>`__).
