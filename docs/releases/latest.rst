@@ -3,6 +3,24 @@ Latest Release (``0.10.1.dev1``)
 
 |pypi| |docs|
 
+Python Changes
+--------------
+
+Packaging
+~~~~~~~~~
+
+-  Explicit support for Python 3.8 has been added.
+   (`#161 <https://github.com/dhermes/bezier/issues/161>`__).
+
+Internals
+~~~~~~~~~
+
+-  Re-factored non-public modules so that algorithms implemented in pure Python
+   **only** invoke other algorithms written in pure Python
+   (`#160 <https://github.com/dhermes/bezier/issues/160>`__). Previously
+   these algorithms invoked the equivalent Fortran speedup if present for a
+   given function.
+
 Bug Fixes
 ---------
 
