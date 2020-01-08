@@ -23,24 +23,47 @@ import pkg_resources
 
 # Error messages for ``handle_import_error``.
 TEMPLATE = "No module named 'bezier.{}'"  # 3.6, 3.7, 3.8, pypy3
+# NOTE: `os.add_dll_directory()` was added on Windows in Python 3.8.
+OS_ADD_DLL_DIRECTORY = getattr(os, "add_dll_directory", None)
+
+
+def add_dll_directory(extra_dll_dir):
+    """Add a DLL directory.
+
+    This is only expected to be invoked on Windows. For Python versions before
+    3.8, this will update the ``%PATH%`` environment variable to include
+    ``extra_dll_dir`` and for 3.8 and later, it will invoke
+    ``os.add_dll_directory()``.
+    """
+    if not os.path.isdir(extra_dll_dir):
+        return
+
+    if OS_ADD_DLL_DIRECTORY is not None:
+        OS_ADD_DLL_DIRECTORY(extra_dll_dir)
+        return
+
+    path = os.environ.get("PATH", "")
+    values = [subdir for subdir in path.split(os.pathsep) if subdir]
+    values.append(extra_dll_dir)
+    os.environ["PATH"] = os.pathsep.join(values)
 
 
 def modify_path():
-    """Modify the module search path."""
-    # Only modify path on Windows.
-    if os.name != "nt":
-        return
+    """Add the DLL directory to the module search path.
 
-    path = os.environ.get("PATH")
-    if path is None:
+    This will only modify path if
+    * on Windows
+    * the ``extra-dll`` directory is in package resources
+    """
+    if os.name != "nt":
         return
 
     try:
         extra_dll_dir = pkg_resources.resource_filename("bezier", "extra-dll")
-        if os.path.isdir(extra_dll_dir):
-            os.environ["PATH"] = path + os.pathsep + extra_dll_dir
     except ImportError:
-        pass
+        return
+
+    add_dll_directory(extra_dll_dir)
 
 
 def handle_import_error(caught_exc, name):
