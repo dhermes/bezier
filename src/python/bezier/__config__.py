@@ -23,7 +23,7 @@ import pkg_resources
 
 # Error messages for ``handle_import_error``.
 TEMPLATE = "No module named 'bezier.{}'"  # 3.6, 3.7, 3.8, pypy3
-# NOTE: `os.add_dll_directory()` was added on Windows in Python 3.8.
+# NOTE: ``os.add_dll_directory()`` was added on Windows in Python 3.8.
 OS_ADD_DLL_DIRECTORY = getattr(os, "add_dll_directory", None)
 
 
