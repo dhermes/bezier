@@ -18,6 +18,7 @@ from tests.unit import utils
 
 
 class TestCurve(utils.NumPyTestCase):
+
     ZEROS = np.zeros((2, 2), order="F")
 
     @staticmethod
@@ -32,10 +33,20 @@ class TestCurve(utils.NumPyTestCase):
 
     def test_constructor(self):
         nodes = np.asfortranarray([[0.0, 0.625, 1.0], [0.0, 0.5, 0.75]])
-        curve = self._make_one(nodes, 2, _copy=False)
+        curve = self._make_one(nodes, 2, copy=False)
         self.assertEqual(curve._degree, 2)
         self.assertEqual(curve._dimension, 2)
         self.assertIs(curve._nodes, nodes)
+
+    def test_constructor_invalid_num_nodes(self):
+        nodes = np.empty((1, 3), order="F")
+        with self.assertRaises(ValueError) as exc_info:
+            self._make_one(nodes, 7, copy=False)
+
+        exc_args = exc_info.exception.args
+        self.assertEqual(
+            exc_args, ("A degree 7 curve should have 8 nodes, not 3.",)
+        )
 
     def test_constructor_wrong_dimension(self):
         nodes = np.asfortranarray([1.0, 2.0])
@@ -74,7 +85,7 @@ class TestCurve(utils.NumPyTestCase):
         self.assertEqual(curve.length, 5.0)
 
     def test___dict___property(self):
-        curve = self._make_one(self.ZEROS, 1, _copy=False)
+        curve = self._make_one(self.ZEROS, 1, copy=False)
         props_dict = curve.__dict__
         expected = {"_nodes": self.ZEROS, "_dimension": 2, "_degree": 1}
         self.assertEqual(props_dict, expected)
@@ -82,11 +93,11 @@ class TestCurve(utils.NumPyTestCase):
         expected["_dimension"] = 47
         self.assertNotEqual(curve._dimension, expected["_dimension"])
 
-    def test__copy(self):
+    def test_copy(self):
         nodes = np.asfortranarray([[2.0, 3.5, 4.0], [0.0, 1.0, 0.0]])
         curve = self._make_one(nodes, 2)
 
-        new_curve = curve._copy()
+        new_curve = curve.copy()
         self.assertEqual(curve._degree, new_curve._degree)
         self.assertEqual(curve._dimension, new_curve._dimension)
         self.assertTrue(np.all(curve._nodes == new_curve._nodes))
@@ -124,7 +135,7 @@ class TestCurve(utils.NumPyTestCase):
         ax = unittest.mock.Mock(spec=["plot"])
         new_axis_mock.return_value = ax
         nodes = np.asfortranarray([[0.0, 1.0], [1.0, 3.0]])
-        curve = self._make_one(nodes, 1, _copy=False)
+        curve = self._make_one(nodes, 1, copy=False)
         num_pts = 2  # This value is crucial for the plot call.
         result = curve.plot(num_pts)
         self.assertIs(result, ax)
@@ -139,7 +150,7 @@ class TestCurve(utils.NumPyTestCase):
     @unittest.mock.patch("bezier._plot_helpers.new_axis")
     def test_plot_explicit(self, new_axis_mock):
         nodes = np.asfortranarray([[0.0, 1.0], [0.0, 1.0]])
-        curve = self._make_one(nodes, 1, _copy=False)
+        curve = self._make_one(nodes, 1, copy=False)
         num_pts = 2  # This value is crucial for the plot call.
         ax = unittest.mock.Mock(spec=["plot"])
         color = (0.75, 1.0, 1.0)
@@ -243,7 +254,7 @@ class TestCurve(utils.NumPyTestCase):
             [[0.0, 0.5, 1.0], [0.0, -0.25, 0.0], [0.0, 0.75, 1.25]]
         )
         curve1 = self._make_one(nodes, 2)
-        curve2 = self._make_one(nodes[:, :2], 2)
+        curve2 = self._make_one(nodes[:, :2], 1)
         with self.assertRaises(NotImplementedError):
             curve1.intersect(curve2)
         with self.assertRaises(NotImplementedError):

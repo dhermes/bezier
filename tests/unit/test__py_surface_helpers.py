@@ -849,7 +849,7 @@ class Test_jacobian_det(utils.NumPyTestCase):
 
         nodes = np.asfortranarray([[0.0, 1.0, 0.0], [0.0, 0.0, 2.0]])
         degree = 1
-        surface = bezier.Surface(nodes, degree=degree, _copy=False)
+        surface = bezier.Surface(nodes, degree=degree, copy=False)
         self.assertTrue(surface.is_valid)
         st_vals = np.asfortranarray(RANDOM((13, 2)))
         result = self._call_function_under_test(nodes, degree, st_vals)
@@ -863,7 +863,7 @@ class Test_jacobian_det(utils.NumPyTestCase):
             [[0.0, 0.5, 1.0, 0.0, 1.0, 0.0], [0.0, 0.0, 0.0, 0.5, 1.0, 1.0]]
         )
         degree = 2
-        surface = bezier.Surface(nodes, degree=degree, _copy=False)
+        surface = bezier.Surface(nodes, degree=degree, copy=False)
         self.assertTrue(surface.is_valid)
         # B(s, t) = [s(t + 1), t(s + 1)]
         st_vals = np.asfortranarray(
@@ -1210,7 +1210,7 @@ class Test_ignored_corner(utils.NumPyTestCase):
     def test_s_corner(self):
         import bezier
 
-        surface = bezier.Surface(UNIT_TRIANGLE, degree=1, _copy=False)
+        surface = bezier.Surface(UNIT_TRIANGLE, degree=1, copy=False)
         edge_nodes1 = tuple(edge._nodes for edge in surface.edges)
         edge_nodes2 = ()
         intersection = make_intersect(2, 0.0, None, 0.5)
@@ -1240,7 +1240,7 @@ class Test_ignored_corner(utils.NumPyTestCase):
     def test_t_corner(self):
         import bezier
 
-        surface = bezier.Surface(UNIT_TRIANGLE, degree=1, _copy=False)
+        surface = bezier.Surface(UNIT_TRIANGLE, degree=1, copy=False)
         edge_nodes1 = ()
         edge_nodes2 = tuple(edge._nodes for edge in surface.edges)
         intersection = make_intersect(None, 0.5, 1, 0.0)
