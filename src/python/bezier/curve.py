@@ -87,6 +87,8 @@ class Curve(_base.Base):
         copy (bool): Flag indicating if the nodes should be copied before
             being stored. Defaults to :data:`True` since callers may
             freely mutate ``nodes`` after passing in.
+        verify (bool): Flag indicating if the degree should be verified against
+            the number of nodes. Defaults to :data:`True`.
     """
 
     __slots__ = (
@@ -95,9 +97,10 @@ class Curve(_base.Base):
         "_degree",  # From constructor
     )
 
-    def __init__(self, nodes, degree, copy=True):
+    def __init__(self, nodes, degree, *, copy=True, verify=True):
         super(Curve, self).__init__(nodes, copy=copy)
         self._degree = degree
+        self._verify_degree(verify)
 
     @classmethod
     def from_nodes(cls, nodes, copy=True):
@@ -120,7 +123,7 @@ class Curve(_base.Base):
         nodes_np = _base.sequence_to_array(nodes)
         _, num_nodes = nodes_np.shape
         degree = cls._get_degree(num_nodes)
-        return cls(nodes_np, degree, copy=copy)
+        return cls(nodes_np, degree, copy=copy, verify=False)
 
     @staticmethod
     def _get_degree(num_nodes):
@@ -133,6 +136,31 @@ class Curve(_base.Base):
             int: The degree of the current curve.
         """
         return num_nodes - 1
+
+    def _verify_degree(self, verify):
+        """Verify that the number of nodes matches the degree.
+
+        Args:
+            verify (bool): Flag indicating if the degree should be verified
+                against the number of nodes.
+
+        Raises:
+            ValueError: If ``verify`` is :data:`True` and the number of nodes
+                does not match the degree.
+        """
+        if not verify:
+            return
+
+        _, num_nodes = self._nodes.shape
+        expected_nodes = self._degree + 1
+        if expected_nodes == num_nodes:
+            return
+
+        msg = (
+            f"A degree {self._degree} curve should have "
+            f"{expected_nodes} nodes, not {num_nodes}."
+        )
+        raise ValueError(msg)
 
     @property
     def length(self):
@@ -173,7 +201,7 @@ class Curve(_base.Base):
         Returns:
             .Curve: Copy of current curve.
         """
-        return Curve(self._nodes, self._degree, copy=True)
+        return Curve(self._nodes, self._degree, copy=True, verify=False)
 
     def evaluate(self, s):
         r"""Evaluate :math:`B(s)` along the curve.
@@ -315,8 +343,8 @@ class Curve(_base.Base):
             Tuple[Curve, Curve]: The left and right sub-curves.
         """
         left_nodes, right_nodes = _curve_helpers.subdivide_nodes(self._nodes)
-        left = Curve(left_nodes, self._degree, copy=False)
-        right = Curve(right_nodes, self._degree, copy=False)
+        left = Curve(left_nodes, self._degree, copy=False, verify=False)
+        right = Curve(right_nodes, self._degree, copy=False, verify=False)
         return left, right
 
     def intersect(
@@ -443,7 +471,7 @@ class Curve(_base.Base):
             Curve: The degree-elevated curve.
         """
         new_nodes = _curve_helpers.elevate_nodes(self._nodes)
-        return Curve(new_nodes, self._degree + 1, copy=False)
+        return Curve(new_nodes, self._degree + 1, copy=False, verify=False)
 
     def reduce_(self):
         r"""Return a degree-reduced version of the current curve.
@@ -540,7 +568,7 @@ class Curve(_base.Base):
             Curve: The degree-reduced curve.
         """
         new_nodes = _curve_helpers.reduce_pseudo_inverse(self._nodes)
-        return Curve(new_nodes, self._degree - 1, copy=False)
+        return Curve(new_nodes, self._degree - 1, copy=False, verify=False)
 
     def specialize(self, start, end):
         """Specialize the curve to a given sub-interval.
@@ -599,7 +627,7 @@ class Curve(_base.Base):
             Curve: The newly-specialized curve.
         """
         new_nodes = _curve_helpers.specialize_curve(self._nodes, start, end)
-        return Curve(new_nodes, self._degree, copy=False)
+        return Curve(new_nodes, self._degree, copy=False, verify=False)
 
     def locate(self, point):
         r"""Find a point on the current curve.

@@ -18,6 +18,7 @@ from tests.unit import utils
 
 
 class TestCurve(utils.NumPyTestCase):
+
     ZEROS = np.zeros((2, 2), order="F")
 
     @staticmethod
@@ -36,6 +37,16 @@ class TestCurve(utils.NumPyTestCase):
         self.assertEqual(curve._degree, 2)
         self.assertEqual(curve._dimension, 2)
         self.assertIs(curve._nodes, nodes)
+
+    def test_constructor_invalid_num_nodes(self):
+        nodes = np.empty((1, 3), order="F")
+        with self.assertRaises(ValueError) as exc_info:
+            self._make_one(nodes, 7, copy=False)
+
+        exc_args = exc_info.exception.args
+        self.assertEqual(
+            exc_args, ("A degree 7 curve should have 8 nodes, not 3.",)
+        )
 
     def test_constructor_wrong_dimension(self):
         nodes = np.asfortranarray([1.0, 2.0])
@@ -243,7 +254,7 @@ class TestCurve(utils.NumPyTestCase):
             [[0.0, 0.5, 1.0], [0.0, -0.25, 0.0], [0.0, 0.75, 1.25]]
         )
         curve1 = self._make_one(nodes, 2)
-        curve2 = self._make_one(nodes[:, :2], 2)
+        curve2 = self._make_one(nodes[:, :2], 1)
         with self.assertRaises(NotImplementedError):
             curve1.intersect(curve2)
         with self.assertRaises(NotImplementedError):

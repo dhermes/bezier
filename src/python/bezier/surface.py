@@ -180,6 +180,8 @@ class Surface(_base.Base):
         copy (bool): Flag indicating if the nodes should be copied before
             being stored. Defaults to :data:`True` since callers may
             freely mutate ``nodes`` after passing in.
+        verify (bool): Flag indicating if the degree should be verified against
+            the number of nodes. Defaults to :data:`True`.
     """
 
     __slots__ = (
@@ -189,10 +191,11 @@ class Surface(_base.Base):
         "_edges",  # Empty default
     )
 
-    def __init__(self, nodes, degree, copy=True):
+    def __init__(self, nodes, degree, *, copy=True, verify=True):
         super(Surface, self).__init__(nodes, copy=copy)
         self._degree = degree
         self._edges = None
+        self._verify_degree(verify)
 
     @classmethod
     def from_nodes(cls, nodes, copy=True):
@@ -215,11 +218,18 @@ class Surface(_base.Base):
         nodes_np = _base.sequence_to_array(nodes)
         _, num_nodes = nodes_np.shape
         degree = cls._get_degree(num_nodes)
-        return cls(nodes_np, degree, copy=copy)
+        # NOTE: **Explicitly** verify because ``_get_degree`` does not.
+        return cls(nodes_np, degree, copy=copy, verify=True)
 
     @staticmethod
     def _get_degree(num_nodes):
         """Get the degree of the current surface.
+
+        .. note::
+
+            If ``num_nodes`` isn't a triangular number, no degree can be
+            correct so the return value will be invalid. Callers should use
+            ``verify`` in the constructor to ensure correctness.
 
         Args:
             num_nodes (int): The number of control points for a
@@ -228,20 +238,38 @@ class Surface(_base.Base):
         Returns:
             int: The degree :math:`d` such that :math:`(d + 1)(d + 2)/2`
             equals ``num_nodes``.
-
-        Raises:
-            ValueError: If ``num_nodes`` isn't a triangular number.
         """
         # 8 * num_nodes = 4(d + 1)(d + 2)
         #               = 4d^2 + 12d + 8
         #               = (2d + 3)^2 - 1
         d_float = 0.5 * (np.sqrt(8.0 * num_nodes + 1.0) - 3.0)
-        d_int = int(np.round(d_float))
-        if (d_int + 1) * (d_int + 2) == 2 * num_nodes:
-            return d_int
+        return int(np.round(d_float))
 
-        else:
-            raise ValueError(num_nodes, "not a triangular number")
+    def _verify_degree(self, verify):
+        """Verify that the number of nodes matches the degree.
+
+        Args:
+            verify (bool): Flag indicating if the degree should be verified
+                against the number of nodes.
+
+        Raises:
+            ValueError: If ``verify`` is :data:`True` and the number of nodes
+                does not match the degree.
+        """
+        if not verify:
+            return
+
+        _, num_nodes = self._nodes.shape
+        twice_expected_nodes = (self._degree + 1) * (self._degree + 2)
+        # Avoid rounding by division by 2.
+        if twice_expected_nodes == 2 * num_nodes:
+            return
+
+        msg = (
+            f"A degree {self._degree} surface should have "
+            f"{0.5 * twice_expected_nodes:g} nodes, not {num_nodes}."
+        )
+        raise ValueError(msg)
 
     @property
     def area(self):
@@ -302,9 +330,15 @@ class Surface(_base.Base):
         nodes1, nodes2, nodes3 = _surface_helpers.compute_edge_nodes(
             self._nodes, self._degree
         )
-        edge1 = _curve_mod.Curve(nodes1, self._degree, copy=False)
-        edge2 = _curve_mod.Curve(nodes2, self._degree, copy=False)
-        edge3 = _curve_mod.Curve(nodes3, self._degree, copy=False)
+        edge1 = _curve_mod.Curve(
+            nodes1, self._degree, copy=False, verify=False
+        )
+        edge2 = _curve_mod.Curve(
+            nodes2, self._degree, copy=False, verify=False
+        )
+        edge3 = _curve_mod.Curve(
+            nodes3, self._degree, copy=False, verify=False
+        )
         return edge1, edge2, edge3
 
     def _get_edges(self):
@@ -751,10 +785,10 @@ class Surface(_base.Base):
             nodes_d,
         ) = _surface_helpers.subdivide_nodes(self._nodes, self._degree)
         return (
-            Surface(nodes_a, self._degree, copy=False),
-            Surface(nodes_b, self._degree, copy=False),
-            Surface(nodes_c, self._degree, copy=False),
-            Surface(nodes_d, self._degree, copy=False),
+            Surface(nodes_a, self._degree, copy=False, verify=False),
+            Surface(nodes_b, self._degree, copy=False, verify=False),
+            Surface(nodes_c, self._degree, copy=False, verify=False),
+            Surface(nodes_d, self._degree, copy=False, verify=False),
         )
 
     def _compute_valid(self):
@@ -1110,7 +1144,7 @@ class Surface(_base.Base):
         # Hold off on division until the end, to (attempt to) avoid round-off.
         denominator = self._degree + 1.0
         new_nodes /= denominator
-        return Surface(new_nodes, self._degree + 1, copy=False)
+        return Surface(new_nodes, self._degree + 1, copy=False, verify=False)
 
 
 def _make_intersection(edge_info, all_edge_nodes):
@@ -1137,7 +1171,7 @@ def _make_intersection(edge_info, all_edge_nodes):
         nodes = all_edge_nodes[index]
         new_nodes = _curve_helpers.specialize_curve(nodes, start, end)
         degree = new_nodes.shape[1] - 1
-        edge = _curve_mod.Curve(new_nodes, degree, copy=False)
+        edge = _curve_mod.Curve(new_nodes, degree, copy=False, verify=False)
         edges.append(edge)
     return curved_polygon.CurvedPolygon(
         *edges, metadata=edge_info, _verify=False

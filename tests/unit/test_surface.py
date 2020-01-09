@@ -18,6 +18,7 @@ from tests.unit import utils
 
 
 class TestSurface(utils.NumPyTestCase):
+
     REF_TRIANGLE = utils.ref_triangle_uniform_nodes(5)
     REF_TRIANGLE3 = utils.ref_triangle_uniform_nodes(3)
     QUADRATIC = np.asfortranarray(
@@ -58,6 +59,16 @@ class TestSurface(utils.NumPyTestCase):
         with self.assertRaises(ValueError):
             self._make_one(nodes, 1)
 
+    def test_constructor_invalid_degree(self):
+        nodes = np.empty((1, 6), order="F")
+        with self.assertRaises(ValueError) as exc_info:
+            self._make_one(nodes, 1)
+
+        exc_args = exc_info.exception.args
+        self.assertEqual(
+            exc_args, ("A degree 1 surface should have 3 nodes, not 6.",)
+        )
+
     def test_from_nodes_factory(self):
         nodes = np.asfortranarray(
             [
@@ -84,6 +95,20 @@ class TestSurface(utils.NumPyTestCase):
         self.assertTrue(np.all(surface._nodes == nodes))
         self.assertIsNone(surface._edges)
 
+    def test_from_nodes_factory_invalid_degree(self):
+        klass = self._get_target_class()
+        messages = {
+            2: "A degree 1 surface should have 3 nodes, not 2.",
+            9: "A degree 3 surface should have 10 nodes, not 9.",
+        }
+        for num_nodes, message in messages.items():
+            with self.assertRaises(ValueError) as exc_info:
+                nodes = np.empty((1, num_nodes), order="F")
+                klass.from_nodes(nodes)
+
+            exc_args = exc_info.exception.args
+            self.assertEqual(exc_args, (message,))
+
     def test___repr__(self):
         nodes = np.zeros((3, 15), order="F")
         surface = self._make_one(nodes, 4)
@@ -98,15 +123,10 @@ class TestSurface(utils.NumPyTestCase):
         self.assertEqual(3, klass._get_degree(10))
         self.assertEqual(11, klass._get_degree(78))
 
-    def test__get_degree_invalid(self):
-        klass = self._get_target_class()
-        with self.assertRaises(ValueError):
-            klass._get_degree(2)
-        with self.assertRaises(ValueError):
-            klass._get_degree(9)
-
     def test_area_property_wrong_dimension(self):
-        nodes = np.asfortranarray([[0.0, 0.0], [1.0, 2.0], [2.0, 3.0]])
+        nodes = np.asfortranarray(
+            [[0.0, 0.0, 0.0], [1.0, 2.0, 0.0], [2.0, 3.0, 0.0]]
+        )
         surface = self._make_one(nodes, 1)
         with self.assertRaises(NotImplementedError) as exc_info:
             getattr(surface, "area")
