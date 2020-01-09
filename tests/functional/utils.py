@@ -370,7 +370,7 @@ class CurveInfo:  # pylint: disable=too-few-public-methods
     def __init__(self, id_, control_points, implicitized=None, note=None):
         self.id_ = id_
         self.control_points = control_points
-        self.curve = bezier.Curve.from_nodes(control_points, _copy=False)
+        self.curve = bezier.Curve.from_nodes(control_points, copy=False)
         self.implicitized = implicitized
         self.note = note
 
@@ -679,7 +679,7 @@ class SurfaceInfo:  # pylint: disable=too-few-public-methods
     def __init__(self, id_, control_points, note=None):
         self.id_ = id_
         self.control_points = control_points
-        self.surface = bezier.Surface.from_nodes(control_points, _copy=False)
+        self.surface = bezier.Surface.from_nodes(control_points, copy=False)
         self.note = note
 
     @classmethod

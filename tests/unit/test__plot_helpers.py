@@ -108,7 +108,7 @@ class Test_add_patch(utils.NumPyTestCase):
     def _get_info(nodes):
         from bezier import surface as surface_mod
 
-        surface = surface_mod.Surface(nodes, 1, _copy=False)
+        surface = surface_mod.Surface(nodes, 1, copy=False)
         edges = surface._get_edges()
         expected = np.empty((2, 7), order="F")
         expected[:, 0] = 0.5 * (nodes[:, 0] + nodes[:, 1])

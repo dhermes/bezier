@@ -44,7 +44,7 @@ class TestSurface(utils.NumPyTestCase):
 
     def test_constructor(self):
         nodes = np.asfortranarray([[0.0, 0.625, 1.0], [0.0, 0.5, 0.75]])
-        surface = self._make_one(nodes, 1, _copy=False)
+        surface = self._make_one(nodes, 1, copy=False)
         self.assertEqual(surface._degree, 1)
         self.assertEqual(surface._dimension, 2)
         self.assertIs(surface._nodes, nodes)
@@ -239,22 +239,22 @@ class TestSurface(utils.NumPyTestCase):
     def test_edges_property_cached(self):
         surface = self._make_one_no_slots(self.ZEROS, 1)
         # Create mock "edges" to be computed.
-        sentinel1 = unittest.mock.Mock(spec=["_copy"])
-        sentinel2 = unittest.mock.Mock(spec=["_copy"])
-        sentinel3 = unittest.mock.Mock(spec=["_copy"])
+        sentinel1 = unittest.mock.Mock(spec=["copy"])
+        sentinel2 = unittest.mock.Mock(spec=["copy"])
+        sentinel3 = unittest.mock.Mock(spec=["copy"])
         expected = sentinel1, sentinel2, sentinel3
         surface._compute_edges = unittest.mock.Mock(return_value=expected)
         # Make sure the "edges" when copied just return themselves.
-        sentinel1._copy.return_value = sentinel1
-        sentinel2._copy.return_value = sentinel2
-        sentinel3._copy.return_value = sentinel3
+        sentinel1.copy.return_value = sentinel1
+        sentinel2.copy.return_value = sentinel2
+        sentinel3.copy.return_value = sentinel3
         # Access the property and check the mocks.
         self.assertEqual(surface.edges, expected)
         surface._compute_edges.assert_any_call()
         self.assertEqual(surface._compute_edges.call_count, 1)
-        sentinel1._copy.assert_called_once_with()
-        sentinel2._copy.assert_called_once_with()
-        sentinel3._copy.assert_called_once_with()
+        sentinel1.copy.assert_called_once_with()
+        sentinel2.copy.assert_called_once_with()
+        sentinel3.copy.assert_called_once_with()
         # Access again but make sure no more calls to _compute_edges().
         self.assertEqual(surface.edges, expected)
         self.assertEqual(surface._compute_edges.call_count, 1)
@@ -282,7 +282,7 @@ class TestSurface(utils.NumPyTestCase):
             klass._verify_barycentric(0.875, 0.25, -0.125)
 
     def test_evaluate_barycentric(self):
-        surface = self._make_one(self.UNIT_TRIANGLE, 1, _copy=False)
+        surface = self._make_one(self.UNIT_TRIANGLE, 1, copy=False)
         lambda_vals = (0.25, 0.0, 0.75)
         # Just make sure we call the helper.
         patch = unittest.mock.patch(
@@ -320,7 +320,7 @@ class TestSurface(utils.NumPyTestCase):
 
     def _eval_bary_multi_helper(self, **kwargs):
         nodes = np.asfortranarray([[0.0, 2.0, -3.0], [0.0, 1.0, 2.0]])
-        surface = self._make_one(nodes, 1, _copy=False)
+        surface = self._make_one(nodes, 1, copy=False)
         param_vals = np.asfortranarray([[1.0, 0.0, 0.0]])
         patch = unittest.mock.patch(
             "bezier._surface_helpers.evaluate_barycentric_multi",
@@ -374,7 +374,7 @@ class TestSurface(utils.NumPyTestCase):
 
     def test_evaluate_cartesian_calls_helper(self):
         nodes = self.ZEROS
-        surface = self._make_one_no_slots(nodes, 1, _copy=False)
+        surface = self._make_one_no_slots(nodes, 1, copy=False)
         patch = unittest.mock.patch(
             "bezier._surface_helpers.evaluate_barycentric",
             return_value=unittest.mock.sentinel.point,
@@ -394,7 +394,7 @@ class TestSurface(utils.NumPyTestCase):
 
     def _eval_cartesian_multi_helper(self, **kwargs):
         nodes = np.asfortranarray([[2.0, 0.0, 3.0], [3.0, 2.0, 7.5]])
-        surface = self._make_one(nodes, 1, _copy=False)
+        surface = self._make_one(nodes, 1, copy=False)
         param_vals = np.asfortranarray([[1.0, 0.0]])
         patch = unittest.mock.patch(
             "bezier._surface_helpers.evaluate_cartesian_multi",
@@ -415,7 +415,7 @@ class TestSurface(utils.NumPyTestCase):
         nodes = np.asfortranarray(
             [[0.0, 1.0, 2.0], [0.0, 3.0, 6.0], [0.0, 4.0, 9.0]]
         )
-        surface = self._make_one(nodes, 1, _copy=False)
+        surface = self._make_one(nodes, 1, copy=False)
         with self.assertRaises(NotImplementedError):
             surface.plot(32)
 
@@ -424,7 +424,7 @@ class TestSurface(utils.NumPyTestCase):
     def test_plot_defaults(self, add_patch_mock, new_axis_mock):
         ax = unittest.mock.Mock(spec=[])
         new_axis_mock.return_value = ax
-        curve = self._make_one(self.UNIT_TRIANGLE, 1, _copy=False)
+        curve = self._make_one(self.UNIT_TRIANGLE, 1, copy=False)
         pts_per_edge = 16
         result = curve.plot(pts_per_edge)
         self.assertIs(result, ax)
@@ -439,7 +439,7 @@ class TestSurface(utils.NumPyTestCase):
     def test_plot_explicit(self, add_patch_mock, new_axis_mock):
         ax = unittest.mock.Mock(spec=["plot"])
         color = (0.5, 0.5, 0.5)
-        curve = self._make_one(self.UNIT_TRIANGLE, 1, _copy=False)
+        curve = self._make_one(self.UNIT_TRIANGLE, 1, copy=False)
         pts_per_edge = 16
         result = curve.plot(pts_per_edge, color=color, ax=ax, with_nodes=True)
         self.assertIs(result, ax)
@@ -464,7 +464,7 @@ class TestSurface(utils.NumPyTestCase):
     def test_subdivide(self):
         klass = self._get_target_class()
         degree = 1
-        surface = self._make_one(self.UNIT_TRIANGLE, degree, _copy=False)
+        surface = self._make_one(self.UNIT_TRIANGLE, degree, copy=False)
         surface_a, surface_b, surface_c, surface_d = surface.subdivide()
         # Check sub-surface A.
         self.assertIsInstance(surface_a, klass)
@@ -501,11 +501,11 @@ class TestSurface(utils.NumPyTestCase):
         # Change the nodes from counterclockwise to clockwise, so the
         # Jacobian becomes negatively signed.
         nodes = np.asfortranarray(nodes[:, (1, 0, 2)])
-        surface = self._make_one(nodes, 1, _copy=False)
+        surface = self._make_one(nodes, 1, copy=False)
         self.assertFalse(surface._compute_valid())
         # Collinear.
         nodes = np.asfortranarray([[0.0, 1.0, 2.0], [0.0, 2.0, 4.0]])
-        surface = self._make_one(nodes, 1, _copy=False)
+        surface = self._make_one(nodes, 1, copy=False)
         self.assertFalse(surface._compute_valid())
 
     def test__compute_valid_quadratic(self):
@@ -516,18 +516,18 @@ class TestSurface(utils.NumPyTestCase):
                 [0.0, -0.1875, 0.0, 0.5, 0.625, 1.0],
             ]
         )
-        surface = self._make_one(nodes, 2, _copy=False)
+        surface = self._make_one(nodes, 2, copy=False)
         self.assertTrue(surface._compute_valid())
         # Change the nodes from counterclockwise to clockwise, so the
         # Jacobian becomes negatively signed.
         nodes = np.asfortranarray(nodes[:, (2, 1, 0, 4, 3, 5)])
-        surface = self._make_one(nodes, 2, _copy=False)
+        surface = self._make_one(nodes, 2, copy=False)
         self.assertFalse(surface._compute_valid())
         # Mixed sign Jacobian: B(L1, L2, L3) = [L1^2 + L2^2, L2^2 + L3^2]
         nodes = np.asfortranarray(
             [[1.0, 0.0, 1.0, 0.0, 0.0, 0.0], [0.0, 0.0, 1.0, 0.0, 0.0, 1.0]]
         )
-        surface = self._make_one(nodes, 2, _copy=False)
+        surface = self._make_one(nodes, 2, copy=False)
         self.assertFalse(surface._compute_valid())
 
     def test__compute_valid_cubic(self):
@@ -538,12 +538,12 @@ class TestSurface(utils.NumPyTestCase):
                 [0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.25, 2.0, 2.25, 3.0],
             ]
         )
-        surface = self._make_one(nodes, 3, _copy=False)
+        surface = self._make_one(nodes, 3, copy=False)
         self.assertTrue(surface._compute_valid())
         # Change the nodes from counterclockwise to clockwise, so the
         # Jacobian becomes negatively signed.
         nodes = np.asfortranarray(nodes[:, (3, 2, 1, 0, 6, 5, 4, 8, 7, 9)])
-        surface = self._make_one(nodes, 3, _copy=False)
+        surface = self._make_one(nodes, 3, copy=False)
         self.assertFalse(surface._compute_valid())
         # Mixed sign Jacobian: B(L1, L2, L3) = [L1^3 + L2^3, L2^3 + L3^3]
         nodes = np.asfortranarray(
@@ -552,7 +552,7 @@ class TestSurface(utils.NumPyTestCase):
                 [0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0],
             ]
         )
-        surface = self._make_one(nodes, 3, _copy=False)
+        surface = self._make_one(nodes, 3, copy=False)
         self.assertFalse(surface._compute_valid())
 
     def test__compute_valid_bad_degree(self):
@@ -572,7 +572,7 @@ class TestSurface(utils.NumPyTestCase):
         self.assertTrue(surface.is_valid)
 
     def test___dict___property(self):
-        surface = self._make_one(self.UNIT_TRIANGLE, 1, _copy=False)
+        surface = self._make_one(self.UNIT_TRIANGLE, 1, copy=False)
         props_dict = surface.__dict__
         expected = {
             "_nodes": self.UNIT_TRIANGLE,
@@ -754,9 +754,9 @@ class Test__make_intersection(utils.NumPyTestCase):
         import bezier
 
         nodes1 = np.asfortranarray([[0.0, 1.0, 0.0], [0.0, 0.0, 1.0]])
-        surface1 = bezier.Surface(nodes1, degree=1, _copy=False)
+        surface1 = bezier.Surface(nodes1, degree=1, copy=False)
         nodes2 = np.asfortranarray([[0.25, -0.75, 0.25], [0.25, 0.25, -0.75]])
-        surface2 = bezier.Surface(nodes2, degree=1, _copy=False)
+        surface2 = bezier.Surface(nodes2, degree=1, copy=False)
         edge_nodes = tuple(edge._nodes for edge in surface1.edges) + tuple(
             edge._nodes for edge in surface2.edges
         )

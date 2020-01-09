@@ -84,7 +84,7 @@ class Curve(_base.Base):
         degree (int): The degree of the curve. This is assumed to
             correctly correspond to the number of ``nodes``. Use
             :meth:`from_nodes` if the degree has not yet been computed.
-        _copy (bool): Flag indicating if the nodes should be copied before
+        copy (bool): Flag indicating if the nodes should be copied before
             being stored. Defaults to :data:`True` since callers may
             freely mutate ``nodes`` after passing in.
     """
@@ -95,12 +95,12 @@ class Curve(_base.Base):
         "_degree",  # From constructor
     )
 
-    def __init__(self, nodes, degree, _copy=True):
-        super(Curve, self).__init__(nodes, _copy=_copy)
+    def __init__(self, nodes, degree, copy=True):
+        super(Curve, self).__init__(nodes, copy=copy)
         self._degree = degree
 
     @classmethod
-    def from_nodes(cls, nodes, _copy=True):
+    def from_nodes(cls, nodes, copy=True):
         """Create a :class:`.Curve` from nodes.
 
         Computes the ``degree`` based on the shape of ``nodes``.
@@ -110,7 +110,7 @@ class Curve(_base.Base):
                 Must be convertible to a 2D NumPy array of floating point
                 values, where the columns represent each node while the rows
                 are the dimension of the ambient space.
-            _copy (bool): Flag indicating if the nodes should be copied before
+            copy (bool): Flag indicating if the nodes should be copied before
                 being stored. Defaults to :data:`True` since callers may
                 freely mutate ``nodes`` after passing in.
 
@@ -120,7 +120,7 @@ class Curve(_base.Base):
         nodes_np = _base.sequence_to_array(nodes)
         _, num_nodes = nodes_np.shape
         degree = cls._get_degree(num_nodes)
-        return cls(nodes_np, degree, _copy=_copy)
+        return cls(nodes_np, degree, copy=copy)
 
     @staticmethod
     def _get_degree(num_nodes):
@@ -167,13 +167,13 @@ class Curve(_base.Base):
             "_degree": self._degree,
         }
 
-    def _copy(self):
+    def copy(self):
         """Make a copy of the current curve.
 
         Returns:
             .Curve: Copy of current curve.
         """
-        return Curve(self._nodes, self._degree, _copy=True)
+        return Curve(self._nodes, self._degree, copy=True)
 
     def evaluate(self, s):
         r"""Evaluate :math:`B(s)` along the curve.
@@ -315,8 +315,8 @@ class Curve(_base.Base):
             Tuple[Curve, Curve]: The left and right sub-curves.
         """
         left_nodes, right_nodes = _curve_helpers.subdivide_nodes(self._nodes)
-        left = Curve(left_nodes, self._degree, _copy=False)
-        right = Curve(right_nodes, self._degree, _copy=False)
+        left = Curve(left_nodes, self._degree, copy=False)
+        right = Curve(right_nodes, self._degree, copy=False)
         return left, right
 
     def intersect(
@@ -443,7 +443,7 @@ class Curve(_base.Base):
             Curve: The degree-elevated curve.
         """
         new_nodes = _curve_helpers.elevate_nodes(self._nodes)
-        return Curve(new_nodes, self._degree + 1, _copy=False)
+        return Curve(new_nodes, self._degree + 1, copy=False)
 
     def reduce_(self):
         r"""Return a degree-reduced version of the current curve.
@@ -540,7 +540,7 @@ class Curve(_base.Base):
             Curve: The degree-reduced curve.
         """
         new_nodes = _curve_helpers.reduce_pseudo_inverse(self._nodes)
-        return Curve(new_nodes, self._degree - 1, _copy=False)
+        return Curve(new_nodes, self._degree - 1, copy=False)
 
     def specialize(self, start, end):
         """Specialize the curve to a given sub-interval.
@@ -599,7 +599,7 @@ class Curve(_base.Base):
             Curve: The newly-specialized curve.
         """
         new_nodes = _curve_helpers.specialize_curve(self._nodes, start, end)
-        return Curve(new_nodes, self._degree, _copy=False)
+        return Curve(new_nodes, self._degree, copy=False)
 
     def locate(self, point):
         r"""Find a point on the current curve.

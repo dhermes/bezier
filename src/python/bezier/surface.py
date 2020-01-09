@@ -177,7 +177,7 @@ class Surface(_base.Base):
         degree (int): The degree of the surface. This is assumed to
             correctly correspond to the number of ``nodes``. Use
             :meth:`from_nodes` if the degree has not yet been computed.
-        _copy (bool): Flag indicating if the nodes should be copied before
+        copy (bool): Flag indicating if the nodes should be copied before
             being stored. Defaults to :data:`True` since callers may
             freely mutate ``nodes`` after passing in.
     """
@@ -189,13 +189,13 @@ class Surface(_base.Base):
         "_edges",  # Empty default
     )
 
-    def __init__(self, nodes, degree, _copy=True):
-        super(Surface, self).__init__(nodes, _copy=_copy)
+    def __init__(self, nodes, degree, copy=True):
+        super(Surface, self).__init__(nodes, copy=copy)
         self._degree = degree
         self._edges = None
 
     @classmethod
-    def from_nodes(cls, nodes, _copy=True):
+    def from_nodes(cls, nodes, copy=True):
         """Create a :class:`.Surface` from nodes.
 
         Computes the ``degree`` based on the shape of ``nodes``.
@@ -205,7 +205,7 @@ class Surface(_base.Base):
                 surface. Must be convertible to a 2D NumPy array of floating
                 point values, where the columns represent each node while the
                 rows are the dimension of the ambient space.
-            _copy (bool): Flag indicating if the nodes should be copied before
+            copy (bool): Flag indicating if the nodes should be copied before
                 being stored. Defaults to :data:`True` since callers may
                 freely mutate ``nodes`` after passing in.
 
@@ -215,7 +215,7 @@ class Surface(_base.Base):
         nodes_np = _base.sequence_to_array(nodes)
         _, num_nodes = nodes_np.shape
         degree = cls._get_degree(num_nodes)
-        return cls(nodes_np, degree, _copy=_copy)
+        return cls(nodes_np, degree, copy=copy)
 
     @staticmethod
     def _get_degree(num_nodes):
@@ -302,9 +302,9 @@ class Surface(_base.Base):
         nodes1, nodes2, nodes3 = _surface_helpers.compute_edge_nodes(
             self._nodes, self._degree
         )
-        edge1 = _curve_mod.Curve(nodes1, self._degree, _copy=False)
-        edge2 = _curve_mod.Curve(nodes2, self._degree, _copy=False)
-        edge3 = _curve_mod.Curve(nodes3, self._degree, _copy=False)
+        edge1 = _curve_mod.Curve(nodes1, self._degree, copy=False)
+        edge2 = _curve_mod.Curve(nodes2, self._degree, copy=False)
+        edge3 = _curve_mod.Curve(nodes3, self._degree, copy=False)
         return edge1, edge2, edge3
 
     def _get_edges(self):
@@ -353,9 +353,9 @@ class Surface(_base.Base):
         # NOTE: It is crucial that we return copies here. Since the edges
         #       are cached, if they were mutable, callers could
         #       inadvertently mutate the cached value.
-        edge1 = edge1._copy()  # pylint: disable=protected-access
-        edge2 = edge2._copy()  # pylint: disable=protected-access
-        edge3 = edge3._copy()  # pylint: disable=protected-access
+        edge1 = edge1.copy()
+        edge2 = edge2.copy()
+        edge3 = edge3.copy()
         return edge1, edge2, edge3
 
     @staticmethod
@@ -751,10 +751,10 @@ class Surface(_base.Base):
             nodes_d,
         ) = _surface_helpers.subdivide_nodes(self._nodes, self._degree)
         return (
-            Surface(nodes_a, self._degree, _copy=False),
-            Surface(nodes_b, self._degree, _copy=False),
-            Surface(nodes_c, self._degree, _copy=False),
-            Surface(nodes_d, self._degree, _copy=False),
+            Surface(nodes_a, self._degree, copy=False),
+            Surface(nodes_b, self._degree, copy=False),
+            Surface(nodes_c, self._degree, copy=False),
+            Surface(nodes_d, self._degree, copy=False),
         )
 
     def _compute_valid(self):
@@ -1110,7 +1110,7 @@ class Surface(_base.Base):
         # Hold off on division until the end, to (attempt to) avoid round-off.
         denominator = self._degree + 1.0
         new_nodes /= denominator
-        return Surface(new_nodes, self._degree + 1, _copy=False)
+        return Surface(new_nodes, self._degree + 1, copy=False)
 
 
 def _make_intersection(edge_info, all_edge_nodes):
@@ -1137,7 +1137,7 @@ def _make_intersection(edge_info, all_edge_nodes):
         nodes = all_edge_nodes[index]
         new_nodes = _curve_helpers.specialize_curve(nodes, start, end)
         degree = new_nodes.shape[1] - 1
-        edge = _curve_mod.Curve(new_nodes, degree, _copy=False)
+        edge = _curve_mod.Curve(new_nodes, degree, copy=False)
         edges.append(edge)
     return curved_polygon.CurvedPolygon(
         *edges, metadata=edge_info, _verify=False

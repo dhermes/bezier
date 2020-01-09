@@ -36,7 +36,7 @@ class TestBase(utils.NumPyTestCase):
 
     def test_constructor_without_copy(self):
         nodes = np.asfortranarray([[0.0, 1.0, 2.0], [0.0, 1.0, 3.0]])
-        shape = self._make_one(nodes, _copy=False)
+        shape = self._make_one(nodes, copy=False)
         self.assertEqual(shape._degree, -1)
         self.assertEqual(shape._dimension, 2)
         self.assertIs(shape._nodes, nodes)
@@ -56,7 +56,7 @@ class TestBase(utils.NumPyTestCase):
 
     def test_constructor_change_order(self):
         nodes = np.array([[10.0, 1.0], [3.5, 2.0]], order="C")
-        shape = self._make_one(nodes, _copy=False)
+        shape = self._make_one(nodes, copy=False)
 
         self.assertFalse(nodes.flags.f_contiguous)
         self.assertTrue(shape._nodes.flags.f_contiguous)
@@ -64,14 +64,14 @@ class TestBase(utils.NumPyTestCase):
 
     def test_constructor_non_array(self):
         nodes = [[10.25, 20.0], [30.5, 4.0]]
-        shape = self._make_one(nodes, _copy=False)
+        shape = self._make_one(nodes, copy=False)
 
         self.assertIsInstance(shape._nodes, np.ndarray)
         self.assertTrue(np.all(nodes == shape._nodes))
 
     def test_constructor_convert_dtype(self):
         nodes = np.asfortranarray([[10, 20], [30, 4]])
-        shape = self._make_one(nodes, _copy=False)
+        shape = self._make_one(nodes, copy=False)
 
         self.assertEqual(nodes.dtype, np.dtype(int))
         self.assertEqual(shape._nodes.dtype, np.float64)
