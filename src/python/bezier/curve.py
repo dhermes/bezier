@@ -723,7 +723,8 @@ class Curve(_base.Base):
            [-(27*s**3 - 72*s**2 + 48*s - 16)/8]])
 
         Returns:
-            ~sympy.matrices.dense.MutableDenseMatrix: The curve :math:`B(s)`.
+            :class:`sympy.Matrix <sympy.matrices.dense.MutableDenseMatrix>`:
+            The curve :math:`B(s)`.
         """
         _, b_polynomial = _symbolic.curve_as_polynomial(
             self._nodes, self._degree
@@ -748,8 +749,8 @@ class Curve(_base.Base):
            9*x**2 + 6*x*y - 20*x + y**2 - 8*y + 12
 
         Returns:
-            ~sympy.core.expr.Expr: The function that defines the curve in
-            :math:`\mathbf{R}^2` via :math:`f(x, y) = 0`.
+            :class:`sympy.Expr <sympy.core.expr.Expr>`: The function that
+            defines the curve in :math:`\mathbf{R}^2` via :math:`f(x, y) = 0`.
 
         Raises:
             ValueError: If the curve's dimension is not ``2``.
