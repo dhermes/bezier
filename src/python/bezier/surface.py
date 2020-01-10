@@ -1169,7 +1169,8 @@ class Surface(_base.Base):
            [ t**2]])
 
         Returns:
-            sympy.Matrix: The surface :math:`B(s, t)`.
+            ~sympy.matrices.dense.MutableDenseMatrix: The surface
+            :math:`B(s, t)`.
         """
         _, _, b_polynomial = _symbolic.surface_as_polynomial(
             self._nodes, self._degree
@@ -1195,8 +1196,8 @@ class Surface(_base.Base):
            (x**4 - 2*x**2*y - 2*x**2*z + y**2 - 2*y*z + z**2)**2
 
         Returns:
-            sympy.Expr: The function :math:`f(x, y, z)` that defines the
-            surface in :math:`\mathbf{R}^3`.
+            ~sympy.core.expr.Expr: The function that defines the surface in
+            :math:`\mathbf{R}^3` via :math:`f(x, y, z) = 0`.
 
         Raises:
             ValueError: If the surface's dimension is not ``3``.
