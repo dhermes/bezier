@@ -105,7 +105,9 @@ def curve_as_polynomial(nodes, degree):
             correctly correspond to the number of ``nodes``.
 
     Returns:
-        sympy.Matrix: The curve :math:`B(s)`.
+        Tuple[sympy.Symbol, sympy.Matrix]: Pair of
+        * The symbol ``s`` used in the polynomial
+        * The curve :math:`B(s)`.
     """
     nodes_sym = to_symbolic(nodes)
 
@@ -137,6 +139,12 @@ def implicitize_2d(x_fn, y_fn, s):
 @require_sympy
 def implicitize_curve(nodes, degree):
     """Implicitize a 2D parametric curve, given the nodes.
+
+    .. note::
+
+       This function assumes (but does not check) that the caller has verified
+       ``nodes`` represents a 2D curve. If it **does not**, this function will
+       error out when tuple-unpacking the polynomial.
 
     Args:
         nodes (numpy.ndarray): Nodes defining a B |eacute| zier curve.
@@ -196,7 +204,10 @@ def surface_as_polynomial(nodes, degree):
             correctly correspond to the number of ``nodes``.
 
     Returns:
-        sympy.Matrix: The surface :math:`B(s, t)`.
+        Tuple[sympy.Symbol, sympy.Symbol, sympy.Matrix]: Triple of
+        * The symbol ``s`` used in the polynomial
+        * The symbol ``t`` used in the polynomial
+        * The surface :math:`B(s, t)`.
     """
     nodes_sym = to_symbolic(nodes)
 
@@ -205,7 +216,7 @@ def surface_as_polynomial(nodes, degree):
     b_polynomial.simplify()
 
     factored = [value.factor() for value in b_polynomial]
-    return sympy.Matrix(factored).reshape(*b_polynomial.shape)
+    return s, t, sympy.Matrix(factored).reshape(*b_polynomial.shape)
 
 
 @require_sympy
@@ -230,3 +241,27 @@ def implicitize_3d(x_fn, y_fn, z_fn, s, t):
     f_xy = sympy.resultant(x_fn - x_sym, y_fn - y_sym, s)
     f_yz = sympy.resultant(y_fn - x_sym, z_fn - z_sym, s)
     return sympy.resultant(f_xy, f_yz, t).factor()
+
+
+@require_sympy
+def implicitize_surface(nodes, degree):
+    """Implicitize a 3D parametric surface, given the nodes.
+
+    .. note::
+
+       This function assumes (but does not check) that the caller has verified
+       ``nodes`` represents a 3D surface. If it **does not**, this function
+       will error out when tuple-unpacking the polynomial.
+
+    Args:
+        nodes (numpy.ndarray): Nodes defining a B |eacute| zier surface.
+        degree (int): The degree of the surface. This is assumed to
+            correctly correspond to the number of ``nodes``.
+
+    Returns:
+        sympy.Expr: The implicitized function :math:`f(x, y, z)` such that the
+        surface satisfies :math:`f(x(s, t), y(s, t), z(s, t)) = 0`.
+    """
+    s, t, b_polynomial = surface_as_polynomial(nodes, degree)
+    x_fn, y_fn, z_fn = b_polynomial
+    return implicitize_3d(x_fn, y_fn, z_fn, s, t)

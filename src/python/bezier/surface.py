@@ -1171,7 +1171,44 @@ class Surface(_base.Base):
         Returns:
             sympy.Matrix: The surface :math:`B(s, t)`.
         """
-        return _symbolic.surface_as_polynomial(self._nodes, self._degree)
+        _, _, b_polynomial = _symbolic.surface_as_polynomial(
+            self._nodes, self._degree
+        )
+        return b_polynomial
+
+    def implicitize(self):
+        r"""Implicitize the surface .
+
+        .. note::
+
+           This method requires :mod:`sympy`.
+
+        .. doctest:: surface-implicitize
+
+           >>> nodes = np.asfortranarray([
+           ...     [0.0, 0.5, 1.0, -0.5, 0.0, -1.0],
+           ...     [0.0, 0.0, 1.0,  0.0, 0.0,  0.0],
+           ...     [0.0, 0.0, 0.0,  0.0, 0.0,  1.0],
+           ... ])
+           >>> surface = bezier.Surface(nodes, degree=2)
+           >>> surface.implicitize()
+           -1
+
+        Returns:
+            sympy.Expr: The function :math:`f(x, y, z)` that defines the
+            surface in :math:`\mathbf{R}^3`.
+
+        Raises:
+            ValueError: If the surface's dimension is not ``3``.
+        """
+        if self._dimension != 3:
+            raise ValueError(
+                "Only a spatial (3D) surface can be implicitized",
+                "Current dimension",
+                self._dimension,
+            )
+
+        return _symbolic.implicitize_surface(self._nodes, self._degree)
 
 
 def _make_intersection(edge_info, all_edge_nodes):

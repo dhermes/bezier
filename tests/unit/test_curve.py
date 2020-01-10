@@ -333,7 +333,7 @@ class TestCurve(utils.NumPyTestCase):
         curve = self._make_one(nodes, 3, copy=False)
         f_polynomial = curve.implicitize()
 
-        s, x_sym, y_sym = sympy.symbols("s, x, y")
+        x_sym, y_sym = sympy.symbols("x, y")
         expected = -9 * (
             x_sym ** 3
             - 9 * x_sym ** 2

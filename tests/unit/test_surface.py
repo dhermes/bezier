@@ -770,13 +770,42 @@ class TestSurface(utils.NumPyTestCase):
 
     @unittest.skipIf(sympy is None, "SymPy not installed")
     def test_to_symbolic(self):
-        nodes = np.eye(3, dtype="F")
+        nodes = np.eye(3, order="F")
         surface = self._make_one(nodes, 1, copy=False)
         b_polynomial = surface.to_symbolic()
 
         s, t = sympy.symbols("s, t")
         expected = sympy.Matrix([[1 - s - t, s, t]]).T
-        assert test__symbolic.sympy_matrix_equal(b_polynomial, expected)
+        self.assertTrue(
+            test__symbolic.sympy_matrix_equal(b_polynomial, expected)
+        )
+
+    @unittest.skipIf(sympy is None, "SymPy not installed")
+    def test_implicitize(self):
+        nodes = np.eye(3, order="F")
+        surface = self._make_one(nodes, 1, copy=False)
+        f_polynomial = surface.implicitize()
+
+        x_sym, y_sym, z_sym = sympy.symbols("x, y, z")
+        expected = 1 - (x_sym + y_sym + z_sym)
+        self.assertTrue(test__symbolic.sympy_equal(f_polynomial, expected))
+
+    @unittest.skipIf(sympy is None, "SymPy not installed")
+    def test_implicitize_bad_dimension(self):
+        nodes = np.empty((1, 3), order="F")
+        surface = self._make_one(nodes, 1, copy=False)
+        with self.assertRaises(ValueError) as exc_info:
+            surface.implicitize()
+
+        exc_args = exc_info.exception.args
+        self.assertEqual(
+            exc_args,
+            (
+                "Only a spatial (3D) surface can be implicitized",
+                "Current dimension",
+                1,
+            ),
+        )
 
 
 class Test__make_intersection(utils.NumPyTestCase):

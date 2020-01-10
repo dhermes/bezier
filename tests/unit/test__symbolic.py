@@ -173,9 +173,7 @@ class Test_surface_as_polynomial:
         nodes = np.asfortranarray(
             [[0.0, 1.0, 1.0], [0.0, 0.0, 1.0], [1.0, 1.0, 1.0]]
         )
-        b_polynomial = self._call_function_under_test(nodes, 1)
-
-        s, t = sympy.symbols("s, t")
+        s, t, b_polynomial = self._call_function_under_test(nodes, 1)
         expected = sympy.Matrix([s + t, t, 1])
         assert sympy_matrix_equal(b_polynomial, expected)
 
