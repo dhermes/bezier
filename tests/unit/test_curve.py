@@ -14,6 +14,12 @@ import unittest.mock
 
 import numpy as np
 
+try:
+    import sympy
+except ImportError:  # pragma: NO COVER
+    sympy = None
+
+from tests.unit import test__symbolic
 from tests.unit import utils
 
 
@@ -308,3 +314,49 @@ class TestCurve(utils.NumPyTestCase):
         point = curve.evaluate(s_val)
         result = curve.locate(point)
         self.assertEqual(result, s_val)
+
+    @unittest.skipIf(sympy is None, "SymPy not installed")
+    def test_to_symbolic(self):
+        nodes = np.asfortranarray([[3, 3, 4, 6], [3, 3, 3, 0]])
+        curve = self._make_one(nodes, 3, copy=False)
+        b_polynomial = curve.to_symbolic()
+
+        s = sympy.Symbol("s")
+        expected = 3 * sympy.Matrix([[1 + s ** 2, 1 - s ** 3]]).T
+        self.assertTrue(
+            test__symbolic.sympy_matrix_equal(b_polynomial, expected)
+        )
+
+    @unittest.skipIf(sympy is None, "SymPy not installed")
+    def test_implicitize(self):
+        nodes = np.asfortranarray([[3, 3, 4, 6], [3, 3, 3, 0]])
+        curve = self._make_one(nodes, 3, copy=False)
+        f_polynomial = curve.implicitize()
+
+        x_sym, y_sym = sympy.symbols("x, y")
+        expected = -9 * (
+            x_sym ** 3
+            - 9 * x_sym ** 2
+            + 27 * x_sym
+            - 3 * y_sym ** 2
+            + 18 * y_sym
+            - 54
+        )
+        self.assertTrue(test__symbolic.sympy_equal(f_polynomial, expected))
+
+    @unittest.skipIf(sympy is None, "SymPy not installed")
+    def test_implicitize_bad_dimension(self):
+        nodes = np.empty((1, 2), order="F")
+        curve = self._make_one(nodes, 1, copy=False)
+        with self.assertRaises(ValueError) as exc_info:
+            curve.implicitize()
+
+        exc_args = exc_info.exception.args
+        self.assertEqual(
+            exc_args,
+            (
+                "Only a planar (2D) curve can be implicitized",
+                "Current dimension",
+                1,
+            ),
+        )

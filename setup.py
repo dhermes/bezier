@@ -47,7 +47,7 @@ building of the binary extension module.
     NO_EXTENSION_ENV
 )
 REQUIREMENTS = ("numpy >= 1.18.1",)
-EXTRAS_REQUIRE = {}
+EXTRAS_REQUIRE = {"full": ["scipy >= 1.4.1", "sympy >= 1.5.1"]}
 DESCRIPTION = (
     u"Helper for B\u00e9zier Curves, Triangles, and Higher Order Objects"
 )

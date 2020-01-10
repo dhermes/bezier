@@ -80,6 +80,8 @@ The ``bezier`` Python package can be installed with `pip`_:
 
    $ python    -m pip install --upgrade bezier
    $ python3.8 -m pip install --upgrade bezier
+   $ # To install optional dependencies, e.g. SymPy
+   $ python    -m pip install --upgrade bezier[full]
 
 To install a pure Python version (i.e. with no binary extension):
 

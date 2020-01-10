@@ -19,7 +19,7 @@ Packaging
 New Features
 ~~~~~~~~~~~~
 
--  Loosening type constraints in ``Curve``
+-  Loosened type constraints in ``Curve``
    `constructor <https://bezier.readthedocs.io/en/latest/python/reference/bezier.curve.html#bezier.curve.Curve>`__
    and ``Surface``
    `constructor <https://bezier.readthedocs.io/en/latest/python/reference/bezier.surface.html#bezier.surface.Surface>`__;
@@ -34,6 +34,19 @@ New Features
    `constructor <https://bezier.readthedocs.io/en/latest/python/reference/bezier.surface.html#bezier.surface.Surface>`__
    (`#163 <https://github.com/dhermes/bezier/pull/163>`__).
    Fixed `#158 <https://github.com/dhermes/bezier/issues/158>`__.
+-  Added `SymPy <https://docs.sympy.org/>`__-based helpers for "exact"
+   representations
+   (`#164 <https://github.com/dhermes/bezier/pull/164>`__).
+   Fixed `#157 <https://github.com/dhermes/bezier/issues/157>`__.
+
+   -  ``Curve.implicitize()``
+      `function <https://bezier.readthedocs.io/en/latest/python/reference/bezier.curve.html#bezier.curve.Curve.implicitize>`__
+   -  ``Curve.to_symbolic()``
+      `function <https://bezier.readthedocs.io/en/latest/python/reference/bezier.curve.html#bezier.curve.Curve.to_symbolic>`__
+   -  ``Surface.implicitize()``
+      `function <https://bezier.readthedocs.io/en/latest/python/reference/bezier.surface.html#bezier.surface.Surface.implicitize>`__
+   -  ``Surface.to_symbolic()``
+      `function <https://bezier.readthedocs.io/en/latest/python/reference/bezier.surface.html#bezier.surface.Surface.to_symbolic>`__
 
 Internals
 ~~~~~~~~~
@@ -48,20 +61,20 @@ Internals
 Miscellany
 ~~~~~~~~~~
 
--  Moving ``*.f90`` Fortran files **out** of Python source tree
+-  Moved ``*.f90`` Fortran files **out** of Python source tree
    (`#152 <https://github.com/dhermes/bezier/pull/152>`__).
 
 Bug Fixes
 ---------
 
--  Explicitly handling length 0 curves (with an error) in the
+-  Explicitly handle length 0 curves (with an error) in the
    ``compute_length()`` Fortran
    `subroutine <https://bezier.readthedocs.io/en/latest/abi/curve.html#c.compute_length>`__
    that is used by the ``Curve.length``
    `property <https://bezier.readthedocs.io/en/latest/python/reference/bezier.curve.html#bezier.curve.Curve.length>`__
    (`a24368f <https://github.com/dhermes/bezier/commit/a24368fc690b2c6d6a676b9d569f25b5919c400d>`__).
    Fixed `#148 <https://github.com/dhermes/bezier/issues/148>`__.
--  Fixing high-degree error in ``Curve.evaluate()``
+-  Fixed high-degree error in ``Curve.evaluate()``
    `method <https://bezier.readthedocs.io/en/latest/python/reference/bezier.curve.html#bezier.curve.Curve.evaluate>`__,
    via the ``evaluate_curve_barycentric()`` Fortran
    `subroutine <https://bezier.readthedocs.io/en/latest/abi/curve.html#c.evaluate_curve_barycentric>`__
@@ -74,12 +87,12 @@ Bug Fixes
 Documentation
 -------------
 
--  Updating install instructions to show how to disable the binary extension
+-  Updated install instructions to show how to disable the binary extension
    via ``BEZIER_NO_EXTENSION``
    (`6262594 <https://github.com/dhermes/bezier/commit/626259493997a9d83924d100900189f32b87e6c5>`__,
    `00c1e61 <https://github.com/dhermes/bezier/commit/00c1e619688b93a6a079288be40153a9157fa6c5>`__).
    Fixed `#147 <https://github.com/dhermes/bezier/issues/147>`__.
--  Adding "Citation" section to landing page
+-  Added "Citation" section to landing page
    (`9885063 <https://github.com/dhermes/bezier/commit/9885063a2e3795e0bec35a4fc1574dc294d359e0>`__).
    Fixed `#150 <https://github.com/dhermes/bezier/issues/150>`__.
 

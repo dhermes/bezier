@@ -35,6 +35,7 @@ from bezier import _curve_helpers
 from bezier import _geometric_intersection
 from bezier import _plot_helpers
 from bezier import _py_intersection_helpers
+from bezier import _symbolic
 
 
 _LOCATE_ERROR_TEMPLATE = (
@@ -701,3 +702,63 @@ class Curve(_base.Base):
             raise ValueError(msg)
 
         return _curve_helpers.locate_point(self._nodes, point)
+
+    def to_symbolic(self):
+        """Convert to a SymPy matrix representing :math:`B(s)`.
+
+        .. note::
+
+           This method requires :mod:`sympy`.
+
+        .. doctest:: curve-to-symbolic
+
+           >>> nodes = np.asfortranarray([
+           ...     [0.0, -1.0, 1.0, -0.75 ],
+           ...     [2.0,  0.0, 1.0,  1.625],
+           ... ])
+           >>> curve = bezier.Curve(nodes, degree=3)
+           >>> curve.to_symbolic()
+           Matrix([
+           [               -3*s*(3*s - 2)**2/4],
+           [-(27*s**3 - 72*s**2 + 48*s - 16)/8]])
+
+        Returns:
+            ~sympy.matrices.dense.MutableDenseMatrix: The curve :math:`B(s)`.
+        """
+        _, b_polynomial = _symbolic.curve_as_polynomial(
+            self._nodes, self._degree
+        )
+        return b_polynomial
+
+    def implicitize(self):
+        r"""Implicitize the curve .
+
+        .. note::
+
+           This method requires :mod:`sympy`.
+
+        .. doctest:: curve-implicitize
+
+           >>> nodes = np.asfortranarray([
+           ...     [0.0, 1.0, 1.0],
+           ...     [2.0, 0.0, 1.0],
+           ... ])
+           >>> curve = bezier.Curve(nodes, degree=2)
+           >>> curve.implicitize()
+           9*x**2 + 6*x*y - 20*x + y**2 - 8*y + 12
+
+        Returns:
+            ~sympy.core.expr.Expr: The function that defines the curve in
+            :math:`\mathbf{R}^2` via :math:`f(x, y) = 0`.
+
+        Raises:
+            ValueError: If the curve's dimension is not ``2``.
+        """
+        if self._dimension != 2:
+            raise ValueError(
+                "Only a planar (2D) curve can be implicitized",
+                "Current dimension",
+                self._dimension,
+            )
+
+        return _symbolic.implicitize_curve(self._nodes, self._degree)

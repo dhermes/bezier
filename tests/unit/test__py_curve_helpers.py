@@ -19,6 +19,7 @@ try:
     import scipy.integrate as SCIPY_INT
 except ImportError:  # pragma: NO COVER
     SCIPY_INT = None
+
 from tests.unit import utils
 
 

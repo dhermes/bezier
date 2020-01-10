@@ -43,6 +43,7 @@ DEPS = {
     "pytest": "pytest >= 5.3.2",
     "pytest-cov": "pytest-cov",
     "scipy": "scipy >= 1.4.1",
+    "sympy": "sympy >= 1.5.1",
     "seaborn": "seaborn >= 0.9.0",
 }
 BASE_DEPS = (DEPS["numpy"], DEPS["pytest"])
@@ -151,10 +152,11 @@ def update_generated(session, check):
 @nox.session(py=ALL_INTERPRETERS)
 def unit(session):
     interpreter = session.virtualenv.interpreter
+    unit_deps = BASE_DEPS + (DEPS["sympy"],)
     if interpreter == PYPY:
-        local_deps = pypy_setup(BASE_DEPS, session)
+        local_deps = pypy_setup(unit_deps, session)
     else:
-        local_deps = BASE_DEPS + (DEPS["scipy"],)
+        local_deps = unit_deps + (DEPS["scipy"],)
 
     # Install all test dependencies.
     session.install(*local_deps)
@@ -170,6 +172,7 @@ def cover(session):
     # Install all test dependencies.
     local_deps = BASE_DEPS + (
         DEPS["scipy"],
+        DEPS["sympy"],
         DEPS["pytest-cov"],
         DEPS["coverage"],
     )
@@ -229,7 +232,7 @@ def get_doctest_args(session):
 @nox.session(py=DEFAULT_INTERPRETER)
 def doctest(session):
     # Install all dependencies.
-    session.install(*DOCS_DEPS)
+    session.install(DEPS["sympy"], *DOCS_DEPS)
     # Install this package.
     if IS_MACOS:
         command = get_path("scripts", "macos", "nox-install-for-doctest.sh")

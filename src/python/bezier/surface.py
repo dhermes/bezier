@@ -32,6 +32,7 @@ from bezier import _py_surface_helpers
 from bezier import _py_surface_intersection
 from bezier import _surface_helpers
 from bezier import _surface_intersection
+from bezier import _symbolic
 from bezier import curve as _curve_mod
 from bezier import curved_polygon
 
@@ -1145,6 +1146,70 @@ class Surface(_base.Base):
         denominator = self._degree + 1.0
         new_nodes /= denominator
         return Surface(new_nodes, self._degree + 1, copy=False, verify=False)
+
+    def to_symbolic(self):
+        """Convert to a SymPy matrix representing :math:`B(s, t)`.
+
+        .. note::
+
+           This method requires :mod:`sympy`.
+
+        .. doctest:: surface-to-symbolic
+
+           >>> nodes = np.asfortranarray([
+           ...     [0.0, 0.5, 1.0, -0.5, 0.0, -1.0],
+           ...     [0.0, 0.0, 1.0,  0.0, 0.0,  0.0],
+           ...     [0.0, 0.0, 0.0,  0.0, 0.0,  1.0],
+           ... ])
+           >>> surface = bezier.Surface(nodes, degree=2)
+           >>> surface.to_symbolic()
+           Matrix([
+           [s - t],
+           [ s**2],
+           [ t**2]])
+
+        Returns:
+            ~sympy.matrices.dense.MutableDenseMatrix: The surface
+            :math:`B(s, t)`.
+        """
+        _, _, b_polynomial = _symbolic.surface_as_polynomial(
+            self._nodes, self._degree
+        )
+        return b_polynomial
+
+    def implicitize(self):
+        r"""Implicitize the surface .
+
+        .. note::
+
+           This method requires :mod:`sympy`.
+
+        .. doctest:: surface-implicitize
+
+           >>> nodes = np.asfortranarray([
+           ...     [0.0, 0.5, 1.0, -0.5, 0.0, -1.0],
+           ...     [0.0, 0.0, 1.0,  0.0, 0.0,  0.0],
+           ...     [0.0, 0.0, 0.0,  0.0, 0.0,  1.0],
+           ... ])
+           >>> surface = bezier.Surface(nodes, degree=2)
+           >>> surface.implicitize()
+           (x**4 - 2*x**2*y - 2*x**2*z + y**2 - 2*y*z + z**2)**2
+
+        Returns:
+            ~sympy.core.expr.Expr: The function that defines the surface in
+            :math:`\mathbf{R}^3` via :math:`f(x, y, z) = 0`.
+
+        Raises:
+            ValueError: If the surface's dimension is not ``3``.
+        """
+        if self._dimension != 3:
+            raise ValueError(
+                "Only a spatial (3D) surface can be implicitized",
+                "Current dimension",
+                self._dimension,
+            )
+
+        return _symbolic.implicitize_surface(self._nodes, self._degree)
 
 
 def _make_intersection(edge_info, all_edge_nodes):
