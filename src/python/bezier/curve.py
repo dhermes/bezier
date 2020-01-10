@@ -30,8 +30,8 @@ See :doc:`../../algorithms/curve-curve-intersection` for examples using the
 import numpy as np
 
 from bezier import _algebraic_intersection
-from bezier import _curve_helpers
 from bezier import _base
+from bezier import _curve_helpers
 from bezier import _geometric_intersection
 from bezier import _plot_helpers
 from bezier import _py_intersection_helpers

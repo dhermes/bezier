@@ -67,10 +67,11 @@ class Test_to_symbolic:
     def test_success(self):
         nodes = np.asfortranarray([[1.0, 5.5], [2.0, 2.0]])
         nodes_sym = self._call_function_under_test(nodes)
-        expected = sympy.Matrix([[1, sympy.Rational(11, 2)], [2, 2],])
+        expected = sympy.Matrix([[1, sympy.Rational(11, 2)], [2, 2]])
         assert nodes_sym == expected
 
 
+# pylint: disable=too-few-public-methods
 class Test_curve_weights:
     @staticmethod
     def _call_function_under_test(degree, s):
@@ -95,6 +96,9 @@ class Test_curve_weights:
         assert sympy_matrix_equal(weights, expected)
 
 
+# pylint: enable=too-few-public-methods
+
+# pylint: disable=too-few-public-methods
 class Test_curve_as_polynomial:
     @staticmethod
     def _call_function_under_test(nodes, degree):
@@ -110,6 +114,9 @@ class Test_curve_as_polynomial:
         assert sympy_matrix_equal(b_polynomial, expected)
 
 
+# pylint: enable=too-few-public-methods
+
+# pylint: disable=too-few-public-methods
 class Test_implicitize_2d:
     @staticmethod
     def _call_function_under_test(x_fn, y_fn, s):
@@ -135,6 +142,9 @@ class Test_implicitize_2d:
         assert sympy_equal(f_polynomial, expected)
 
 
+# pylint: enable=too-few-public-methods
+
+# pylint: disable=too-few-public-methods
 class Test_surface_weights:
     @staticmethod
     def _call_function_under_test(degree, s, t):
@@ -161,6 +171,9 @@ class Test_surface_weights:
         assert sympy_matrix_equal(weights, expected)
 
 
+# pylint: enable=too-few-public-methods
+
+# pylint: disable=too-few-public-methods
 class Test_surface_as_polynomial:
     @staticmethod
     def _call_function_under_test(nodes, degree):
@@ -178,6 +191,9 @@ class Test_surface_as_polynomial:
         assert sympy_matrix_equal(b_polynomial, expected)
 
 
+# pylint: enable=too-few-public-methods
+
+# pylint: disable=too-few-public-methods
 class Test_implicitize_3d:
     @staticmethod
     def _call_function_under_test(x_fn, y_fn, z_fn, s, t):
@@ -206,3 +222,6 @@ class Test_implicitize_3d:
             + z_sym ** 2
         )
         assert sympy_equal(f_polynomial, expected)
+
+
+# pylint: enable=too-few-public-methods
