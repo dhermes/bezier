@@ -10,7 +10,11 @@ Packaging
 ~~~~~~~~~
 
 -  Explicit support for Python 3.8 has been added
-   (`#161 <https://github.com/dhermes/bezier/issues/161>`__).
+   (`#161 <https://github.com/dhermes/bezier/issues/161>`__). On Windows this
+   required using the ``os.add_dll_directory()``
+   `function <https://docs.python.org/3/library/os.html#os.add_dll_directory>`__
+   to load ``bezier.dll`` (in earlier Python version, the DLL directory was
+   added by modifying ``%PATH%``).
 
 New Features
 ~~~~~~~~~~~~

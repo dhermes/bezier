@@ -12,8 +12,8 @@
 
 """Environment configuration for ``bezier`` runtime dependencies.
 
-Only needed for Windows, to add ``extra-dll`` directory to the search
-``%PATH%`` so that the ``libbezier`` DLL can be located.
+Only needed for Windows, to add ``extra-dll`` directory to the DLL search
+path so that the ``libbezier`` DLL can be located.
 """
 
 import os

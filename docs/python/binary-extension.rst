@@ -392,7 +392,11 @@ The Python extension module (``.pyd`` file) depends directly on this library:
 
 In order to ensure this DLL can be found, the ``bezier.__config__``
 module adds the ``extra-dll`` directory to ``os.environ["PATH"]`` on import
-(``%PATH%`` is used on Windows as part of the DLL search path).
+(``%PATH%`` is used on Windows as part of the DLL search path). For Python
+versions starting with 3.8, modifying ``%PATH%`` no longer works; instead
+the ``os.add_dll_directory()``
+`function <https://docs.python.org/3/library/os.html#os.add_dll_directory>`__
+achieves the same goal in a more official capacity.
 
 The ``libbezier`` DLL has **no external dependencies**, but does have
 a corresponding `import library`_ --- ``lib/bezier.lib`` --- which is

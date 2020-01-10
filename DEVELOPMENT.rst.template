@@ -545,7 +545,10 @@ for interacting with the system at import time:
 
 - ``PATH``: On Windows, we add the ``bezier/extra-dll`` package directory to
   the path so that the ``bezier.dll`` shared libary can be loaded at
-  import time
+  import time for Python versions **before** 3.8. After 3.8, modifying ``PATH``
+  no longer works for these purposes; the ``os.add_dll_directory()``
+  `function <https://docs.python.org/3/library/os.html#os.add_dll_directory>`__
+  is used.
 
 and for running tests and interacting with Continuous Integration
 services:
