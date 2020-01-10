@@ -231,7 +231,7 @@ def get_doctest_args(session):
 @nox.session(py=DEFAULT_INTERPRETER)
 def doctest(session):
     # Install all dependencies.
-    session.install(*DOCS_DEPS)
+    session.install(DEPS["sympy"], *DOCS_DEPS)
     # Install this package.
     if IS_MACOS:
         command = get_path("scripts", "macos", "nox-install-for-doctest.sh")

@@ -111,4 +111,6 @@ def curve_as_polynomial(nodes):
     s = sympy.Symbol("s")
     b_polynomial = nodes_sym * curve_weights(degree, s)
     b_polynomial.simplify()
-    return b_polynomial
+
+    factored = [value.factor() for value in b_polynomial]
+    return sympy.Matrix(factored).reshape(*b_polynomial.shape)

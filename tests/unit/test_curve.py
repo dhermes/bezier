@@ -14,6 +14,12 @@ import unittest.mock
 
 import numpy as np
 
+try:
+    import sympy
+except ImportError:  # pragma: NO COVER
+    sympy = None
+
+from tests.unit import test__symbolic
 from tests.unit import utils
 
 
@@ -308,3 +314,13 @@ class TestCurve(utils.NumPyTestCase):
         point = curve.evaluate(s_val)
         result = curve.locate(point)
         self.assertEqual(result, s_val)
+
+    @unittest.skipIf(sympy is None, "SymPy not installed")
+    def test_to_symbolic(self):
+        nodes = np.asfortranarray([[3, 3, 4, 6], [3, 3, 3, 0]])
+        curve = self._make_one(nodes, 3)
+        b_polynomial = curve.to_symbolic()
+
+        s = sympy.Symbol("s")
+        expected = 3 * sympy.Matrix([[1 + s ** 2, 1 - s ** 3]]).T
+        assert test__symbolic.sympy_matrix_equal(b_polynomial, expected)
