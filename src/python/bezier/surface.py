@@ -1147,6 +1147,9 @@ class Surface(_base.Base):
         new_nodes /= denominator
         return Surface(new_nodes, self._degree + 1, copy=False, verify=False)
 
+    # Return type doc appears missing to Pylint because of the use of the
+    # :class:`sympy.Matrix ...` aliases.
+    # pylint: disable=missing-return-type-doc
     def to_symbolic(self):
         """Convert to a SymPy matrix representing :math:`B(s, t)`.
 
@@ -1211,6 +1214,8 @@ class Surface(_base.Base):
             )
 
         return _symbolic.implicitize_surface(self._nodes, self._degree)
+
+    # pylint: enable=missing-return-type-doc
 
 
 def _make_intersection(edge_info, all_edge_nodes):
