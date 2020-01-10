@@ -105,9 +105,7 @@ class Test_curve_as_polynomial:
     @unittest.skipIf(sympy is None, "SymPy not installed")
     def test_it(self):
         nodes = np.asfortranarray([[0.0, 0.5, 1.0], [0.0, 1.0, 0.0]])
-        b_polynomial = self._call_function_under_test(nodes, 2)
-
-        s = sympy.Symbol("s")
+        s, b_polynomial = self._call_function_under_test(nodes, 2)
         expected = sympy.Matrix([s, 2 * s * (1 - s)])
         assert sympy_matrix_equal(b_polynomial, expected)
 

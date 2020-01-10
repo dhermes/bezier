@@ -725,4 +725,40 @@ class Curve(_base.Base):
         Returns:
             sympy.Matrix: The curve :math:`B(s)`.
         """
-        return _symbolic.curve_as_polynomial(self._nodes, self._degree)
+        _, b_polynomial = _symbolic.curve_as_polynomial(
+            self._nodes, self._degree
+        )
+        return b_polynomial
+
+    def implicitize(self):
+        r"""Implicitize the curve .
+
+        .. note::
+
+           This method requires :mod:`sympy`.
+
+        .. doctest:: curve-implicitize
+
+           >>> nodes = np.asfortranarray([
+           ...     [0.0, -1.0, 1.0, -0.75 ],
+           ...     [2.0,  0.0, 1.0,  1.625],
+           ... ])
+           >>> curve = bezier.Curve(nodes, degree=3)
+           >>> curve.implicitize()
+           -1
+
+        Returns:
+            sympy.Expr: The function :math:`f(x, y)` that defines the
+            curve in :math:`\mathbf{R}^2`.
+
+        Raises:
+            ValueError: If the curve's dimension is not ``2``.
+        """
+        if self._dimension != 2:
+            raise ValueError(
+                "Only a planar (2D) curve can be implicitized",
+                "Current dimension",
+                self._dimension,
+            )
+
+        return _symbolic.implicitize_curve(self._nodes, self._degree)

@@ -114,7 +114,7 @@ def curve_as_polynomial(nodes, degree):
     b_polynomial.simplify()
 
     factored = [value.factor() for value in b_polynomial]
-    return sympy.Matrix(factored).reshape(*b_polynomial.shape)
+    return s, sympy.Matrix(factored).reshape(*b_polynomial.shape)
 
 
 @require_sympy
@@ -132,6 +132,24 @@ def implicitize_2d(x_fn, y_fn, s):
     """
     x_sym, y_sym = sympy.symbols("x, y")
     return sympy.resultant(x_fn - x_sym, y_fn - y_sym, s).factor()
+
+
+@require_sympy
+def implicitize_curve(nodes, degree):
+    """Implicitize a 2D parametric curve, given the nodes.
+
+    Args:
+        nodes (numpy.ndarray): Nodes defining a B |eacute| zier curve.
+        degree (int): The degree of the curve. This is assumed to
+            correctly correspond to the number of ``nodes``.
+
+    Returns:
+        sympy.Expr: The implicitized function :math:`f(x, y)` such that the
+        curve satisfies :math:`f(x(s), y(s)) = 0`.
+    """
+    s, b_polynomial = curve_as_polynomial(nodes, degree)
+    x_fn, y_fn = b_polynomial
+    return implicitize_2d(x_fn, y_fn, s)
 
 
 @require_sympy
