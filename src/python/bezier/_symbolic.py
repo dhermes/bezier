@@ -22,12 +22,34 @@ Includes functions for:
    :trim:
 """
 
+import functools
+
 try:
     import sympy
 except ImportError:  # pragma: NO COVER
     sympy = None
 
 
+def require_sympy(wrapped):
+    """Function decorator to require :mod:`sympy` to exist.
+
+    Args:
+        wrapped (Callable): A function to be wrapped.
+
+    Returns:
+        Callable: The wrapped function.
+    """
+
+    @functools.wraps(wrapped)
+    def ensure_sympy(*args, **kwargs):
+        if sympy is None:
+            raise OSError("This function requires SymPy.")
+        return wrapped(*args, **kwargs)
+
+    return ensure_sympy
+
+
+@require_sympy
 def to_symbolic(nodes):
     """Convert a 2D NumPy array to a SymPy matrix of rational numbers.
 
@@ -38,15 +60,55 @@ def to_symbolic(nodes):
         sympy.Matrix: The nodes as a SymPy matrix of rational numbers.
 
     Raises:
-        OSError: If SymPy is not installed.
         ValueError: If ``nodes`` is not 2D.
     """
-    if sympy is None:
-        raise OSError("This function requires SymPy.")
-
     if nodes.ndim != 2:
         raise ValueError("Nodes must be 2-dimensional, not", nodes.ndim)
 
     return sympy.Matrix(
         [[sympy.Rational(value) for value in row] for row in nodes]
     )
+
+
+@require_sympy
+def curve_weights(degree, s):
+    """Compute de Casteljau weights for a curve.
+
+    .. note::
+
+       This function could be optimized by introducing a cache. However, any
+       code using SymPy is (for now) assumed not to be performance critical.
+
+    Args:
+        degree (int): The degree of a curve.
+        s (sympy.Symbol): The sympy to be used in the weights.
+
+    Returns:
+        sympy.Matrix: The de Casteljau weights for a curve as a
+        ``(degree + 1) x 1`` matrix.
+    """
+    return sympy.Matrix(
+        [
+            [sympy.binomial(degree, k) * s ** k * (1 - s) ** (degree - k)]
+            for k in range(degree + 1)
+        ]
+    )
+
+
+@require_sympy
+def curve_as_polynomial(nodes):
+    """Convert ``nodes`` into a SymPy polynomial array :math:`B(s)`.
+
+    Args:
+        nodes (numpy.ndarray): Nodes defining a B |eacute| zier curve.
+
+    Returns:
+        sympy.Matrix: The curve :math:`B(s)`.
+    """
+    nodes_sym = to_symbolic(nodes)
+    degree = nodes_sym.cols - 1
+
+    s = sympy.Symbol("s")
+    b_polynomial = nodes_sym * curve_weights(degree, s)
+    b_polynomial.simplify()
+    return b_polynomial
