@@ -64,6 +64,16 @@ Miscellany
 -  Moved ``*.f90`` Fortran files **out** of Python source tree
    (`#152 <https://github.com/dhermes/bezier/pull/152>`__).
 
+ABI Changes
+-----------
+
+Breaking Changes
+~~~~~~~~~~~~~~~~
+
+-  Added `BEZ_` prefix for exported ABI names
+   (`#167 <https://github.com/dhermes/bezier/pull/167>`__).
+   Fixed `#166 <https://github.com/dhermes/bezier/issues/166>`__.
+
 Bug Fixes
 ---------
 
