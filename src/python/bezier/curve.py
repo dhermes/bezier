@@ -725,4 +725,4 @@ class Curve(_base.Base):
         Returns:
             sympy.Matrix: The curve :math:`B(s)`.
         """
-        return _symbolic.curve_as_polynomial(self._nodes)
+        return _symbolic.curve_as_polynomial(self._nodes, self._degree)

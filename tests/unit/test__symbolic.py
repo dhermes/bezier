@@ -92,15 +92,61 @@ class Test_curve_weights:
 
 class Test_curve_as_polynomial:
     @staticmethod
-    def _call_function_under_test(nodes):
+    def _call_function_under_test(nodes, degree):
         from bezier import _symbolic
 
-        return _symbolic.curve_as_polynomial(nodes)
+        return _symbolic.curve_as_polynomial(nodes, degree)
 
     def test_it(self):
         nodes = np.asfortranarray([[0.0, 0.5, 1.0], [0.0, 1.0, 0.0]])
-        b_polynomial = self._call_function_under_test(nodes)
+        b_polynomial = self._call_function_under_test(nodes, 2)
 
         s = sympy.Symbol("s")
         expected = sympy.Matrix([s, 2 * s * (1 - s)])
+        assert sympy_matrix_equal(b_polynomial, expected)
+
+
+class Test_surface_weights:
+    @staticmethod
+    def _call_function_under_test(degree, s, t):
+        from bezier import _symbolic
+
+        return _symbolic.surface_weights(degree, s, t)
+
+    @unittest.skipIf(sympy is None, "SymPy not installed")
+    def test_it(self):
+        s = sympy.Symbol("s")
+        t = sympy.Symbol("t")
+        weights = self._call_function_under_test(2, s, t)
+        expected = sympy.Matrix(
+            [
+                [
+                    (1 - s - t) ** 2,
+                    2 * (1 - s - t) * s,
+                    s ** 2,
+                    2 * (1 - s - t) * t,
+                    2 * s * t,
+                    t ** 2,
+                ]
+            ]
+        ).T
+        assert sympy_matrix_equal(weights, expected)
+
+
+class Test_surface_as_polynomial:
+    @staticmethod
+    def _call_function_under_test(nodes, degree):
+        from bezier import _symbolic
+
+        return _symbolic.surface_as_polynomial(nodes, degree)
+
+    def test_it(self):
+        nodes = np.asfortranarray(
+            [[0.0, 1.0, 1.0], [0.0, 0.0, 1.0], [1.0, 1.0, 1.0]]
+        )
+        b_polynomial = self._call_function_under_test(nodes, 1)
+
+        s = sympy.Symbol("s")
+        t = sympy.Symbol("t")
+        expected = sympy.Matrix([s + t, t, 1])
         assert sympy_matrix_equal(b_polynomial, expected)

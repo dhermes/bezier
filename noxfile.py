@@ -172,6 +172,7 @@ def cover(session):
     # Install all test dependencies.
     local_deps = BASE_DEPS + (
         DEPS["scipy"],
+        DEPS["sympy"],
         DEPS["pytest-cov"],
         DEPS["coverage"],
     )

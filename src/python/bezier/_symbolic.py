@@ -81,10 +81,10 @@ def curve_weights(degree, s):
 
     Args:
         degree (int): The degree of a curve.
-        s (sympy.Symbol): The sympy to be used in the weights.
+        s (sympy.Symbol): The symbol to be used in the weights.
 
     Returns:
-        sympy.Matrix: The de Casteljau weights for a curve as a
+        sympy.Matrix: The de Casteljau weights for the curve as a
         ``(degree + 1) x 1`` matrix.
     """
     return sympy.Matrix(
@@ -96,20 +96,78 @@ def curve_weights(degree, s):
 
 
 @require_sympy
-def curve_as_polynomial(nodes):
+def curve_as_polynomial(nodes, degree):
     """Convert ``nodes`` into a SymPy polynomial array :math:`B(s)`.
 
     Args:
         nodes (numpy.ndarray): Nodes defining a B |eacute| zier curve.
+        degree (int): The degree of the curve. This is assumed to
+            correctly correspond to the number of ``nodes``.
 
     Returns:
         sympy.Matrix: The curve :math:`B(s)`.
     """
     nodes_sym = to_symbolic(nodes)
-    degree = nodes_sym.cols - 1
 
     s = sympy.Symbol("s")
     b_polynomial = nodes_sym * curve_weights(degree, s)
+    b_polynomial.simplify()
+
+    factored = [value.factor() for value in b_polynomial]
+    return sympy.Matrix(factored).reshape(*b_polynomial.shape)
+
+
+@require_sympy
+def surface_weights(degree, s, t):
+    """Compute de Casteljau weights for a surface.
+
+    .. note::
+
+       This function could be optimized by introducing a cache. However, any
+       code using SymPy is (for now) assumed not to be performance critical.
+
+    Args:
+        degree (int): The degree of a surface.
+        s (sympy.Symbol): The symbol to be used in the weights.
+        t (sympy.Symbol): The symbol to be used in the weights.
+
+    Returns:
+        sympy.Matrix: The de Casteljau weights for the surface as an ``N x 1``
+        matrix, where ``N == (degree + 1)(degree + 2) / 2``.
+    """
+    lambda1 = 1 - s - t
+    lambda2 = s
+    lambda3 = t
+
+    values = []
+    for k in range(degree + 1):
+        coeff_k = sympy.binomial(degree, k)
+        # N! / i! j! k! = N! / [k! (N - k)!] (i + j)! / [i! j!]
+        for j in range(degree - k + 1):
+            i = degree - j - k
+            coeff = coeff_k * sympy.binomial(degree - k, j)
+            values.append(coeff * lambda1 ** i * lambda2 ** j * lambda3 ** k)
+
+    return sympy.Matrix(values).reshape(len(values), 1)
+
+
+@require_sympy
+def surface_as_polynomial(nodes, degree):
+    """Convert ``nodes`` into a SymPy polynomial array :math:`B(s, t)`.
+
+    Args:
+        nodes (numpy.ndarray): Nodes defining a B |eacute| zier surface.
+        degree (int): The degree of the surface. This is assumed to
+            correctly correspond to the number of ``nodes``.
+
+    Returns:
+        sympy.Matrix: The surface :math:`B(s, t)`.
+    """
+    nodes_sym = to_symbolic(nodes)
+
+    s = sympy.Symbol("s")
+    t = sympy.Symbol("t")
+    b_polynomial = nodes_sym * surface_weights(degree, s, t)
     b_polynomial.simplify()
 
     factored = [value.factor() for value in b_polynomial]
