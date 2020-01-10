@@ -32,6 +32,7 @@ from bezier import _py_surface_helpers
 from bezier import _py_surface_intersection
 from bezier import _surface_helpers
 from bezier import _surface_intersection
+from bezier import _symbolic
 from bezier import curve as _curve_mod
 from bezier import curved_polygon
 
@@ -1145,6 +1146,32 @@ class Surface(_base.Base):
         denominator = self._degree + 1.0
         new_nodes /= denominator
         return Surface(new_nodes, self._degree + 1, copy=False, verify=False)
+
+    def to_symbolic(self):
+        """Convert to a SymPy matrix representing :math:`B(s, t)`.
+
+        .. note::
+
+           This method requires :mod:`sympy`.
+
+        .. doctest:: surface-to-symbolic
+
+           >>> nodes = np.asfortranarray([
+           ...     [0.0, 0.5, 1.0, -0.5, 0.0, -1.0],
+           ...     [0.0, 0.0, 1.0,  0.0, 0.0,  0.0],
+           ...     [0.0, 0.0, 0.0,  0.0, 0.0,  1.0],
+           ... ])
+           >>> surface = bezier.Surface(nodes, degree=2)
+           >>> surface.to_symbolic()
+           Matrix([
+           [s - t],
+           [ s**2],
+           [ t**2]])
+
+        Returns:
+            sympy.Matrix: The surface :math:`B(s, t)`.
+        """
+        return _symbolic.surface_as_polynomial(self._nodes, self._degree)
 
 
 def _make_intersection(edge_info, all_edge_nodes):

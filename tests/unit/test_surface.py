@@ -14,6 +14,12 @@ import unittest.mock
 
 import numpy as np
 
+try:
+    import sympy
+except ImportError:  # pragma: NO COVER
+    sympy = None
+
+from tests.unit import test__symbolic
 from tests.unit import utils
 
 
@@ -761,6 +767,17 @@ class TestSurface(utils.NumPyTestCase):
         main_vals = surface.evaluate_cartesian_multi(self.REF_TRIANGLE3)
         sub_vals = elevated.evaluate_cartesian_multi(self.REF_TRIANGLE3)
         self.assertEqual(main_vals, sub_vals)
+
+    @unittest.skipIf(sympy is None, "SymPy not installed")
+    def test_to_symbolic(self):
+        nodes = np.eye(3, dtype="F")
+        surface = self._make_one(nodes, 1, copy=False)
+        b_polynomial = surface.to_symbolic()
+
+        s = sympy.Symbol("s")
+        t = sympy.Symbol("s")
+        expected = sympy.Matrix([[1 - s - t, s, t]]).T
+        assert test__symbolic.sympy_matrix_equal(b_polynomial, expected)
 
 
 class Test__make_intersection(utils.NumPyTestCase):
