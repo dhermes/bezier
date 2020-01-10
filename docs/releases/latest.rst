@@ -24,6 +24,12 @@ New Features
    `a8c68a3 <https://github.com/dhermes/bezier/commit/a8c68a3368a1edf90cd76cd6ff77ab698b6c3907>`__,
    `f5c7869 <https://github.com/dhermes/bezier/commit/f5c7869e86b196aca3db272a2e85413357864bc7>`__).
    Fixed `#146 <https://github.com/dhermes/bezier/issues/146>`__.
+-  Added ``copy`` and ``verify`` arguments to ``Curve``
+   `constructor <https://bezier.readthedocs.io/en/latest/python/reference/bezier.curve.html#bezier.curve.Curve>`__
+   and ``Surface``
+   `constructor <https://bezier.readthedocs.io/en/latest/python/reference/bezier.surface.html#bezier.surface.Surface>`__
+   (`#163 <https://github.com/dhermes/bezier/pull/163>`__).
+   Fixed `#158 <https://github.com/dhermes/bezier/issues/158>`__.
 
 Internals
 ~~~~~~~~~
