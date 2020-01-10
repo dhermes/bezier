@@ -30,7 +30,7 @@ contains
 
   pure subroutine cross_product( &
        vec0, vec1, result_) &
-       bind(c, name='cross_product')
+       bind(c, name='BEZ_cross_product')
 
     real(c_double), intent(in) :: vec0(2)
     real(c_double), intent(in) :: vec1(2)
@@ -42,7 +42,7 @@ contains
 
   subroutine bbox( &
        num_nodes, nodes, left, right, bottom, top) &
-       bind(c, name='bbox')
+       bind(c, name='BEZ_bbox')
 
     integer(c_int), intent(in) :: num_nodes
     real(c_double), intent(in) :: nodes(2, num_nodes)
@@ -61,7 +61,7 @@ contains
 
   subroutine wiggle_interval( &
        value_, result_, success) &
-       bind(c, name='wiggle_interval')
+       bind(c, name='BEZ_wiggle_interval')
 
     real(c_double), intent(in) :: value_
     real(c_double), intent(out) :: result_
@@ -83,7 +83,7 @@ contains
 
   pure subroutine contains_nd( &
        num_nodes, dimension_, nodes, point, predicate) &
-       bind(c, name='contains_nd')
+       bind(c, name='BEZ_contains_nd')
 
     integer(c_int), intent(in) :: num_nodes, dimension_
     real(c_double), intent(in) :: nodes(dimension_, num_nodes)
@@ -102,7 +102,7 @@ contains
 
   logical(c_bool) pure function vector_close( &
        num_values, vec1, vec2, eps) result(is_close) &
-       bind(c, name='vector_close')
+       bind(c, name='BEZ_vector_close')
 
     integer(c_int), intent(in) :: num_values
     real(c_double), intent(in) :: vec1(num_values)
@@ -126,7 +126,7 @@ contains
 
   pure function in_interval( &
        value_, start, end) result(predicate) &
-       bind(c, name='in_interval')
+       bind(c, name='BEZ_in_interval')
 
     real(c_double), intent(in) :: value_, start, end
     logical(c_bool) :: predicate
@@ -242,7 +242,7 @@ contains
 
   subroutine convex_hull( &
        num_points, points, polygon_size, polygon) &
-       bind(c, name='simple_convex_hull')
+       bind(c, name='BEZ_simple_convex_hull')
 
     ! NOTE: This uses Andrew's monotone chain convex hull algorithm and used
     !       (https://en.wikibooks.org/wiki/Algorithm_Implementation/
@@ -396,7 +396,7 @@ contains
 
   subroutine polygon_collide( &
        polygon_size1, polygon1, polygon_size2, polygon2, collision) &
-       bind(c, name='polygon_collide')
+       bind(c, name='BEZ_polygon_collide')
 
     ! This determines if two **convex** polygons collide. The polygons
     ! are given as ``2 x N`` arrays of ``x-y`` points (one per column)

@@ -151,7 +151,7 @@ contains
 
   subroutine newton_refine_intersect( &
        s, num_nodes1, nodes1, t, num_nodes2, nodes2, new_s, new_t, status) &
-       bind(c, name='newton_refine_curve_intersect')
+       bind(c, name='BEZ_newton_refine_curve_intersect')
 
     ! Possible error states:
     ! * Status_SUCCESS : On success.
@@ -202,7 +202,7 @@ contains
 
   subroutine bbox_intersect( &
        num_nodes1, nodes1, num_nodes2, nodes2, enum_) &
-       bind(c, name='bbox_intersect')
+       bind(c, name='BEZ_bbox_intersect')
 
     integer(c_int), intent(in) :: num_nodes1
     real(c_double), intent(in) :: nodes1(2, num_nodes1)
@@ -1882,7 +1882,7 @@ contains
        num_nodes_first, nodes_first, num_nodes_second, nodes_second, &
        intersections_size, intersections, num_intersections, &
        coincident, status) &
-       bind(c, name='curve_intersections')
+       bind(c, name='BEZ_curve_intersections')
 
     ! NOTE: The number of intersections cannot be known beforehand (though it
     !       will be **at most** the product of the degrees of the two curves,
@@ -1932,7 +1932,7 @@ contains
   end subroutine all_intersections_abi
 
   subroutine free_curve_intersections_workspace() &
-       bind(c, name='free_curve_intersections_workspace')
+       bind(c, name='BEZ_free_curve_intersections_workspace')
 
     ! NOTE: This **should** be run during clean-up for any code which
     !       invokes ``all_intersections()``.

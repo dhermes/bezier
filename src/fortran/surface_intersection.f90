@@ -134,7 +134,7 @@ contains
   subroutine newton_refine( &
        num_nodes, nodes, degree, x_val, y_val, &
        s, t, updated_s, updated_t) &
-       bind(c, name='newton_refine_surface')
+       bind(c, name='BEZ_newton_refine_surface')
 
     integer(c_int), intent(in) :: num_nodes
     real(c_double), intent(in) :: nodes(2, num_nodes)
@@ -287,7 +287,7 @@ contains
 
   subroutine locate_point( &
        num_nodes, nodes, degree, x_val, y_val, s_val, t_val) &
-       bind(c, name='locate_point_surface')
+       bind(c, name='BEZ_locate_point_surface')
 
     ! NOTE: This solves the inverse problem B(s, t) = (x, y) (if it can be
     !       solved). Does so by subdividing the surface until the sub-surfaces
@@ -1773,7 +1773,7 @@ contains
        num_nodes2, nodes2, degree2, &
        segment_ends_size, segment_ends, segments_size, segments, &
        num_intersected, contained, status) &
-       bind(c, name='surface_intersections')
+       bind(c, name='BEZ_surface_intersections')
 
     ! NOTE: The number of intersections cannot be known beforehand. If
     !       ``segment_ends`` is not large enough, then it will not be
@@ -1849,7 +1849,7 @@ contains
   end subroutine surfaces_intersect_abi
 
   subroutine free_surface_intersections_workspace() &
-       bind(c, name='free_surface_intersections_workspace')
+       bind(c, name='BEZ_free_surface_intersections_workspace')
 
     ! NOTE: This **should** be run during clean-up for any code which
     !       invokes ``surfaces_intersect_abi()``.

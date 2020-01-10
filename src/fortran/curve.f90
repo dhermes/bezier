@@ -97,7 +97,7 @@ contains
 
   subroutine evaluate_curve_barycentric( &
        num_nodes, dimension_, nodes, num_vals, lambda1, lambda2, evaluated) &
-       bind(c, name='evaluate_curve_barycentric')
+       bind(c, name='BEZ_evaluate_curve_barycentric')
 
     ! NOTE: This is evaluate_multi_barycentric for a Bezier curve.
 
@@ -139,7 +139,7 @@ contains
 
   subroutine evaluate_multi( &
        num_nodes, dimension_, nodes, num_vals, s_vals, evaluated) &
-       bind(c, name='evaluate_multi')
+       bind(c, name='BEZ_evaluate_multi')
 
     ! NOTE: This is evaluate_multi for a Bezier curve.
 
@@ -233,7 +233,7 @@ contains
 
   subroutine specialize_curve( &
        num_nodes, dimension_, nodes, start, end_, new_nodes) &
-       bind(c, name='specialize_curve')
+       bind(c, name='BEZ_specialize_curve')
 
     integer(c_int), intent(in) :: num_nodes, dimension_
     real(c_double), intent(in) :: nodes(dimension_, num_nodes)
@@ -255,7 +255,7 @@ contains
 
   subroutine evaluate_hodograph( &
        s, num_nodes, dimension_, nodes, hodograph) &
-       bind(c, name='evaluate_hodograph')
+       bind(c, name='BEZ_evaluate_hodograph')
 
     real(c_double), intent(in) :: s
     integer(c_int), intent(in) :: num_nodes, dimension_
@@ -309,7 +309,7 @@ contains
 
   subroutine subdivide_nodes( &
        num_nodes, dimension_, nodes, left_nodes, right_nodes) &
-       bind(c, name='subdivide_nodes_curve')
+       bind(c, name='BEZ_subdivide_nodes_curve')
 
     integer(c_int), intent(in) :: num_nodes, dimension_
     real(c_double), intent(in) :: nodes(dimension_, num_nodes)
@@ -350,7 +350,7 @@ contains
 
   subroutine newton_refine( &
        num_nodes, dimension_, nodes, point, s, updated_s) &
-       bind(c, name='newton_refine_curve')
+       bind(c, name='BEZ_newton_refine_curve')
 
     integer(c_int), intent(in) :: num_nodes, dimension_
     real(c_double), intent(in) :: nodes(dimension_, num_nodes)
@@ -457,7 +457,7 @@ contains
 
   subroutine locate_point( &
        num_nodes, dimension_, nodes, point, s_approx) &
-       bind(c, name='locate_point_curve')
+       bind(c, name='BEZ_locate_point_curve')
 
     ! NOTE: This returns ``-1`` (``LOCATE_MISS``) as a signal for "point is
     !       not on the curve" and ``-2`` (``LOCATE_INVALID``) for "point is
@@ -552,7 +552,7 @@ contains
 
   subroutine elevate_nodes( &
        num_nodes, dimension_, nodes, elevated) &
-       bind(c, name='elevate_nodes_curve')
+       bind(c, name='BEZ_elevate_nodes_curve')
 
     integer(c_int), intent(in) :: num_nodes, dimension_
     real(c_double), intent(in) :: nodes(dimension_, num_nodes)
@@ -571,7 +571,7 @@ contains
 
   subroutine get_curvature( &
        num_nodes, nodes, tangent_vec, s, curvature) &
-       bind(c, name='get_curvature')
+       bind(c, name='BEZ_get_curvature')
 
     ! NOTE: This **only** computes curvature for plane curves (i.e. curves
     !       in R^2). An equivalent notion of curvature exists for space
@@ -611,7 +611,7 @@ contains
 
   subroutine reduce_pseudo_inverse( &
        num_nodes, dimension_, nodes, reduced, not_implemented) &
-       bind(c, name='reduce_pseudo_inverse')
+       bind(c, name='BEZ_reduce_pseudo_inverse')
 
     integer(c_int), intent(in) :: num_nodes, dimension_
     real(c_double), intent(in) :: nodes(dimension_, num_nodes)
@@ -746,7 +746,7 @@ contains
   subroutine full_reduce( &
        num_nodes, dimension_, nodes, num_reduced_nodes, &
        reduced, not_implemented) &
-       bind(c, name='full_reduce')
+       bind(c, name='BEZ_full_reduce')
 
     ! NOTE: The size of ``reduced`` represents the **maximum** possible
     !       size, but ``num_reduced_nodes`` actually reflects the number
@@ -796,7 +796,7 @@ contains
 
   subroutine compute_length( &
        num_nodes, dimension_, nodes, length, error_val) &
-       bind(c, name='compute_length')
+       bind(c, name='BEZ_compute_length')
 
     integer(c_int), intent(in) :: num_nodes, dimension_
     real(c_double), intent(in) :: nodes(dimension_, num_nodes)

@@ -29,7 +29,7 @@ contains
   subroutine de_casteljau_one_round( &
        num_nodes, dimension_, nodes, degree, &
        lambda1, lambda2, lambda3, new_nodes) &
-       bind(c, name='de_casteljau_one_round')
+       bind(c, name='BEZ_de_casteljau_one_round')
 
     ! NOTE: This is de Casteljau on a Bezier surface / triangle.
 
@@ -77,7 +77,7 @@ contains
   subroutine evaluate_barycentric( &
        num_nodes, dimension_, nodes, degree, &
        lambda1, lambda2, lambda3, point) &
-       bind(c, name='evaluate_barycentric')
+       bind(c, name='BEZ_evaluate_barycentric')
 
     ! NOTE: This evaluation is on a Bezier surface / triangle.
     ! NOTE: This assumes degree >= 1.
@@ -102,7 +102,7 @@ contains
 
   subroutine evaluate_barycentric_multi( &
        num_nodes, dimension_, nodes, degree, num_vals, param_vals, evaluated) &
-       bind(c, name='evaluate_barycentric_multi')
+       bind(c, name='BEZ_evaluate_barycentric_multi')
 
     ! NOTE: This evaluation is on a Bezier surface / triangle.
     ! NOTE: This assumes degree >= 1.
@@ -156,7 +156,7 @@ contains
 
   subroutine evaluate_cartesian_multi( &
        num_nodes, dimension_, nodes, degree, num_vals, param_vals, evaluated) &
-       bind(c, name='evaluate_cartesian_multi')
+       bind(c, name='BEZ_evaluate_cartesian_multi')
 
     ! NOTE: This evaluation is on a Bezier surface / triangle.
     ! NOTE: This mostly copies evaluate_barycentric_multi but does not just
@@ -214,7 +214,7 @@ contains
 
   subroutine jacobian_both( &
        num_nodes, dimension_, nodes, degree, new_nodes) &
-       bind(c, name='jacobian_both')
+       bind(c, name='BEZ_jacobian_both')
 
     integer(c_int), intent(in) :: num_nodes, dimension_
     real(c_double), intent(in) :: nodes(dimension_, num_nodes)
@@ -248,7 +248,7 @@ contains
 
   subroutine jacobian_det( &
        num_nodes, nodes, degree, num_vals, param_vals, evaluated) &
-       bind(c, name='jacobian_det')
+       bind(c, name='BEZ_jacobian_det')
 
     integer(c_int), intent(in) :: num_nodes
     real(c_double), intent(in) :: nodes(2, num_nodes)
@@ -357,7 +357,7 @@ contains
   subroutine specialize_surface( &
        num_nodes, dimension_, nodes, degree, &
        weights_a, weights_b, weights_c, specialized) &
-       bind(c, name='specialize_surface')
+       bind(c, name='BEZ_specialize_surface')
 
     ! This re-parameterizes by "specializing" to a subregion of the unit
     ! triangle. This happens in waves by applying one round of de Casteljau
@@ -502,7 +502,7 @@ contains
   subroutine subdivide_nodes( &
        num_nodes, dimension_, nodes, degree, &
        nodes_a, nodes_b, nodes_c, nodes_d) &
-       bind(c, name='subdivide_nodes_surface')
+       bind(c, name='BEZ_subdivide_nodes_surface')
 
     integer(c_int), intent(in) :: num_nodes, dimension_
     real(c_double), intent(in) :: nodes(dimension_, num_nodes)
@@ -769,7 +769,7 @@ contains
 
   subroutine compute_edge_nodes( &
        num_nodes, dimension_, nodes, degree, nodes1, nodes2, nodes3) &
-       bind(c, name='compute_edge_nodes')
+       bind(c, name='BEZ_compute_edge_nodes')
 
     integer(c_int), intent(in) :: num_nodes, dimension_
     real(c_double), intent(in) :: nodes(dimension_, num_nodes)
@@ -846,7 +846,7 @@ contains
 
   subroutine compute_area( &
        num_edges, sizes, nodes_pointers, area, not_implemented) &
-       bind(c, name='compute_area')
+       bind(c, name='BEZ_compute_area')
 
     integer(c_int), intent(in) :: num_edges
     integer(c_int), intent(in) :: sizes(num_edges)
