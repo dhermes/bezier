@@ -740,12 +740,12 @@ class Curve(_base.Base):
         .. doctest:: curve-implicitize
 
            >>> nodes = np.asfortranarray([
-           ...     [0.0, -1.0, 1.0, -0.75 ],
-           ...     [2.0,  0.0, 1.0,  1.625],
+           ...     [0.0, 1.0, 1.0],
+           ...     [2.0, 0.0, 1.0],
            ... ])
-           >>> curve = bezier.Curve(nodes, degree=3)
+           >>> curve = bezier.Curve(nodes, degree=2)
            >>> curve.implicitize()
-           -1
+           9*x**2 + 6*x*y - 20*x + y**2 - 8*y + 12
 
         Returns:
             sympy.Expr: The function :math:`f(x, y)` that defines the

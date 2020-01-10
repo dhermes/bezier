@@ -1192,7 +1192,7 @@ class Surface(_base.Base):
            ... ])
            >>> surface = bezier.Surface(nodes, degree=2)
            >>> surface.implicitize()
-           -1
+           (x**4 - 2*x**2*y - 2*x**2*z + y**2 - 2*y*z + z**2)**2
 
         Returns:
             sympy.Expr: The function :math:`f(x, y, z)` that defines the
