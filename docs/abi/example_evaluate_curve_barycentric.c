@@ -26,7 +26,7 @@ int main(void)
     // Outputs.
     double evaluated[8];
 
-    evaluate_curve_barycentric(
+    BEZ_evaluate_curve_barycentric(
         &num_nodes, &dimension, nodes, &num_vals, lambda1, lambda2, evaluated);
     printf("Evaluated:\n");
     printf("%f, %f, %f, %f\n", evaluated[0], evaluated[2], evaluated[4],

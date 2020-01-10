@@ -24,7 +24,7 @@ int main(void)
     double reduced[6];
     bool not_implemented;
 
-    reduce_pseudo_inverse(
+    BEZ_reduce_pseudo_inverse(
         &num_nodes, &dimension, nodes, reduced, &not_implemented);
     printf("Reduced:\n");
     printf("% f, %f, %f\n", reduced[0], reduced[2], reduced[4]);

@@ -25,7 +25,7 @@ int main(void)
     // Outputs.
     double evaluated[6];
 
-    evaluate_multi(
+    BEZ_evaluate_multi(
         &num_nodes, &dimension, nodes, &num_vals, s_vals, evaluated);
     printf("Evaluated:\n");
     printf("%f, %f, %f\n", evaluated[0], evaluated[2], evaluated[4]);

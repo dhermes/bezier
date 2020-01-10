@@ -23,7 +23,7 @@ int main(void)
     // Outputs.
     double elevated[8];
 
-    elevate_nodes_curve(&num_nodes, &dimension, nodes, elevated);
+    BEZ_elevate_nodes_curve(&num_nodes, &dimension, nodes, elevated);
     printf("Elevated:\n");
     printf("%f, %f, %f, %f\n", elevated[0], elevated[2], elevated[4],
         elevated[6]);

@@ -24,7 +24,7 @@ int main(void)
     // Outputs.
     double curvature;
 
-    get_curvature(&num_nodes, nodes, tangent_vec, &s, &curvature);
+    BEZ_get_curvature(&num_nodes, nodes, tangent_vec, &s, &curvature);
     printf("Curvature: %f\n", curvature);
 
     return 0;

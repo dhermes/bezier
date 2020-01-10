@@ -25,7 +25,7 @@ int main(void)
     // Outputs.
     double new_nodes[6];
 
-    specialize_curve(&num_nodes, &dimension, nodes, &start, &end, new_nodes);
+    BEZ_specialize_curve(&num_nodes, &dimension, nodes, &start, &end, new_nodes);
     printf("New Nodes:\n");
     printf("%f, %f, %f\n", new_nodes[0], new_nodes[2], new_nodes[4]);
     printf("%f, %f, %f\n", new_nodes[1], new_nodes[3], new_nodes[5]);

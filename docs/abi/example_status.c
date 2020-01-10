@@ -27,7 +27,7 @@ int main(void)
     double new_s, new_t;
     Status status;
 
-    newton_refine_curve_intersect(&s, &num_nodes1, nodes1, &t, &num_nodes2,
+    BEZ_newton_refine_curve_intersect(&s, &num_nodes1, nodes1, &t, &num_nodes2,
         nodes2, &new_s, &new_t, &status);
     if (status == SINGULAR) {
         printf("Jacobian is singular.\n");
