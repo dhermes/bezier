@@ -3634,7 +3634,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_evaluate_multi_barycentric(CYTHON_UN
  *         &num_nodes,
  *         &dimension,
  */
-  evaluate_curve_barycentric((&__pyx_v_num_nodes), (&__pyx_v_dimension), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_nodes.data) + __pyx_t_12)) ) + __pyx_t_13 * __pyx_v_nodes.strides[1]) )))), (&__pyx_v_num_vals), (&(*((double *) ( /* dim=0 */ ((char *) (((double *) __pyx_v_lambda1.data) + __pyx_t_14)) )))), (&(*((double *) ( /* dim=0 */ ((char *) (((double *) __pyx_v_lambda2.data) + __pyx_t_15)) )))), (&(*__Pyx_BufPtrFortranContig2d(double *, __pyx_pybuffernd_evaluated.rcbuffer->pybuffer.buf, __pyx_t_16, __pyx_pybuffernd_evaluated.diminfo[0].strides, __pyx_t_17, __pyx_pybuffernd_evaluated.diminfo[1].strides))));
+  BEZ_evaluate_curve_barycentric((&__pyx_v_num_nodes), (&__pyx_v_dimension), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_nodes.data) + __pyx_t_12)) ) + __pyx_t_13 * __pyx_v_nodes.strides[1]) )))), (&__pyx_v_num_vals), (&(*((double *) ( /* dim=0 */ ((char *) (((double *) __pyx_v_lambda1.data) + __pyx_t_14)) )))), (&(*((double *) ( /* dim=0 */ ((char *) (((double *) __pyx_v_lambda2.data) + __pyx_t_15)) )))), (&(*__Pyx_BufPtrFortranContig2d(double *, __pyx_pybuffernd_evaluated.rcbuffer->pybuffer.buf, __pyx_t_16, __pyx_pybuffernd_evaluated.diminfo[0].strides, __pyx_t_17, __pyx_pybuffernd_evaluated.diminfo[1].strides))));
 
   /* "bezier/_speedup.pyx":140
  *         &evaluated[0, 0],
@@ -4036,7 +4036,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_2evaluate_multi(CYTHON_UNUSED PyObje
  *         &num_nodes,
  *         &dimension,
  */
-  evaluate_multi((&__pyx_v_num_nodes), (&__pyx_v_dimension), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_nodes.data) + __pyx_t_12)) ) + __pyx_t_13 * __pyx_v_nodes.strides[1]) )))), (&__pyx_v_num_vals), (&(*((double *) ( /* dim=0 */ ((char *) (((double *) __pyx_v_s_vals.data) + __pyx_t_14)) )))), (&(*__Pyx_BufPtrFortranContig2d(double *, __pyx_pybuffernd_evaluated.rcbuffer->pybuffer.buf, __pyx_t_15, __pyx_pybuffernd_evaluated.diminfo[0].strides, __pyx_t_16, __pyx_pybuffernd_evaluated.diminfo[1].strides))));
+  BEZ_evaluate_multi((&__pyx_v_num_nodes), (&__pyx_v_dimension), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_nodes.data) + __pyx_t_12)) ) + __pyx_t_13 * __pyx_v_nodes.strides[1]) )))), (&__pyx_v_num_vals), (&(*((double *) ( /* dim=0 */ ((char *) (((double *) __pyx_v_s_vals.data) + __pyx_t_14)) )))), (&(*__Pyx_BufPtrFortranContig2d(double *, __pyx_pybuffernd_evaluated.rcbuffer->pybuffer.buf, __pyx_t_15, __pyx_pybuffernd_evaluated.diminfo[0].strides, __pyx_t_16, __pyx_pybuffernd_evaluated.diminfo[1].strides))));
 
   /* "bezier/_speedup.pyx":159
  *         &evaluated[0, 0],
@@ -4364,7 +4364,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_4specialize_curve(CYTHON_UNUSED PyOb
  *         &num_nodes,
  *         &dimension,
  */
-  specialize_curve((&__pyx_v_num_nodes), (&__pyx_v_dimension), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_nodes.data) + __pyx_t_12)) ) + __pyx_t_13 * __pyx_v_nodes.strides[1]) )))), (&__pyx_v_start), (&__pyx_v_end), (&(*__Pyx_BufPtrFortranContig2d(double *, __pyx_pybuffernd_new_nodes.rcbuffer->pybuffer.buf, __pyx_t_14, __pyx_pybuffernd_new_nodes.diminfo[0].strides, __pyx_t_15, __pyx_pybuffernd_new_nodes.diminfo[1].strides))));
+  BEZ_specialize_curve((&__pyx_v_num_nodes), (&__pyx_v_dimension), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_nodes.data) + __pyx_t_12)) ) + __pyx_t_13 * __pyx_v_nodes.strides[1]) )))), (&__pyx_v_start), (&__pyx_v_end), (&(*__Pyx_BufPtrFortranContig2d(double *, __pyx_pybuffernd_new_nodes.rcbuffer->pybuffer.buf, __pyx_t_14, __pyx_pybuffernd_new_nodes.diminfo[0].strides, __pyx_t_15, __pyx_pybuffernd_new_nodes.diminfo[1].strides))));
 
   /* "bezier/_speedup.pyx":178
  *     )
@@ -4678,7 +4678,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_6evaluate_hodograph(CYTHON_UNUSED Py
  *         &s,
  *         &num_nodes,
  */
-  evaluate_hodograph((&__pyx_v_s), (&__pyx_v_num_nodes), (&__pyx_v_dimension), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_nodes.data) + __pyx_t_12)) ) + __pyx_t_13 * __pyx_v_nodes.strides[1]) )))), (&(*__Pyx_BufPtrFortranContig2d(double *, __pyx_pybuffernd_hodograph.rcbuffer->pybuffer.buf, __pyx_t_14, __pyx_pybuffernd_hodograph.diminfo[0].strides, __pyx_t_15, __pyx_pybuffernd_hodograph.diminfo[1].strides))));
+  BEZ_evaluate_hodograph((&__pyx_v_s), (&__pyx_v_num_nodes), (&__pyx_v_dimension), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_nodes.data) + __pyx_t_12)) ) + __pyx_t_13 * __pyx_v_nodes.strides[1]) )))), (&(*__Pyx_BufPtrFortranContig2d(double *, __pyx_pybuffernd_hodograph.rcbuffer->pybuffer.buf, __pyx_t_14, __pyx_pybuffernd_hodograph.diminfo[0].strides, __pyx_t_15, __pyx_pybuffernd_hodograph.diminfo[1].strides))));
 
   /* "bezier/_speedup.pyx":196
  *     )
@@ -5035,7 +5035,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_8subdivide_nodes_curve(CYTHON_UNUSED
  *         &num_nodes,
  *         &dimension,
  */
-  subdivide_nodes_curve((&__pyx_v_num_nodes), (&__pyx_v_dimension), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_nodes.data) + __pyx_t_12)) ) + __pyx_t_13 * __pyx_v_nodes.strides[1]) )))), (&(*__Pyx_BufPtrFortranContig2d(double *, __pyx_pybuffernd_left_nodes.rcbuffer->pybuffer.buf, __pyx_t_14, __pyx_pybuffernd_left_nodes.diminfo[0].strides, __pyx_t_15, __pyx_pybuffernd_left_nodes.diminfo[1].strides))), (&(*__Pyx_BufPtrFortranContig2d(double *, __pyx_pybuffernd_right_nodes.rcbuffer->pybuffer.buf, __pyx_t_16, __pyx_pybuffernd_right_nodes.diminfo[0].strides, __pyx_t_17, __pyx_pybuffernd_right_nodes.diminfo[1].strides))));
+  BEZ_subdivide_nodes_curve((&__pyx_v_num_nodes), (&__pyx_v_dimension), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_nodes.data) + __pyx_t_12)) ) + __pyx_t_13 * __pyx_v_nodes.strides[1]) )))), (&(*__Pyx_BufPtrFortranContig2d(double *, __pyx_pybuffernd_left_nodes.rcbuffer->pybuffer.buf, __pyx_t_14, __pyx_pybuffernd_left_nodes.diminfo[0].strides, __pyx_t_15, __pyx_pybuffernd_left_nodes.diminfo[1].strides))), (&(*__Pyx_BufPtrFortranContig2d(double *, __pyx_pybuffernd_right_nodes.rcbuffer->pybuffer.buf, __pyx_t_16, __pyx_pybuffernd_right_nodes.diminfo[0].strides, __pyx_t_17, __pyx_pybuffernd_right_nodes.diminfo[1].strides))));
 
   /* "bezier/_speedup.pyx":216
  *     )
@@ -5303,7 +5303,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_10newton_refine_curve(CYTHON_UNUSED 
  *         &num_nodes,
  *         &dimension,
  */
-  newton_refine_curve((&__pyx_v_num_nodes), (&__pyx_v_dimension), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_nodes.data) + __pyx_t_8)) ) + __pyx_t_9 * __pyx_v_nodes.strides[1]) )))), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_point.data) + __pyx_t_10)) ) + __pyx_t_11 * __pyx_v_point.strides[1]) )))), (&__pyx_v_s), (&__pyx_v_updated_s));
+  BEZ_newton_refine_curve((&__pyx_v_num_nodes), (&__pyx_v_dimension), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_nodes.data) + __pyx_t_8)) ) + __pyx_t_9 * __pyx_v_nodes.strides[1]) )))), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_point.data) + __pyx_t_10)) ) + __pyx_t_11 * __pyx_v_point.strides[1]) )))), (&__pyx_v_s), (&__pyx_v_updated_s));
 
   /* "bezier/_speedup.pyx":236
  *     )
@@ -5543,7 +5543,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_12locate_point_curve(CYTHON_UNUSED P
  *         &num_nodes,
  *         &dimension,
  */
-  locate_point_curve((&__pyx_v_num_nodes), (&__pyx_v_dimension), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_nodes.data) + __pyx_t_8)) ) + __pyx_t_9 * __pyx_v_nodes.strides[1]) )))), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_point.data) + __pyx_t_10)) ) + __pyx_t_11 * __pyx_v_point.strides[1]) )))), (&__pyx_v_s_approx));
+  BEZ_locate_point_curve((&__pyx_v_num_nodes), (&__pyx_v_dimension), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_nodes.data) + __pyx_t_8)) ) + __pyx_t_9 * __pyx_v_nodes.strides[1]) )))), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_point.data) + __pyx_t_10)) ) + __pyx_t_11 * __pyx_v_point.strides[1]) )))), (&__pyx_v_s_approx));
 
   /* "bezier/_speedup.pyx":254
  *     )
@@ -5878,7 +5878,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_14elevate_nodes(CYTHON_UNUSED PyObje
  *         &num_nodes,
  *         &dimension,
  */
-  elevate_nodes_curve((&__pyx_v_num_nodes), (&__pyx_v_dimension), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_nodes.data) + __pyx_t_12)) ) + __pyx_t_13 * __pyx_v_nodes.strides[1]) )))), (&(*__Pyx_BufPtrFortranContig2d(double *, __pyx_pybuffernd_elevated.rcbuffer->pybuffer.buf, __pyx_t_14, __pyx_pybuffernd_elevated.diminfo[0].strides, __pyx_t_15, __pyx_pybuffernd_elevated.diminfo[1].strides))));
+  BEZ_elevate_nodes_curve((&__pyx_v_num_nodes), (&__pyx_v_dimension), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_nodes.data) + __pyx_t_12)) ) + __pyx_t_13 * __pyx_v_nodes.strides[1]) )))), (&(*__Pyx_BufPtrFortranContig2d(double *, __pyx_pybuffernd_elevated.rcbuffer->pybuffer.buf, __pyx_t_14, __pyx_pybuffernd_elevated.diminfo[0].strides, __pyx_t_15, __pyx_pybuffernd_elevated.diminfo[1].strides))));
 
   /* "bezier/_speedup.pyx":277
  *     )
@@ -6133,7 +6133,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_16get_curvature(CYTHON_UNUSED PyObje
  *         &num_nodes,
  *         &nodes[0, 0],
  */
-  get_curvature((&__pyx_v_num_nodes), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_nodes.data) + __pyx_t_7)) ) + __pyx_t_8 * __pyx_v_nodes.strides[1]) )))), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_tangent_vec.data) + __pyx_t_9)) ) + __pyx_t_10 * __pyx_v_tangent_vec.strides[1]) )))), (&__pyx_v_s), (&__pyx_v_curvature));
+  BEZ_get_curvature((&__pyx_v_num_nodes), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_nodes.data) + __pyx_t_7)) ) + __pyx_t_8 * __pyx_v_nodes.strides[1]) )))), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_tangent_vec.data) + __pyx_t_9)) ) + __pyx_t_10 * __pyx_v_tangent_vec.strides[1]) )))), (&__pyx_v_s), (&__pyx_v_curvature));
 
   /* "bezier/_speedup.pyx":296
  *     )
@@ -6408,7 +6408,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_18reduce_pseudo_inverse(CYTHON_UNUSE
  *         &num_nodes,
  *         &dimension,
  */
-  reduce_pseudo_inverse((&__pyx_v_num_nodes), (&__pyx_v_dimension), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_nodes.data) + __pyx_t_12)) ) + __pyx_t_13 * __pyx_v_nodes.strides[1]) )))), (&(*__Pyx_BufPtrFortranContig2d(double *, __pyx_pybuffernd_reduced.rcbuffer->pybuffer.buf, __pyx_t_14, __pyx_pybuffernd_reduced.diminfo[0].strides, __pyx_t_15, __pyx_pybuffernd_reduced.diminfo[1].strides))), (&__pyx_v_not_implemented));
+  BEZ_reduce_pseudo_inverse((&__pyx_v_num_nodes), (&__pyx_v_dimension), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_nodes.data) + __pyx_t_12)) ) + __pyx_t_13 * __pyx_v_nodes.strides[1]) )))), (&(*__Pyx_BufPtrFortranContig2d(double *, __pyx_pybuffernd_reduced.rcbuffer->pybuffer.buf, __pyx_t_14, __pyx_pybuffernd_reduced.diminfo[0].strides, __pyx_t_15, __pyx_pybuffernd_reduced.diminfo[1].strides))), (&__pyx_v_not_implemented));
 
   /* "bezier/_speedup.pyx":316
  *     )
@@ -6758,7 +6758,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_20full_reduce(CYTHON_UNUSED PyObject
  *         &num_nodes,
  *         &dimension,
  */
-  full_reduce((&__pyx_v_num_nodes), (&__pyx_v_dimension), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_nodes.data) + __pyx_t_12)) ) + __pyx_t_13 * __pyx_v_nodes.strides[1]) )))), (&__pyx_v_num_reduced_nodes), (&(*__Pyx_BufPtrFortranContig2d(double *, __pyx_pybuffernd_reduced.rcbuffer->pybuffer.buf, __pyx_t_14, __pyx_pybuffernd_reduced.diminfo[0].strides, __pyx_t_15, __pyx_pybuffernd_reduced.diminfo[1].strides))), (&__pyx_v_not_implemented));
+  BEZ_full_reduce((&__pyx_v_num_nodes), (&__pyx_v_dimension), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_nodes.data) + __pyx_t_12)) ) + __pyx_t_13 * __pyx_v_nodes.strides[1]) )))), (&__pyx_v_num_reduced_nodes), (&(*__Pyx_BufPtrFortranContig2d(double *, __pyx_pybuffernd_reduced.rcbuffer->pybuffer.buf, __pyx_t_14, __pyx_pybuffernd_reduced.diminfo[0].strides, __pyx_t_15, __pyx_pybuffernd_reduced.diminfo[1].strides))), (&__pyx_v_not_implemented));
 
   /* "bezier/_speedup.pyx":343
  *     )
@@ -7150,7 +7150,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_22compute_length(CYTHON_UNUSED PyObj
  *         &num_nodes,
  *         &dimension,
  */
-  compute_length((&__pyx_v_num_nodes), (&__pyx_v_dimension), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_nodes.data) + __pyx_t_8)) ) + __pyx_t_9 * __pyx_v_nodes.strides[1]) )))), (&__pyx_v_length), (&__pyx_v_error_val));
+  BEZ_compute_length((&__pyx_v_num_nodes), (&__pyx_v_dimension), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_nodes.data) + __pyx_t_8)) ) + __pyx_t_9 * __pyx_v_nodes.strides[1]) )))), (&__pyx_v_length), (&__pyx_v_error_val));
 
   /* "bezier/_speedup.pyx":373
  *     )
@@ -7730,7 +7730,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_24newton_refine_curve_intersect(CYTH
  *         &s,
  *         &num_nodes1,
  */
-  newton_refine_curve_intersect((&__pyx_v_s), (&__pyx_v_num_nodes1), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_nodes1.data) + __pyx_t_7)) ) + __pyx_t_8 * __pyx_v_nodes1.strides[1]) )))), (&__pyx_v_t), (&__pyx_v_num_nodes2), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_nodes2.data) + __pyx_t_9)) ) + __pyx_t_10 * __pyx_v_nodes2.strides[1]) )))), (&__pyx_v_new_s), (&__pyx_v_new_t), (&__pyx_v_status));
+  BEZ_newton_refine_curve_intersect((&__pyx_v_s), (&__pyx_v_num_nodes1), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_nodes1.data) + __pyx_t_7)) ) + __pyx_t_8 * __pyx_v_nodes1.strides[1]) )))), (&__pyx_v_t), (&__pyx_v_num_nodes2), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_nodes2.data) + __pyx_t_9)) ) + __pyx_t_10 * __pyx_v_nodes2.strides[1]) )))), (&__pyx_v_new_s), (&__pyx_v_new_t), (&__pyx_v_status));
 
   /* "bezier/_speedup.pyx":414
  *     )
@@ -8093,7 +8093,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_26bbox_intersect(CYTHON_UNUSED PyObj
  *         &num_nodes1,
  *         &nodes1[0, 0],
  */
-  bbox_intersect((&__pyx_v_num_nodes1), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_nodes1.data) + __pyx_t_7)) ) + __pyx_t_8 * __pyx_v_nodes1.strides[1]) )))), (&__pyx_v_num_nodes2), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_nodes2.data) + __pyx_t_9)) ) + __pyx_t_10 * __pyx_v_nodes2.strides[1]) )))), (&__pyx_v_enum_val));
+  BEZ_bbox_intersect((&__pyx_v_num_nodes1), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_nodes1.data) + __pyx_t_7)) ) + __pyx_t_8 * __pyx_v_nodes1.strides[1]) )))), (&__pyx_v_num_nodes2), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_nodes2.data) + __pyx_t_9)) ) + __pyx_t_10 * __pyx_v_nodes2.strides[1]) )))), (&__pyx_v_enum_val));
 
   /* "bezier/_speedup.pyx":437
  *     )
@@ -8827,7 +8827,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_32curve_intersections(CYTHON_UNUSED 
  *         &num_nodes_first,
  *         &nodes_first[0, 0],
  */
-  curve_intersections((&__pyx_v_num_nodes_first), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_nodes_first.data) + __pyx_t_7)) ) + __pyx_t_8 * __pyx_v_nodes_first.strides[1]) )))), (&__pyx_v_num_nodes_second), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_nodes_second.data) + __pyx_t_9)) ) + __pyx_t_10 * __pyx_v_nodes_second.strides[1]) )))), (&__pyx_v_intersections_size), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_6bezier_8_speedup_CURVES_WORKSPACE.data) + __pyx_t_11)) ) + __pyx_t_12 * __pyx_v_6bezier_8_speedup_CURVES_WORKSPACE.strides[1]) )))), (&__pyx_v_num_intersections), (&__pyx_v_coincident), (&__pyx_v_status));
+  BEZ_curve_intersections((&__pyx_v_num_nodes_first), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_nodes_first.data) + __pyx_t_7)) ) + __pyx_t_8 * __pyx_v_nodes_first.strides[1]) )))), (&__pyx_v_num_nodes_second), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_nodes_second.data) + __pyx_t_9)) ) + __pyx_t_10 * __pyx_v_nodes_second.strides[1]) )))), (&__pyx_v_intersections_size), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_6bezier_8_speedup_CURVES_WORKSPACE.data) + __pyx_t_11)) ) + __pyx_t_12 * __pyx_v_6bezier_8_speedup_CURVES_WORKSPACE.strides[1]) )))), (&__pyx_v_num_intersections), (&__pyx_v_coincident), (&__pyx_v_status));
 
   /* "bezier/_speedup.pyx":482
  *     )
@@ -9349,7 +9349,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_34free_curve_intersections_workspace
  *
  * ############################
  */
-  free_curve_intersections_workspace();
+  BEZ_free_curve_intersections_workspace();
 
   /* "bezier/_speedup.pyx":505
  *
@@ -9470,7 +9470,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_36cross_product(CYTHON_UNUSED PyObje
  *         &vec0[0],
  *         &vec1[0],
  */
-  cross_product((&(*((double *) ( /* dim=0 */ ((char *) (((double *) __pyx_v_vec0.data) + __pyx_t_1)) )))), (&(*((double *) ( /* dim=0 */ ((char *) (((double *) __pyx_v_vec1.data) + __pyx_t_2)) )))), (&__pyx_v_result));
+  BEZ_cross_product((&(*((double *) ( /* dim=0 */ ((char *) (((double *) __pyx_v_vec0.data) + __pyx_t_1)) )))), (&(*((double *) ( /* dim=0 */ ((char *) (((double *) __pyx_v_vec1.data) + __pyx_t_2)) )))), (&__pyx_v_result));
 
   /* "bezier/_speedup.pyx":521
  *     )
@@ -9658,7 +9658,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_38bbox(CYTHON_UNUSED PyObject *__pyx
  *         &num_nodes,
  *         &nodes[0, 0],
  */
-  bbox((&__pyx_v_num_nodes), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_nodes.data) + __pyx_t_7)) ) + __pyx_t_8 * __pyx_v_nodes.strides[1]) )))), (&__pyx_v_left), (&__pyx_v_right), (&__pyx_v_bottom), (&__pyx_v_top));
+  BEZ_bbox((&__pyx_v_num_nodes), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_nodes.data) + __pyx_t_7)) ) + __pyx_t_8 * __pyx_v_nodes.strides[1]) )))), (&__pyx_v_left), (&__pyx_v_right), (&__pyx_v_bottom), (&__pyx_v_top));
 
   /* "bezier/_speedup.pyx":540
  *     )
@@ -9768,7 +9768,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_40wiggle_interval(CYTHON_UNUSED PyOb
  *         &value,
  *         &result,
  */
-  wiggle_interval((&__pyx_v_value), (&__pyx_v_result), (&__pyx_v_success));
+  BEZ_wiggle_interval((&__pyx_v_value), (&__pyx_v_result), (&__pyx_v_success));
 
   /* "bezier/_speedup.pyx":553
  *     )
@@ -10176,7 +10176,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_42contains_nd(CYTHON_UNUSED PyObject
  *         &num_nodes,
  *         &dimension,
  */
-  contains_nd((&__pyx_v_num_nodes), (&__pyx_v_dimension), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_nodes.data) + __pyx_t_11)) ) + __pyx_t_12 * __pyx_v_nodes.strides[1]) )))), (&(*((double *) ( /* dim=0 */ ((char *) (((double *) __pyx_v_point.data) + __pyx_t_13)) )))), (&__pyx_v_predicate));
+  BEZ_contains_nd((&__pyx_v_num_nodes), (&__pyx_v_dimension), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_nodes.data) + __pyx_t_11)) ) + __pyx_t_12 * __pyx_v_nodes.strides[1]) )))), (&(*((double *) ( /* dim=0 */ ((char *) (((double *) __pyx_v_point.data) + __pyx_t_13)) )))), (&__pyx_v_predicate));
 
   /* "bezier/_speedup.pyx":574
  *     )
@@ -10428,7 +10428,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_44vector_close(CYTHON_UNUSED PyObjec
  *         &num_values,
  *         &vec1[0],
  */
-  __pyx_t_1 = __Pyx_PyBool_FromLong(vector_close((&__pyx_v_num_values), (&(*((double *) ( /* dim=0 */ ((char *) (((double *) __pyx_v_vec1.data) + __pyx_t_7)) )))), (&(*((double *) ( /* dim=0 */ ((char *) (((double *) __pyx_v_vec2.data) + __pyx_t_8)) )))), (&__pyx_v_eps))); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 583, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyBool_FromLong(BEZ_vector_close((&__pyx_v_num_values), (&(*((double *) ( /* dim=0 */ ((char *) (((double *) __pyx_v_vec1.data) + __pyx_t_7)) )))), (&(*((double *) ( /* dim=0 */ ((char *) (((double *) __pyx_v_vec2.data) + __pyx_t_8)) )))), (&__pyx_v_eps))); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 583, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -10561,7 +10561,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_46in_interval(CYTHON_UNUSED PyObject
  *     )
  *
  */
-  __pyx_t_1 = __Pyx_PyBool_FromLong(in_interval((&__pyx_v_value), (&__pyx_v_start), (&__pyx_v_end))); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 592, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyBool_FromLong(BEZ_in_interval((&__pyx_v_value), (&__pyx_v_start), (&__pyx_v_end))); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 592, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -10814,7 +10814,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_48simple_convex_hull(CYTHON_UNUSED P
  *         &num_points,
  *         &points[0, 0],
  */
-  simple_convex_hull((&__pyx_v_num_points), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_points.data) + __pyx_t_11)) ) + __pyx_t_12 * __pyx_v_points.strides[1]) )))), (&__pyx_v_polygon_size), (&(*__Pyx_BufPtrFortranContig2d(double *, __pyx_pybuffernd_polygon.rcbuffer->pybuffer.buf, __pyx_t_13, __pyx_pybuffernd_polygon.diminfo[0].strides, __pyx_t_14, __pyx_pybuffernd_polygon.diminfo[1].strides))));
+  BEZ_simple_convex_hull((&__pyx_v_num_points), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_points.data) + __pyx_t_11)) ) + __pyx_t_12 * __pyx_v_points.strides[1]) )))), (&__pyx_v_polygon_size), (&(*__Pyx_BufPtrFortranContig2d(double *, __pyx_pybuffernd_polygon.rcbuffer->pybuffer.buf, __pyx_t_13, __pyx_pybuffernd_polygon.diminfo[0].strides, __pyx_t_14, __pyx_pybuffernd_polygon.diminfo[1].strides))));
 
   /* "bezier/_speedup.pyx":615
  *     )
@@ -11158,7 +11158,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_50polygon_collide(CYTHON_UNUSED PyOb
  *         &polygon_size1,
  *         &polygon1[0, 0],
  */
-  polygon_collide((&__pyx_v_polygon_size1), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_polygon1.data) + __pyx_t_7)) ) + __pyx_t_8 * __pyx_v_polygon1.strides[1]) )))), (&__pyx_v_polygon_size2), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_polygon2.data) + __pyx_t_9)) ) + __pyx_t_10 * __pyx_v_polygon2.strides[1]) )))), (&__pyx_v_collision));
+  BEZ_polygon_collide((&__pyx_v_polygon_size1), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_polygon1.data) + __pyx_t_7)) ) + __pyx_t_8 * __pyx_v_polygon1.strides[1]) )))), (&__pyx_v_polygon_size2), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_polygon2.data) + __pyx_t_9)) ) + __pyx_t_10 * __pyx_v_polygon2.strides[1]) )))), (&__pyx_v_collision));
 
   /* "bezier/_speedup.pyx":634
  *     )
@@ -11501,7 +11501,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_52de_casteljau_one_round(CYTHON_UNUS
  *         &num_nodes,
  *         &dimension,
  */
-  de_casteljau_one_round((&__pyx_v_num_nodes), (&__pyx_v_dimension), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_nodes.data) + __pyx_t_12)) ) + __pyx_t_13 * __pyx_v_nodes.strides[1]) )))), (&__pyx_v_degree), (&__pyx_v_lambda1), (&__pyx_v_lambda2), (&__pyx_v_lambda3), (&(*__Pyx_BufPtrFortranContig2d(double *, __pyx_pybuffernd_new_nodes.rcbuffer->pybuffer.buf, __pyx_t_14, __pyx_pybuffernd_new_nodes.diminfo[0].strides, __pyx_t_15, __pyx_pybuffernd_new_nodes.diminfo[1].strides))));
+  BEZ_de_casteljau_one_round((&__pyx_v_num_nodes), (&__pyx_v_dimension), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_nodes.data) + __pyx_t_12)) ) + __pyx_t_13 * __pyx_v_nodes.strides[1]) )))), (&__pyx_v_degree), (&__pyx_v_lambda1), (&__pyx_v_lambda2), (&__pyx_v_lambda3), (&(*__Pyx_BufPtrFortranContig2d(double *, __pyx_pybuffernd_new_nodes.rcbuffer->pybuffer.buf, __pyx_t_14, __pyx_pybuffernd_new_nodes.diminfo[0].strides, __pyx_t_15, __pyx_pybuffernd_new_nodes.diminfo[1].strides))));
 
   /* "bezier/_speedup.pyx":660
  *     )
@@ -11848,7 +11848,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_54evaluate_barycentric(CYTHON_UNUSED
  *         &num_nodes,
  *         &dimension,
  */
-  evaluate_barycentric((&__pyx_v_num_nodes), (&__pyx_v_dimension), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_nodes.data) + __pyx_t_12)) ) + __pyx_t_13 * __pyx_v_nodes.strides[1]) )))), (&__pyx_v_degree), (&__pyx_v_lambda1), (&__pyx_v_lambda2), (&__pyx_v_lambda3), (&(*__Pyx_BufPtrFortranContig2d(double *, __pyx_pybuffernd_point.rcbuffer->pybuffer.buf, __pyx_t_14, __pyx_pybuffernd_point.diminfo[0].strides, __pyx_t_15, __pyx_pybuffernd_point.diminfo[1].strides))));
+  BEZ_evaluate_barycentric((&__pyx_v_num_nodes), (&__pyx_v_dimension), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_nodes.data) + __pyx_t_12)) ) + __pyx_t_13 * __pyx_v_nodes.strides[1]) )))), (&__pyx_v_degree), (&__pyx_v_lambda1), (&__pyx_v_lambda2), (&__pyx_v_lambda3), (&(*__Pyx_BufPtrFortranContig2d(double *, __pyx_pybuffernd_point.rcbuffer->pybuffer.buf, __pyx_t_14, __pyx_pybuffernd_point.diminfo[0].strides, __pyx_t_15, __pyx_pybuffernd_point.diminfo[1].strides))));
 
   /* "bezier/_speedup.pyx":683
  *     )
@@ -12279,7 +12279,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_56evaluate_barycentric_multi(CYTHON_
  *         &num_nodes,
  *         &dimension,
  */
-  evaluate_barycentric_multi((&__pyx_v_num_nodes), (&__pyx_v_dimension), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_nodes.data) + __pyx_t_11)) ) + __pyx_t_12 * __pyx_v_nodes.strides[1]) )))), (&__pyx_v_degree), (&__pyx_v_num_vals), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_param_vals.data) + __pyx_t_13)) ) + __pyx_t_14 * __pyx_v_param_vals.strides[1]) )))), (&(*__Pyx_BufPtrFortranContig2d(double *, __pyx_pybuffernd_evaluated.rcbuffer->pybuffer.buf, __pyx_t_15, __pyx_pybuffernd_evaluated.diminfo[0].strides, __pyx_t_16, __pyx_pybuffernd_evaluated.diminfo[1].strides))));
+  BEZ_evaluate_barycentric_multi((&__pyx_v_num_nodes), (&__pyx_v_dimension), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_nodes.data) + __pyx_t_11)) ) + __pyx_t_12 * __pyx_v_nodes.strides[1]) )))), (&__pyx_v_degree), (&__pyx_v_num_vals), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_param_vals.data) + __pyx_t_13)) ) + __pyx_t_14 * __pyx_v_param_vals.strides[1]) )))), (&(*__Pyx_BufPtrFortranContig2d(double *, __pyx_pybuffernd_evaluated.rcbuffer->pybuffer.buf, __pyx_t_15, __pyx_pybuffernd_evaluated.diminfo[0].strides, __pyx_t_16, __pyx_pybuffernd_evaluated.diminfo[1].strides))));
 
   /* "bezier/_speedup.pyx":708
  *     )
@@ -12712,7 +12712,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_58evaluate_cartesian_multi(CYTHON_UN
  *         &num_nodes,
  *         &dimension,
  */
-  evaluate_cartesian_multi((&__pyx_v_num_nodes), (&__pyx_v_dimension), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_nodes.data) + __pyx_t_11)) ) + __pyx_t_12 * __pyx_v_nodes.strides[1]) )))), (&__pyx_v_degree), (&__pyx_v_num_vals), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_param_vals.data) + __pyx_t_13)) ) + __pyx_t_14 * __pyx_v_param_vals.strides[1]) )))), (&(*__Pyx_BufPtrFortranContig2d(double *, __pyx_pybuffernd_evaluated.rcbuffer->pybuffer.buf, __pyx_t_15, __pyx_pybuffernd_evaluated.diminfo[0].strides, __pyx_t_16, __pyx_pybuffernd_evaluated.diminfo[1].strides))));
+  BEZ_evaluate_cartesian_multi((&__pyx_v_num_nodes), (&__pyx_v_dimension), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_nodes.data) + __pyx_t_11)) ) + __pyx_t_12 * __pyx_v_nodes.strides[1]) )))), (&__pyx_v_degree), (&__pyx_v_num_vals), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_param_vals.data) + __pyx_t_13)) ) + __pyx_t_14 * __pyx_v_param_vals.strides[1]) )))), (&(*__Pyx_BufPtrFortranContig2d(double *, __pyx_pybuffernd_evaluated.rcbuffer->pybuffer.buf, __pyx_t_15, __pyx_pybuffernd_evaluated.diminfo[0].strides, __pyx_t_16, __pyx_pybuffernd_evaluated.diminfo[1].strides))));
 
   /* "bezier/_speedup.pyx":733
  *     )
@@ -13039,7 +13039,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_60jacobian_both(CYTHON_UNUSED PyObje
  *         &num_nodes,
  *         &dimension,
  */
-  jacobian_both((&__pyx_v_num_nodes), (&__pyx_v_dimension), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_nodes.data) + __pyx_t_11)) ) + __pyx_t_12 * __pyx_v_nodes.strides[1]) )))), (&__pyx_v_degree), (&(*__Pyx_BufPtrFortranContig2d(double *, __pyx_pybuffernd_new_nodes.rcbuffer->pybuffer.buf, __pyx_t_13, __pyx_pybuffernd_new_nodes.diminfo[0].strides, __pyx_t_14, __pyx_pybuffernd_new_nodes.diminfo[1].strides))));
+  BEZ_jacobian_both((&__pyx_v_num_nodes), (&__pyx_v_dimension), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_nodes.data) + __pyx_t_11)) ) + __pyx_t_12 * __pyx_v_nodes.strides[1]) )))), (&__pyx_v_degree), (&(*__Pyx_BufPtrFortranContig2d(double *, __pyx_pybuffernd_new_nodes.rcbuffer->pybuffer.buf, __pyx_t_13, __pyx_pybuffernd_new_nodes.diminfo[0].strides, __pyx_t_14, __pyx_pybuffernd_new_nodes.diminfo[1].strides))));
 
   /* "bezier/_speedup.pyx":752
  *     )
@@ -13453,7 +13453,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_62jacobian_det(CYTHON_UNUSED PyObjec
  *         &num_nodes,
  *         &nodes[0, 0],
  */
-  jacobian_det((&__pyx_v_num_nodes), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_nodes.data) + __pyx_t_11)) ) + __pyx_t_12 * __pyx_v_nodes.strides[1]) )))), (&__pyx_v_degree), (&__pyx_v_num_vals), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_st_vals.data) + __pyx_t_13)) ) + __pyx_t_14 * __pyx_v_st_vals.strides[1]) )))), (&(*__Pyx_BufPtrFortranContig1d(double *, __pyx_pybuffernd_evaluated.rcbuffer->pybuffer.buf, __pyx_t_15, __pyx_pybuffernd_evaluated.diminfo[0].strides))));
+  BEZ_jacobian_det((&__pyx_v_num_nodes), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_nodes.data) + __pyx_t_11)) ) + __pyx_t_12 * __pyx_v_nodes.strides[1]) )))), (&__pyx_v_degree), (&__pyx_v_num_vals), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_st_vals.data) + __pyx_t_13)) ) + __pyx_t_14 * __pyx_v_st_vals.strides[1]) )))), (&(*__Pyx_BufPtrFortranContig1d(double *, __pyx_pybuffernd_evaluated.rcbuffer->pybuffer.buf, __pyx_t_15, __pyx_pybuffernd_evaluated.diminfo[0].strides))));
 
   /* "bezier/_speedup.pyx":775
  *     )
@@ -13834,7 +13834,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_64specialize_surface(CYTHON_UNUSED P
  *         &num_nodes,
  *         &dimension,
  */
-  specialize_surface((&__pyx_v_num_nodes), (&__pyx_v_dimension), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_nodes.data) + __pyx_t_12)) ) + __pyx_t_13 * __pyx_v_nodes.strides[1]) )))), (&__pyx_v_degree), (&(*((double *) ( /* dim=0 */ ((char *) (((double *) __pyx_v_weights_a.data) + __pyx_t_14)) )))), (&(*((double *) ( /* dim=0 */ ((char *) (((double *) __pyx_v_weights_b.data) + __pyx_t_15)) )))), (&(*((double *) ( /* dim=0 */ ((char *) (((double *) __pyx_v_weights_c.data) + __pyx_t_16)) )))), (&(*__Pyx_BufPtrFortranContig2d(double *, __pyx_pybuffernd_specialized.rcbuffer->pybuffer.buf, __pyx_t_17, __pyx_pybuffernd_specialized.diminfo[0].strides, __pyx_t_18, __pyx_pybuffernd_specialized.diminfo[1].strides))));
+  BEZ_specialize_surface((&__pyx_v_num_nodes), (&__pyx_v_dimension), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_nodes.data) + __pyx_t_12)) ) + __pyx_t_13 * __pyx_v_nodes.strides[1]) )))), (&__pyx_v_degree), (&(*((double *) ( /* dim=0 */ ((char *) (((double *) __pyx_v_weights_a.data) + __pyx_t_14)) )))), (&(*((double *) ( /* dim=0 */ ((char *) (((double *) __pyx_v_weights_b.data) + __pyx_t_15)) )))), (&(*((double *) ( /* dim=0 */ ((char *) (((double *) __pyx_v_weights_c.data) + __pyx_t_16)) )))), (&(*__Pyx_BufPtrFortranContig2d(double *, __pyx_pybuffernd_specialized.rcbuffer->pybuffer.buf, __pyx_t_17, __pyx_pybuffernd_specialized.diminfo[0].strides, __pyx_t_18, __pyx_pybuffernd_specialized.diminfo[1].strides))));
 
   /* "bezier/_speedup.pyx":798
  *     )
@@ -14393,7 +14393,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_66subdivide_nodes_surface(CYTHON_UNU
  *         &num_nodes,
  *         &dimension,
  */
-  subdivide_nodes_surface((&__pyx_v_num_nodes), (&__pyx_v_dimension), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_nodes.data) + __pyx_t_15)) ) + __pyx_t_16 * __pyx_v_nodes.strides[1]) )))), (&__pyx_v_degree), (&(*__Pyx_BufPtrFortranContig2d(double *, __pyx_pybuffernd_nodes_a.rcbuffer->pybuffer.buf, __pyx_t_17, __pyx_pybuffernd_nodes_a.diminfo[0].strides, __pyx_t_18, __pyx_pybuffernd_nodes_a.diminfo[1].strides))), (&(*__Pyx_BufPtrFortranContig2d(double *, __pyx_pybuffernd_nodes_b.rcbuffer->pybuffer.buf, __pyx_t_19, __pyx_pybuffernd_nodes_b.diminfo[0].strides, __pyx_t_20, __pyx_pybuffernd_nodes_b.diminfo[1].strides))), (&(*__Pyx_BufPtrFortranContig2d(double *, __pyx_pybuffernd_nodes_c.rcbuffer->pybuffer.buf, __pyx_t_21, __pyx_pybuffernd_nodes_c.diminfo[0].strides, __pyx_t_22, __pyx_pybuffernd_nodes_c.diminfo[1].strides))), (&(*__Pyx_BufPtrFortranContig2d(double *, __pyx_pybuffernd_nodes_d.rcbuffer->pybuffer.buf, __pyx_t_23, __pyx_pybuffernd_nodes_d.diminfo[0].strides, __pyx_t_24, __pyx_pybuffernd_nodes_d.diminfo[1].strides))));
+  BEZ_subdivide_nodes_surface((&__pyx_v_num_nodes), (&__pyx_v_dimension), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_nodes.data) + __pyx_t_15)) ) + __pyx_t_16 * __pyx_v_nodes.strides[1]) )))), (&__pyx_v_degree), (&(*__Pyx_BufPtrFortranContig2d(double *, __pyx_pybuffernd_nodes_a.rcbuffer->pybuffer.buf, __pyx_t_17, __pyx_pybuffernd_nodes_a.diminfo[0].strides, __pyx_t_18, __pyx_pybuffernd_nodes_a.diminfo[1].strides))), (&(*__Pyx_BufPtrFortranContig2d(double *, __pyx_pybuffernd_nodes_b.rcbuffer->pybuffer.buf, __pyx_t_19, __pyx_pybuffernd_nodes_b.diminfo[0].strides, __pyx_t_20, __pyx_pybuffernd_nodes_b.diminfo[1].strides))), (&(*__Pyx_BufPtrFortranContig2d(double *, __pyx_pybuffernd_nodes_c.rcbuffer->pybuffer.buf, __pyx_t_21, __pyx_pybuffernd_nodes_c.diminfo[0].strides, __pyx_t_22, __pyx_pybuffernd_nodes_c.diminfo[1].strides))), (&(*__Pyx_BufPtrFortranContig2d(double *, __pyx_pybuffernd_nodes_d.rcbuffer->pybuffer.buf, __pyx_t_23, __pyx_pybuffernd_nodes_d.diminfo[0].strides, __pyx_t_24, __pyx_pybuffernd_nodes_d.diminfo[1].strides))));
 
   /* "bezier/_speedup.pyx":825
  *     )
@@ -14892,7 +14892,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_68compute_edge_nodes(CYTHON_UNUSED P
  *         &num_nodes,
  *         &dimension,
  */
-  compute_edge_nodes((&__pyx_v_num_nodes), (&__pyx_v_dimension), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_nodes.data) + __pyx_t_14)) ) + __pyx_t_15 * __pyx_v_nodes.strides[1]) )))), (&__pyx_v_degree), (&(*__Pyx_BufPtrFortranContig2d(double *, __pyx_pybuffernd_nodes1.rcbuffer->pybuffer.buf, __pyx_t_16, __pyx_pybuffernd_nodes1.diminfo[0].strides, __pyx_t_17, __pyx_pybuffernd_nodes1.diminfo[1].strides))), (&(*__Pyx_BufPtrFortranContig2d(double *, __pyx_pybuffernd_nodes2.rcbuffer->pybuffer.buf, __pyx_t_18, __pyx_pybuffernd_nodes2.diminfo[0].strides, __pyx_t_19, __pyx_pybuffernd_nodes2.diminfo[1].strides))), (&(*__Pyx_BufPtrFortranContig2d(double *, __pyx_pybuffernd_nodes3.rcbuffer->pybuffer.buf, __pyx_t_20, __pyx_pybuffernd_nodes3.diminfo[0].strides, __pyx_t_21, __pyx_pybuffernd_nodes3.diminfo[1].strides))));
+  BEZ_compute_edge_nodes((&__pyx_v_num_nodes), (&__pyx_v_dimension), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_nodes.data) + __pyx_t_14)) ) + __pyx_t_15 * __pyx_v_nodes.strides[1]) )))), (&__pyx_v_degree), (&(*__Pyx_BufPtrFortranContig2d(double *, __pyx_pybuffernd_nodes1.rcbuffer->pybuffer.buf, __pyx_t_16, __pyx_pybuffernd_nodes1.diminfo[0].strides, __pyx_t_17, __pyx_pybuffernd_nodes1.diminfo[1].strides))), (&(*__Pyx_BufPtrFortranContig2d(double *, __pyx_pybuffernd_nodes2.rcbuffer->pybuffer.buf, __pyx_t_18, __pyx_pybuffernd_nodes2.diminfo[0].strides, __pyx_t_19, __pyx_pybuffernd_nodes2.diminfo[1].strides))), (&(*__Pyx_BufPtrFortranContig2d(double *, __pyx_pybuffernd_nodes3.rcbuffer->pybuffer.buf, __pyx_t_20, __pyx_pybuffernd_nodes3.diminfo[0].strides, __pyx_t_21, __pyx_pybuffernd_nodes3.diminfo[1].strides))));
 
   /* "bezier/_speedup.pyx":849
  *     )
@@ -15306,7 +15306,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_70compute_area(CYTHON_UNUSED PyObjec
  *         &num_edges,
  *         &sizes[0],
  */
-  compute_area((&__pyx_v_num_edges), (&(*((int *) ( /* dim=0 */ ((char *) (((int *) __pyx_v_sizes.data) + __pyx_t_16)) )))), __pyx_v_nodes_pointers, (&__pyx_v_area), (&__pyx_v_unused_not_implemented));
+  BEZ_compute_area((&__pyx_v_num_edges), (&(*((int *) ( /* dim=0 */ ((char *) (((int *) __pyx_v_sizes.data) + __pyx_t_16)) )))), __pyx_v_nodes_pointers, (&__pyx_v_area), (&__pyx_v_unused_not_implemented));
 
   /* "bezier/_speedup.pyx":894
  *     )
@@ -15590,7 +15590,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_72newton_refine_surface(CYTHON_UNUSE
  *         &num_nodes,
  *         &nodes[0, 0],
  */
-  newton_refine_surface((&__pyx_v_num_nodes), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_nodes.data) + __pyx_t_7)) ) + __pyx_t_8 * __pyx_v_nodes.strides[1]) )))), (&__pyx_v_degree), (&__pyx_v_x_val), (&__pyx_v_y_val), (&__pyx_v_s), (&__pyx_v_t), (&__pyx_v_updated_s), (&__pyx_v_updated_t));
+  BEZ_newton_refine_surface((&__pyx_v_num_nodes), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_nodes.data) + __pyx_t_7)) ) + __pyx_t_8 * __pyx_v_nodes.strides[1]) )))), (&__pyx_v_degree), (&__pyx_v_x_val), (&__pyx_v_y_val), (&__pyx_v_s), (&__pyx_v_t), (&__pyx_v_updated_s), (&__pyx_v_updated_t));
 
   /* "bezier/_speedup.pyx":923
  *     )
@@ -15849,7 +15849,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_74locate_point_surface(CYTHON_UNUSED
  *         &num_nodes,
  *         &nodes[0, 0],
  */
-  locate_point_surface((&__pyx_v_num_nodes), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_nodes.data) + __pyx_t_7)) ) + __pyx_t_8 * __pyx_v_nodes.strides[1]) )))), (&__pyx_v_degree), (&__pyx_v_x_val), (&__pyx_v_y_val), (&__pyx_v_s_val), (&__pyx_v_t_val));
+  BEZ_locate_point_surface((&__pyx_v_num_nodes), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_nodes.data) + __pyx_t_7)) ) + __pyx_t_8 * __pyx_v_nodes.strides[1]) )))), (&__pyx_v_degree), (&__pyx_v_x_val), (&__pyx_v_y_val), (&__pyx_v_s_val), (&__pyx_v_t_val));
 
   /* "bezier/_speedup.pyx":944
  *     )
@@ -17252,7 +17252,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_80_surface_intersections_success(CYT
  *         &num_nodes,
  *         &dimension,
  */
-  compute_edge_nodes((&__pyx_v_num_nodes), (&__pyx_v_dimension), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_nodes1.data) + __pyx_t_20)) ) + __pyx_t_21 * __pyx_v_nodes1.strides[1]) )))), (&__pyx_v_degree1), (&(*__Pyx_BufPtrFortranContig2d(double *, __pyx_pybuffernd_edge_nodes1.rcbuffer->pybuffer.buf, __pyx_t_22, __pyx_pybuffernd_edge_nodes1.diminfo[0].strides, __pyx_t_23, __pyx_pybuffernd_edge_nodes1.diminfo[1].strides))), (&(*__Pyx_BufPtrFortranContig2d(double *, __pyx_pybuffernd_edge_nodes2.rcbuffer->pybuffer.buf, __pyx_t_24, __pyx_pybuffernd_edge_nodes2.diminfo[0].strides, __pyx_t_25, __pyx_pybuffernd_edge_nodes2.diminfo[1].strides))), (&(*__Pyx_BufPtrFortranContig2d(double *, __pyx_pybuffernd_edge_nodes3.rcbuffer->pybuffer.buf, __pyx_t_26, __pyx_pybuffernd_edge_nodes3.diminfo[0].strides, __pyx_t_27, __pyx_pybuffernd_edge_nodes3.diminfo[1].strides))));
+  BEZ_compute_edge_nodes((&__pyx_v_num_nodes), (&__pyx_v_dimension), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_nodes1.data) + __pyx_t_20)) ) + __pyx_t_21 * __pyx_v_nodes1.strides[1]) )))), (&__pyx_v_degree1), (&(*__Pyx_BufPtrFortranContig2d(double *, __pyx_pybuffernd_edge_nodes1.rcbuffer->pybuffer.buf, __pyx_t_22, __pyx_pybuffernd_edge_nodes1.diminfo[0].strides, __pyx_t_23, __pyx_pybuffernd_edge_nodes1.diminfo[1].strides))), (&(*__Pyx_BufPtrFortranContig2d(double *, __pyx_pybuffernd_edge_nodes2.rcbuffer->pybuffer.buf, __pyx_t_24, __pyx_pybuffernd_edge_nodes2.diminfo[0].strides, __pyx_t_25, __pyx_pybuffernd_edge_nodes2.diminfo[1].strides))), (&(*__Pyx_BufPtrFortranContig2d(double *, __pyx_pybuffernd_edge_nodes3.rcbuffer->pybuffer.buf, __pyx_t_26, __pyx_pybuffernd_edge_nodes3.diminfo[0].strides, __pyx_t_27, __pyx_pybuffernd_edge_nodes3.diminfo[1].strides))));
 
   /* "bezier/_speedup.pyx":1024
  *     )
@@ -17564,7 +17564,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_80_surface_intersections_success(CYT
  *         &num_nodes,
  *         &dimension,
  */
-  compute_edge_nodes((&__pyx_v_num_nodes), (&__pyx_v_dimension), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_nodes2.data) + __pyx_t_31)) ) + __pyx_t_32 * __pyx_v_nodes2.strides[1]) )))), (&__pyx_v_degree2), (&(*__Pyx_BufPtrFortranContig2d(double *, __pyx_pybuffernd_edge_nodes4.rcbuffer->pybuffer.buf, __pyx_t_33, __pyx_pybuffernd_edge_nodes4.diminfo[0].strides, __pyx_t_34, __pyx_pybuffernd_edge_nodes4.diminfo[1].strides))), (&(*__Pyx_BufPtrFortranContig2d(double *, __pyx_pybuffernd_edge_nodes5.rcbuffer->pybuffer.buf, __pyx_t_35, __pyx_pybuffernd_edge_nodes5.diminfo[0].strides, __pyx_t_36, __pyx_pybuffernd_edge_nodes5.diminfo[1].strides))), (&(*__Pyx_BufPtrFortranContig2d(double *, __pyx_pybuffernd_edge_nodes6.rcbuffer->pybuffer.buf, __pyx_t_37, __pyx_pybuffernd_edge_nodes6.diminfo[0].strides, __pyx_t_38, __pyx_pybuffernd_edge_nodes6.diminfo[1].strides))));
+  BEZ_compute_edge_nodes((&__pyx_v_num_nodes), (&__pyx_v_dimension), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_nodes2.data) + __pyx_t_31)) ) + __pyx_t_32 * __pyx_v_nodes2.strides[1]) )))), (&__pyx_v_degree2), (&(*__Pyx_BufPtrFortranContig2d(double *, __pyx_pybuffernd_edge_nodes4.rcbuffer->pybuffer.buf, __pyx_t_33, __pyx_pybuffernd_edge_nodes4.diminfo[0].strides, __pyx_t_34, __pyx_pybuffernd_edge_nodes4.diminfo[1].strides))), (&(*__Pyx_BufPtrFortranContig2d(double *, __pyx_pybuffernd_edge_nodes5.rcbuffer->pybuffer.buf, __pyx_t_35, __pyx_pybuffernd_edge_nodes5.diminfo[0].strides, __pyx_t_36, __pyx_pybuffernd_edge_nodes5.diminfo[1].strides))), (&(*__Pyx_BufPtrFortranContig2d(double *, __pyx_pybuffernd_edge_nodes6.rcbuffer->pybuffer.buf, __pyx_t_37, __pyx_pybuffernd_edge_nodes6.diminfo[0].strides, __pyx_t_38, __pyx_pybuffernd_edge_nodes6.diminfo[1].strides))));
 
   /* "bezier/_speedup.pyx":1039
  *
@@ -18702,7 +18702,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_84surface_intersections(CYTHON_UNUSE
  *         &num_nodes1,
  *         &nodes1[0, 0],
  */
-  surface_intersections((&__pyx_v_num_nodes1), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_nodes1.data) + __pyx_t_8)) ) + __pyx_t_9 * __pyx_v_nodes1.strides[1]) )))), (&__pyx_v_degree1), (&__pyx_v_num_nodes2), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_nodes2.data) + __pyx_t_10)) ) + __pyx_t_11 * __pyx_v_nodes2.strides[1]) )))), (&__pyx_v_degree2), (&__pyx_v_segment_ends_size), (&(*((int *) ( /* dim=0 */ ((char *) (((int *) __pyx_v_6bezier_8_speedup_SEGMENT_ENDS_WORKSPACE.data) + __pyx_t_12)) )))), (&__pyx_v_segments_size), (&(*((CurvedPolygonSegment *) ( /* dim=0 */ ((char *) (((CurvedPolygonSegment *) __pyx_v_6bezier_8_speedup_SEGMENTS_WORKSPACE.data) + __pyx_t_13)) )))), (&__pyx_v_num_intersected), (&__pyx_v_contained), (&__pyx_v_status));
+  BEZ_surface_intersections((&__pyx_v_num_nodes1), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_nodes1.data) + __pyx_t_8)) ) + __pyx_t_9 * __pyx_v_nodes1.strides[1]) )))), (&__pyx_v_degree1), (&__pyx_v_num_nodes2), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_nodes2.data) + __pyx_t_10)) ) + __pyx_t_11 * __pyx_v_nodes2.strides[1]) )))), (&__pyx_v_degree2), (&__pyx_v_segment_ends_size), (&(*((int *) ( /* dim=0 */ ((char *) (((int *) __pyx_v_6bezier_8_speedup_SEGMENT_ENDS_WORKSPACE.data) + __pyx_t_12)) )))), (&__pyx_v_segments_size), (&(*((CurvedPolygonSegment *) ( /* dim=0 */ ((char *) (((CurvedPolygonSegment *) __pyx_v_6bezier_8_speedup_SEGMENTS_WORKSPACE.data) + __pyx_t_13)) )))), (&__pyx_v_num_intersected), (&__pyx_v_contained), (&__pyx_v_status));
 
   /* "bezier/_speedup.pyx":1116
  *     )
@@ -19269,7 +19269,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_86free_surface_intersections_workspa
  *
  *
  */
-  free_surface_intersections_workspace();
+  BEZ_free_surface_intersections_workspace();
 
   /* "bezier/_speedup.pyx":1156
  *
