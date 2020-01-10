@@ -26,9 +26,9 @@ typedef enum BoxIntersectionType {
     DISJOINT = 2,
 } BoxIntersectionType;
 
-void BEZ_newton_refine_curve_intersect(double* s, int* num_nodes1, double* nodes1,
-    double* t, int* num_nodes2, double* nodes2, double* new_s, double* new_t,
-    Status* status);
+void BEZ_newton_refine_curve_intersect(double* s, int* num_nodes1,
+    double* nodes1, double* t, int* num_nodes2, double* nodes2, double* new_s,
+    double* new_t, Status* status);
 void BEZ_bbox_intersect(int* num_nodes1, double* nodes1, int* num_nodes2,
     double* nodes2, BoxIntersectionType* enum_);
 void BEZ_curve_intersections(int* num_nodes_first, double* nodes_first,

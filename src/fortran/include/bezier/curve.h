@@ -19,8 +19,9 @@
 extern "C" {
 #endif
 
-void BEZ_evaluate_curve_barycentric(int* num_nodes, int* dimension, double* nodes,
-    int* num_vals, double* lambda1, double* lambda2, double* evaluated);
+void BEZ_evaluate_curve_barycentric(int* num_nodes, int* dimension,
+    double* nodes, int* num_vals, double* lambda1, double* lambda2,
+    double* evaluated);
 void BEZ_evaluate_multi(int* num_nodes, int* dimension, double* nodes,
     int* num_vals, double* s_vals, double* evaluated);
 void BEZ_specialize_curve(int* num_nodes, int* dimension, double* nodes,

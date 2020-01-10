@@ -25,14 +25,16 @@ void BEZ_de_casteljau_one_round(int* num_nodes, int* dimension, double* nodes,
 void BEZ_evaluate_barycentric(int* num_nodes, int* dimension, double* nodes,
     int* degree, double* lambda1, double* lambda2, double* lambda3,
     double* point);
-void BEZ_evaluate_barycentric_multi(int* num_nodes, int* dimension, double* nodes,
-    int* degree, int* num_vals, double* param_vals, double* evaluated);
-void BEZ_evaluate_cartesian_multi(int* num_nodes, int* dimension, double* nodes,
-    int* degree, int* num_vals, double* param_vals, double* evaluated);
-void BEZ_jacobian_both(int* num_nodes, int* dimension, double* nodes, int* degree,
-    double* new_nodes);
-void BEZ_jacobian_det(int* num_nodes, double* nodes, int* degree, int* num_vals,
-    double* param_vals, double* evaluated);
+void BEZ_evaluate_barycentric_multi(int* num_nodes, int* dimension,
+    double* nodes, int* degree, int* num_vals, double* param_vals,
+    double* evaluated);
+void BEZ_evaluate_cartesian_multi(int* num_nodes, int* dimension,
+    double* nodes, int* degree, int* num_vals, double* param_vals,
+    double* evaluated);
+void BEZ_jacobian_both(int* num_nodes, int* dimension, double* nodes,
+    int* degree, double* new_nodes);
+void BEZ_jacobian_det(int* num_nodes, double* nodes, int* degree,
+    int* num_vals, double* param_vals, double* evaluated);
 void BEZ_specialize_surface(int* num_nodes, int* dimension, double* nodes,
     int* degree, double* weights_a, double* weights_b, double* weights_c,
     double* specialized);
