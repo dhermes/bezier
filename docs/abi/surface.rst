@@ -23,11 +23,11 @@ B |eacute| zier `surface`_.
 Procedures
 **********
 
-.. c:function:: void compute_area(int *num_edges, \
-                                  int *sizes, \
-                                  double **nodes_pointers, \
-                                  double *area, \
-                                  bool *not_implemented)
+.. c:function:: void BEZ_compute_area(int *num_edges, \
+                                      int *sizes, \
+                                      double **nodes_pointers, \
+                                      double *area, \
+                                      bool *not_implemented)
 
    This computes the area of a curved polygon in :math:`\mathbf{R}^2` via
    Green's theorem. In order to do this, it assumes that the edges
@@ -58,19 +58,19 @@ Procedures
    .. code-block:: c
 
       void
-      compute_area(int *num_edges,
-                   int *sizes,
-                   double **nodes_pointers,
-                   double *area,
-                   bool *not_implemented);
+      BEZ_compute_area(int *num_edges,
+                       int *sizes,
+                       double **nodes_pointers,
+                       double *area,
+                       bool *not_implemented);
 
-.. c:function:: void compute_edge_nodes(int *num_nodes, \
-                                        int *dimension, \
-                                        double *nodes, \
-                                        int *degree, \
-                                        double *nodes1, \
-                                        double *nodes2, \
-                                        double *nodes3)
+.. c:function:: void BEZ_compute_edge_nodes(int *num_nodes, \
+                                            int *dimension, \
+                                            double *nodes, \
+                                            int *degree, \
+                                            double *nodes1, \
+                                            double *nodes2, \
+                                            double *nodes3)
 
    Extracts the edge nodes from the control net of a B |eacute| zier surface.
    For example, if the control net of a quadratic surface is:
@@ -124,22 +124,22 @@ Procedures
    .. code-block:: c
 
       void
-      compute_edge_nodes(int *num_nodes,
-                         int *dimension,
-                         double *nodes,
-                         int *degree,
-                         double *nodes1,
-                         double *nodes2,
-                         double *nodes3);
+      BEZ_compute_edge_nodes(int *num_nodes,
+                             int *dimension,
+                             double *nodes,
+                             int *degree,
+                             double *nodes1,
+                             double *nodes2,
+                             double *nodes3);
 
-.. c:function:: void de_casteljau_one_round(int *num_nodes, \
-                                            int *dimension, \
-                                            double *nodes, \
-                                            int *degree, \
-                                            double *lambda1, \
-                                            double *lambda2, \
-                                            double *lambda3, \
-                                            double *new_nodes)
+.. c:function:: void BEZ_de_casteljau_one_round(int *num_nodes, \
+                                                int *dimension, \
+                                                double *nodes, \
+                                                int *degree, \
+                                                double *lambda1, \
+                                                double *lambda2, \
+                                                double *lambda3, \
+                                                double *new_nodes)
 
    This performs a single round of the de Casteljau algorithm for evaluation
    in barycentric coordinates :math:`B(\lambda_1, \lambda_2, \lambda_3)`. This
@@ -178,23 +178,23 @@ Procedures
    .. code-block:: c
 
       void
-      de_casteljau_one_round(int *num_nodes,
-                             int *dimension,
-                             double *nodes,
-                             int *degree,
-                             double *lambda1,
-                             double *lambda2,
-                             double *lambda3,
-                             double *new_nodes);
+      BEZ_de_casteljau_one_round(int *num_nodes,
+                                 int *dimension,
+                                 double *nodes,
+                                 int *degree,
+                                 double *lambda1,
+                                 double *lambda2,
+                                 double *lambda3,
+                                 double *new_nodes);
 
-.. c:function:: void evaluate_barycentric(int *num_nodes, \
-                                          int *dimension, \
-                                          double *nodes, \
-                                          int *degree, \
-                                          double *lambda1, \
-                                          double *lambda2, \
-                                          double *lambda3, \
-                                          double *point)
+.. c:function:: void BEZ_evaluate_barycentric(int *num_nodes, \
+                                              int *dimension, \
+                                              double *nodes, \
+                                              int *degree, \
+                                              double *lambda1, \
+                                              double *lambda2, \
+                                              double *lambda3, \
+                                              double *point)
 
    Evaluates a single point on a B |eacute| zier surface, with input
    in barycentric coordinates: :math:`B(\lambda_1, \lambda_2, \lambda_3)`.
@@ -227,22 +227,22 @@ Procedures
    .. code-block:: c
 
       void
-      evaluate_barycentric(int *num_nodes,
-                           int *dimension,
-                           double *nodes,
-                           int *degree,
-                           double *lambda1,
-                           double *lambda2,
-                           double *lambda3,
-                           double *point);
+      BEZ_evaluate_barycentric(int *num_nodes,
+                               int *dimension,
+                               double *nodes,
+                               int *degree,
+                               double *lambda1,
+                               double *lambda2,
+                               double *lambda3,
+                               double *point);
 
-.. c:function:: void evaluate_barycentric_multi(int *num_nodes, \
-                                                int *dimension, \
-                                                double *nodes, \
-                                                int *degree, \
-                                                int *num_vals, \
-                                                double *param_vals, \
-                                                double *evaluated)
+.. c:function:: void BEZ_evaluate_barycentric_multi(int *num_nodes, \
+                                                    int *dimension, \
+                                                    double *nodes, \
+                                                    int *degree, \
+                                                    int *num_vals, \
+                                                    double *param_vals, \
+                                                    double *evaluated)
 
    Evaluates many points on a B |eacute| zier surface, with input
    in barycentric coordinates:
@@ -278,21 +278,21 @@ Procedures
    .. code-block:: c
 
       void
-      evaluate_barycentric_multi(int *num_nodes,
-                                 int *dimension,
-                                 double *nodes,
-                                 int *degree,
-                                 int *num_vals,
-                                 double *param_vals,
-                                 double *evaluated);
+      BEZ_evaluate_barycentric_multi(int *num_nodes,
+                                     int *dimension,
+                                     double *nodes,
+                                     int *degree,
+                                     int *num_vals,
+                                     double *param_vals,
+                                     double *evaluated);
 
-.. c:function:: void evaluate_cartesian_multi(int *num_nodes, \
-                                              int *dimension, \
-                                              double *nodes, \
-                                              int *degree, \
-                                              int *num_vals, \
-                                              double *param_vals, \
-                                              double *evaluated)
+.. c:function:: void BEZ_evaluate_cartesian_multi(int *num_nodes, \
+                                                  int *dimension, \
+                                                  double *nodes, \
+                                                  int *degree, \
+                                                  int *num_vals, \
+                                                  double *param_vals, \
+                                                  double *evaluated)
 
    Evaluates many points on a B |eacute| zier surface, with input
    in cartesian coordinates:
@@ -330,19 +330,19 @@ Procedures
    .. code-block:: c
 
       void
-      evaluate_cartesian_multi(int *num_nodes,
-                               int *dimension,
-                               double *nodes,
-                               int *degree,
-                               int *num_vals,
-                               double *param_vals,
-                               double *evaluated);
+      BEZ_evaluate_cartesian_multi(int *num_nodes,
+                                   int *dimension,
+                                   double *nodes,
+                                   int *degree,
+                                   int *num_vals,
+                                   double *param_vals,
+                                   double *evaluated);
 
-.. c:function:: void jacobian_both(int *num_nodes, \
-                                   int *dimension, \
-                                   double *nodes, \
-                                   int *degree, \
-                                   double *new_nodes)
+.. c:function:: void BEZ_jacobian_both(int *num_nodes, \
+                                       int *dimension, \
+                                       double *nodes, \
+                                       int *degree, \
+                                       double *new_nodes)
 
    Computes control nets for both cartesian partial derivatives of a
    B |eacute| zier surface :math:`B_s(s, t)` and :math:`B_t(s, t)`. Taking
@@ -371,18 +371,18 @@ Procedures
    .. code-block:: c
 
       void
-      jacobian_both(int *num_nodes,
-                    int *dimension,
-                    double *nodes,
-                    int *degree,
-                    double *new_nodes);
+      BEZ_jacobian_both(int *num_nodes,
+                        int *dimension,
+                        double *nodes,
+                        int *degree,
+                        double *new_nodes);
 
-.. c:function:: void jacobian_det(int *num_nodes, \
-                                  double *nodes, \
-                                  int *degree, \
-                                  int *num_vals, \
-                                  double *param_vals, \
-                                  double *evaluated)
+.. c:function:: void BEZ_jacobian_det(int *num_nodes, \
+                                      double *nodes, \
+                                      int *degree, \
+                                      int *num_vals, \
+                                      double *param_vals, \
+                                      double *evaluated)
 
    Computes :math:`\det(DB)` at many points :math:`(s_j, t_j)`. This is only
    well-defined if :math:`\det(DB)` has two rows, hence the surface must lie
@@ -414,21 +414,21 @@ Procedures
    .. code-block:: c
 
       void
-      jacobian_det(int *num_nodes,
-                   double *nodes,
-                   int *degree,
-                   int *num_vals,
-                   double *param_vals,
-                   double *evaluated);
+      BEZ_jacobian_det(int *num_nodes,
+                       double *nodes,
+                       int *degree,
+                       int *num_vals,
+                       double *param_vals,
+                       double *evaluated);
 
-.. c:function:: void specialize_surface(int *num_nodes, \
-                                        int *dimension, \
-                                        double *nodes, \
-                                        int *degree, \
-                                        double *weights_a, \
-                                        double *weights_b, \
-                                        double *weights_c, \
-                                        double *specialized)
+.. c:function:: void BEZ_specialize_surface(int *num_nodes, \
+                                            int *dimension, \
+                                            double *nodes, \
+                                            int *degree, \
+                                            double *weights_a, \
+                                            double *weights_b, \
+                                            double *weights_c, \
+                                            double *specialized)
 
    Changes the control net for a B |eacute| zier surface by specializing
    from the original triangle :math:`(0, 0), (1, 0), (0, 1)` to a new
@@ -464,23 +464,23 @@ Procedures
    .. code-block:: c
 
       void
-      specialize_surface(int *num_nodes,
-                         int *dimension,
-                         double *nodes,
-                         int *degree,
-                         double *weights_a,
-                         double *weights_b,
-                         double *weights_c,
-                         double *specialized);
+      BEZ_specialize_surface(int *num_nodes,
+                             int *dimension,
+                             double *nodes,
+                             int *degree,
+                             double *weights_a,
+                             double *weights_b,
+                             double *weights_c,
+                             double *specialized);
 
-.. c:function:: void subdivide_nodes_surface(int *num_nodes, \
-                                             int *dimension, \
-                                             double *nodes, \
-                                             int *degree, \
-                                             double *nodes_a, \
-                                             double *nodes_b, \
-                                             double *nodes_c, \
-                                             double *nodes_d)
+.. c:function:: void BEZ_subdivide_nodes_surface(int *num_nodes, \
+                                                 int *dimension, \
+                                                 double *nodes, \
+                                                 int *degree, \
+                                                 double *nodes_a, \
+                                                 double *nodes_b, \
+                                                 double *nodes_c, \
+                                                 double *nodes_d)
 
    Subdivides a B |eacute| zier surface into four sub-surfaces that cover
    the original surface. See :meth:`.Surface.subdivide` for more
@@ -516,11 +516,11 @@ Procedures
    .. code-block:: c
 
       void
-      subdivide_nodes_surface(int *num_nodes,
-                              int *dimension,
-                              double *nodes,
-                              int *degree,
-                              double *nodes_a,
-                              double *nodes_b,
-                              double *nodes_c,
-                              double *nodes_d);
+      BEZ_subdivide_nodes_surface(int *num_nodes,
+                                  int *dimension,
+                                  double *nodes,
+                                  int *degree,
+                                  double *nodes_a,
+                                  double *nodes_b,
+                                  double *nodes_c,
+                                  double *nodes_d);

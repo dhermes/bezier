@@ -25,7 +25,7 @@ int main(void)
     double reduced[10];
     bool not_implemented;
 
-    full_reduce(&num_nodes, &dimension, nodes, &num_reduced_nodes, reduced,
+    BEZ_full_reduce(&num_nodes, &dimension, nodes, &num_reduced_nodes, reduced,
         &not_implemented);
     printf("Number of reduced nodes: %d\n", num_reduced_nodes);
     printf("Reduced:\n");

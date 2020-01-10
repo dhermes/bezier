@@ -19,29 +19,30 @@
 extern "C" {
 #endif
 
-void evaluate_curve_barycentric(int* num_nodes, int* dimension, double* nodes,
-    int* num_vals, double* lambda1, double* lambda2, double* evaluated);
-void evaluate_multi(int* num_nodes, int* dimension, double* nodes,
+void BEZ_evaluate_curve_barycentric(int* num_nodes, int* dimension,
+    double* nodes, int* num_vals, double* lambda1, double* lambda2,
+    double* evaluated);
+void BEZ_evaluate_multi(int* num_nodes, int* dimension, double* nodes,
     int* num_vals, double* s_vals, double* evaluated);
-void specialize_curve(int* num_nodes, int* dimension, double* nodes,
+void BEZ_specialize_curve(int* num_nodes, int* dimension, double* nodes,
     double* start, double* end, double* new_nodes);
-void evaluate_hodograph(double* s, int* num_nodes, int* dimension,
+void BEZ_evaluate_hodograph(double* s, int* num_nodes, int* dimension,
     double* nodes, double* hodograph);
-void subdivide_nodes_curve(int* num_nodes, int* dimension, double* nodes,
+void BEZ_subdivide_nodes_curve(int* num_nodes, int* dimension, double* nodes,
     double* left_nodes, double* right_nodes);
-void newton_refine_curve(int* num_nodes, int* dimension, double* nodes,
+void BEZ_newton_refine_curve(int* num_nodes, int* dimension, double* nodes,
     double* point, double* s, double* updated_s);
-void locate_point_curve(int* num_nodes, int* dimension, double* nodes,
+void BEZ_locate_point_curve(int* num_nodes, int* dimension, double* nodes,
     double* point, double* s_approx);
-void elevate_nodes_curve(
+void BEZ_elevate_nodes_curve(
     int* num_nodes, int* dimension, double* nodes, double* elevated);
-void get_curvature(int* num_nodes, double* nodes, double* tangent_vec,
+void BEZ_get_curvature(int* num_nodes, double* nodes, double* tangent_vec,
     double* s, double* curvature);
-void reduce_pseudo_inverse(int* num_nodes, int* dimension, double* nodes,
+void BEZ_reduce_pseudo_inverse(int* num_nodes, int* dimension, double* nodes,
     double* reduced, bool* not_implemented);
-void full_reduce(int* num_nodes, int* dimension, double* nodes,
+void BEZ_full_reduce(int* num_nodes, int* dimension, double* nodes,
     int* num_reduced_nodes, double* reduced, bool* not_implemented);
-void compute_length(int* num_nodes, int* dimension, double* nodes,
+void BEZ_compute_length(int* num_nodes, int* dimension, double* nodes,
     double* length, int* error_val);
 
 #if defined(__cplusplus)

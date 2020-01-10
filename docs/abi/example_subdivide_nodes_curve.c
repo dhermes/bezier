@@ -24,7 +24,7 @@ int main(void)
     double left_nodes[6];
     double right_nodes[6];
 
-    subdivide_nodes_curve(
+    BEZ_subdivide_nodes_curve(
         &num_nodes, &dimension, nodes, left_nodes, right_nodes);
     printf("Left Nodes:\n");
     printf("%f, %f, %f\n", left_nodes[0], left_nodes[2], left_nodes[4]);

@@ -24,7 +24,7 @@ int main(void)
     double length;
     int error_val;
 
-    compute_length(&num_nodes, &dimension, nodes, &length, &error_val);
+    BEZ_compute_length(&num_nodes, &dimension, nodes, &length, &error_val);
     printf("Length: %f\n", length);
     printf("Error value: %d\n", error_val);
 

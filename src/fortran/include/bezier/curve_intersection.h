@@ -26,16 +26,16 @@ typedef enum BoxIntersectionType {
     DISJOINT = 2,
 } BoxIntersectionType;
 
-void newton_refine_curve_intersect(double* s, int* num_nodes1, double* nodes1,
-    double* t, int* num_nodes2, double* nodes2, double* new_s, double* new_t,
-    Status* status);
-void bbox_intersect(int* num_nodes1, double* nodes1, int* num_nodes2,
+void BEZ_newton_refine_curve_intersect(double* s, int* num_nodes1,
+    double* nodes1, double* t, int* num_nodes2, double* nodes2, double* new_s,
+    double* new_t, Status* status);
+void BEZ_bbox_intersect(int* num_nodes1, double* nodes1, int* num_nodes2,
     double* nodes2, BoxIntersectionType* enum_);
-void curve_intersections(int* num_nodes_first, double* nodes_first,
+void BEZ_curve_intersections(int* num_nodes_first, double* nodes_first,
     int* num_nodes_second, double* nodes_second, int* intersections_size,
     double* intersections, int* num_intersections, bool* coincident,
     Status* status);
-void free_curve_intersections_workspace(void);
+void BEZ_free_curve_intersections_workspace(void);
 
 #if defined(__cplusplus)
 }

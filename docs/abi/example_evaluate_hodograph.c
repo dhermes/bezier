@@ -24,7 +24,7 @@ int main(void)
     // Outputs.
     double hodograph[2];
 
-    evaluate_hodograph(&s, &num_nodes, &dimension, nodes, hodograph);
+    BEZ_evaluate_hodograph(&s, &num_nodes, &dimension, nodes, hodograph);
     printf("Hodograph:\n%f\n%f\n", hodograph[0], hodograph[1]);
 
     return 0;

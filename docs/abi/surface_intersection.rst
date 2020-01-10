@@ -23,13 +23,13 @@ the B |eacute| zier curve segments that form the exterior.
 Procedures
 **********
 
-.. c:function:: void locate_point_surface(int *num_nodes, \
-                                          double *nodes, \
-                                          int *degree, \
-                                          double *x_val, \
-                                          double *y_val, \
-                                          double *s_val, \
-                                          double *t_val)
+.. c:function:: void BEZ_locate_point_surface(int *num_nodes, \
+                                              double *nodes, \
+                                              int *degree, \
+                                              double *x_val, \
+                                              double *y_val, \
+                                              double *s_val, \
+                                              double *t_val)
 
    This solves the inverse problem :math:`B(s, t) = (x, y)` (if it can be
    solved). Does so by subdividing the surface until the sub-surfaces are
@@ -66,23 +66,23 @@ Procedures
    .. code-block:: c
 
       void
-      locate_point_surface(int *num_nodes,
-                           double *nodes,
-                           int *degree,
-                           double *x_val,
-                           double *y_val,
-                           double *s_val,
-                           double *t_val);
+      BEZ_locate_point_surface(int *num_nodes,
+                               double *nodes,
+                               int *degree,
+                               double *x_val,
+                               double *y_val,
+                               double *s_val,
+                               double *t_val);
 
-.. c:function:: void newton_refine_surface(int *num_nodes, \
-                                           double *nodes, \
-                                           int *degree, \
-                                           double *x_val, \
-                                           double *y_val, \
-                                           double *s, \
-                                           double *t, \
-                                           double *updated_s, \
-                                           double *updated_t)
+.. c:function:: void BEZ_newton_refine_surface(int *num_nodes, \
+                                               double *nodes, \
+                                               int *degree, \
+                                               double *x_val, \
+                                               double *y_val, \
+                                               double *s, \
+                                               double *t, \
+                                               double *updated_s, \
+                                               double *updated_t)
 
    This refines a solution to :math:`B(s, t) = (x, y) = p` using Newton's
    method. Given a current approximation :math:`(s_n, t_n)` for a solution,
@@ -125,29 +125,29 @@ Procedures
    .. code-block:: c
 
       void
-      newton_refine_surface(int *num_nodes,
-                            double *nodes,
-                            int *degree,
-                            double *x_val,
-                            double *y_val,
-                            double *s,
-                            double *t,
-                            double *updated_s,
-                            double *updated_t);
+      BEZ_newton_refine_surface(int *num_nodes,
+                                double *nodes,
+                                int *degree,
+                                double *x_val,
+                                double *y_val,
+                                double *s,
+                                double *t,
+                                double *updated_s,
+                                double *updated_t);
 
-.. c:function:: void surface_intersections(int *num_nodes1, \
-                                           double *nodes1, \
-                                           int *degree1, \
-                                           int *num_nodes2, \
-                                           double *nodes2, \
-                                           int *degree2, \
-                                           int *segment_ends_size, \
-                                           int *segment_ends, \
-                                           int *segments_size, \
-                                           CurvedPolygonSegment *segments, \
-                                           int *num_intersected, \
-                                           SurfaceContained *contained, \
-                                           Status *status)
+.. c:function:: void BEZ_surface_intersections(int *num_nodes1, \
+                                               double *nodes1, \
+                                               int *degree1, \
+                                               int *num_nodes2, \
+                                               double *nodes2, \
+                                               int *degree2, \
+                                               int *segment_ends_size, \
+                                               int *segment_ends, \
+                                               int *segments_size, \
+                                               CurvedPolygonSegment *segments, \
+                                               int *num_intersected, \
+                                               SurfaceContained *contained, \
+                                               Status *status)
 
    Compute the intersection of two B |eacute| zier surfaces. This will
    first compute all intersection points between edges of the first and
@@ -227,17 +227,17 @@ Procedures
         intersection, but no other types).
       * :c:data:`NO_CONVERGE` if the two curves in an edge pair don't converge
         to approximately linear after being subdivided 20 times. (This error
-        will occur via :c:func:`curve_intersections`.)
+        will occur via :c:func:`BEZ_curve_intersections`.)
       * An integer :math:`N_C \geq 64` to indicate that there were :math:`N_C`
         pairs of candidate segments during edge-edge intersection that had
         overlapping convex hulls. This is a sign of either round-off error
         in detecting that the edges are coincident curve segments on the same
         algebraic curve or that the intersection is a non-simple root. (This
-        error will occur via :c:func:`curve_intersections`.)
+        error will occur via :c:func:`BEZ_curve_intersections`.)
       * :c:data:`BAD_MULTIPLICITY` if the two curves in an edge pair have an
         intersection that doesn't converge to either a simple or double root
         via Newton's method. (This error will occur via
-        :c:func:`curve_intersections`.)
+        :c:func:`BEZ_curve_intersections`.)
       * :c:data:`EDGE_END` If there is an attempt to add an intersection
         point with either the :math:`s` or :math:`t`\-parameter equal to 1
         (i.e. if the intersection is at the end of an edge). This should
@@ -257,32 +257,32 @@ Procedures
    .. code-block:: c
 
       void
-      surface_intersections(int *num_nodes1,
-                            double *nodes1,
-                            int *degree1,
-                            int *num_nodes2,
-                            double *nodes2,
-                            int *degree2,
-                            int *segment_ends_size,
-                            int *segment_ends,
-                            int *segments_size,
-                            CurvedPolygonSegment *segments,
-                            int *num_intersected,
-                            SurfaceContained *contained,
-                            Status *status);
+      BEZ_surface_intersections(int *num_nodes1,
+                                double *nodes1,
+                                int *degree1,
+                                int *num_nodes2,
+                                double *nodes2,
+                                int *degree2,
+                                int *segment_ends_size,
+                                int *segment_ends,
+                                int *segments_size,
+                                CurvedPolygonSegment *segments,
+                                int *num_intersected,
+                                SurfaceContained *contained,
+                                Status *status);
 
-.. c:function:: void free_surface_intersections_workspace(void)
+.. c:function:: void BEZ_free_surface_intersections_workspace(void)
 
    This frees any long-lived workspace(s) used by ``libbezier`` throughout
    the life of a program. It should be called during clean-up for any code
-   which invokes :c:func:`surface_intersections`.
+   which invokes :c:func:`BEZ_surface_intersections`.
 
    **Signature:**
 
    .. code-block:: c
 
       void
-      free_surface_intersections_workspace(void);
+      BEZ_free_surface_intersections_workspace(void);
 
 *****
 Types

@@ -14,11 +14,11 @@ B |eacute| zier `curve`_.
 Procedures
 **********
 
-.. c:function:: void compute_length(int *num_nodes, \
-                                    int *dimension, \
-                                    double *nodes, \
-                                    double *length, \
-                                    int *error_val)
+.. c:function:: void BEZ_compute_length(int *num_nodes, \
+                                        int *dimension, \
+                                        double *nodes, \
+                                        double *length, \
+                                        int *error_val)
 
    Computes the length of a B |eacute| zier curve via
 
@@ -47,11 +47,11 @@ Procedures
    .. code-block:: c
 
       void
-      compute_length(int *num_nodes,
-                     int *dimension,
-                     double *nodes,
-                     double *length,
-                     int *error_val);
+      BEZ_compute_length(int *num_nodes,
+                         int *dimension,
+                         double *nodes,
+                         double *length,
+                         int *error_val);
 
    **Example:**
 
@@ -68,7 +68,7 @@ Procedures
       $ gcc \
       >   -o example \
       >   example_compute_length.c \
-      >   -I src/fortran/include/ \
+      >   -I .../src/fortran/include \
       >   -L .../site-packages/bezier/lib \
       >   -lbezier \
       >   -lm -lgfortran
@@ -76,10 +76,10 @@ Procedures
       Length: 5.000000
       Error value: 0
 
-.. c:function:: void elevate_nodes_curve(int *num_nodes, \
-                                         int *dimension, \
-                                         double *nodes, \
-                                         double *elevated)
+.. c:function:: void BEZ_elevate_nodes_curve(int *num_nodes, \
+                                             int *dimension, \
+                                             double *nodes, \
+                                             double *elevated)
 
    Degree-elevate a B |eacute| zier curve. Does so by producing
    control points of a higher degree that define the exact same curve.
@@ -105,10 +105,10 @@ Procedures
    .. code-block:: c
 
       void
-      elevate_nodes_curve(int *num_nodes,
-                          int *dimension,
-                          double *nodes,
-                          double *elevated);
+      BEZ_elevate_nodes_curve(int *num_nodes,
+                              int *dimension,
+                              double *nodes,
+                              double *elevated);
 
    **Example:**
 
@@ -133,7 +133,7 @@ Procedures
       $ gcc \
       >   -o example \
       >   example_elevate_nodes_curve.c \
-      >   -I src/fortran/include/ \
+      >   -I .../src/fortran/include \
       >   -L .../site-packages/bezier/lib \
       >   -lbezier \
       >   -lm -lgfortran
@@ -145,13 +145,13 @@ Procedures
    .. image:: ../images/curve_elevate.png
       :align: center
 
-.. c:function:: void evaluate_curve_barycentric(int *num_nodes, \
-                                                int *dimension, \
-                                                double *nodes, \
-                                                int *num_vals, \
-                                                double *lambda1, \
-                                                double *lambda2, \
-                                                double *evaluated)
+.. c:function:: void BEZ_evaluate_curve_barycentric(int *num_nodes, \
+                                                    int *dimension, \
+                                                    double *nodes, \
+                                                    int *num_vals, \
+                                                    double *lambda1, \
+                                                    double *lambda2, \
+                                                    double *evaluated)
 
    For a B |eacute| zier curve with control points :math:`p_0, \ldots, p_d`,
    this evaluates the quantity
@@ -193,13 +193,13 @@ Procedures
    .. code-block:: c
 
       void
-      evaluate_curve_barycentric(int *num_nodes,
-                                 int *dimension,
-                                 double *nodes,
-                                 int *num_vals,
-                                 double *lambda1,
-                                 double *lambda2,
-                                 double *evaluated);
+      BEZ_evaluate_curve_barycentric(int *num_nodes,
+                                     int *dimension,
+                                     double *nodes,
+                                     int *num_vals,
+                                     double *lambda1,
+                                     double *lambda2,
+                                     double *evaluated);
 
    **Example:**
 
@@ -234,7 +234,7 @@ Procedures
       $ gcc \
       >   -o example \
       >   example_evaluate_curve_barycentric.c \
-      >   -I src/fortran/include/ \
+      >   -I .../src/fortran/include \
       >   -L .../site-packages/bezier/lib \
       >   -lbezier \
       >   -lm -lgfortran
@@ -243,11 +243,11 @@ Procedures
       2.437500, 0.687500, 0.750000, 1.187500
       2.125000, 0.687500, 0.750000, 1.687500
 
-.. c:function:: void evaluate_hodograph(double *s, \
-                                        int *num_nodes, \
-                                        int *dimension, \
-                                        double *nodes, \
-                                        double *hodograph)
+.. c:function:: void BEZ_evaluate_hodograph(double *s, \
+                                            int *num_nodes, \
+                                            int *dimension, \
+                                            double *nodes, \
+                                            double *hodograph)
 
    Evaluates the hodograph (or derivative) of a B |eacute| zier curve
    function :math:`B'(s)`.
@@ -273,11 +273,11 @@ Procedures
    .. code-block:: c
 
       void
-      evaluate_hodograph(double *s,
-                         int *num_nodes,
-                         int *dimension,
-                         double *nodes,
-                         double *hodograph);
+      BEZ_evaluate_hodograph(double *s,
+                             int *num_nodes,
+                             int *dimension,
+                             double *nodes,
+                             double *hodograph);
 
    **Example:**
 
@@ -300,7 +300,7 @@ Procedures
       $ gcc \
       >   -o example \
       >   example_evaluate_hodograph.c \
-      >   -I src/fortran/include/ \
+      >   -I .../src/fortran/include \
       >   -L .../site-packages/bezier/lib \
       >   -lbezier \
       >   -lm -lgfortran
@@ -309,12 +309,12 @@ Procedures
       0.656250
       1.687500
 
-.. c:function:: void evaluate_multi(int *num_nodes, \
-                                    int *dimension, \
-                                    double *nodes, \
-                                    int *num_vals, \
-                                    double *s_vals, \
-                                    double *evaluated)
+.. c:function:: void BEZ_evaluate_multi(int *num_nodes, \
+                                        int *dimension, \
+                                        double *nodes, \
+                                        int *num_vals, \
+                                        double *s_vals, \
+                                        double *evaluated)
 
    Evaluate a B |eacute| zier curve function :math:`B(s_j)` at
    multiple values :math:`\left\{s_j\right\}_j`.
@@ -344,12 +344,12 @@ Procedures
    .. code-block:: c
 
       void
-      evaluate_multi(int *num_nodes,
-                     int *dimension,
-                     double *nodes,
-                     int *num_vals,
-                     double *s_vals,
-                     double *evaluated);
+      BEZ_evaluate_multi(int *num_nodes,
+                         int *dimension,
+                         double *nodes,
+                         int *num_vals,
+                         double *s_vals,
+                         double *evaluated);
 
    **Example:**
 
@@ -374,7 +374,7 @@ Procedures
       $ gcc \
       >   -o example \
       >   example_evaluate_multi.c \
-      >   -I src/fortran/include/ \
+      >   -I .../src/fortran/include \
       >   -L .../site-packages/bezier/lib \
       >   -lbezier \
       >   -lm -lgfortran
@@ -383,15 +383,15 @@ Procedures
       1.000000, 1.500000, 2.000000
       0.000000, 0.500000, 1.000000
 
-.. c:function:: void full_reduce(int *num_nodes, \
-                                 int *dimension, \
-                                 double *nodes, \
-                                 int *num_reduced_nodes, \
-                                 double *reduced, \
-                                 bool *not_implemented)
+.. c:function:: void BEZ_full_reduce(int *num_nodes, \
+                                     int *dimension, \
+                                     double *nodes, \
+                                     int *num_reduced_nodes, \
+                                     double *reduced, \
+                                     bool *not_implemented)
 
    Perform a "full" degree reduction. Does so by using
-   :c:func:`reduce_pseudo_inverse` continually until the degree of
+   :c:func:`BEZ_reduce_pseudo_inverse` continually until the degree of
    the curve can no longer be reduced.
 
    :param int* num_nodes:
@@ -423,12 +423,12 @@ Procedures
    .. code-block:: c
 
       void
-      full_reduce(int *num_nodes,
-                  int *dimension,
-                  double *nodes,
-                  int *num_reduced_nodes,
-                  double *reduced,
-                  bool *not_implemented);
+      BEZ_full_reduce(int *num_nodes,
+                      int *dimension,
+                      double *nodes,
+                      int *num_reduced_nodes,
+                      double *reduced,
+                      bool *not_implemented);
 
    **Example:**
 
@@ -450,7 +450,7 @@ Procedures
       $ gcc \
       >   -o example \
       >   example_full_reduce.c \
-      >   -I src/fortran/include/ \
+      >   -I .../src/fortran/include \
       >   -L .../site-packages/bezier/lib \
       >   -lbezier \
       >   -lm -lgfortran
@@ -461,11 +461,11 @@ Procedures
       3.000000, 5.000000
       Not implemented: FALSE
 
-.. c:function:: void get_curvature(int *num_nodes, \
-                                   double *nodes, \
-                                   double *tangent_vec, \
-                                   double *s, \
-                                   double *curvature)
+.. c:function:: void BEZ_get_curvature(int *num_nodes, \
+                                       double *nodes, \
+                                       double *tangent_vec, \
+                                       double *s, \
+                                       double *curvature)
 
    Get the signed curvature of a B |eacute| zier curve at a point. See
    :func:`._py_curve_helpers.get_curvature` for more details.
@@ -498,11 +498,11 @@ Procedures
    .. code-block:: c
 
       void
-      get_curvature(int *num_nodes,
-                    double *nodes,
-                    double *tangent_vec,
-                    double *s,
-                    double *curvature);
+      BEZ_get_curvature(int *num_nodes,
+                        double *nodes,
+                        double *tangent_vec,
+                        double *s,
+                        double *curvature);
 
    **Example:**
 
@@ -519,18 +519,18 @@ Procedures
       $ gcc \
       >   -o example \
       >   example_get_curvature.c \
-      >   -I src/fortran/include/ \
+      >   -I .../src/fortran/include \
       >   -L .../site-packages/bezier/lib \
       >   -lbezier \
       >   -lm -lgfortran
       $ ./example
       Curvature: -12.000000
 
-.. c:function:: void locate_point_curve(int *num_nodes, \
-                                        int *dimension, \
-                                        double *nodes, \
-                                        double *point, \
-                                        double *s_approx)
+.. c:function:: void BEZ_locate_point_curve(int *num_nodes, \
+                                            int *dimension, \
+                                            double *nodes, \
+                                            double *point, \
+                                            double *s_approx)
 
    This solves the inverse problem :math:`B(s) = p` (if it can be
    solved). Does so by subdividing the curve until the segments are
@@ -561,11 +561,11 @@ Procedures
    .. code-block:: c
 
       void
-      locate_point_curve(int *num_nodes,
-                         int *dimension,
-                         double *nodes,
-                         double *point,
-                         double *s_approx);
+      BEZ_locate_point_curve(int *num_nodes,
+                             int *dimension,
+                             double *nodes,
+                             double *point,
+                             double *s_approx);
 
    **Example:**
 
@@ -598,7 +598,7 @@ Procedures
       $ gcc \
       >   -o example \
       >   example_locate_point_curve.c \
-      >   -I src/fortran/include/ \
+      >   -I .../src/fortran/include \
       >   -L .../site-packages/bezier/lib \
       >   -lbezier \
       >   -lm -lgfortran
@@ -610,12 +610,12 @@ Procedures
    .. image:: ../images/curve_locate.png
       :align: center
 
-.. c:function:: void newton_refine_curve(int *num_nodes, \
-                                         int *dimension, \
-                                         double *nodes, \
-                                         double *point, \
-                                         double *s, \
-                                         double *updated_s)
+.. c:function:: void BEZ_newton_refine_curve(int *num_nodes, \
+                                             int *dimension, \
+                                             double *nodes, \
+                                             double *point, \
+                                             double *s, \
+                                             double *updated_s)
 
    This refines a solution to :math:`B(s) = p` using Newton's
    method. Given a current approximation :math:`s_n` for a solution,
@@ -650,12 +650,12 @@ Procedures
    .. code-block:: c
 
       void
-      newton_refine_curve(int *num_nodes,
-                          int *dimension,
-                          double *nodes,
-                          double *point,
-                          double *s,
-                          double *updated_s);
+      BEZ_newton_refine_curve(int *num_nodes,
+                              int *dimension,
+                              double *nodes,
+                              double *point,
+                              double *s,
+                              double *updated_s);
 
    **Example:**
 
@@ -679,7 +679,7 @@ Procedures
       $ gcc \
       >   -o example \
       >   example_newton_refine_curve.c \
-      >   -I src/fortran/include/ \
+      >   -I .../src/fortran/include \
       >   -L .../site-packages/bezier/lib \
       >   -lbezier \
       >   -lm -lgfortran
@@ -689,13 +689,13 @@ Procedures
    .. image:: ../images/newton_refine_curve.png
       :align: center
 
-.. c:function:: void reduce_pseudo_inverse(int *num_nodes, \
-                                           int *dimension, \
-                                           double *nodes, \
-                                           double *reduced, \
-                                           bool *not_implemented)
+.. c:function:: void BEZ_reduce_pseudo_inverse(int *num_nodes, \
+                                               int *dimension, \
+                                               double *nodes, \
+                                               double *reduced, \
+                                               bool *not_implemented)
 
-   Perform a pseudo inverse to :c:func:`elevate_nodes_curve`. If an
+   Perform a pseudo inverse to :c:func:`BEZ_elevate_nodes_curve`. If an
    inverse can be found, i.e. if a curve can be degree-reduced, then
    this will produce the equivalent curve of lower degree. If no
    inverse can be found, then this will produce the "best" answer in
@@ -724,11 +724,11 @@ Procedures
    .. code-block:: c
 
       void
-      reduce_pseudo_inverse(int *num_nodes,
-                            int *dimension,
-                            double *nodes,
-                            double *reduced,
-                            bool *not_implemented);
+      BEZ_reduce_pseudo_inverse(int *num_nodes,
+                                int *dimension,
+                                double *nodes,
+                                double *reduced,
+                                bool *not_implemented);
 
    **Example:**
 
@@ -752,7 +752,7 @@ Procedures
       $ gcc \
       >   -o example \
       >   example_reduce_pseudo_inverse.c \
-      >   -I src/fortran/include/ \
+      >   -I .../src/fortran/include \
       >   -L .../site-packages/bezier/lib \
       >   -lbezier \
       >   -lm -lgfortran
@@ -765,12 +765,12 @@ Procedures
    .. image:: ../images/curve_reduce.png
       :align: center
 
-.. c:function:: void specialize_curve(int *num_nodes, \
-                                      int *dimension, \
-                                      double *nodes, \
-                                      double *start, \
-                                      double *end, \
-                                      double *new_nodes)
+.. c:function:: void BEZ_specialize_curve(int *num_nodes, \
+                                          int *dimension, \
+                                          double *nodes, \
+                                          double *start, \
+                                          double *end, \
+                                          double *new_nodes)
 
    Specialize a B |eacute| zier curve to an interval
    :math:`\left[a, b\right]`. This produces the control points
@@ -799,12 +799,12 @@ Procedures
    .. code-block:: c
 
       void
-      specialize_curve(int *num_nodes,
-                       int *dimension,
-                       double *nodes,
-                       double *start,
-                       double *end,
-                       double *new_nodes);
+      BEZ_specialize_curve(int *num_nodes,
+                           int *dimension,
+                           double *nodes,
+                           double *start,
+                           double *end,
+                           double *new_nodes);
 
    **Example:**
 
@@ -831,8 +831,8 @@ Procedures
 
       $ gcc \
       >   -o example \
-      >   example_curve_specialize.c \
-      >   -I src/fortran/include/ \
+      >   example_specialize_curve.c \
+      >   -I .../src/fortran/include \
       >   -L .../site-packages/bezier/lib \
       >   -lbezier \
       >   -lm -lgfortran
@@ -844,11 +844,11 @@ Procedures
    .. image:: ../images/curve_specialize.png
       :align: center
 
-.. c:function:: void subdivide_nodes_curve(int *num_nodes, \
-                                           int *dimension, \
-                                           double *nodes, \
-                                           double *left_nodes, \
-                                           double *right_nodes)
+.. c:function:: void BEZ_subdivide_nodes_curve(int *num_nodes, \
+                                               int *dimension, \
+                                               double *nodes, \
+                                               double *left_nodes, \
+                                               double *right_nodes)
 
    Split a B |eacute| zier curve into two halves
    :math:`B\left(\left[0, \frac{1}{2}\right]\right)` and
@@ -878,11 +878,11 @@ Procedures
    .. code-block:: c
 
       void
-      subdivide_nodes_curve(int *num_nodes,
-                            int *dimension,
-                            double *nodes,
-                            double *left_nodes,
-                            double *right_nodes);
+      BEZ_subdivide_nodes_curve(int *num_nodes,
+                                int *dimension,
+                                double *nodes,
+                                double *left_nodes,
+                                double *right_nodes);
 
    **Example:**
 
@@ -903,7 +903,7 @@ Procedures
       $ gcc \
       >   -o example \
       >   example_subdivide_nodes_curve.c \
-      >   -I src/fortran/include/ \
+      >   -I .../src/fortran/include \
       >   -L .../site-packages/bezier/lib \
       >   -lbezier \
       >   -lm -lgfortran

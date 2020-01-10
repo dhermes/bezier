@@ -25,7 +25,8 @@ int main(void)
     // Outputs.
     double updated_s;
 
-    newton_refine_curve(&num_nodes, &dimension, nodes, point, &s, &updated_s);
+    BEZ_newton_refine_curve(
+        &num_nodes, &dimension, nodes, point, &s, &updated_s);
     printf("Updated s: %f\n", updated_s);
 
     return 0;

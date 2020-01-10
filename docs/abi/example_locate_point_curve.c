@@ -26,11 +26,11 @@ int main(void)
     // Outputs.
     double s_approx;
 
-    locate_point_curve(&num_nodes, &dimension, nodes, point1, &s_approx);
+    BEZ_locate_point_curve(&num_nodes, &dimension, nodes, point1, &s_approx);
     printf("When B(s) = [% f, %f]; s = % f\n", point1[0], point1[1], s_approx);
-    locate_point_curve(&num_nodes, &dimension, nodes, point2, &s_approx);
+    BEZ_locate_point_curve(&num_nodes, &dimension, nodes, point2, &s_approx);
     printf("When B(s) = [% f, %f]; s = % f\n", point2[0], point2[1], s_approx);
-    locate_point_curve(&num_nodes, &dimension, nodes, point3, &s_approx);
+    BEZ_locate_point_curve(&num_nodes, &dimension, nodes, point3, &s_approx);
     printf("When B(s) = [% f, %f]; s = % f\n", point3[0], point3[1], s_approx);
 
     return 0;

@@ -12,11 +12,11 @@ between two B |eacute| zier curves in :math:`\mathbf{R}^2`.
 Procedures
 **********
 
-.. c:function:: void bbox_intersect(int *num_nodes1, \
-                                    double *nodes1, \
-                                    int *num_nodes2, \
-                                    double *nodes2, \
-                                    BoxIntersectionType *enum_)
+.. c:function:: void BEZ_bbox_intersect(int *num_nodes1, \
+                                        double *nodes1, \
+                                        int *num_nodes2, \
+                                        double *nodes2, \
+                                        BoxIntersectionType *enum_)
 
    Determine how the bounding boxes of two B |eacute| zier curves intersect.
 
@@ -43,21 +43,21 @@ Procedures
    .. code-block:: c
 
       void
-      bbox_intersect(int *num_nodes1,
-                     double *nodes1,
-                     int *num_nodes2,
-                     double *nodes2,
-                     BoxIntersectionType *enum_);
+      BEZ_bbox_intersect(int *num_nodes1,
+                         double *nodes1,
+                         int *num_nodes2,
+                         double *nodes2,
+                         BoxIntersectionType *enum_);
 
-.. c:function:: void curve_intersections(int *num_nodes_first, \
-                                         double *nodes_first, \
-                                         int *num_nodes_second, \
-                                         double *nodes_second, \
-                                         int *intersections_size, \
-                                         double *intersections, \
-                                         int *num_intersections, \
-                                         bool *coincident, \
-                                         Status *status)
+.. c:function:: void BEZ_curve_intersections(int *num_nodes_first, \
+                                             double *nodes_first, \
+                                             int *num_nodes_second, \
+                                             double *nodes_second, \
+                                             int *intersections_size, \
+                                             double *intersections, \
+                                             int *num_intersections, \
+                                             bool *coincident, \
+                                             Status *status)
 
    Compute the intersection points of two B |eacute| zier curves in
    :math:`\mathbf{R}^2`. Does so by subdividing each curve in half and
@@ -133,25 +133,25 @@ Procedures
    .. code-block:: c
 
       void
-      curve_intersections(int *num_nodes_first,
-                          double *nodes_first,
-                          int *num_nodes_second,
-                          double *nodes_second,
-                          int *intersections_size,
-                          double *intersections,
-                          int *num_intersections,
-                          bool *coincident,
-                          Status *status);
+      BEZ_curve_intersections(int *num_nodes_first,
+                              double *nodes_first,
+                              int *num_nodes_second,
+                              double *nodes_second,
+                              int *intersections_size,
+                              double *intersections,
+                              int *num_intersections,
+                              bool *coincident,
+                              Status *status);
 
-.. c:function:: void newton_refine_curve_intersect(double *s, \
-                                                   int *num_nodes1, \
-                                                   double *nodes1, \
-                                                   double *t, \
-                                                   int *num_nodes2, \
-                                                   double *nodes2, \
-                                                   double *new_s, \
-                                                   double *new_t, \
-                                                   Status *status)
+.. c:function:: void BEZ_newton_refine_curve_intersect(double *s, \
+                                                       int *num_nodes1, \
+                                                       double *nodes1, \
+                                                       double *t, \
+                                                       int *num_nodes2, \
+                                                       double *nodes2, \
+                                                       double *new_s, \
+                                                       double *new_t, \
+                                                       Status *status)
 
    This refines a solution to :math:`F(s, t) = B_1(s) - B_2(t)` using Newton's
    method. Given a current approximation :math:`(s_n, t_n)` for a solution,
@@ -201,28 +201,28 @@ Procedures
    .. code-block:: c
 
       void
-      newton_refine_curve_intersect(double *s,
-                                    int *num_nodes1,
-                                    double *nodes1,
-                                    double *t,
-                                    int *num_nodes2,
-                                    double *nodes2,
-                                    double *new_s,
-                                    double *new_t,
-                                    Status *status);
+      BEZ_newton_refine_curve_intersect(double *s,
+                                        int *num_nodes1,
+                                        double *nodes1,
+                                        double *t,
+                                        int *num_nodes2,
+                                        double *nodes2,
+                                        double *new_s,
+                                        double *new_t,
+                                        Status *status);
 
-.. c:function:: void free_curve_intersections_workspace(void)
+.. c:function:: void BEZ_free_curve_intersections_workspace(void)
 
    This frees any long-lived workspace(s) used by ``libbezier`` throughout
    the life of a program. It should be called during clean-up for any code
-   which invokes :c:func:`curve_intersections`.
+   which invokes :c:func:`BEZ_curve_intersections`.
 
    **Signature:**
 
    .. code-block:: c
 
       void
-      free_curve_intersections_workspace(void);
+      BEZ_free_curve_intersections_workspace(void);
 
 *****
 Types
