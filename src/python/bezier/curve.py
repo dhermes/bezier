@@ -708,7 +708,7 @@ class Curve(_base.Base):
 
         .. note::
 
-           This method requires :mod:`sympy`.
+           This method requires SymPy.
 
         .. doctest:: curve-to-symbolic
 
@@ -736,7 +736,7 @@ class Curve(_base.Base):
 
         .. note::
 
-           This method requires :mod:`sympy`.
+           This method requires SymPy.
 
         .. doctest:: curve-implicitize
 

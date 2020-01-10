@@ -1152,7 +1152,7 @@ class Surface(_base.Base):
 
         .. note::
 
-           This method requires :mod:`sympy`.
+           This method requires SymPy.
 
         .. doctest:: surface-to-symbolic
 
@@ -1182,7 +1182,7 @@ class Surface(_base.Base):
 
         .. note::
 
-           This method requires :mod:`sympy`.
+           This method requires SymPy.
 
         .. doctest:: surface-implicitize
 

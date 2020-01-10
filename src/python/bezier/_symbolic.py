@@ -31,7 +31,7 @@ except ImportError:  # pragma: NO COVER
 
 
 def require_sympy(wrapped):
-    """Function decorator to require :mod:`sympy` to exist.
+    """Function decorator to require ``sympy`` to exist.
 
     Args:
         wrapped (Callable): A function to be wrapped.
