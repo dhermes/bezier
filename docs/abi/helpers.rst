@@ -9,12 +9,12 @@ with various geometric computations.
 Procedures
 **********
 
-.. c:function:: void bbox(int *num_nodes, \
-                          double *nodes, \
-                          double *left, \
-                          double *right, \
-                          double *bottom, \
-                          double *top)
+.. c:function:: void BEZ_bbox(int *num_nodes, \
+                              double *nodes, \
+                              double *left, \
+                              double *right, \
+                              double *bottom, \
+                              double *top)
 
    Computes a rectangular bounding box
    :math:`\left[m_x, M_x\right] \times \left[m_y, M_y\right]`
@@ -39,18 +39,18 @@ Procedures
    .. code-block:: c
 
       void
-      bbox(int *num_nodes,
-           double *nodes,
-           double *left,
-           double *right,
-           double *bottom,
-           double *top);
+      BEZ_bbox(int *num_nodes,
+               double *nodes,
+               double *left,
+               double *right,
+               double *bottom,
+               double *top);
 
-.. c:function:: void contains_nd(int *num_nodes, \
-                                 int *dimension, \
-                                 double *nodes, \
-                                 double *point, \
-                                 bool *predicate)
+.. c:function:: void BEZ_contains_nd(int *num_nodes, \
+                                     int *dimension, \
+                                     double *nodes, \
+                                     double *point, \
+                                     bool *predicate)
 
    Checks if a point :math:`p` is contained in the bounding box
    for a set of points.
@@ -73,15 +73,15 @@ Procedures
    .. code-block:: c
 
       void
-      contains_nd(int *num_nodes,
-                  int *dimension,
-                  double *nodes,
-                  double *point,
-                  bool *predicate);
+      BEZ_contains_nd(int *num_nodes,
+                      int *dimension,
+                      double *nodes,
+                      double *point,
+                      bool *predicate);
 
-.. c:function:: void cross_product(double *vec0, \
-                                   double *vec1, \
-                                   double *result)
+.. c:function:: void BEZ_cross_product(double *vec0, \
+                                       double *vec1, \
+                                       double *result)
 
    Computes the cross-product of two vectors :math:`v_1, v_2` in
    :math:`\mathbf{R}^2`. This is done as if they were embedded in
@@ -100,13 +100,13 @@ Procedures
    .. code-block:: c
 
       void
-      cross_product(double *vec0,
-                    double *vec1,
-                    double *result);
+      BEZ_cross_product(double *vec0,
+                        double *vec1,
+                        double *result);
 
-.. c:function:: bool in_interval(double *value, \
-                                 double *start, \
-                                 double *end)
+.. c:function:: bool BEZ_in_interval(double *value, \
+                                     double *start, \
+                                     double *end)
 
    Checks if a value :math:`v` is in an interval :math:`\left[s, e\right]`.
 
@@ -125,15 +125,15 @@ Procedures
    .. code-block:: c
 
       bool
-      in_interval(double *value,
-                  double *start,
-                  double *end);
+      BEZ_in_interval(double *value,
+                     double *start,
+                     double *end);
 
-.. c:function:: void polygon_collide(int *polygon_size1, \
-                                     double *polygon1, \
-                                     int *polygon_size2, \
-                                     double *polygon2, \
-                                     bool *collision)
+.. c:function:: void BEZ_polygon_collide(int *polygon_size1, \
+                                         double *polygon1, \
+                                         int *polygon_size2, \
+                                         double *polygon2, \
+                                         bool *collision)
 
    Determines if two polygons collide.
 
@@ -155,16 +155,16 @@ Procedures
    .. code-block:: c
 
       void
-      polygon_collide(int *polygon_size1,
-                      double *polygon1,
-                      int *polygon_size2,
-                      double *polygon2,
-                      bool *collision);
+      BEZ_polygon_collide(int *polygon_size1,
+                          double *polygon1,
+                          int *polygon_size2,
+                          double *polygon2,
+                          bool *collision);
 
-.. c:function:: void simple_convex_hull(int *num_points, \
-                                        double *points, \
-                                        int *polygon_size, \
-                                        double *polygon)
+.. c:function:: void BEZ_simple_convex_hull(int *num_points, \
+                                            double *points, \
+                                            int *polygon_size, \
+                                            double *polygon)
 
    Computes the convex hull of a set of points.
 
@@ -186,15 +186,15 @@ Procedures
    .. code-block:: c
 
       void
-      simple_convex_hull(int *num_points,
-                         double *points,
-                         int *polygon_size,
-                         double *polygon);
+      BEZ_simple_convex_hull(int *num_points,
+                             double *points,
+                             int *polygon_size,
+                             double *polygon);
 
-.. c:function:: bool vector_close(int *num_values, \
-                                  double *vec1, \
-                                  double *vec2, \
-                                  double *eps)
+.. c:function:: bool BEZ_vector_close(int *num_values, \
+                                      double *vec1, \
+                                      double *vec2, \
+                                      double *eps)
 
    Determines if two vectors are close to machine precision.
 
@@ -222,14 +222,14 @@ Procedures
    .. code-block:: c
 
       bool
-      vector_close(int *num_values,
-                   double *vec1,
-                   double *vec2,
-                   double *eps);
+      BEZ_vector_close(int *num_values,
+                       double *vec1,
+                       double *vec2,
+                       double *eps);
 
-.. c:function:: void wiggle_interval(double *value, \
-                                     double *result, \
-                                     bool *success)
+.. c:function:: void BEZ_wiggle_interval(double *value, \
+                                         double *result, \
+                                         bool *success)
 
    Round a value :math:`v` into the unit interval if it is sufficiently
    close. The real line will be broken into five intervals and handled
@@ -260,6 +260,6 @@ Procedures
    .. code-block:: c
 
       void
-      wiggle_interval(double *value,
-                      double *result,
-                      bool *success);
+      BEZ_wiggle_interval(double *value,
+                          double *result,
+                          bool *success);
