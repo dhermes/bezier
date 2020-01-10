@@ -41,7 +41,7 @@ New Features
 
    -  ``Curve.implicitize()``
       `function <https://bezier.readthedocs.io/en/latest/python/reference/bezier.curve.html#bezier.curve.Curve.implicitize>`__
-   -  ``Curve.implicitize()``
+   -  ``Curve.to_symbolic()``
       `function <https://bezier.readthedocs.io/en/latest/python/reference/bezier.curve.html#bezier.curve.Curve.to_symbolic>`__
    -  ``Surface.implicitize()``
       `function <https://bezier.readthedocs.io/en/latest/python/reference/bezier.surface.html#bezier.surface.Surface.implicitize>`__
