@@ -27,6 +27,11 @@ except ImportError:  # pragma: NO COVER
     sympy = None
 
 
+def sympy_equal(value1, value2):
+    difference = (value1 - value2).expand()
+    return difference == 0
+
+
 def sympy_matrix_equal(value1, value2):
     if value1.shape != value2.shape:  # pragma: NO COVER
         return False
@@ -97,6 +102,7 @@ class Test_curve_as_polynomial:
 
         return _symbolic.curve_as_polynomial(nodes, degree)
 
+    @unittest.skipIf(sympy is None, "SymPy not installed")
     def test_it(self):
         nodes = np.asfortranarray([[0.0, 0.5, 1.0], [0.0, 1.0, 0.0]])
         b_polynomial = self._call_function_under_test(nodes, 2)
@@ -104,6 +110,31 @@ class Test_curve_as_polynomial:
         s = sympy.Symbol("s")
         expected = sympy.Matrix([s, 2 * s * (1 - s)])
         assert sympy_matrix_equal(b_polynomial, expected)
+
+
+class Test_implicitize_2d:
+    @staticmethod
+    def _call_function_under_test(x_fn, y_fn, s):
+        from bezier import _symbolic
+
+        return _symbolic.implicitize_2d(x_fn, y_fn, s)
+
+    @unittest.skipIf(sympy is None, "SymPy not installed")
+    def test_it(self):
+        s, x_sym, y_sym = sympy.symbols("s, x, y")
+        x_fn = 1 - s ** 2
+        y_fn = 1 + s + s ** 2
+        f_polynomial = self._call_function_under_test(x_fn, y_fn, s)
+
+        expected = (
+            x_sym ** 2
+            + 2 * x_sym * y_sym
+            - 3 * x_sym
+            + y_sym ** 2
+            - 4 * y_sym
+            + 3
+        )
+        assert sympy_equal(f_polynomial, expected)
 
 
 class Test_surface_weights:
@@ -115,8 +146,7 @@ class Test_surface_weights:
 
     @unittest.skipIf(sympy is None, "SymPy not installed")
     def test_it(self):
-        s = sympy.Symbol("s")
-        t = sympy.Symbol("t")
+        s, t = sympy.symbols("s, t")
         weights = self._call_function_under_test(2, s, t)
         expected = sympy.Matrix(
             [
@@ -140,13 +170,43 @@ class Test_surface_as_polynomial:
 
         return _symbolic.surface_as_polynomial(nodes, degree)
 
+    @unittest.skipIf(sympy is None, "SymPy not installed")
     def test_it(self):
         nodes = np.asfortranarray(
             [[0.0, 1.0, 1.0], [0.0, 0.0, 1.0], [1.0, 1.0, 1.0]]
         )
         b_polynomial = self._call_function_under_test(nodes, 1)
 
-        s = sympy.Symbol("s")
-        t = sympy.Symbol("t")
+        s, t = sympy.symbols("s, t")
         expected = sympy.Matrix([s + t, t, 1])
         assert sympy_matrix_equal(b_polynomial, expected)
+
+
+class Test_implicitize_3d:
+    @staticmethod
+    def _call_function_under_test(x_fn, y_fn, z_fn, s, t):
+        from bezier import _symbolic
+
+        return _symbolic.implicitize_3d(x_fn, y_fn, z_fn, s, t)
+
+    @unittest.skipIf(sympy is None, "SymPy not installed")
+    def test_it(self):
+        s, t, x_sym, y_sym, z_sym = sympy.symbols("s, t, x, y, z")
+        x_fn = s * t
+        y_fn = s + t
+        z_fn = s ** 2 + t ** 2
+        f_polynomial = self._call_function_under_test(x_fn, y_fn, z_fn, s, t)
+
+        expected = (
+            x_sym ** 4
+            - 2 * x_sym ** 3 * y_sym
+            + 2 * x_sym ** 2 * y_sym ** 2
+            - 4 * x_sym ** 2 * y_sym
+            - 2 * x_sym ** 2 * z_sym
+            + 4 * x_sym ** 2
+            + 2 * x_sym * y_sym * z_sym
+            + 4 * x_sym * z_sym
+            - 2 * y_sym ** 2 * z_sym
+            + z_sym ** 2
+        )
+        assert sympy_equal(f_polynomial, expected)

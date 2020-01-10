@@ -118,6 +118,23 @@ def curve_as_polynomial(nodes, degree):
 
 
 @require_sympy
+def implicitize_2d(x_fn, y_fn, s):
+    """Implicitize a 2D parametric curve.
+
+    Args:
+        x_fn (sympy.Expr): Function :math:`x(s)` in the curve.
+        y_fn (sympy.Expr): Function :math:`y(s)` in the curve.
+        s (sympy.Symbol): The symbol used to define ``x_fn`` and ``y_fn``.
+
+    Returns:
+        sympy.Expr: The implicitized function :math:`f(x, y)` such that the
+        curve satisfies :math:`f(x(s), y(s)) = 0`.
+    """
+    x_sym, y_sym = sympy.symbols("x, y")
+    return sympy.resultant(x_fn - x_sym, y_fn - y_sym, s).factor()
+
+
+@require_sympy
 def surface_weights(degree, s, t):
     """Compute de Casteljau weights for a surface.
 
@@ -128,8 +145,8 @@ def surface_weights(degree, s, t):
 
     Args:
         degree (int): The degree of a surface.
-        s (sympy.Symbol): The symbol to be used in the weights.
-        t (sympy.Symbol): The symbol to be used in the weights.
+        s (sympy.Symbol): The first symbol to be used in the weights.
+        t (sympy.Symbol): The second symbol to be used in the weights.
 
     Returns:
         sympy.Matrix: The de Casteljau weights for the surface as an ``N x 1``
@@ -165,10 +182,33 @@ def surface_as_polynomial(nodes, degree):
     """
     nodes_sym = to_symbolic(nodes)
 
-    s = sympy.Symbol("s")
-    t = sympy.Symbol("t")
+    s, t = sympy.symbols("s, t")
     b_polynomial = nodes_sym * surface_weights(degree, s, t)
     b_polynomial.simplify()
 
     factored = [value.factor() for value in b_polynomial]
     return sympy.Matrix(factored).reshape(*b_polynomial.shape)
+
+
+@require_sympy
+def implicitize_3d(x_fn, y_fn, z_fn, s, t):
+    """Implicitize a 3D parametric surface.
+
+    Args:
+        x_fn (sympy.Expr): Function :math:`x(s)` in the surface.
+        y_fn (sympy.Expr): Function :math:`y(s)` in the surface.
+        z_fn (sympy.Expr): Function :math:`y(s)` in the surface.
+        s (sympy.Symbol): The first symbol used to define ``x_fn``, ``y_fn``
+            and ``z_fn``.
+        t (sympy.Symbol): The second symbol used to define ``x_fn``, ``y_fn``
+            and ``z_fn``.
+
+    Returns:
+        sympy.Expr: The implicitized function :math:`f(x, y, z)` such that the
+        surface satisfies :math:`f(x(s, t), y(s, t), z(s, t)) = 0`.
+    """
+    x_sym, y_sym, z_sym = sympy.symbols("x, y, z")
+
+    f_xy = sympy.resultant(x_fn - x_sym, y_fn - y_sym, s)
+    f_yz = sympy.resultant(y_fn - x_sym, z_fn - z_sym, s)
+    return sympy.resultant(f_xy, f_yz, t).factor()

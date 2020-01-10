@@ -774,8 +774,7 @@ class TestSurface(utils.NumPyTestCase):
         surface = self._make_one(nodes, 1, copy=False)
         b_polynomial = surface.to_symbolic()
 
-        s = sympy.Symbol("s")
-        t = sympy.Symbol("s")
+        s, t = sympy.symbols("s, t")
         expected = sympy.Matrix([[1 - s - t, s, t]]).T
         assert test__symbolic.sympy_matrix_equal(b_polynomial, expected)
 
