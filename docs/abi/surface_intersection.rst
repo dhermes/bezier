@@ -227,17 +227,17 @@ Procedures
         intersection, but no other types).
       * :c:data:`NO_CONVERGE` if the two curves in an edge pair don't converge
         to approximately linear after being subdivided 20 times. (This error
-        will occur via :c:func:`curve_intersections`.)
+        will occur via :c:func:`BEZ_curve_intersections`.)
       * An integer :math:`N_C \geq 64` to indicate that there were :math:`N_C`
         pairs of candidate segments during edge-edge intersection that had
         overlapping convex hulls. This is a sign of either round-off error
         in detecting that the edges are coincident curve segments on the same
         algebraic curve or that the intersection is a non-simple root. (This
-        error will occur via :c:func:`curve_intersections`.)
+        error will occur via :c:func:`BEZ_curve_intersections`.)
       * :c:data:`BAD_MULTIPLICITY` if the two curves in an edge pair have an
         intersection that doesn't converge to either a simple or double root
         via Newton's method. (This error will occur via
-        :c:func:`curve_intersections`.)
+        :c:func:`BEZ_curve_intersections`.)
       * :c:data:`EDGE_END` If there is an attempt to add an intersection
         point with either the :math:`s` or :math:`t`\-parameter equal to 1
         (i.e. if the intersection is at the end of an edge). This should
@@ -275,7 +275,7 @@ Procedures
 
    This frees any long-lived workspace(s) used by ``libbezier`` throughout
    the life of a program. It should be called during clean-up for any code
-   which invokes :c:func:`surface_intersections`.
+   which invokes :c:func:`BEZ_surface_intersections`.
 
    **Signature:**
 

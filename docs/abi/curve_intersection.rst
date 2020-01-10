@@ -215,7 +215,7 @@ Procedures
 
    This frees any long-lived workspace(s) used by ``libbezier`` throughout
    the life of a program. It should be called during clean-up for any code
-   which invokes :c:func:`curve_intersections`.
+   which invokes :c:func:`BEZ_curve_intersections`.
 
    **Signature:**
 

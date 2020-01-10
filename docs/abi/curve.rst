@@ -68,7 +68,7 @@ Procedures
       $ gcc \
       >   -o example \
       >   example_compute_length.c \
-      >   -I src/fortran/include/ \
+      >   -I .../src/fortran/include \
       >   -L .../site-packages/bezier/lib \
       >   -lbezier \
       >   -lm -lgfortran
@@ -133,7 +133,7 @@ Procedures
       $ gcc \
       >   -o example \
       >   example_elevate_nodes_curve.c \
-      >   -I src/fortran/include/ \
+      >   -I .../src/fortran/include \
       >   -L .../site-packages/bezier/lib \
       >   -lbezier \
       >   -lm -lgfortran
@@ -234,7 +234,7 @@ Procedures
       $ gcc \
       >   -o example \
       >   example_evaluate_curve_barycentric.c \
-      >   -I src/fortran/include/ \
+      >   -I .../src/fortran/include \
       >   -L .../site-packages/bezier/lib \
       >   -lbezier \
       >   -lm -lgfortran
@@ -300,7 +300,7 @@ Procedures
       $ gcc \
       >   -o example \
       >   example_evaluate_hodograph.c \
-      >   -I src/fortran/include/ \
+      >   -I .../src/fortran/include \
       >   -L .../site-packages/bezier/lib \
       >   -lbezier \
       >   -lm -lgfortran
@@ -374,7 +374,7 @@ Procedures
       $ gcc \
       >   -o example \
       >   example_evaluate_multi.c \
-      >   -I src/fortran/include/ \
+      >   -I .../src/fortran/include \
       >   -L .../site-packages/bezier/lib \
       >   -lbezier \
       >   -lm -lgfortran
@@ -391,7 +391,7 @@ Procedures
                                      bool *not_implemented)
 
    Perform a "full" degree reduction. Does so by using
-   :c:func:`reduce_pseudo_inverse` continually until the degree of
+   :c:func:`BEZ_reduce_pseudo_inverse` continually until the degree of
    the curve can no longer be reduced.
 
    :param int* num_nodes:
@@ -450,7 +450,7 @@ Procedures
       $ gcc \
       >   -o example \
       >   example_full_reduce.c \
-      >   -I src/fortran/include/ \
+      >   -I .../src/fortran/include \
       >   -L .../site-packages/bezier/lib \
       >   -lbezier \
       >   -lm -lgfortran
@@ -519,7 +519,7 @@ Procedures
       $ gcc \
       >   -o example \
       >   example_get_curvature.c \
-      >   -I src/fortran/include/ \
+      >   -I .../src/fortran/include \
       >   -L .../site-packages/bezier/lib \
       >   -lbezier \
       >   -lm -lgfortran
@@ -598,7 +598,7 @@ Procedures
       $ gcc \
       >   -o example \
       >   example_locate_point_curve.c \
-      >   -I src/fortran/include/ \
+      >   -I .../src/fortran/include \
       >   -L .../site-packages/bezier/lib \
       >   -lbezier \
       >   -lm -lgfortran
@@ -679,7 +679,7 @@ Procedures
       $ gcc \
       >   -o example \
       >   example_newton_refine_curve.c \
-      >   -I src/fortran/include/ \
+      >   -I .../src/fortran/include \
       >   -L .../site-packages/bezier/lib \
       >   -lbezier \
       >   -lm -lgfortran
@@ -695,7 +695,7 @@ Procedures
                                                double *reduced, \
                                                bool *not_implemented)
 
-   Perform a pseudo inverse to :c:func:`elevate_nodes_curve`. If an
+   Perform a pseudo inverse to :c:func:`BEZ_elevate_nodes_curve`. If an
    inverse can be found, i.e. if a curve can be degree-reduced, then
    this will produce the equivalent curve of lower degree. If no
    inverse can be found, then this will produce the "best" answer in
@@ -752,7 +752,7 @@ Procedures
       $ gcc \
       >   -o example \
       >   example_reduce_pseudo_inverse.c \
-      >   -I src/fortran/include/ \
+      >   -I .../src/fortran/include \
       >   -L .../site-packages/bezier/lib \
       >   -lbezier \
       >   -lm -lgfortran
@@ -831,8 +831,8 @@ Procedures
 
       $ gcc \
       >   -o example \
-      >   example_curve_specialize.c \
-      >   -I src/fortran/include/ \
+      >   example_specialize_curve.c \
+      >   -I .../src/fortran/include \
       >   -L .../site-packages/bezier/lib \
       >   -lbezier \
       >   -lm -lgfortran
@@ -903,7 +903,7 @@ Procedures
       $ gcc \
       >   -o example \
       >   example_subdivide_nodes_curve.c \
-      >   -I src/fortran/include/ \
+      >   -I .../src/fortran/include \
       >   -L .../site-packages/bezier/lib \
       >   -lbezier \
       >   -lm -lgfortran
