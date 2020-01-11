@@ -12,28 +12,32 @@ between two B |eacute| zier curves in :math:`\mathbf{R}^2`.
 Procedures
 **********
 
-.. c:function:: void BEZ_bbox_intersect(int *num_nodes1, \
-                                        double *nodes1, \
-                                        int *num_nodes2, \
-                                        double *nodes2, \
+.. c:function:: void BEZ_bbox_intersect(const int *num_nodes1, \
+                                        const double *nodes1, \
+                                        const int *num_nodes2, \
+                                        const double *nodes2, \
                                         BoxIntersectionType *enum_)
 
    Determine how the bounding boxes of two B |eacute| zier curves intersect.
 
-   :param int* num_nodes1:
+   :param num_nodes1:
       **[Input]** The number of control points :math:`N_1` of the first
       B |eacute| zier curve.
-   :param double* nodes1:
+   :type num_nodes1: const int*
+   :param nodes1:
       **[Input]** The actual control points of the first curve as a
       :math:`2 \times N_1` array. This should be laid out in Fortran order,
       with :math:`2 N_1` total values.
-   :param int* num_nodes2:
+   :type nodes1: const double*
+   :param num_nodes2:
       **[Input]** The number of control points :math:`N_2` of the second
       B |eacute| zier curve.
-   :param double* nodes2:
+   :type num_nodes2: const int*
+   :param nodes2:
       **[Input]** The actual control points of the second curve as a
       :math:`2 \times N_2` array. This should be laid out in Fortran order,
       with :math:`2 N_2` total values.
+   :type nodes2: const double*
    :param BoxIntersectionType* enum_:
       **[Output]** The type of intersection between the bounding boxes of the
       two curves.
@@ -43,17 +47,17 @@ Procedures
    .. code-block:: c
 
       void
-      BEZ_bbox_intersect(int *num_nodes1,
-                         double *nodes1,
-                         int *num_nodes2,
-                         double *nodes2,
+      BEZ_bbox_intersect(const int *num_nodes1,
+                         const double *nodes1,
+                         const int *num_nodes2,
+                         const double *nodes2,
                          BoxIntersectionType *enum_);
 
-.. c:function:: void BEZ_curve_intersections(int *num_nodes_first, \
-                                             double *nodes_first, \
-                                             int *num_nodes_second, \
-                                             double *nodes_second, \
-                                             int *intersections_size, \
+.. c:function:: void BEZ_curve_intersections(const int *num_nodes_first, \
+                                             const double *nodes_first, \
+                                             const int *num_nodes_second, \
+                                             const double *nodes_second, \
+                                             const int *intersections_size, \
                                              double *intersections, \
                                              int *num_intersections, \
                                              bool *coincident, \
@@ -82,25 +86,30 @@ Procedures
       Failed invocations can be avoided altogether if B |eacute| zout's
       theorem is used to determine the maximum number of intersections.
 
-   :param int* num_nodes_first:
+   :param num_nodes_first:
       **[Input]** The number of control points :math:`N_1` of the first
       B |eacute| zier curve.
-   :param double* nodes_first:
+   :type num_nodes_first: const int*
+   :param nodes_first:
       **[Input]** The actual control points of the first curve as a
       :math:`2 \times N_1` array. This should be laid out in Fortran order,
       with :math:`2 N_1` total values.
-   :param int* num_nodes_second:
+   :type nodes_first: const double*
+   :param num_nodes_second:
       **[Input]** The number of control points :math:`N_2` of the second
       B |eacute| zier curve.
-   :param double* nodes_second:
+   :type num_nodes_second: const int*
+   :param nodes_second:
       **[Input]** The actual control points of the second curve as a
       :math:`2 \times N_2` array. This should be laid out in Fortran order,
       with :math:`2 N_2` total values.
-   :param int* intersections_size:
+   :type nodes_second: const double*
+   :param intersections_size:
       **[Input]** The size :math:`S` of ``intersections``, which must be
       pre-allocated by the caller. By B |eacute| zout's theorem, a hard upper
       bound is :math:`S \leq (N_1 - 1)(N_2 - 2)` (since the degree of each
       curve is one less than the number of control points).
+   :type intersections_size: const int*
    :param int* intersections:
       **[Output]** The pairs of intersection points, as a :math:`2 \times S`
       array laid out in Fortran order. The first ``num_intersections``
@@ -133,22 +142,22 @@ Procedures
    .. code-block:: c
 
       void
-      BEZ_curve_intersections(int *num_nodes_first,
-                              double *nodes_first,
-                              int *num_nodes_second,
-                              double *nodes_second,
-                              int *intersections_size,
+      BEZ_curve_intersections(const int *num_nodes_first,
+                              const double *nodes_first,
+                              const int *num_nodes_second,
+                              const double *nodes_second,
+                              const int *intersections_size,
                               double *intersections,
                               int *num_intersections,
                               bool *coincident,
                               Status *status);
 
-.. c:function:: void BEZ_newton_refine_curve_intersect(double *s, \
-                                                       int *num_nodes1, \
-                                                       double *nodes1, \
-                                                       double *t, \
-                                                       int *num_nodes2, \
-                                                       double *nodes2, \
+.. c:function:: void BEZ_newton_refine_curve_intersect(const double *s, \
+                                                       const int *num_nodes1, \
+                                                       const double *nodes1, \
+                                                       const double *t, \
+                                                       const int *num_nodes2, \
+                                                       const double *nodes2, \
                                                        double *new_s, \
                                                        double *new_t, \
                                                        Status *status)
@@ -163,26 +172,32 @@ Procedures
       \left[\begin{array}{c} s_n \\ t_n \end{array}\right] -
       DF(s_n, t_n)^{-1} F(s_n, t_n).
 
-   :param double* s:
+   :param s:
       **[Input]** The first parameter :math:`s_n` of the current approximation
       of a solution.
-   :param int* num_nodes1:
+   :type s: const double*
+   :param num_nodes1:
       **[Input]** The number of control points :math:`N_1` of the first
       B |eacute| zier curve.
-   :param double* nodes1:
+   :type num_nodes1: const int*
+   :param nodes1:
       **[Input]** The actual control points of the first curve as a
       :math:`2 \times N_1` array. This should be laid out in Fortran order,
       with :math:`2 N_1` total values.
-   :param double* t:
+   :type nodes1: const double*
+   :param t:
       **[Input]** The second parameter :math:`t_n` of the current approximation
       of a solution.
-   :param int* num_nodes2:
+   :type t: const double*
+   :param num_nodes2:
       **[Input]** The number of control points :math:`N_2` of the second
       B |eacute| zier curve.
-   :param double* nodes2:
+   :type num_nodes2: const int*
+   :param nodes2:
       **[Input]** The actual control points of the second curve as a
       :math:`2 \times N_2` array. This should be laid out in Fortran order,
       with :math:`2 N_2` total values.
+   :type nodes2: const double*
    :param double* new_s:
       **[Output]** The first parameter :math:`s_{n + 1}` of the updated
       approximation.
@@ -201,12 +216,12 @@ Procedures
    .. code-block:: c
 
       void
-      BEZ_newton_refine_curve_intersect(double *s,
-                                        int *num_nodes1,
-                                        double *nodes1,
-                                        double *t,
-                                        int *num_nodes2,
-                                        double *nodes2,
+      BEZ_newton_refine_curve_intersect(const double *s,
+                                        const int *num_nodes1,
+                                        const double *nodes1,
+                                        const double *t,
+                                        const int *num_nodes2,
+                                        const double *nodes2,
                                         double *new_s,
                                         double *new_t,
                                         Status *status);

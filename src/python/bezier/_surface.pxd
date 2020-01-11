@@ -18,36 +18,40 @@ from libcpp cimport bool as bool_t
 
 cdef extern from "bezier/surface.h":
     void de_casteljau_one_round "BEZ_de_casteljau_one_round" (
-        int* num_nodes, int* dimension, double* nodes,
-        int* degree, double* lambda1, double* lambda2, double* lambda3,
-        double* new_nodes)
+        const int* num_nodes, const int* dimension,
+        const double* nodes, const int* degree, const double* lambda1,
+        const double* lambda2, const double* lambda3, double* new_nodes)
     void evaluate_barycentric "BEZ_evaluate_barycentric" (
-        int* num_nodes, int* dimension, double* nodes,
-        int* degree, double* lambda1, double* lambda2, double* lambda3,
-        double* point)
+        const int* num_nodes, const int* dimension,
+        const double* nodes, const int* degree, const double* lambda1,
+        const double* lambda2, const double* lambda3, double* point)
     void evaluate_barycentric_multi "BEZ_evaluate_barycentric_multi" (
-        int* num_nodes, int* dimension, double* nodes,
-        int* degree, int* num_vals, double* param_vals, double* evaluated)
+        const int* num_nodes, const int* dimension,
+        const double* nodes, const int* degree, const int* num_vals,
+        const double* param_vals, double* evaluated)
     void evaluate_cartesian_multi "BEZ_evaluate_cartesian_multi" (
-        int* num_nodes, int* dimension, double* nodes,
-        int* degree, int* num_vals, double* param_vals, double* evaluated)
+        const int* num_nodes, const int* dimension,
+        const double* nodes, const int* degree, const int* num_vals,
+        const double* param_vals, double* evaluated)
     void jacobian_both "BEZ_jacobian_both" (
-        int* num_nodes, int* dimension, double* nodes, int* degree,
-        double* new_nodes)
+        const int* num_nodes, const int* dimension,
+        const double* nodes, const int* degree, double* new_nodes)
     void jacobian_det "BEZ_jacobian_det" (
-        int* num_nodes, double* nodes, int* degree, int* num_vals,
-        double* param_vals, double* evaluated)
+        const int* num_nodes, const double* nodes,
+        const int* degree, const int* num_vals, const double* param_vals,
+        double* evaluated)
     void specialize_surface "BEZ_specialize_surface" (
-        int* num_nodes, int* dimension, double* nodes,
-        int* degree, double* weights_a, double* weights_b, double* weights_c,
-        double* specialized)
+        const int* num_nodes, const int* dimension,
+        const double* nodes, const int* degree, const double* weights_a,
+        const double* weights_b, const double* weights_c, double* specialized)
     void subdivide_nodes_surface "BEZ_subdivide_nodes_surface" (
-        int* num_nodes, int* dimension, double* nodes,
-        int* degree, double* nodes_a, double* nodes_b, double* nodes_c,
-        double* nodes_d)
+        const int* num_nodes, const int* dimension,
+        const double* nodes, const int* degree, double* nodes_a, double* nodes_b,
+        double* nodes_c, double* nodes_d)
     void compute_edge_nodes "BEZ_compute_edge_nodes" (
-        int* num_nodes, int* dimension, double* nodes,
-        int* degree, double* nodes1, double* nodes2, double* nodes3)
+        const int* num_nodes, const int* dimension,
+        const double* nodes, const int* degree, double* nodes1, double* nodes2,
+        double* nodes3)
     void compute_area "BEZ_compute_area" (
-        int* num_edges, int* sizes, double** nodes_pointers,
-        double* area, bool_t* not_implemented)
+        int* num_edges, int* sizes,
+        const double* const* nodes_pointers, double* area, bool_t* not_implemented)

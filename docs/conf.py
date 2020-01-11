@@ -45,7 +45,9 @@ needs_sphinx = "1.7.0"
 nitpicky = True
 # ``bool`` is not a stopword but ``_Bool`` is, because only ``_Bool``
 # is in the language (``bool`` requires ``<stdbool.h>``)
-sphinx.domains.c.CObject.stopwords.add("bool")
+sphinx.domains.c.CObject.stopwords.update(
+    ("bool", "const double", "const double* const", "const int")
+)
 nitpick_ignore = [("py:class", "bezier._base.Base")]
 
 # Add any Sphinx extension module names here, as strings. They can be

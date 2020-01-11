@@ -14,9 +14,9 @@ B |eacute| zier `curve`_.
 Procedures
 **********
 
-.. c:function:: void BEZ_compute_length(int *num_nodes, \
-                                        int *dimension, \
-                                        double *nodes, \
+.. c:function:: void BEZ_compute_length(const int *num_nodes, \
+                                        const int *dimension, \
+                                        const double *nodes, \
                                         double *length, \
                                         int *error_val)
 
@@ -26,16 +26,19 @@ Procedures
 
       \ell = \int_0^1 \left\lVert B'(s) \right\rVert \, ds.
 
-   :param int* num_nodes:
+   :param num_nodes:
       **[Input]** The number of control points :math:`N` of a
       B |eacute| zier curve.
-   :param int* dimension:
+   :type num_nodes: const int*
+   :param dimension:
       **[Input]** The dimension :math:`D` such that the curve lies in
       :math:`\mathbf{R}^D`.
-   :param double* nodes:
+   :type dimension: const int*
+   :param nodes:
       **[Input]** The actual control points of the curve as a
       :math:`D \times N` array. This should be laid out in Fortran order,
       with :math:`D N` total values.
+   :type nodes: const double*
    :param double* length:
       **[Output]** The computed length :math:`\ell`.
    :param int* error_val:
@@ -47,9 +50,9 @@ Procedures
    .. code-block:: c
 
       void
-      BEZ_compute_length(int *num_nodes,
-                         int *dimension,
-                         double *nodes,
+      BEZ_compute_length(const int *num_nodes,
+                         const int *dimension,
+                         const double *nodes,
                          double *length,
                          int *error_val);
 
@@ -76,9 +79,9 @@ Procedures
       Length: 5.000000
       Error value: 0
 
-.. c:function:: void BEZ_elevate_nodes_curve(int *num_nodes, \
-                                             int *dimension, \
-                                             double *nodes, \
+.. c:function:: void BEZ_elevate_nodes_curve(const int *num_nodes, \
+                                             const int *dimension, \
+                                             const double *nodes, \
                                              double *elevated)
 
    Degree-elevate a B |eacute| zier curve. Does so by producing
@@ -86,16 +89,19 @@ Procedures
 
    See :meth:`.Curve.elevate` for more details.
 
-   :param int* num_nodes:
+   :param num_nodes:
       **[Input]** The number of control points :math:`N` of a
       B |eacute| zier curve.
-   :param int* dimension:
+   :type num_nodes: const int*
+   :param dimension:
       **[Input]** The dimension :math:`D` such that the curve lies in
       :math:`\mathbf{R}^D`.
-   :param double* nodes:
+   :type dimension: const int*
+   :param nodes:
       **[Input]** The actual control points of the curve as a
       :math:`D \times N` array. This should be laid out in Fortran order,
       with :math:`D N` total values.
+   :type nodes: const double*
    :param double* elevated:
       **[Output]** The control points of the degree-elevated curve as a
       :math:`D \times (N + 1)` array, laid out in Fortran order.
@@ -105,9 +111,9 @@ Procedures
    .. code-block:: c
 
       void
-      BEZ_elevate_nodes_curve(int *num_nodes,
-                              int *dimension,
-                              double *nodes,
+      BEZ_elevate_nodes_curve(const int *num_nodes,
+                              const int *dimension,
+                              const double *nodes,
                               double *elevated);
 
    **Example:**
@@ -145,12 +151,12 @@ Procedures
    .. image:: ../images/curve_elevate.png
       :align: center
 
-.. c:function:: void BEZ_evaluate_curve_barycentric(int *num_nodes, \
-                                                    int *dimension, \
-                                                    double *nodes, \
-                                                    int *num_vals, \
-                                                    double *lambda1, \
-                                                    double *lambda2, \
+.. c:function:: void BEZ_evaluate_curve_barycentric(const int *num_nodes, \
+                                                    const int *dimension, \
+                                                    const double *nodes, \
+                                                    const int *num_vals, \
+                                                    const double *lambda1, \
+                                                    const double *lambda2, \
                                                     double *evaluated)
 
    For a B |eacute| zier curve with control points :math:`p_0, \ldots, p_d`,
@@ -164,25 +170,31 @@ Procedures
    The typical case is barycentric, i.e. :math:`\lambda_1 + \lambda_2 = 1`, but
    this is not required.
 
-   :param int* num_nodes:
+   :param num_nodes:
       **[Input]** The number of control points :math:`N` of a
       B |eacute| zier curve.
-   :param int* dimension:
+   :type num_nodes: const int*
+   :param dimension:
       **[Input]** The dimension :math:`D` such that the curve lies in
       :math:`\mathbf{R}^D`.
-   :param double* nodes:
+   :type dimension: const int*
+   :param nodes:
       **[Input]** The actual control points of the curve as a
       :math:`D \times N` array. This should be laid out in Fortran order,
       with :math:`D N` total values.
-   :param int* num_vals:
+   :type nodes: const double*
+   :param num_vals:
       **[Input]** The number of values :math:`k` where the quantity will be
       evaluated.
-   :param double* lambda1:
+   :type num_vals: const int*
+   :param lambda1:
       **[Input]** An array of :math:`k` values used for the first parameter
       :math:`\lambda_1`.
-   :param double* lambda2:
+   :type lambda1: const double*
+   :param lambda2:
       **[Input]** An array of :math:`k` values used for the second parameter
       :math:`\lambda_2`.
+   :type lambda2: const double*
    :param double* evaluated:
       **[Output]** The evaluated quantites as a :math:`D \times k` array, laid
       out in Fortran order. Column :math:`j` of ``evaluated`` will contain
@@ -193,12 +205,12 @@ Procedures
    .. code-block:: c
 
       void
-      BEZ_evaluate_curve_barycentric(int *num_nodes,
-                                     int *dimension,
-                                     double *nodes,
-                                     int *num_vals,
-                                     double *lambda1,
-                                     double *lambda2,
+      BEZ_evaluate_curve_barycentric(const int *num_nodes,
+                                     const int *dimension,
+                                     const double *nodes,
+                                     const int *num_vals,
+                                     const double *lambda1,
+                                     const double *lambda2,
                                      double *evaluated);
 
    **Example:**
@@ -243,28 +255,32 @@ Procedures
       2.437500, 0.687500, 0.750000, 1.187500
       2.125000, 0.687500, 0.750000, 1.687500
 
-.. c:function:: void BEZ_evaluate_hodograph(double *s, \
-                                            int *num_nodes, \
-                                            int *dimension, \
-                                            double *nodes, \
+.. c:function:: void BEZ_evaluate_hodograph(const double *s, \
+                                            const int *num_nodes, \
+                                            const int *dimension, \
+                                            const double *nodes, \
                                             double *hodograph)
 
    Evaluates the hodograph (or derivative) of a B |eacute| zier curve
    function :math:`B'(s)`.
 
-   :param double* s:
+   :param s:
       **[Input]** The parameter :math:`s` where the hodograph is being
       computed.
-   :param int* num_nodes:
+   :type s: const double*
+   :param num_nodes:
       **[Input]** The number of control points :math:`N` of a
       B |eacute| zier curve.
-   :param int* dimension:
+   :type num_nodes: const int*
+   :param dimension:
       **[Input]** The dimension :math:`D` such that the curve lies in
       :math:`\mathbf{R}^D`.
-   :param double* nodes:
+   :type dimension: const int*
+   :param nodes:
       **[Input]** The actual control points of the curve as a
       :math:`D \times N` array. This should be laid out in Fortran order,
       with :math:`D N` total values.
+   :type nodes: const double*
    :param double* hodograph:
       **[Output]** The hodograph :math:`B'(s)` as a :math:`D \times 1` array.
 
@@ -273,10 +289,10 @@ Procedures
    .. code-block:: c
 
       void
-      BEZ_evaluate_hodograph(double *s,
-                             int *num_nodes,
-                             int *dimension,
-                             double *nodes,
+      BEZ_evaluate_hodograph(const double *s,
+                             const int *num_nodes,
+                             const int *dimension,
+                             const double *nodes,
                              double *hodograph);
 
    **Example:**
@@ -309,31 +325,36 @@ Procedures
       0.656250
       1.687500
 
-.. c:function:: void BEZ_evaluate_multi(int *num_nodes, \
-                                        int *dimension, \
-                                        double *nodes, \
-                                        int *num_vals, \
-                                        double *s_vals, \
+.. c:function:: void BEZ_evaluate_multi(const int *num_nodes, \
+                                        const int *dimension, \
+                                        const double *nodes, \
+                                        const int *num_vals, \
+                                        const double *s_vals, \
                                         double *evaluated)
 
    Evaluate a B |eacute| zier curve function :math:`B(s_j)` at
    multiple values :math:`\left\{s_j\right\}_j`.
 
-   :param int* num_nodes:
+   :param num_nodes:
       **[Input]** The number of control points :math:`N` of a
       B |eacute| zier curve.
-   :param int* dimension:
+   :type num_nodes: const int*
+   :param dimension:
       **[Input]** The dimension :math:`D` such that the curve lies in
       :math:`\mathbf{R}^D`.
-   :param double* nodes:
+   :type dimension: const int*
+   :param nodes:
       **[Input]** The actual control points of the curve as a
       :math:`D \times N` array. This should be laid out in Fortran order,
       with :math:`D N` total values.
-   :param int* num_vals:
+   :type nodes: const double*
+   :param num_vals:
       **[Input]** The number of values :math:`k` where the :math:`B(s)` will be
       evaluated.
-   :param double* s_vals:
+   :type num_vals: const int*
+   :param s_vals:
       **[Input]** An array of :math:`k` values :math:`s_j`.
+   :type s_vals: const double*
    :param double* evaluated:
       **[Output]** The evaluated points as a :math:`D \times k` array, laid
       out in Fortran order. Column :math:`j` of ``evaluated`` will contain
@@ -344,11 +365,11 @@ Procedures
    .. code-block:: c
 
       void
-      BEZ_evaluate_multi(int *num_nodes,
-                         int *dimension,
-                         double *nodes,
-                         int *num_vals,
-                         double *s_vals,
+      BEZ_evaluate_multi(const int *num_nodes,
+                         const int *dimension,
+                         const double *nodes,
+                         const int *num_vals,
+                         const double *s_vals,
                          double *evaluated);
 
    **Example:**
@@ -383,10 +404,10 @@ Procedures
       1.000000, 1.500000, 2.000000
       0.000000, 0.500000, 1.000000
 
-.. c:function:: void BEZ_full_reduce(int *num_nodes, \
-                                     int *dimension, \
-                                     double *nodes, \
-                                     int *num_reduced_nodes, \
+.. c:function:: void BEZ_full_reduce(const int *num_nodes, \
+                                     const int *dimension, \
+                                     const double *nodes, \
+                                     const int *num_reduced_nodes, \
                                      double *reduced, \
                                      bool *not_implemented)
 
@@ -394,19 +415,23 @@ Procedures
    :c:func:`BEZ_reduce_pseudo_inverse` continually until the degree of
    the curve can no longer be reduced.
 
-   :param int* num_nodes:
+   :param num_nodes:
       **[Input]** The number of control points :math:`N` of a
       B |eacute| zier curve.
-   :param int* dimension:
+   :type num_nodes: const int*
+   :param dimension:
       **[Input]** The dimension :math:`D` such that the curve lies in
       :math:`\mathbf{R}^D`.
-   :param double* nodes:
+   :type dimension: const int*
+   :param nodes:
       **[Input]** The actual control points of the curve as a
       :math:`D \times N` array. This should be laid out in Fortran order,
       with :math:`D N` total values.
-   :param int* num_reduced_nodes:
+   :type nodes: const double*
+   :param num_reduced_nodes:
       **[Output]** The number of control points :math:`M` of the fully reduced
       curve.
+   :type num_reduced_nodes: const int*
    :param double* reduced:
       **[Output]** The control points of the fully reduced curve as a
       :math:`D \times N` array. The first :math:`M` columns will contain the
@@ -423,10 +448,10 @@ Procedures
    .. code-block:: c
 
       void
-      BEZ_full_reduce(int *num_nodes,
-                      int *dimension,
-                      double *nodes,
-                      int *num_reduced_nodes,
+      BEZ_full_reduce(const int *num_nodes,
+                      const int *dimension,
+                      const double *nodes,
+                      const int *num_reduced_nodes,
                       double *reduced,
                       bool *not_implemented);
 
@@ -461,10 +486,10 @@ Procedures
       3.000000, 5.000000
       Not implemented: FALSE
 
-.. c:function:: void BEZ_get_curvature(int *num_nodes, \
-                                       double *nodes, \
-                                       double *tangent_vec, \
-                                       double *s, \
+.. c:function:: void BEZ_get_curvature(const int *num_nodes, \
+                                       const double *nodes, \
+                                       const double *tangent_vec, \
+                                       const double *s, \
                                        double *curvature)
 
    Get the signed curvature of a B |eacute| zier curve at a point. See
@@ -476,20 +501,24 @@ Procedures
       in :math:`\mathbf{R}^2`). An equivalent notion of curvature exists for
       space curves, but support for that is not implemented here.
 
-   :param int* num_nodes:
+   :param num_nodes:
       **[Input]** The number of control points :math:`N` of a
       B |eacute| zier curve.
-   :param double* nodes:
+   :type num_nodes: const int*
+   :param nodes:
       **[Input]** The actual control points of the curve as a
       :math:`2 \times N` array. This should be laid out in Fortran order,
       with :math:`2 N` total values.
-   :param double* tangent_vec:
+   :type nodes: const double*
+   :param tangent_vec:
       **[Input]** The hodograph :math:`B'(s)` as a :math:`2 \times 1` array.
       Note that this could be computed once :math:`s` and :math:`B` are known,
       but this allows the caller to re-use an already computed tangent vector.
-   :param double* s:
+   :type tangent_vec: const double*
+   :param s:
       **[Input]** The parameter :math:`s` where the curvature is being
       computed.
+   :type s: const double*
    :param double* curvature:
       **[Output]** The signed curvature :math:`\kappa`.
 
@@ -498,10 +527,10 @@ Procedures
    .. code-block:: c
 
       void
-      BEZ_get_curvature(int *num_nodes,
-                        double *nodes,
-                        double *tangent_vec,
-                        double *s,
+      BEZ_get_curvature(const int *num_nodes,
+                        const double *nodes,
+                        const double *tangent_vec,
+                        const double *s,
                         double *curvature);
 
    **Example:**
@@ -526,10 +555,10 @@ Procedures
       $ ./example
       Curvature: -12.000000
 
-.. c:function:: void BEZ_locate_point_curve(int *num_nodes, \
-                                            int *dimension, \
-                                            double *nodes, \
-                                            double *point, \
+.. c:function:: void BEZ_locate_point_curve(const int *num_nodes, \
+                                            const int *dimension, \
+                                            const double *nodes, \
+                                            const double *point, \
                                             double *s_approx)
 
    This solves the inverse problem :math:`B(s) = p` (if it can be
@@ -537,18 +566,22 @@ Procedures
    sufficiently small, then using Newton's method to narrow in on the
    pre-image of the point.
 
-   :param int* num_nodes:
+   :param num_nodes:
       **[Input]** The number of control points :math:`N` of a
       B |eacute| zier curve.
-   :param int* dimension:
+   :type num_nodes: const int*
+   :param dimension:
       **[Input]** The dimension :math:`D` such that the curve lies in
       :math:`\mathbf{R}^D`.
-   :param double* nodes:
+   :type dimension: const int*
+   :param nodes:
       **[Input]** The actual control points of the curve as a
       :math:`D \times N` array. This should be laid out in Fortran order,
       with :math:`D N` total values.
-   :param double* point:
+   :type nodes: const double*
+   :param point:
       **[Input]** The point :math:`p` as a :math:`D \times 1` array.
+   :type point: const double*
    :param double* s_approx:
       **[Output]** The parameter :math:`s` of the solution. If
       :math:`p` can't be located on the curve, then ``s_approx = -1.0``.
@@ -561,10 +594,10 @@ Procedures
    .. code-block:: c
 
       void
-      BEZ_locate_point_curve(int *num_nodes,
-                             int *dimension,
-                             double *nodes,
-                             double *point,
+      BEZ_locate_point_curve(const int *num_nodes,
+                             const int *dimension,
+                             const double *nodes,
+                             const double *point,
                              double *s_approx);
 
    **Example:**
@@ -610,11 +643,11 @@ Procedures
    .. image:: ../images/curve_locate.png
       :align: center
 
-.. c:function:: void BEZ_newton_refine_curve(int *num_nodes, \
-                                             int *dimension, \
-                                             double *nodes, \
-                                             double *point, \
-                                             double *s, \
+.. c:function:: void BEZ_newton_refine_curve(const int *num_nodes, \
+                                             const int *dimension, \
+                                             const double *nodes, \
+                                             const double *point, \
+                                             const double *s, \
                                              double *updated_s)
 
    This refines a solution to :math:`B(s) = p` using Newton's
@@ -626,21 +659,26 @@ Procedures
       s_{n + 1} = s_n - \frac{B'(s_n)^T \left[B(s_n) - p\right]}{
           B'(s_n)^T B'(s_n)}.
 
-   :param int* num_nodes:
+   :param num_nodes:
       **[Input]** The number of control points :math:`N` of a
       B |eacute| zier curve.
-   :param int* dimension:
+   :type num_nodes: const int*
+   :param dimension:
       **[Input]** The dimension :math:`D` such that the curve lies in
       :math:`\mathbf{R}^D`.
-   :param double* nodes:
+   :type dimension: const int*
+   :param nodes:
       **[Input]** The actual control points of the curve as a
       :math:`D \times N` array. This should be laid out in Fortran order,
       with :math:`D N` total values.
-   :param double* point:
+   :type nodes: const double*
+   :param point:
       **[Input]** The point :math:`p` as a :math:`D \times 1` array.
-   :param double* s:
+   :type point: const double*
+   :param s:
       **[Input]** The parameter :math:`s_n` of the current approximation
       of a solution.
+   :type s: const double*
    :param double* updated_s:
       **[Output]** The parameter :math:`s_{n + 1}` of the updated
       approximation.
@@ -650,11 +688,11 @@ Procedures
    .. code-block:: c
 
       void
-      BEZ_newton_refine_curve(int *num_nodes,
-                              int *dimension,
-                              double *nodes,
-                              double *point,
-                              double *s,
+      BEZ_newton_refine_curve(const int *num_nodes,
+                              const int *dimension,
+                              const double *nodes,
+                              const double *point,
+                              const double *s,
                               double *updated_s);
 
    **Example:**
@@ -689,9 +727,9 @@ Procedures
    .. image:: ../images/newton_refine_curve.png
       :align: center
 
-.. c:function:: void BEZ_reduce_pseudo_inverse(int *num_nodes, \
-                                               int *dimension, \
-                                               double *nodes, \
+.. c:function:: void BEZ_reduce_pseudo_inverse(const int *num_nodes, \
+                                               const int *dimension, \
+                                               const double *nodes, \
                                                double *reduced, \
                                                bool *not_implemented)
 
@@ -701,16 +739,19 @@ Procedures
    inverse can be found, then this will produce the "best" answer in
    the least squares sense.
 
-   :param int* num_nodes:
+   :param num_nodes:
       **[Input]** The number of control points :math:`N` of a
       B |eacute| zier curve.
-   :param int* dimension:
+   :type num_nodes: const int*
+   :param dimension:
       **[Input]** The dimension :math:`D` such that the curve lies in
       :math:`\mathbf{R}^D`.
-   :param double* nodes:
+   :type dimension: const int*
+   :param nodes:
       **[Input]** The actual control points of the curve as a
       :math:`D \times N` array. This should be laid out in Fortran order,
       with :math:`D N` total values.
+   :type nodes: const double*
    :param double* reduced:
       **[Output]** The control points of the degree-(pseudo)reduced curve
       :math:`D \times (N - 1)` array, laid out in Fortran order.
@@ -724,9 +765,9 @@ Procedures
    .. code-block:: c
 
       void
-      BEZ_reduce_pseudo_inverse(int *num_nodes,
-                                int *dimension,
-                                double *nodes,
+      BEZ_reduce_pseudo_inverse(const int *num_nodes,
+                                const int *dimension,
+                                const double *nodes,
                                 double *reduced,
                                 bool *not_implemented);
 
@@ -765,31 +806,36 @@ Procedures
    .. image:: ../images/curve_reduce.png
       :align: center
 
-.. c:function:: void BEZ_specialize_curve(int *num_nodes, \
-                                          int *dimension, \
-                                          double *nodes, \
-                                          double *start, \
-                                          double *end, \
+.. c:function:: void BEZ_specialize_curve(const int *num_nodes, \
+                                          const int *dimension, \
+                                          const double *nodes, \
+                                          const double *start, \
+                                          const double *end, \
                                           double *new_nodes)
 
    Specialize a B |eacute| zier curve to an interval
    :math:`\left[a, b\right]`. This produces the control points
    for the curve given by :math:`B\left(a + (b - a) s\right)`.
 
-   :param int* num_nodes:
+   :param num_nodes:
       **[Input]** The number of control points :math:`N` of a
       B |eacute| zier curve.
-   :param int* dimension:
+   :type num_nodes: const int*
+   :param dimension:
       **[Input]** The dimension :math:`D` such that the curve lies in
       :math:`\mathbf{R}^D`.
-   :param double* nodes:
+   :type dimension: const int*
+   :param nodes:
       **[Input]** The actual control points of the curve as a
       :math:`D \times N` array. This should be laid out in Fortran order,
       with :math:`D N` total values.
-   :param double* start:
+   :type nodes: const double*
+   :param start:
       **[Input]** The start :math:`a` of the specialized interval.
-   :param double* end:
+   :type start: const double*
+   :param end:
       **[Input]** The end :math:`b` of the specialized interval.
+   :type end: const double*
    :param double* new_nodes:
       **[Output]** The control points of the specialized curve, as a
       :math:`D \times N` array, laid out in Fortran order.
@@ -799,11 +845,11 @@ Procedures
    .. code-block:: c
 
       void
-      BEZ_specialize_curve(int *num_nodes,
-                           int *dimension,
-                           double *nodes,
-                           double *start,
-                           double *end,
+      BEZ_specialize_curve(const int *num_nodes,
+                           const int *dimension,
+                           const double *nodes,
+                           const double *start,
+                           const double *end,
                            double *new_nodes);
 
    **Example:**
@@ -844,9 +890,9 @@ Procedures
    .. image:: ../images/curve_specialize.png
       :align: center
 
-.. c:function:: void BEZ_subdivide_nodes_curve(int *num_nodes, \
-                                               int *dimension, \
-                                               double *nodes, \
+.. c:function:: void BEZ_subdivide_nodes_curve(const int *num_nodes, \
+                                               const int *dimension, \
+                                               const double *nodes, \
                                                double *left_nodes, \
                                                double *right_nodes)
 
@@ -854,16 +900,19 @@ Procedures
    :math:`B\left(\left[0, \frac{1}{2}\right]\right)` and
    :math:`B\left(\left[\frac{1}{2}, 1\right]\right)`.
 
-   :param int* num_nodes:
+   :param num_nodes:
       **[Input]** The number of control points :math:`N` of a
       B |eacute| zier curve.
-   :param int* dimension:
+   :type num_nodes: const int*
+   :param dimension:
       **[Input]** The dimension :math:`D` such that the curve lies in
       :math:`\mathbf{R}^D`.
-   :param double* nodes:
+   :type dimension: const int*
+   :param nodes:
       **[Input]** The actual control points of the curve as a
       :math:`D \times N` array. This should be laid out in Fortran order,
       with :math:`D N` total values.
+   :type nodes: const double*
    :param double* left_nodes:
       **[Output]** The control points of the left half curve
       :math:`B\left(\left[0, \frac{1}{2}\right]\right)` as a
@@ -878,9 +927,9 @@ Procedures
    .. code-block:: c
 
       void
-      BEZ_subdivide_nodes_curve(int *num_nodes,
-                                int *dimension,
-                                double *nodes,
+      BEZ_subdivide_nodes_curve(const int *num_nodes,
+                                const int *dimension,
+                                const double *nodes,
                                 double *left_nodes,
                                 double *right_nodes);
 

@@ -25,15 +25,16 @@ cdef extern from "bezier/curve_intersection.h":
         DISJOINT = 2
 
     void newton_refine_curve_intersect "BEZ_newton_refine_curve_intersect" (
-        double* s, int* num_nodes1, double* nodes1,
-        double* t, int* num_nodes2, double* nodes2, double* new_s, double* new_t,
-        Status* status)
+        const double* s, const int* num_nodes1,
+        const double* nodes1, const double* t, const int* num_nodes2,
+        const double* nodes2, double* new_s, double* new_t, Status* status)
     void bbox_intersect "BEZ_bbox_intersect" (
-        int* num_nodes1, double* nodes1, int* num_nodes2,
-        double* nodes2, BoxIntersectionType* enum_)
+        const int* num_nodes1, const double* nodes1,
+        const int* num_nodes2, const double* nodes2, BoxIntersectionType* enum_)
     void curve_intersections "BEZ_curve_intersections" (
-        int* num_nodes_first, double* nodes_first,
-        int* num_nodes_second, double* nodes_second, int* intersections_size,
-        double* intersections, int* num_intersections, bool_t* coincident,
+        const int* num_nodes_first,
+        const double* nodes_first, const int* num_nodes_second,
+        const double* nodes_second, const int* intersections_size,
+        double* intersections, const int* num_intersections, bool_t* coincident,
         Status* status)
     void free_curve_intersections_workspace "BEZ_free_curve_intersections_workspace" ()

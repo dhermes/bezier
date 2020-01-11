@@ -74,6 +74,13 @@ Breaking Changes
    (`#167 <https://github.com/dhermes/bezier/pull/167>`__).
    Fixed `#166 <https://github.com/dhermes/bezier/issues/166>`__.
 
+Additive Changes
+~~~~~~~~~~~~~~~~
+
+-  Changed all ``[in]`` arguments in C headers to ``const`` pointers
+   (`#169 <https://github.com/dhermes/bezier/pull/169>`__).
+   Fixed `#168 <https://github.com/dhermes/bezier/issues/168>`__.
+
 Bug Fixes
 ---------
 
