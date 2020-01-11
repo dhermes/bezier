@@ -167,19 +167,19 @@ cited. The following BibTeX entry can be used:
 
 .. code-block:: rest
 
-   @article{Hermes2017,
-     doi = {10.21105/joss.00267},
-     url = {https://doi.org/10.21105%2Fjoss.00267},
-     year = {2017},
-     month = {Aug},
-     publisher = {The Open Journal},
-     volume = {2},
-     number = {16},
-     pages = {267},
-     author = {Danny Hermes},
-     title = {Helper for B{\'{e}}zier Curves, Triangles, and Higher Order Objects},
-     journal = {The Journal of Open Source Software}
-   }
+   @article{{Hermes2017,
+     doi = {{10.21105/joss.00267}},
+     url = {{https://doi.org/10.21105%2Fjoss.00267}},
+     year = {{2017}},
+     month = {{Aug}},
+     publisher = {{The Open Journal}},
+     volume = {{2}},
+     number = {{16}},
+     pages = {{267}},
+     author = {{Danny Hermes}},
+     title = {{Helper for B{{\'{{e}}}}zier Curves, Triangles, and Higher Order Objects}},
+     journal = {{The Journal of Open Source Software}}
+   }}
 
 A **particular** version of this library can be cited via a Zenodo DOI; see
 a full `list by version`_.
