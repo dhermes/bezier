@@ -46,7 +46,7 @@ void BEZ_compute_edge_nodes(const int* num_nodes, const int* dimension,
     const double* nodes, const int* degree, double* nodes1, double* nodes2,
     double* nodes3);
 void BEZ_compute_area(int* num_edges, int* sizes,
-    const double** nodes_pointers, double* area, bool* not_implemented);
+    const double* const* nodes_pointers, double* area, bool* not_implemented);
 
 #if defined(__cplusplus)
 }

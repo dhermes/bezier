@@ -54,4 +54,4 @@ cdef extern from "bezier/surface.h":
         double* nodes3)
     void compute_area "BEZ_compute_area" (
         int* num_edges, int* sizes,
-        const double** nodes_pointers, double* area, bool_t* not_implemented)
+        const double* const* nodes_pointers, double* area, bool_t* not_implemented)

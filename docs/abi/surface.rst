@@ -25,7 +25,7 @@ Procedures
 
 .. c:function:: void BEZ_compute_area(const int *num_edges, \
                                       const int *sizes, \
-                                      const double **nodes_pointers, \
+                                      const double* const* nodes_pointers, \
                                       double *area, \
                                       bool *not_implemented)
 
@@ -46,8 +46,10 @@ Procedures
    :param nodes_pointers:
       **[Input]** An array of :math:`N` pointers. Pointer :math:`j` points to
       the start of the edge :math:`E_j` along the boundary of the curved
-      polygon.
-   :type nodes_pointers: const double**
+      polygon. (This is a ``const`` array of ``const`` pointers, i.e. the
+      ``double**`` pointer array cannot be modified and the underlying
+      ``double*`` arrays pointed to by each element cannot be modified.)
+   :type nodes_pointers: const double* const*
    :param double* area:
       **[Output]** The computed area of the curved polygon. If
       ``not_implemented`` is ``TRUE``, then this is undefined.
@@ -63,7 +65,7 @@ Procedures
       void
       BEZ_compute_area(const int *num_edges,
                        const int *sizes,
-                       const double **nodes_pointers,
+                       const double* const* nodes_pointers,
                        double *area,
                        bool *not_implemented);
 
