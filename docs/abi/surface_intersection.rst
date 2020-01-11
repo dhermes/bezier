@@ -23,11 +23,11 @@ the B |eacute| zier curve segments that form the exterior.
 Procedures
 **********
 
-.. c:function:: void BEZ_locate_point_surface(int *num_nodes, \
-                                              double *nodes, \
-                                              int *degree, \
-                                              double *x_val, \
-                                              double *y_val, \
+.. c:function:: void BEZ_locate_point_surface(const int *num_nodes, \
+                                              const double *nodes, \
+                                              const int *degree, \
+                                              const double *x_val, \
+                                              const double *y_val, \
                                               double *s_val, \
                                               double *t_val)
 
@@ -40,19 +40,24 @@ Procedures
    throughout the unit triangle. (If this were not true, then multiple
    inputs could map to the same output.)
 
-   :param int* num_nodes:
+   :param num_nodes:
       **[Input]** The number of nodes :math:`N` in the control net of the
       B |eacute| zier surface.
-   :param double* nodes:
+   :type num_nodes: const int*
+   :param nodes:
       **[Input]** The actual control net of the B |eacute| zier surface as a
       :math:`2 \times N` array. This should be laid out in Fortran order, with
       :math:`2 N` total values.
-   :param int* degree:
+   :type nodes: const double*
+   :param degree:
       **[Input]** The degree :math:`d` of the B |eacute| zier surface.
-   :param double* x_val:
+   :type degree: const int*
+   :param x_val:
       **[Input]** The :math:`x`\-value of the point being located.
-   :param double* y_val:
+   :type x_val: const double*
+   :param y_val:
       **[Input]** The :math:`y`\-value of the point being located.
+   :type y_val: const double*
    :param double* s_val:
       **[Output]** The first parameter :math:`s` of the solution. If
       :math:`(x, y)` can't be located on the surface, then ``s_val = -1.0``.
@@ -66,21 +71,21 @@ Procedures
    .. code-block:: c
 
       void
-      BEZ_locate_point_surface(int *num_nodes,
-                               double *nodes,
-                               int *degree,
-                               double *x_val,
-                               double *y_val,
+      BEZ_locate_point_surface(const int *num_nodes,
+                               const double *nodes,
+                               const int *degree,
+                               const double *x_val,
+                               const double *y_val,
                                double *s_val,
                                double *t_val);
 
-.. c:function:: void BEZ_newton_refine_surface(int *num_nodes, \
-                                               double *nodes, \
-                                               int *degree, \
-                                               double *x_val, \
-                                               double *y_val, \
-                                               double *s, \
-                                               double *t, \
+.. c:function:: void BEZ_newton_refine_surface(const int *num_nodes, \
+                                               const double *nodes, \
+                                               const int *degree, \
+                                               const double *x_val, \
+                                               const double *y_val, \
+                                               const double *s, \
+                                               const double *t, \
                                                double *updated_s, \
                                                double *updated_t)
 
@@ -94,25 +99,32 @@ Procedures
       \left[\begin{array}{c} s_n \\ t_n \end{array}\right] -
       DB(s_n, t_n)^{-1} \left(B(s_n, t_n) - p\right).
 
-   :param int* num_nodes:
+   :param num_nodes:
       **[Input]** The number of nodes :math:`N` in the control net of the
       B |eacute| zier surface.
-   :param double* nodes:
+   :type num_nodes: const int*
+   :param nodes:
       **[Input]** The actual control net of the B |eacute| zier surface as a
       :math:`2 \times N` array. This should be laid out in Fortran order, with
       :math:`2 N` total values.
-   :param int* degree:
+   :type nodes: const double*
+   :param degree:
       **[Input]** The degree :math:`d` of the B |eacute| zier surface.
-   :param double* x_val:
+   :type degree: const int*
+   :param x_val:
       **[Input]** The :math:`x`\-value of the point :math:`p`.
-   :param double* y_val:
+   :type x_val: const double*
+   :param y_val:
       **[Input]** The :math:`y`\-value of the point :math:`p`.
-   :param double* s:
+   :type y_val: const double*
+   :param s:
       **[Input]** The first parameter :math:`s_n` of the current approximation
       of a solution.
-   :param double* t:
+   :type s: const double*
+   :param t:
       **[Input]** The second parameter :math:`t_n` of the current approximation
       of a solution.
+   :type t: const double*
    :param double* updated_s:
       **[Output]** The first parameter :math:`s_{n + 1}` of the updated
       approximation.
@@ -125,25 +137,25 @@ Procedures
    .. code-block:: c
 
       void
-      BEZ_newton_refine_surface(int *num_nodes,
-                                double *nodes,
-                                int *degree,
-                                double *x_val,
-                                double *y_val,
-                                double *s,
-                                double *t,
+      BEZ_newton_refine_surface(const int *num_nodes,
+                                const double *nodes,
+                                const int *degree,
+                                const double *x_val,
+                                const double *y_val,
+                                const double *s,
+                                const double *t,
                                 double *updated_s,
                                 double *updated_t);
 
-.. c:function:: void BEZ_surface_intersections(int *num_nodes1, \
-                                               double *nodes1, \
-                                               int *degree1, \
-                                               int *num_nodes2, \
-                                               double *nodes2, \
-                                               int *degree2, \
-                                               int *segment_ends_size, \
+.. c:function:: void BEZ_surface_intersections(const int *num_nodes1, \
+                                               const double *nodes1, \
+                                               const int *degree1, \
+                                               const int *num_nodes2, \
+                                               const double *nodes2, \
+                                               const int *degree2, \
+                                               const int *segment_ends_size, \
                                                int *segment_ends, \
-                                               int *segments_size, \
+                                               const int *segments_size, \
                                                CurvedPolygonSegment *segments, \
                                                int *num_intersected, \
                                                SurfaceContained *contained, \
@@ -174,27 +186,34 @@ Procedures
       static workspace around that will continue to grow as resizing is
       needed, but will never shrink.
 
-   :param int* num_nodes1:
+   :param num_nodes1:
       **[Input]** The number of nodes :math:`N_1` in the control net of the
       first B |eacute| zier surface.
-   :param double* nodes1:
+   :type num_nodes1: const int*
+   :param nodes1:
       **[Input]** The actual control net of the first B |eacute| zier surface
       as a :math:`2 \times N_1` array. This should be laid out in Fortran
       order, with :math:`2 N_1` total values.
-   :param int* degree1:
+   :type nodes1: const double*
+   :param degree1:
       **[Input]** The degree :math:`d_1` of the first B |eacute| zier surface.
-   :param int* num_nodes2:
+   :type degree1: const int*
+   :param num_nodes2:
       **[Input]** The number of nodes :math:`N_2` in the control net of the
       second B |eacute| zier surface.
-   :param double* nodes2:
+   :type num_nodes2: const int*
+   :param nodes2:
       **[Input]** The actual control net of the second B |eacute| zier surface
       as a :math:`2 \times N_2` array. This should be laid out in Fortran
       order, with :math:`2 N_2` total values.
-   :param int* degree2:
+   :type nodes2: const double*
+   :param degree2:
       **[Input]** The degree :math:`d_2` of the second B |eacute| zier surface.
-   :param int* segment_ends_size:
+   :type degree1: const int*
+   :param segment_ends_size:
       **[Input]** The size of ``segment_ends``, which must be pre-allocated by
       the caller.
+   :type segment_ends_size: const int*
    :param int* segment_ends:
       **[Output]** An array (pre-allocated by the caller) of the end indices
       for each group of segments in ``segments``. For example, if the surfaces
@@ -202,9 +221,10 @@ Procedures
       sides and the second of which has three, then the first two values in
       ``segment_ends`` will be ``[4, 7]`` and ``num_intersected`` will be
       ``2``.
-   :param int* segments_size:
+   :param segments_size:
       **[Input]** The size of ``segments``, which must be pre-allocated by
       the caller.
+   :type segments_size: const int*
    :param CurvedPolygonSegment* segments:
       **[Output]** An array (pre-allocated by the caller) of the edge segments
       that make up the boundary of the curved polygon(s) that form the
@@ -257,15 +277,15 @@ Procedures
    .. code-block:: c
 
       void
-      BEZ_surface_intersections(int *num_nodes1,
-                                double *nodes1,
-                                int *degree1,
-                                int *num_nodes2,
-                                double *nodes2,
-                                int *degree2,
-                                int *segment_ends_size,
+      BEZ_surface_intersections(const int *num_nodes1,
+                                const double *nodes1,
+                                const int *degree1,
+                                const int *num_nodes2,
+                                const double *nodes2,
+                                const int *degree2,
+                                const int *segment_ends_size,
                                 int *segment_ends,
-                                int *segments_size,
+                                const int *segments_size,
                                 CurvedPolygonSegment *segments,
                                 int *num_intersected,
                                 SurfaceContained *contained,
