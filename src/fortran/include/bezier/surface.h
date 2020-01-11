@@ -19,32 +19,34 @@
 extern "C" {
 #endif
 
-void BEZ_de_casteljau_one_round(int* num_nodes, int* dimension, double* nodes,
-    int* degree, double* lambda1, double* lambda2, double* lambda3,
-    double* new_nodes);
-void BEZ_evaluate_barycentric(int* num_nodes, int* dimension, double* nodes,
-    int* degree, double* lambda1, double* lambda2, double* lambda3,
-    double* point);
-void BEZ_evaluate_barycentric_multi(int* num_nodes, int* dimension,
-    double* nodes, int* degree, int* num_vals, double* param_vals,
+void BEZ_de_casteljau_one_round(const int* num_nodes, const int* dimension,
+    const double* nodes, const int* degree, const double* lambda1,
+    const double* lambda2, const double* lambda3, double* new_nodes);
+void BEZ_evaluate_barycentric(const int* num_nodes, const int* dimension,
+    const double* nodes, const int* degree, const double* lambda1,
+    const double* lambda2, const double* lambda3, double* point);
+void BEZ_evaluate_barycentric_multi(const int* num_nodes, const int* dimension,
+    const double* nodes, const int* degree, const int* num_vals,
+    const double* param_vals, double* evaluated);
+void BEZ_evaluate_cartesian_multi(const int* num_nodes, const int* dimension,
+    const double* nodes, const int* degree, const int* num_vals,
+    const double* param_vals, double* evaluated);
+void BEZ_jacobian_both(const int* num_nodes, const int* dimension,
+    const double* nodes, const int* degree, double* new_nodes);
+void BEZ_jacobian_det(const int* num_nodes, const double* nodes,
+    const int* degree, const int* num_vals, const double* param_vals,
     double* evaluated);
-void BEZ_evaluate_cartesian_multi(int* num_nodes, int* dimension,
-    double* nodes, int* degree, int* num_vals, double* param_vals,
-    double* evaluated);
-void BEZ_jacobian_both(int* num_nodes, int* dimension, double* nodes,
-    int* degree, double* new_nodes);
-void BEZ_jacobian_det(int* num_nodes, double* nodes, int* degree,
-    int* num_vals, double* param_vals, double* evaluated);
-void BEZ_specialize_surface(int* num_nodes, int* dimension, double* nodes,
-    int* degree, double* weights_a, double* weights_b, double* weights_c,
-    double* specialized);
-void BEZ_subdivide_nodes_surface(int* num_nodes, int* dimension, double* nodes,
-    int* degree, double* nodes_a, double* nodes_b, double* nodes_c,
-    double* nodes_d);
-void BEZ_compute_edge_nodes(int* num_nodes, int* dimension, double* nodes,
-    int* degree, double* nodes1, double* nodes2, double* nodes3);
-void BEZ_compute_area(int* num_edges, int* sizes, double** nodes_pointers,
-    double* area, bool* not_implemented);
+void BEZ_specialize_surface(const int* num_nodes, const int* dimension,
+    const double* nodes, const int* degree, const double* weights_a,
+    const double* weights_b, const double* weights_c, double* specialized);
+void BEZ_subdivide_nodes_surface(const int* num_nodes, const int* dimension,
+    const double* nodes, const int* degree, double* nodes_a, double* nodes_b,
+    double* nodes_c, double* nodes_d);
+void BEZ_compute_edge_nodes(const int* num_nodes, const int* dimension,
+    const double* nodes, const int* degree, double* nodes1, double* nodes2,
+    double* nodes3);
+void BEZ_compute_area(int* num_edges, int* sizes,
+    const double** nodes_pointers, double* area, bool* not_implemented);
 
 #if defined(__cplusplus)
 }

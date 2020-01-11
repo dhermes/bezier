@@ -19,19 +19,20 @@
 extern "C" {
 #endif
 
-void BEZ_cross_product(double* vec0, double* vec1, double* result);
-void BEZ_bbox(int* num_nodes, double* nodes, double* left, double* right,
-    double* bottom, double* top);
-void BEZ_wiggle_interval(double* value, double* result, bool* success);
-void BEZ_contains_nd(int* num_nodes, int* dimension, double* nodes,
-    double* point, bool* predicate);
-bool BEZ_vector_close(
-    int* num_values, double* vec1, double* vec2, double* eps);
-bool BEZ_in_interval(double* value, double* start, double* end);
+void BEZ_cross_product(const double* vec0, const double* vec1, double* result);
+void BEZ_bbox(const int* num_nodes, const double* nodes, double* left,
+    double* right, double* bottom, double* top);
+void BEZ_wiggle_interval(const double* value, double* result, bool* success);
+void BEZ_contains_nd(const int* num_nodes, const int* dimension,
+    const double* nodes, const double* point, bool* predicate);
+bool BEZ_vector_close(int* num_values, const double* vec1, const double* vec2,
+    const double* eps);
+bool BEZ_in_interval(
+    const double* value, const double* start, const double* end);
 void BEZ_simple_convex_hull(
-    int* num_points, double* points, int* polygon_size, double* polygon);
-void BEZ_polygon_collide(int* polygon_size1, double* polygon1,
-    int* polygon_size2, double* polygon2, bool* collision);
+    int* num_points, const double* points, int* polygon_size, double* polygon);
+void BEZ_polygon_collide(const int* polygon_size1, const double* polygon1,
+    const int* polygon_size2, const double* polygon2, bool* collision);
 
 #if defined(__cplusplus)
 }

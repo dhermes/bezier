@@ -19,31 +19,35 @@
 extern "C" {
 #endif
 
-void BEZ_evaluate_curve_barycentric(int* num_nodes, int* dimension,
-    double* nodes, int* num_vals, double* lambda1, double* lambda2,
+void BEZ_evaluate_curve_barycentric(const int* num_nodes, const int* dimension,
+    const double* nodes, const int* num_vals, const double* lambda1,
+    const double* lambda2, double* evaluated);
+void BEZ_evaluate_multi(const int* num_nodes, const int* dimension,
+    const double* nodes, const int* num_vals, const double* s_vals,
     double* evaluated);
-void BEZ_evaluate_multi(int* num_nodes, int* dimension, double* nodes,
-    int* num_vals, double* s_vals, double* evaluated);
-void BEZ_specialize_curve(int* num_nodes, int* dimension, double* nodes,
-    double* start, double* end, double* new_nodes);
-void BEZ_evaluate_hodograph(double* s, int* num_nodes, int* dimension,
-    double* nodes, double* hodograph);
-void BEZ_subdivide_nodes_curve(int* num_nodes, int* dimension, double* nodes,
-    double* left_nodes, double* right_nodes);
-void BEZ_newton_refine_curve(int* num_nodes, int* dimension, double* nodes,
-    double* point, double* s, double* updated_s);
-void BEZ_locate_point_curve(int* num_nodes, int* dimension, double* nodes,
-    double* point, double* s_approx);
-void BEZ_elevate_nodes_curve(
-    int* num_nodes, int* dimension, double* nodes, double* elevated);
-void BEZ_get_curvature(int* num_nodes, double* nodes, double* tangent_vec,
-    double* s, double* curvature);
-void BEZ_reduce_pseudo_inverse(int* num_nodes, int* dimension, double* nodes,
-    double* reduced, bool* not_implemented);
-void BEZ_full_reduce(int* num_nodes, int* dimension, double* nodes,
-    int* num_reduced_nodes, double* reduced, bool* not_implemented);
-void BEZ_compute_length(int* num_nodes, int* dimension, double* nodes,
-    double* length, int* error_val);
+void BEZ_specialize_curve(const int* num_nodes, const int* dimension,
+    const double* nodes, const double* start, const double* end,
+    double* new_nodes);
+void BEZ_evaluate_hodograph(double* s, const int* num_nodes,
+    const int* dimension, const double* nodes, double* hodograph);
+void BEZ_subdivide_nodes_curve(const int* num_nodes, const int* dimension,
+    const double* nodes, double* left_nodes, double* right_nodes);
+void BEZ_newton_refine_curve(const int* num_nodes, const int* dimension,
+    const double* nodes, const double* point, const double* s,
+    double* updated_s);
+void BEZ_locate_point_curve(const int* num_nodes, const int* dimension,
+    const double* nodes, const double* point, double* s_approx);
+void BEZ_elevate_nodes_curve(const int* num_nodes, const int* dimension,
+    const double* nodes, double* elevated);
+void BEZ_get_curvature(const int* num_nodes, const double* nodes,
+    const double* tangent_vec, const double* s, double* curvature);
+void BEZ_reduce_pseudo_inverse(const int* num_nodes, const int* dimension,
+    const double* nodes, double* reduced, bool* not_implemented);
+void BEZ_full_reduce(const int* num_nodes, const int* dimension,
+    const double* nodes, int* num_reduced_nodes, double* reduced,
+    bool* not_implemented);
+void BEZ_compute_length(const int* num_nodes, const int* dimension,
+    const double* nodes, double* length, int* error_val);
 
 #if defined(__cplusplus)
 }
