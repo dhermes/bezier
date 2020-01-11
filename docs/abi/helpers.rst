@@ -9,8 +9,8 @@ with various geometric computations.
 Procedures
 **********
 
-.. c:function:: void BEZ_bbox(int *num_nodes, \
-                              double *nodes, \
+.. c:function:: void BEZ_bbox(const int *num_nodes, \
+                              const double *nodes, \
                               double *left, \
                               double *right, \
                               double *bottom, \
@@ -20,11 +20,13 @@ Procedures
    :math:`\left[m_x, M_x\right] \times \left[m_y, M_y\right]`
    for a set of points in :math:`\mathbf{R}^2`.
 
-   :param int* num_nodes:
+   :param num_nodes:
       **[Input]** The number of nodes :math:`N` we are bounding.
-   :param double* nodes:
+   :type num_nodes: const int*
+   :param nodes:
       **[Input]** The actual nodes as a :math:`2 \times N` array. This should
       be laid out in Fortran order, with :math:`2 N` total values.
+   :type nodes: const double*
    :param double* left:
       **[Output]** The minimal :math:`x`\-value :math:`m_x`.
    :param double* right:
@@ -39,32 +41,36 @@ Procedures
    .. code-block:: c
 
       void
-      BEZ_bbox(int *num_nodes,
-               double *nodes,
+      BEZ_bbox(const int *num_nodes,
+               const double *nodes,
                double *left,
                double *right,
                double *bottom,
                double *top);
 
-.. c:function:: void BEZ_contains_nd(int *num_nodes, \
-                                     int *dimension, \
-                                     double *nodes, \
-                                     double *point, \
+.. c:function:: void BEZ_contains_nd(const int *num_nodes, \
+                                     const int *dimension, \
+                                     const double *nodes, \
+                                     const double *point, \
                                      bool *predicate)
 
    Checks if a point :math:`p` is contained in the bounding box
    for a set of points.
 
-   :param int* num_nodes:
+   :param num_nodes:
       **[Input]** The number of nodes :math:`N` define the bounding box.
-   :param int* dimension:
+   :type num_nodes: const int*
+   :param dimension:
       **[Input]** The dimension :math:`D` such that the nodes and point lie in
       :math:`\mathbf{R}^D`.
-   :param double* nodes:
+   :type dimension: const int*
+   :param nodes:
       **[Input]** The actual nodes as a :math:`D \times N` array. This should
       be laid out in Fortran order, with :math:`D N` total values.
-   :param double* point:
+   :type nodes: const double*
+   :param point:
       **[Input]** The point :math:`p` as an array containing :math:`D` values.
+   :type point: const double*
    :param bool* predicate:
       **[Output]** Flag indicating if the point lies inside the box.
 
@@ -73,14 +79,14 @@ Procedures
    .. code-block:: c
 
       void
-      BEZ_contains_nd(int *num_nodes,
-                      int *dimension,
-                      double *nodes,
-                      double *point,
+      BEZ_contains_nd(const int *num_nodes,
+                      const int *dimension,
+                      const double *nodes,
+                      const double *point,
                       bool *predicate);
 
-.. c:function:: void BEZ_cross_product(double *vec0, \
-                                       double *vec1, \
+.. c:function:: void BEZ_cross_product(const double *vec0, \
+                                       const double *vec1, \
                                        double *result)
 
    Computes the cross-product of two vectors :math:`v_1, v_2` in
@@ -88,10 +94,12 @@ Procedures
    :math:`\mathbf{R}^3` and the result is the resulting :math:`z`\-component
    :math:`x_1 y_2 - x_2 y_1`.
 
-   :param double* vec0:
+   :param vec0:
       **[Input]** The first vector :math:`v_1` in :math:`\mathbf{R}^2`.
-   :param double* vec1:
+   :type vec0: const double*
+   :param vec1:
       **[Input]** The second vector :math:`v_2` in :math:`\mathbf{R}^2`.
+   :type vec1: const double*
    :param double* result:
       **[Output]** The cross-product.
 
@@ -100,23 +108,26 @@ Procedures
    .. code-block:: c
 
       void
-      BEZ_cross_product(double *vec0,
-                        double *vec1,
+      BEZ_cross_product(const double *vec0,
+                        const double *vec1,
                         double *result);
 
-.. c:function:: bool BEZ_in_interval(double *value, \
-                                     double *start, \
-                                     double *end)
+.. c:function:: bool BEZ_in_interval(const double *value, \
+                                     const double *start, \
+                                     const double *end)
 
    Checks if a value :math:`v` is in an interval :math:`\left[s, e\right]`.
 
-   :param double* value:
+   :param value:
       **[Input]** The value :math:`v`.
-   :param double* start:
+   :type value: const double*
+   :param start:
       **[Input]** The start :math:`s` of the interval
       :math:`\left[s, e\right]`.
-   :param double* end:
+   :type start: const double*
+   :param end:
       **[Input]** The end :math:`e` of the interval :math:`\left[s, e\right]`.
+   :type end: const double*
    :returns: Flag indicating if :math:`v \in \left[s, e\right]`.
    :rtype: bool
 
@@ -125,28 +136,32 @@ Procedures
    .. code-block:: c
 
       bool
-      BEZ_in_interval(double *value,
-                     double *start,
-                     double *end);
+      BEZ_in_interval(const double *value,
+                      const double *start,
+                      const double *end);
 
-.. c:function:: void BEZ_polygon_collide(int *polygon_size1, \
-                                         double *polygon1, \
-                                         int *polygon_size2, \
-                                         double *polygon2, \
+.. c:function:: void BEZ_polygon_collide(const int *polygon_size1, \
+                                         const double *polygon1, \
+                                         const int *polygon_size2, \
+                                         const double *polygon2, \
                                          bool *collision)
 
    Determines if two polygons collide.
 
-   :param int* polygon_size1:
+   :param polygon_size1:
       **[Input]** The number of sides :math:`N_1` in the first polygon.
-   :param double* polygon1:
+   :type polygon_size1: const int*
+   :param polygon1:
       **[Input]** The nodes of the first polygon as a :math:`2 \times N_1`
       array. This should be laid out in Fortran order.
-   :param int* polygon_size2:
+   :type polygon1: const double*
+   :param polygon_size2:
       **[Input]** The number of sides :math:`N_2` in the second polygon.
-   :param double* polygon2:
+   :type polygon_size2: const int*
+   :param polygon2:
       **[Input]** The nodes of the second polygon as a :math:`2 \times N_2`
       array. This should be laid out in Fortran order.
+   :type polygon2: const double*
    :param bool* collision:
       **[Output]** Flag indicating if the polygons collide.
 
@@ -155,24 +170,26 @@ Procedures
    .. code-block:: c
 
       void
-      BEZ_polygon_collide(int *polygon_size1,
-                          double *polygon1,
-                          int *polygon_size2,
-                          double *polygon2,
+      BEZ_polygon_collide(const int *polygon_size1,
+                          const double *polygon1,
+                          const int *polygon_size2,
+                          const double *polygon2,
                           bool *collision);
 
-.. c:function:: void BEZ_simple_convex_hull(int *num_points, \
-                                            double *points, \
+.. c:function:: void BEZ_simple_convex_hull(const int *num_points, \
+                                            const double *points, \
                                             int *polygon_size, \
                                             double *polygon)
 
    Computes the convex hull of a set of points.
 
-   :param int* num_points:
+   :param num_points:
       **[Input]** The number of points :math:`N`.
-   :param double* points:
+   :type num_points: const int*
+   :param points:
       **[Input]** The points being considered, as a :math:`2 \times N`
       array. This should be laid out in Fortran order.
+   :type points: const double*
    :param int* polygon_size:
       **[Output]** The number of sides :math:`M` in the convex hull. This
       will be at most :math:`N`.
@@ -186,32 +203,36 @@ Procedures
    .. code-block:: c
 
       void
-      BEZ_simple_convex_hull(int *num_points,
-                             double *points,
+      BEZ_simple_convex_hull(const int *num_points,
+                             const double *points,
                              int *polygon_size,
                              double *polygon);
 
-.. c:function:: bool BEZ_vector_close(int *num_values, \
-                                      double *vec1, \
-                                      double *vec2, \
-                                      double *eps)
+.. c:function:: bool BEZ_vector_close(const int *num_values, \
+                                      const double *vec1, \
+                                      const double *vec2, \
+                                      const double *eps)
 
    Determines if two vectors are close to machine precision.
 
-   :param int* num_values:
+   :param num_values:
       **[Input]** The dimension :math:`D` such that the vectors lie in
       :math:`\mathbf{R}^D`.
-   :param double* vec1:
+   :type num_values: const int*
+   :param vec1:
       **[Input]** The first vector :math:`v_1`, as an array of :math:`D`
       values.
-   :param double* vec2:
+   :type vec1: const double*
+   :param vec2:
       **[Input]** The second vector :math:`v_2`, as an array of :math:`D`
       values.
-   :param double* eps:
+   :type vec2: const double*
+   :param eps:
       **[Input]** The tolerance :math:`\varepsilon` used when comparing
       :math:`\left\lVert v_1 - v_2 \right\rVert` to
       :math:`\left\lVert v_1 \right\rVert` and
       :math:`\left\lVert v_2 \right\rVert`.
+   :type eps: const double*
    :returns:
       Flag indicating if :math:`v_1` and :math:`v_2` are close to the desired
       precision.
@@ -222,12 +243,12 @@ Procedures
    .. code-block:: c
 
       bool
-      BEZ_vector_close(int *num_values,
-                       double *vec1,
-                       double *vec2,
-                       double *eps);
+      BEZ_vector_close(const int *num_values,
+                       const double *vec1,
+                       const double *vec2,
+                       const double *eps);
 
-.. c:function:: void BEZ_wiggle_interval(double *value, \
+.. c:function:: void BEZ_wiggle_interval(const double *value, \
                                          double *result, \
                                          bool *success)
 
@@ -246,8 +267,9 @@ Procedures
    * :math:`v \in \left[1 + 2^{-44}, \infty\right)` will not be rounded
      and will set ``success`` to ``FALSE``.
 
-   :param double* value:
+   :param value:
       **[Input]** The value :math:`v` to be rounded.
+   :type value: const double*
    :param double* result:
       **[Output]** The rounded version of :math:`v`. If ``success`` is
       ``FALSE`` this is undefined.
@@ -260,6 +282,6 @@ Procedures
    .. code-block:: c
 
       void
-      BEZ_wiggle_interval(double *value,
+      BEZ_wiggle_interval(const double *value,
                           double *result,
                           bool *success);
