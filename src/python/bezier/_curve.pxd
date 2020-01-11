@@ -18,37 +18,43 @@ from libcpp cimport bool as bool_t
 
 cdef extern from "bezier/curve.h":
     void evaluate_curve_barycentric "BEZ_evaluate_curve_barycentric" (
-        int* num_nodes, int* dimension, double* nodes,
-        int* num_vals, double* lambda1, double* lambda2, double* evaluated)
+        const int* num_nodes, const int* dimension,
+        const double* nodes, const int* num_vals, const double* lambda1,
+        const double* lambda2, double* evaluated)
     void evaluate_multi "BEZ_evaluate_multi" (
-        int* num_nodes, int* dimension, double* nodes,
-        int* num_vals, double* s_vals, double* evaluated)
+        const int* num_nodes, const int* dimension,
+        const double* nodes, const int* num_vals, const double* s_vals,
+        double* evaluated)
     void specialize_curve "BEZ_specialize_curve" (
-        int* num_nodes, int* dimension, double* nodes,
-        double* start, double* end, double* new_nodes)
+        const int* num_nodes, const int* dimension,
+        const double* nodes, const double* start, const double* end,
+        double* new_nodes)
     void evaluate_hodograph "BEZ_evaluate_hodograph" (
-        double* s, int* num_nodes, int* dimension,
-        double* nodes, double* hodograph)
+        double* s, const int* num_nodes,
+        const int* dimension, const double* nodes, double* hodograph)
     void subdivide_nodes_curve "BEZ_subdivide_nodes_curve" (
-        int* num_nodes, int* dimension, double* nodes,
-        double* left_nodes, double* right_nodes)
+        const int* num_nodes, const int* dimension,
+        const double* nodes, double* left_nodes, double* right_nodes)
     void newton_refine_curve "BEZ_newton_refine_curve" (
-        int* num_nodes, int* dimension, double* nodes,
-        double* point, double* s, double* updated_s)
+        const int* num_nodes, const int* dimension,
+        const double* nodes, const double* point, const double* s,
+        double* updated_s)
     void locate_point_curve "BEZ_locate_point_curve" (
-        int* num_nodes, int* dimension, double* nodes,
-        double* point, double* s_approx)
+        const int* num_nodes, const int* dimension,
+        const double* nodes, const double* point, double* s_approx)
     void elevate_nodes_curve "BEZ_elevate_nodes_curve" (
-        int* num_nodes, int* dimension, double* nodes, double* elevated)
+        const int* num_nodes, const int* dimension,
+        const double* nodes, double* elevated)
     void get_curvature "BEZ_get_curvature" (
-        int* num_nodes, double* nodes, double* tangent_vec,
-        double* s, double* curvature)
+        const int* num_nodes, const double* nodes,
+        const double* tangent_vec, const double* s, double* curvature)
     void reduce_pseudo_inverse "BEZ_reduce_pseudo_inverse" (
-        int* num_nodes, int* dimension, double* nodes,
-        double* reduced, bool_t* not_implemented)
+        const int* num_nodes, const int* dimension,
+        const double* nodes, double* reduced, bool_t* not_implemented)
     void full_reduce "BEZ_full_reduce" (
-        int* num_nodes, int* dimension, double* nodes,
-        int* num_reduced_nodes, double* reduced, bool_t* not_implemented)
+        const int* num_nodes, const int* dimension,
+        const double* nodes, int* num_reduced_nodes, double* reduced,
+        bool_t* not_implemented)
     void compute_length "BEZ_compute_length" (
-        int* num_nodes, int* dimension, double* nodes,
-        double* length, int* error_val)
+        const int* num_nodes, const int* dimension,
+        const double* nodes, double* length, int* error_val)
