@@ -267,7 +267,9 @@ def docs_images(session):
             get_path("tests", "functional", "make_segment_box_images.py"),
             get_path("tests", "functional", "make_triangle_locate_images.py"),
             get_path("tests", "functional", "make_curve_curve_images.py"),
-            get_path("tests", "functional", "make_triangle_triangle_images.py"),
+            get_path(
+                "tests", "functional", "make_triangle_triangle_images.py"
+            ),
         )
     )
     # Make sure that the root directory is on the Python path so that

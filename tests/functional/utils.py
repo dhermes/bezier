@@ -935,4 +935,6 @@ class TriangleIntersectionsInfo:
             CurvedPolygonInfo.from_json(curved_polygon)
             for curved_polygon in intersections
         ]
-        return cls(id_, triangle1_info, triangle2_info, intersections, note=note)
+        return cls(
+            id_, triangle1_info, triangle2_info, intersections, note=note
+        )

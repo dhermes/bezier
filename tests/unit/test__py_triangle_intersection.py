@@ -325,7 +325,10 @@ class Test_verify_edge_segments(unittest.TestCase):
             self._call_function_under_test(edge_infos)
 
         exc_args = exc_info.exception.args
-        expected = (_py_triangle_intersection.BAD_SEGMENT_PARAMS, (0, 0.0, 1.5))
+        expected = (
+            _py_triangle_intersection.BAD_SEGMENT_PARAMS,
+            (0, 0.0, 1.5),
+        )
         self.assertEqual(exc_args, expected)
 
     def test_consecutive_segments(self):

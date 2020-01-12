@@ -1023,7 +1023,9 @@ def classify_intersection7(s, curve1a, curve1b, curve2):
     )
     figure, (ax1, ax2) = plt.subplots(2, 1)
     classify_help(s, curve1a, triangle1, curve2, triangle2, None, ax=ax1)
-    triangle1._nodes = np.asfortranarray(triangle1._nodes[:, (2, 4, 5, 1, 3, 0)])
+    triangle1._nodes = np.asfortranarray(
+        triangle1._nodes[:, (2, 4, 5, 1, 3, 0)]
+    )
     triangle1._edges = None
     classify_help(0.0, curve1b, triangle1, curve2, triangle2, 0, ax=ax2)
     for ax in (ax1, ax2):

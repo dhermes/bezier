@@ -33,7 +33,9 @@ if _speedup is None:  # pragma: NO COVER
     jacobian_both = _py_triangle_helpers.jacobian_both
     jacobian_det = _py_triangle_helpers.jacobian_det
     evaluate_barycentric = _py_triangle_helpers.evaluate_barycentric
-    evaluate_barycentric_multi = _py_triangle_helpers.evaluate_barycentric_multi
+    evaluate_barycentric_multi = (
+        _py_triangle_helpers.evaluate_barycentric_multi
+    )
     evaluate_cartesian_multi = _py_triangle_helpers.evaluate_cartesian_multi
     compute_edge_nodes = _py_triangle_helpers.compute_edge_nodes
     compute_area = _py_triangle_helpers.compute_area
