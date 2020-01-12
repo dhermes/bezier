@@ -1,19 +1,19 @@
 ##############
-surface module
+triangle module
 ##############
 
 .. |eacute| unicode:: U+000E9 .. LATIN SMALL LETTER E WITH ACUTE
    :trim:
 
 This is a collection of procedures for performing computations on a
-B |eacute| zier `surface`_.
+B |eacute| zier `triangle`_.
 
-.. _surface: https://en.wikipedia.org/wiki/B%C3%A9zier_triangle
+.. _triangle: https://en.wikipedia.org/wiki/B%C3%A9zier_triangle
 
 .. note::
 
     In most of the procedures below both the number of nodes :math:`N` and
-    the degree :math:`d` of a B |eacute| zier surface are provided. It is
+    the degree :math:`d` of a B |eacute| zier triangle are provided. It is
     redundant to require both as arguments since :math:`N = \binom{d + 2}{2}`.
     However, both are provided as arguments to avoid unnecessary
     re-computation, i.e. we expect the caller to know both :math:`N` and
@@ -77,8 +77,8 @@ Procedures
                                             double *nodes2, \
                                             double *nodes3)
 
-   Extracts the edge nodes from the control net of a B |eacute| zier surface.
-   For example, if the control net of a quadratic surface is:
+   Extracts the edge nodes from the control net of a B |eacute| zier triangle.
+   For example, if the control net of a quadratic triangle is:
 
    .. math::
 
@@ -104,19 +104,19 @@ Procedures
 
    :param num_nodes:
       **[Input]** The number of nodes :math:`N` in the control net of the
-      B |eacute| zier surface.
+      B |eacute| zier triangle.
    :type num_nodes: const int*
    :param dimension:
-      **[Input]** The dimension :math:`D` such that the surface lies in
+      **[Input]** The dimension :math:`D` such that the triangle lies in
       :math:`\mathbf{R}^D`.
    :type dimension: const int*
    :param nodes:
-      **[Input]** The actual control net of the B |eacute| zier surface as a
+      **[Input]** The actual control net of the B |eacute| zier triangle as a
       :math:`D \times N` array. This should be laid out in Fortran order, with
       :math:`D N` total values.
    :type nodes: const double*
    :param degree:
-      **[Input]** The degree :math:`d` of the B |eacute| zier surface.
+      **[Input]** The degree :math:`d` of the B |eacute| zier triangle.
    :type degree: const int*
    :param double* nodes1:
       **[Output]** The control points of the first edge B |eacute| zier curve
@@ -161,19 +161,19 @@ Procedures
 
    :param num_nodes:
       **[Input]** The number of nodes :math:`N` in the control net of the
-      B |eacute| zier surface.
+      B |eacute| zier triangle.
    :type num_nodes: const int*
    :param dimension:
-      **[Input]** The dimension :math:`D` such that the surface lies in
+      **[Input]** The dimension :math:`D` such that the triangle lies in
       :math:`\mathbf{R}^D`.
    :type dimension: const int*
    :param nodes:
-      **[Input]** The actual control net of the B |eacute| zier surface as a
+      **[Input]** The actual control net of the B |eacute| zier triangle as a
       :math:`D \times N` array. This should be laid out in Fortran order, with
       :math:`D N` total values.
    :type nodes: const double*
    :param degree:
-      **[Input]** The degree :math:`d` of the B |eacute| zier surface.
+      **[Input]** The degree :math:`d` of the B |eacute| zier triangle.
    :type degree: const int*
    :param lambda1:
       **[Input]** The first barycentric parameter along the reference triangle.
@@ -212,24 +212,24 @@ Procedures
                                               const double *lambda3, \
                                               double *point)
 
-   Evaluates a single point on a B |eacute| zier surface, with input
+   Evaluates a single point on a B |eacute| zier triangle, with input
    in barycentric coordinates: :math:`B(\lambda_1, \lambda_2, \lambda_3)`.
 
    :param num_nodes:
       **[Input]** The number of nodes :math:`N` in the control net of the
-      B |eacute| zier surface.
+      B |eacute| zier triangle.
    :type num_nodes: const int*
    :param dimension:
-      **[Input]** The dimension :math:`D` such that the surface lies in
+      **[Input]** The dimension :math:`D` such that the triangle lies in
       :math:`\mathbf{R}^D`.
    :type dimension: const int*
    :param nodes:
-      **[Input]** The actual control net of the B |eacute| zier surface as a
+      **[Input]** The actual control net of the B |eacute| zier triangle as a
       :math:`D \times N` array. This should be laid out in Fortran order, with
       :math:`D N` total values.
    :type nodes: const double*
    :param degree:
-      **[Input]** The degree :math:`d` of the B |eacute| zier surface.
+      **[Input]** The degree :math:`d` of the B |eacute| zier triangle.
    :type degree: const int*
    :param double* lambda1:
       **[Input]** The first barycentric parameter along the reference triangle.
@@ -267,25 +267,25 @@ Procedures
                                                     const double *param_vals, \
                                                     double *evaluated)
 
-   Evaluates many points on a B |eacute| zier surface, with input
+   Evaluates many points on a B |eacute| zier triangle, with input
    in barycentric coordinates:
    :math:`\left\{B(\lambda_{1,j}, \lambda_{2,j}, \lambda_{3,j})\right\}_j`.
 
    :param num_nodes:
       **[Input]** The number of nodes :math:`N` in the control net of the
-      B |eacute| zier surface.
+      B |eacute| zier triangle.
    :type num_nodes: const int*
    :param dimension:
-      **[Input]** The dimension :math:`D` such that the surface lies in
+      **[Input]** The dimension :math:`D` such that the triangle lies in
       :math:`\mathbf{R}^D`.
    :type dimension: const int*
    :param nodes:
-      **[Input]** The actual control net of the B |eacute| zier surface as a
+      **[Input]** The actual control net of the B |eacute| zier triangle as a
       :math:`D \times N` array. This should be laid out in Fortran order, with
       :math:`D N` total values.
    :type nodes: const double*
    :param degree:
-      **[Input]** The degree :math:`d` of the B |eacute| zier surface.
+      **[Input]** The degree :math:`d` of the B |eacute| zier triangle.
    :type degree: const int*
    :param num_vals:
       **[Input]** The number of points :math:`k` where :math:`B` is
@@ -299,7 +299,7 @@ Procedures
    :type param_vals: const double*
    :param double* evaluated:
       **[Output]** A :math:`D \times k` array of all evaluated points on the
-      surface. Column :math:`j` will contain
+      triangle. Column :math:`j` will contain
       :math:`B(\lambda_{1,j}, \lambda_{2,j}, \lambda_{3,j})`.
 
    **Signature:**
@@ -323,7 +323,7 @@ Procedures
                                                   const double *param_vals, \
                                                   double *evaluated)
 
-   Evaluates many points on a B |eacute| zier surface, with input
+   Evaluates many points on a B |eacute| zier triangle, with input
    in cartesian coordinates:
    :math:`\left\{B(s_j, t_j)\right\}_j`. Each input :math:`(s, t)` is
    equivalent to the barycentric input :math:`\lambda_1 = 1 - s - t`,
@@ -331,19 +331,19 @@ Procedures
 
    :param num_nodes:
       **[Input]** The number of nodes :math:`N` in the control net of the
-      B |eacute| zier surface.
+      B |eacute| zier triangle.
    :type num_nodes: const int*
    :param dimension:
-      **[Input]** The dimension :math:`D` such that the surface lies in
+      **[Input]** The dimension :math:`D` such that the triangle lies in
       :math:`\mathbf{R}^D`.
    :type dimension: const int*
    :param nodes:
-      **[Input]** The actual control net of the B |eacute| zier surface as a
+      **[Input]** The actual control net of the B |eacute| zier triangle as a
       :math:`D \times N` array. This should be laid out in Fortran order, with
       :math:`D N` total values.
    :type nodes: const double*
    :param degree:
-      **[Input]** The degree :math:`d` of the B |eacute| zier surface.
+      **[Input]** The degree :math:`d` of the B |eacute| zier triangle.
    :type degree: const int*
    :param num_vals:
       **[Input]** The number of points :math:`k` where :math:`B` is
@@ -357,7 +357,7 @@ Procedures
    :type param_vals: const double*
    :param double* evaluated:
       **[Output]** A :math:`D \times k` array of all evaluated points on the
-      surface. Column :math:`j` will contain
+      triangle. Column :math:`j` will contain
       :math:`B(s_j, t_j)`.
 
    **Signature:**
@@ -380,24 +380,24 @@ Procedures
                                        double *new_nodes)
 
    Computes control nets for both cartesian partial derivatives of a
-   B |eacute| zier surface :math:`B_s(s, t)` and :math:`B_t(s, t)`. Taking
+   B |eacute| zier triangle :math:`B_s(s, t)` and :math:`B_t(s, t)`. Taking
    a single (partial) derivative lowers the degree by 1.
 
    :param num_nodes:
       **[Input]** The number of nodes :math:`N` in the control net of the
-      B |eacute| zier surface.
+      B |eacute| zier triangle.
    :type num_nodes: const int*
    :param dimension:
-      **[Input]** The dimension :math:`D` such that the surface lies in
+      **[Input]** The dimension :math:`D` such that the triangle lies in
       :math:`\mathbf{R}^D`.
    :type dimension: const int*
    :param nodes:
-      **[Input]** The actual control net of the B |eacute| zier surface as a
+      **[Input]** The actual control net of the B |eacute| zier triangle as a
       :math:`D \times N` array. This should be laid out in Fortran order, with
       :math:`D N` total values.
    :type nodes: const double*
    :param degree:
-      **[Input]** The degree :math:`d` of the B |eacute| zier surface.
+      **[Input]** The degree :math:`d` of the B |eacute| zier triangle.
    :type degree: const int*
    :param double* new_nodes:
       **[Output]** The combined control nets :math:`B_s` and :math:`B_t` as
@@ -424,20 +424,20 @@ Procedures
                                       double *evaluated)
 
    Computes :math:`\det(DB)` at many points :math:`(s_j, t_j)`. This is only
-   well-defined if :math:`\det(DB)` has two rows, hence the surface must lie
+   well-defined if :math:`\det(DB)` has two rows, hence the triangle must lie
    in :math:`\mathbf{R}^2`.
 
    :param num_nodes:
       **[Input]** The number of nodes :math:`N` in the control net of the
-      B |eacute| zier surface.
+      B |eacute| zier triangle.
    :type num_nodes: const int*
    :param nodes:
-      **[Input]** The actual control net of the B |eacute| zier surface as a
+      **[Input]** The actual control net of the B |eacute| zier triangle as a
       :math:`2 \times N` array. This should be laid out in Fortran order, with
       :math:`2 N` total values.
    :type nodes: const double*
    :param degree:
-      **[Input]** The degree :math:`d` of the B |eacute| zier surface.
+      **[Input]** The degree :math:`d` of the B |eacute| zier triangle.
    :type degree: const int*
    :param num_vals:
       **[Input]** The number of points :math:`k` where :math:`\det(DB)` is
@@ -465,7 +465,7 @@ Procedures
                        const double *param_vals,
                        double *evaluated);
 
-.. c:function:: void BEZ_specialize_surface(const int *num_nodes, \
+.. c:function:: void BEZ_specialize_triangle(const int *num_nodes, \
                                             const int *dimension, \
                                             const double *nodes, \
                                             const int *degree, \
@@ -474,25 +474,25 @@ Procedures
                                             const double *weights_c, \
                                             double *specialized)
 
-   Changes the control net for a B |eacute| zier surface by specializing
+   Changes the control net for a B |eacute| zier triangle by specializing
    from the original triangle :math:`(0, 0), (1, 0), (0, 1)` to a new
    triangle :math:`p_1, p_2, p_3`.
 
    :param num_nodes:
       **[Input]** The number of nodes :math:`N` in the control net of the
-      B |eacute| zier surface.
+      B |eacute| zier triangle.
    :type num_nodes: const int*
    :param dimension:
-      **[Input]** The dimension :math:`D` such that the surface lies in
+      **[Input]** The dimension :math:`D` such that the triangle lies in
       :math:`\mathbf{R}^D`.
    :type dimension: const int*
    :param nodes:
-      **[Input]** The actual control net of the B |eacute| zier surface as a
+      **[Input]** The actual control net of the B |eacute| zier triangle as a
       :math:`D \times N` array. This should be laid out in Fortran order, with
       :math:`D N` total values.
    :type nodes: const double*
    :param degree:
-      **[Input]** The degree :math:`d` of the B |eacute| zier surface.
+      **[Input]** The degree :math:`d` of the B |eacute| zier triangle.
    :type degree: const int*
    :param weights_a:
       **[Input]** A 3-array containing the barycentric weights for the first
@@ -507,7 +507,7 @@ Procedures
       node :math:`p_3` in the new triangle.
    :type weights_c: const double*
    :param double* specialized:
-      **[Output]** The control net of the newly formed B |eacute| zier surface
+      **[Output]** The control net of the newly formed B |eacute| zier triangle
       as a :math:`D \times N` array.
 
    **Signature:**
@@ -515,7 +515,7 @@ Procedures
    .. code-block:: c
 
       void
-      BEZ_specialize_surface(const int *num_nodes,
+      BEZ_specialize_triangle(const int *num_nodes,
                              const int *dimension,
                              const double *nodes,
                              const int *degree,
@@ -524,7 +524,7 @@ Procedures
                              const double *weights_c,
                              double *specialized);
 
-.. c:function:: void BEZ_subdivide_nodes_surface(const int *num_nodes, \
+.. c:function:: void BEZ_subdivide_nodes_triangle(const int *num_nodes, \
                                                  const int *dimension, \
                                                  const double *nodes, \
                                                  const int *degree, \
@@ -533,37 +533,37 @@ Procedures
                                                  double *nodes_c, \
                                                  double *nodes_d)
 
-   Subdivides a B |eacute| zier surface into four sub-surfaces that cover
-   the original surface. See :meth:`.Triangle.subdivide` for more
+   Subdivides a B |eacute| zier triangle into four sub-triangles that cover
+   the original triangle. See :meth:`.Triangle.subdivide` for more
    details
 
    :param num_nodes:
       **[Input]** The number of nodes :math:`N` in the control net of the
-      B |eacute| zier surface.
+      B |eacute| zier triangle.
    :type num_nodes: const int*
    :param dimension:
-      **[Input]** The dimension :math:`D` such that the surface lies in
+      **[Input]** The dimension :math:`D` such that the triangle lies in
       :math:`\mathbf{R}^D`.
    :type dimension: const int*
    :param nodes:
-      **[Input]** The actual control net of the B |eacute| zier surface as a
+      **[Input]** The actual control net of the B |eacute| zier triangle as a
       :math:`D \times N` array. This should be laid out in Fortran order, with
       :math:`D N` total values.
    :type nodes: const double*
    :param degree:
-      **[Input]** The degree :math:`d` of the B |eacute| zier surface.
+      **[Input]** The degree :math:`d` of the B |eacute| zier triangle.
    :type degree: const int*
    :param double* nodes_a:
-      **[Output]** The control net of the lower left sub-surface as a
+      **[Output]** The control net of the lower left sub-triangle as a
       :math:`D \times N` array, laid out in Fortran order.
    :param double* nodes_b:
-      **[Output]** The control net of the central sub-surface as a
+      **[Output]** The control net of the central sub-triangle as a
       :math:`D \times N` array, laid out in Fortran order.
    :param double* nodes_c:
-      **[Output]** The control net of the lower right sub-surface as a
+      **[Output]** The control net of the lower right sub-triangle as a
       :math:`D \times N` array, laid out in Fortran order.
    :param double* nodes_d:
-      **[Output]** The control net of the upper left sub-surface as a
+      **[Output]** The control net of the upper left sub-triangle as a
       :math:`D \times N` array, laid out in Fortran order.
 
    **Signature:**
@@ -571,7 +571,7 @@ Procedures
    .. code-block:: c
 
       void
-      BEZ_subdivide_nodes_surface(const int *num_nodes,
+      BEZ_subdivide_nodes_triangle(const int *num_nodes,
                                   const int *dimension,
                                   const double *nodes,
                                   const int *degree,

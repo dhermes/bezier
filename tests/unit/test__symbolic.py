@@ -145,12 +145,12 @@ class Test_implicitize_2d:
 # pylint: enable=too-few-public-methods
 
 # pylint: disable=too-few-public-methods
-class Test_surface_weights:
+class Test_triangle_weights:
     @staticmethod
     def _call_function_under_test(degree, s, t):
         from bezier import _symbolic
 
-        return _symbolic.surface_weights(degree, s, t)
+        return _symbolic.triangle_weights(degree, s, t)
 
     @unittest.skipIf(sympy is None, "SymPy not installed")
     def test_it(self):
@@ -174,12 +174,12 @@ class Test_surface_weights:
 # pylint: enable=too-few-public-methods
 
 # pylint: disable=too-few-public-methods
-class Test_surface_as_polynomial:
+class Test_triangle_as_polynomial:
     @staticmethod
     def _call_function_under_test(nodes, degree):
         from bezier import _symbolic
 
-        return _symbolic.surface_as_polynomial(nodes, degree)
+        return _symbolic.triangle_as_polynomial(nodes, degree)
 
     @unittest.skipIf(sympy is None, "SymPy not installed")
     def test_it(self):

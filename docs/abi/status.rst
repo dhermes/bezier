@@ -42,15 +42,15 @@ status module
    .. c:var:: BAD_INTERIOR
 
       (``5``)
-      Caused by a failure during the process of surface-surface intersection.
+      Caused by a failure during the process of triangle-triangle intersection.
       Occurs when the corners and edge-edge intersections can't be converted
       into the curved polygon(s) that make up the intersection of the two
-      surfaces.
+      triangles.
 
    .. c:var:: EDGE_END
 
       (``6``)
-      A surface-surface intersection point occurs at the **end** of an
+      A triangle-triangle intersection point occurs at the **end** of an
       edge (only intersections at the beginning of an edge should be used).
 
    .. c:var:: SINGULAR

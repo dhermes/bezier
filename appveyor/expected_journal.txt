@@ -93,9 +93,9 @@ $ C:\mingw-w64\x86_64-6.3.0-posix-seh-rt_v5-rev1\mingw64\bin\gfortran.exe \
 >   -march=native \
 >   -c \
 >   -c \
->   src\fortran\surface.f90 \
+>   src\fortran\triangle.f90 \
 >   -o \
->   build\temp.win-amd64-3.8\Release\src\fortran\surface.o \
+>   build\temp.win-amd64-3.8\Release\src\fortran\triangle.o \
 >   -J \
 >   build\temp.win-amd64-3.8\Release
 ----------------------------------------
@@ -133,9 +133,9 @@ $ C:\mingw-w64\x86_64-6.3.0-posix-seh-rt_v5-rev1\mingw64\bin\gfortran.exe \
 >   -march=native \
 >   -c \
 >   -c \
->   src\fortran\surface_intersection.f90 \
+>   src\fortran\triangle_intersection.f90 \
 >   -o \
->   build\temp.win-amd64-3.8\Release\src\fortran\surface_intersection.o \
+>   build\temp.win-amd64-3.8\Release\src\fortran\triangle_intersection.o \
 >   -J \
 >   build\temp.win-amd64-3.8\Release
 ----------------------------------------
@@ -253,9 +253,9 @@ $ C:\mingw-w64\x86_64-6.3.0-posix-seh-rt_v5-rev1\mingw64\bin\gfortran.exe \
 >   build\temp.win-amd64-3.8\Release\src\fortran\status.o \
 >   build\temp.win-amd64-3.8\Release\src\fortran\helpers.o \
 >   build\temp.win-amd64-3.8\Release\src\fortran\curve.o \
->   build\temp.win-amd64-3.8\Release\src\fortran\surface.o \
+>   build\temp.win-amd64-3.8\Release\src\fortran\triangle.o \
 >   build\temp.win-amd64-3.8\Release\src\fortran\curve_intersection.o \
->   build\temp.win-amd64-3.8\Release\src\fortran\surface_intersection.o \
+>   build\temp.win-amd64-3.8\Release\src\fortran\triangle_intersection.o \
 >   -Wl,--output-def,build\temp.win-amd64-3.8\Release\bezier.def
 ----------------------------------------
 $ C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\BIN\x86_amd64\lib.exe \

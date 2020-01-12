@@ -10,7 +10,7 @@
 ! See the License for the specific language governing permissions and
 ! limitations under the License.
 
-module test_surface_intersection
+module test_triangle_intersection
 
   use, intrinsic :: iso_c_binding, only: c_bool, c_double, c_int
   use status, only: &
@@ -18,7 +18,7 @@ module test_surface_intersection
        Status_INSUFFICIENT_SPACE, Status_SAME_CURVATURE, Status_BAD_INTERIOR, &
        Status_EDGE_END, Status_UNKNOWN
   use curve, only: CurveData, LOCATE_MISS
-  use surface_intersection, only: &
+  use triangle_intersection, only: &
        Intersection, CurvedPolygonSegment, IntersectionClassification_UNSET, &
        IntersectionClassification_FIRST, IntersectionClassification_SECOND, &
        IntersectionClassification_OPPOSED, &
@@ -32,25 +32,25 @@ module test_surface_intersection
        TriangleContained_FIRST, TriangleContained_SECOND, newton_refine, &
        locate_point, classify_intersection, update_edge_end_unused, &
        find_corner_unused, add_st_vals, should_keep, &
-       surfaces_intersection_points, is_first, is_second, &
+       triangles_intersection_points, is_first, is_second, &
        get_next, to_front, add_segment, &
-       interior_combine, surfaces_intersect, surfaces_intersect_abi
+       interior_combine, triangles_intersect, triangles_intersect_abi
   use types, only: dp
   use unit_test_helpers, only: print_status
   implicit none
   private &
        test_newton_refine, test_locate_point, test_classify_intersection, &
        test_update_edge_end_unused, test_find_corner_unused, &
-       test_add_st_vals, test_should_keep, test_surfaces_intersection_points, &
+       test_add_st_vals, test_should_keep, test_triangles_intersection_points, &
        test_is_first, test_is_second, &
        intersection_check, intersection_equal, test_get_next, test_to_front, &
        test_add_segment, test_interior_combine, segment_check, &
-       test_surfaces_intersect, test_surfaces_intersect_abi
-  public surface_intersection_all_tests
+       test_triangles_intersect, test_triangles_intersect_abi
+  public triangle_intersection_all_tests
 
 contains
 
-  subroutine surface_intersection_all_tests(success)
+  subroutine triangle_intersection_all_tests(success)
     logical(c_bool), intent(inout) :: success
 
     call test_newton_refine(success)
@@ -60,17 +60,17 @@ contains
     call test_find_corner_unused(success)
     call test_add_st_vals(success)
     call test_should_keep(success)
-    call test_surfaces_intersection_points(success)
+    call test_triangles_intersection_points(success)
     call test_is_first(success)
     call test_is_second(success)
     call test_get_next(success)
     call test_to_front(success)
     call test_add_segment(success)
     call test_interior_combine(success)
-    call test_surfaces_intersect(success)
-    call test_surfaces_intersect_abi(success)
+    call test_triangles_intersect(success)
+    call test_triangles_intersect_abi(success)
 
-  end subroutine surface_intersection_all_tests
+  end subroutine triangle_intersection_all_tests
 
   subroutine test_newton_refine(success)
     logical(c_bool), intent(inout) :: success
@@ -84,8 +84,8 @@ contains
     case_id = 1
     name = "newton_refine (Triangle)"
 
-    ! CASE 1: Quadratic surface.
-    ! NOTE: This surface is given by
+    ! CASE 1: Quadratic triangle.
+    ! NOTE: This triangle is given by
     !       [(4 s - t^2) / 4, (4 s^2 + 4 s t - t^2 - 4 s + 8 t) / 8]
     nodes(:, 1) = 0
     nodes(:, 2) = [0.5_dp, -0.25_dp]
@@ -106,7 +106,7 @@ contains
     call print_status(name, case_id, case_success, success)
 
     ! CASE 2: Solution is **exact**.
-    ! NOTE: This surface is given by [s, t]
+    ! NOTE: This triangle is given by [s, t]
     nodes(:, 1) = 0
     nodes(:, 2) = [0.5_dp, 0.0_dp]
     nodes(:, 3) = [1.0_dp, 0.0_dp]
@@ -303,7 +303,7 @@ contains
     nodes1(:, 1) = [0.0_dp, 1.0_dp]
     nodes1(:, 2) = 0
     edges_first(3)%nodes = nodes1
-    ! ... and those in ``edges_second`` are the edges in the surface given by
+    ! ... and those in ``edges_second`` are the edges in the triangle given by
     !           [ 0,  0]
     !           [-1,  0]
     !           [ 0, -1]
@@ -952,7 +952,7 @@ contains
 
   end subroutine test_should_keep
 
-  subroutine test_surfaces_intersection_points(success)
+  subroutine test_triangles_intersection_points(success)
     logical(c_bool), intent(inout) :: success
     ! Variables outside of signature.
     logical :: case_success
@@ -967,20 +967,20 @@ contains
     real(c_double) :: expected_s, expected_t
 
     case_id = 1
-    name = "surfaces_intersection_points"
+    name = "triangles_intersection_points"
 
     first = IntersectionClassification_FIRST
     second = IntersectionClassification_SECOND
     coincident = IntersectionClassification_COINCIDENT
 
-    ! CASE 1: Overlapping triangles (i.e. degree 1 surfaces).
+    ! CASE 1: Overlapping triangles (i.e. degree 1 triangles).
     linear1(:, 1) = 0
     linear1(:, 2) = [2.0_dp, 0.0_dp]
     linear1(:, 3) = [1.0_dp, 2.0_dp]
     linear2(:, 1) = [0.0_dp, 1.0_dp]
     linear2(:, 2) = [2.0_dp, 1.0_dp]
     linear2(:, 3) = [1.0_dp, -1.0_dp]
-    call surfaces_intersection_points( &
+    call triangles_intersection_points( &
          3, linear1, 1, 3, linear2, 1, &
          intersections, num_intersections, all_types, status)
     case_success = ( &
@@ -1016,7 +1016,7 @@ contains
     quadratic2(:, 4) = [6.0_dp, 21.0_dp]
     quadratic2(:, 5) = [12.0_dp, 24.0_dp]
     quadratic2(:, 6) = [8.0_dp, 32.0_dp]
-    call surfaces_intersection_points( &
+    call triangles_intersection_points( &
          6, quadratic1, 2, 6, quadratic2, 2, &
          intersections, num_intersections, all_types, status)
     expected_s = 2.0_dp / 3.0_dp
@@ -1047,7 +1047,7 @@ contains
     quadratic2(:, 4) = [1.0_dp, 5.0_dp]
     quadratic2(:, 5) = [5.0_dp, 5.0_dp]
     quadratic2(:, 6) = [4.0_dp, 8.0_dp]
-    call surfaces_intersection_points( &
+    call triangles_intersection_points( &
          6, quadratic1, 2, 6, quadratic2, 2, &
          intersections, num_intersections, all_types, status)
     case_success = ( &
@@ -1073,7 +1073,7 @@ contains
     quadratic2(:, 4) = [0.625_dp, -0.328125_dp]
     quadratic2(:, 5) = [0.125_dp, -0.453125_dp]
     quadratic2(:, 6) = [0.5_dp, -0.75_dp]
-    call surfaces_intersection_points( &
+    call triangles_intersection_points( &
          6, quadratic1, 2, 6, quadratic2, 2, &
          intersections, num_intersections, all_types, status)
     case_success = ( &
@@ -1090,7 +1090,7 @@ contains
          status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
-  end subroutine test_surfaces_intersection_points
+  end subroutine test_triangles_intersection_points
 
   subroutine test_is_first(success)
     logical(c_bool), intent(inout) :: success
@@ -1202,7 +1202,7 @@ contains
     second = IntersectionClassification_SECOND
     coincident = IntersectionClassification_COINCIDENT
 
-    ! CASE 1: On an edge of first surface, no other intersections on that edge.
+    ! CASE 1: On an edge of first triangle, no other intersections on that edge.
     curr_node = Intersection(0.125_dp, -1.0_dp, 2, -1, first)
     intersections(1) = Intersection(0.5_dp, -1.0_dp, 3, -1, first)
     remaining = 4
@@ -1215,7 +1215,7 @@ contains
          .NOT. at_start)
     call print_status(name, case_id, case_success, success)
 
-    ! CASE 2: On an edge of first surface, **multiple** other intersections
+    ! CASE 2: On an edge of first triangle, **multiple** other intersections
     !         on same edge.
     curr_node = Intersection(0.25_dp, -1.0_dp, 3, -1, first)
     ! An "acceptable" intersection that will be overtaken by the
@@ -1242,7 +1242,7 @@ contains
          at_start)
     call print_status(name, case_id, case_success, success)
 
-    ! CASE 3: On an edge of second surface, no other intersections on
+    ! CASE 3: On an edge of second triangle, no other intersections on
     !         that edge.
     curr_node = Intersection(-1.0_dp, 0.625_dp, -1, 3, second)
     intersections(1) = Intersection(-1.0_dp, 0.5_dp, -1, 1, first)
@@ -1256,7 +1256,7 @@ contains
          .NOT. at_start)
     call print_status(name, case_id, case_success, success)
 
-    ! CASE 4: On an edge of second surface, **multiple** other intersections
+    ! CASE 4: On an edge of second triangle, **multiple** other intersections
     !         on same edge.
     curr_node = Intersection(-1.0_dp, 0.125_dp, -1, 2, second)
     ! An "acceptable" intersection that will be overtaken by the
@@ -1282,8 +1282,8 @@ contains
          .NOT. at_start)
     call print_status(name, case_id, case_success, success)
 
-    ! CASE 5: On an edge of both surfaces (i.e. along a ``COINCIDENT``
-    !         segment). Next node found along edge of first surface.
+    ! CASE 5: On an edge of both triangles (i.e. along a ``COINCIDENT``
+    !         segment). Next node found along edge of first triangle.
     curr_node = Intersection(0.25_dp, 0.0_dp, 1, 3, coincident)
     ! NOTE: ``intersections(1)`` is "nonsense". A coincident edge should
     !       only have one other intesection along it, the "nonsense"
@@ -1303,8 +1303,8 @@ contains
          .NOT. at_start)
     call print_status(name, case_id, case_success, success)
 
-    ! CASE 6: On an edge of both surfaces (i.e. along a ``COINCIDENT``
-    !         segment). Next node found along edge of second surface.
+    ! CASE 6: On an edge of both triangles (i.e. along a ``COINCIDENT``
+    !         segment). Next node found along edge of second triangle.
     curr_node = Intersection(0.625_dp, 0.0_dp, 2, 2, coincident)
     ! NOTE: ``intersections(1)`` is "nonsense". A coincident edge should
     !       only have one other intesection along it, the "nonsense"
@@ -1324,7 +1324,7 @@ contains
          .NOT. at_start)
     call print_status(name, case_id, case_success, success)
 
-    ! CASE 7: On an edge of both surfaces (i.e. along a ``COINCIDENT``
+    ! CASE 7: On an edge of both triangles (i.e. along a ``COINCIDENT``
     !         segment). Next node found at corner of edges.
     curr_node = Intersection(0.625_dp, 0.5_dp, 1, 3, coincident)
     intersections(1) = Intersection(0.0_dp, 0.0_dp, 2, 1, first)
@@ -1684,7 +1684,7 @@ contains
          status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
-    ! CASE 5: First surface is completely contained in the other; from
+    ! CASE 5: First triangle is completely contained in the other; from
     !         13Q-35Q (ID: 37).
     intersections(1) = Intersection(0.0_dp, 0.5_dp, 3, 3, first)
     call interior_combine( &
@@ -1697,7 +1697,7 @@ contains
          status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
-    ! CASE 6: Second surface is completely contained in the other; from
+    ! CASE 6: Second triangle is completely contained in the other; from
     !         1L-9L (ID: 30).
     intersections(1) = Intersection(0.875_dp, 0.0_dp, 1, 2, second)
     intersections(2) = Intersection(0.75_dp, 0.0_dp, 2, 3, second)
@@ -1712,8 +1712,8 @@ contains
          status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
-    ! CASE 7: Intersection only contains "whole" edges of each surface, but
-    !         is not either one of the surface; from 1L-39Q (ID: 40).
+    ! CASE 7: Intersection only contains "whole" edges of each triangle, but
+    !         is not either one of the triangle; from 1L-39Q (ID: 40).
     intersections(1) = Intersection(0.0_dp, 0.0_dp, 2, 1, second)
     intersections(2) = Intersection(0.0_dp, 0.0_dp, 3, 2, first)
     call interior_combine( &
@@ -1750,7 +1750,7 @@ contains
 
   end function segment_check
 
-  subroutine test_surfaces_intersect(success)
+  subroutine test_triangles_intersect(success)
     logical(c_bool), intent(inout) :: success
     ! Variables outside of signature.
     logical :: case_success
@@ -1765,7 +1765,7 @@ contains
     real(c_double) :: start, end_
 
     case_id = 1
-    name = "surfaces_intersect"
+    name = "triangles_intersect"
 
     ! CASE 1: Disjoint bounding boxes.
     linear1(:, 1) = 0
@@ -1775,7 +1775,7 @@ contains
     linear2(:, 2) = [11.0_dp, 10.0_dp]
     linear2(:, 3) = [10.0_dp, 11.0_dp]
 
-    call surfaces_intersect( &
+    call triangles_intersect( &
          3, linear1, 1, 3, linear2, 1, &
          segment_ends, segments, &
          num_intersected, contained, status)
@@ -1801,7 +1801,7 @@ contains
     quadratic2(:, 5) = [5.0_dp, 5.0_dp]
     quadratic2(:, 6) = [4.0_dp, 8.0_dp]
 
-    call surfaces_intersect( &
+    call triangles_intersect( &
          6, quadratic1, 2, 6, quadratic2, 2, &
          segment_ends, segments, &
          num_intersected, contained, status)
@@ -1813,7 +1813,7 @@ contains
          status == Status_BAD_MULTIPLICITY)
     call print_status(name, case_id, case_success, success)
 
-    ! CASE 3: Triangle 2 contained in surface 1.
+    ! CASE 3: Triangle 2 contained in triangle 1.
     linear1(:, 1) = 0
     linear1(:, 2) = [5.0_dp, 0.0_dp]
     linear1(:, 3) = [0.0_dp, 5.0_dp]
@@ -1821,7 +1821,7 @@ contains
     linear2(:, 2) = [3.0_dp, 1.0_dp]
     linear2(:, 3) = 2
 
-    call surfaces_intersect( &
+    call triangles_intersect( &
          3, linear1, 1, 3, linear2, 1, &
          segment_ends, segments, &
          num_intersected, contained, status)
@@ -1833,8 +1833,8 @@ contains
          status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
-    ! CASE 4: Triangle 1 contained in surface 2 (re-uses all data from CASE 3).
-    call surfaces_intersect( &
+    ! CASE 4: Triangle 1 contained in triangle 2 (re-uses all data from CASE 3).
+    call triangles_intersect( &
          3, linear2, 1, 3, linear1, 1, &
          segment_ends, segments, &
          num_intersected, contained, status)
@@ -1852,7 +1852,7 @@ contains
     linear2(:, 2) = [7.0_dp, 3.0_dp]
     linear2(:, 3) = [6.0_dp, 3.0_dp]
 
-    call surfaces_intersect( &
+    call triangles_intersect( &
          3, linear1, 1, 3, linear2, 1, &
          segment_ends, segments, &
          num_intersected, contained, status)
@@ -1872,7 +1872,7 @@ contains
     linear2(:, 2) = [-4.0_dp, 5.0_dp]
     linear2(:, 3) = [4.0_dp, -3.0_dp]
 
-    call surfaces_intersect( &
+    call triangles_intersect( &
          3, linear1, 1, 3, linear2, 1, &
          segment_ends, segments, &
          num_intersected, contained, status)
@@ -1906,7 +1906,7 @@ contains
     quadratic2(:, 5) = [3.0_dp, 6.0_dp]
     quadratic2(:, 6) = [2.0_dp, 8.0_dp]
 
-    call surfaces_intersect( &
+    call triangles_intersect( &
          6, quadratic1, 2, 6, quadratic2, 2, &
          segment_ends, segments, &
          num_intersected, contained, status)
@@ -1926,7 +1926,7 @@ contains
     linear2(:, 2) = [-2.0_dp, 3.0_dp]
     linear2(:, 3) = [1.0_dp, -3.0_dp]
 
-    call surfaces_intersect( &
+    call triangles_intersect( &
          3, linear1, 1, 3, linear2, 1, &
          segment_ends, segments, &
          num_intersected, contained, status)
@@ -1952,7 +1952,7 @@ contains
     quadratic2(:, 5) = [11.0_dp, 6.0_dp]
     quadratic2(:, 6) = 8
 
-    call surfaces_intersect( &
+    call triangles_intersect( &
          6, quadratic1, 2, 6, quadratic2, 2, &
          segment_ends, segments, &
          num_intersected, contained, status)
@@ -1966,7 +1966,7 @@ contains
 
     ! CASE 10: The only intersection(s) are ``TANGENT_SECOND`` (re-uses
     !          **all** data from CASE 9).
-    call surfaces_intersect( &
+    call triangles_intersect( &
          6, quadratic2, 2, 6, quadratic1, 2, &
          segment_ends, segments, &
          num_intersected, contained, status)
@@ -2004,7 +2004,7 @@ contains
     cubic2(:, 9) = [-0.5612419767391262_dp, 0.007849282849502192_dp]
     cubic2(:, 10) = [-0.5650788564504334_dp, -0.0003406439314109452_dp]
 
-    call surfaces_intersect( &
+    call triangles_intersect( &
          10, cubic1, 3, 10, cubic2, 3, &
          segment_ends, segments, &
          num_intersected, contained, status)
@@ -2022,7 +2022,7 @@ contains
          status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
-    ! CASE 12: Two surfaces share an edge but no interior, will result in
+    ! CASE 12: Two triangles share an edge but no interior, will result in
     !          ``COINCIDENT_UNUSED``. This is 29Q-42Q (ID: 43).
     quadratic1(:, 1) = -0.5_dp
     quadratic1(:, 2) = [0.3125_dp, -0.25_dp]
@@ -2036,7 +2036,7 @@ contains
     quadratic2(:, 4) = [0.625_dp, 1.25_dp]
     quadratic2(:, 5) = [1.25_dp, 0.625_dp]
     quadratic2(:, 6) = 1.25_dp
-    call surfaces_intersect( &
+    call triangles_intersect( &
          6, quadratic1, 2, 6, quadratic2, 2, &
          segment_ends, segments, &
          num_intersected, contained, status)
@@ -2047,7 +2047,7 @@ contains
     call print_status(name, case_id, case_success, success)
 
     ! CASE 13: Same as CASE 12, with arguments swapped.
-    call surfaces_intersect( &
+    call triangles_intersect( &
          6, quadratic2, 2, 6, quadratic1, 2, &
          segment_ends, segments, &
          num_intersected, contained, status)
@@ -2065,7 +2065,7 @@ contains
     linear2(:, 2) = 6
     linear2(:, 3) = [3.0_dp, 6.0_dp]
 
-    call surfaces_intersect( &
+    call triangles_intersect( &
          3, linear1, 1, 3, linear2, 1, &
          segment_ends, segments, &
          num_intersected, contained, status)
@@ -2075,9 +2075,9 @@ contains
          status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
-  end subroutine test_surfaces_intersect
+  end subroutine test_triangles_intersect
 
-  subroutine test_surfaces_intersect_abi(success)
+  subroutine test_triangles_intersect_abi(success)
     logical(c_bool), intent(inout) :: success
     ! Variables outside of signature.
     logical :: case_success
@@ -2090,7 +2090,7 @@ contains
     type(CurvedPolygonSegment) :: segments(6)
 
     case_id = 1
-    name = "surfaces_intersect_abi"
+    name = "triangles_intersect_abi"
 
     ! CASE 1: Intersection results in error.
     quadratic1(:, 1) = [0.0_dp, 2.0_dp]
@@ -2105,7 +2105,7 @@ contains
     quadratic2(:, 4) = [1.0_dp, 5.0_dp]
     quadratic2(:, 5) = [5.0_dp, 5.0_dp]
     quadratic2(:, 6) = [4.0_dp, 8.0_dp]
-    call surfaces_intersect_abi( &
+    call triangles_intersect_abi( &
          6, quadratic1, 2, 6, quadratic2, 2, &
          2, segment_ends, 6, segments, &
          num_intersected, contained, status)
@@ -2127,7 +2127,7 @@ contains
     quadratic1(:, 5) = [-2.0_dp, -3.0_dp]
     quadratic1(:, 6) = [0.0_dp, -9.0_dp]
     segment_ends(:2) = [-1337, -42]
-    call surfaces_intersect_abi( &
+    call triangles_intersect_abi( &
          3, linear1, 1, 6, quadratic1, 2, &
          1, segment_ends, 3, segments(:3), &
          num_intersected, contained, status)
@@ -2140,7 +2140,7 @@ contains
 
     ! CASE 3: ``segments`` is not large enough; two disjoint intersections
     !         from 13L-38Q (ID: 39).
-    call surfaces_intersect_abi( &
+    call triangles_intersect_abi( &
          3, linear1, 1, 6, quadratic1, 2, &
          2, segment_ends, 3, segments(:3), &
          num_intersected, contained, status)
@@ -2153,7 +2153,7 @@ contains
 
     ! CASE 4: Successful intersection; two disjoint intersections
     !         from 13L-38Q (ID: 39).
-    call surfaces_intersect_abi( &
+    call triangles_intersect_abi( &
          3, linear1, 1, 6, quadratic1, 2, &
          2, segment_ends, 6, segments, &
          num_intersected, contained, status)
@@ -2177,7 +2177,7 @@ contains
     linear2(:, 1) = 3
     linear2(:, 2) = [4.0_dp, 3.0_dp]
     linear2(:, 3) = [3.0_dp, 4.0_dp]
-    call surfaces_intersect_abi( &
+    call triangles_intersect_abi( &
          3, linear1, 1, 3, linear2, 1, &
          2, segment_ends, 6, segments, &
          num_intersected, contained, status)
@@ -2187,6 +2187,6 @@ contains
          status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
-  end subroutine test_surfaces_intersect_abi
+  end subroutine test_triangles_intersect_abi
 
-end module test_surface_intersection
+end module test_triangle_intersection

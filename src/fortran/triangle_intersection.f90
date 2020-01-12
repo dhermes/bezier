@@ -10,7 +10,7 @@
 ! See the License for the specific language governing permissions and
 ! limitations under the License.
 
-module surface_intersection
+module triangle_intersection
 
   use, intrinsic :: iso_c_binding, only: c_double, c_int, c_bool
   use status, only: &
@@ -22,7 +22,7 @@ module surface_intersection
        bbox_intersect, all_intersections
   use helpers, only: cross_product, contains_nd, vector_close
   use types, only: dp
-  use surface, only: &
+  use triangle, only: &
        evaluate_barycentric, jacobian_both, subdivide_nodes, compute_edge_nodes
   implicit none
   private &
@@ -48,10 +48,10 @@ module surface_intersection
        TriangleContained_FIRST, TriangleContained_SECOND, newton_refine, &
        locate_point, classify_intersection, update_edge_end_unused, &
        find_corner_unused, add_st_vals, should_keep, &
-       surfaces_intersection_points, is_first, is_second, &
+       triangles_intersection_points, is_first, is_second, &
        get_next, to_front, add_segment, &
-       interior_combine, surfaces_intersect, surfaces_intersect_abi, &
-       free_surface_intersections_workspace
+       interior_combine, triangles_intersect, triangles_intersect_abi, &
+       free_triangle_intersections_workspace
 
   integer(c_int), parameter :: IntersectionClassification_UNSET = -99
 
@@ -103,7 +103,7 @@ module surface_intersection
   ! to be "zero". This is a "hack", since it doesn't take ||u||
   ! or ||v|| into account.
   real(c_double), parameter :: ALMOST_TANGENT = 0.5_dp**50
-  ! Long-lived workspaces for ``surfaces_intersect_abi()``. If multiple
+  ! Long-lived workspaces for ``triangles_intersect_abi()``. If multiple
   ! threads are used, each of these **should** be thread-local.
   integer(c_int), allocatable :: SEGMENT_ENDS_WORKSPACE(:)
   type(CurvedPolygonSegment), allocatable :: SEGMENTS_WORKSPACE(:)
@@ -134,7 +134,7 @@ contains
   subroutine newton_refine( &
        num_nodes, nodes, degree, x_val, y_val, &
        s, t, updated_s, updated_t) &
-       bind(c, name='BEZ_newton_refine_surface')
+       bind(c, name='BEZ_newton_refine_triangle')
 
     integer(c_int), intent(in) :: num_nodes
     real(c_double), intent(in) :: nodes(2, num_nodes)
@@ -287,15 +287,15 @@ contains
 
   subroutine locate_point( &
        num_nodes, nodes, degree, x_val, y_val, s_val, t_val) &
-       bind(c, name='BEZ_locate_point_surface')
+       bind(c, name='BEZ_locate_point_triangle')
 
     ! NOTE: This solves the inverse problem B(s, t) = (x, y) (if it can be
-    !       solved). Does so by subdividing the surface until the sub-surfaces
+    !       solved). Does so by subdividing the triangle until the sub-triangles
     !       are sufficiently small, then using Newton's method to narrow
     !       in on the pre-image of the point.
     ! NOTE: This returns ``-1`` (``LOCATE_MISS``) for ``s_val`` as a signal
-    !       for "point is not on the surface".
-    ! NOTE: This assumes, but does not check, that the surface is "valid",
+    !       for "point is not on the triangle".
+    ! NOTE: This assumes, but does not check, that the triangle is "valid",
     !       i.e. all pre-images are unique.
 
     integer(c_int), intent(in) :: num_nodes
@@ -430,7 +430,7 @@ contains
        tangent_s, tangent_t) result(predicate)
 
     ! NOTE: This assumes that ``intersection_%index_(first|second)``
-    !       are in [1, 2, 3] (marked as the edges of a surface).
+    !       are in [1, 2, 3] (marked as the edges of a triangle).
 
     type(CurveData), intent(in) :: edges_first(3), edges_second(3)
     type(Intersection), intent(in) :: intersection_
@@ -440,19 +440,19 @@ contains
     real(c_double) :: alt_tangent_s(2), alt_tangent_t(2)
     real(c_double) :: cross_prod1, cross_prod2, cross_prod3
 
-    ! Compute the other edge for the ``s`` surface.
+    ! Compute the other edge for the ``s`` triangle.
     index = 1 + modulo(intersection_%index_first - 2, 3)
     num_nodes = size(edges_first(index)%nodes, 2)
     call evaluate_hodograph( &
          1.0_dp, num_nodes, 2, &
          edges_first(index)%nodes, alt_tangent_s)
 
-    ! First check if ``tangent_t`` is interior to the ``s`` surface.
+    ! First check if ``tangent_t`` is interior to the ``s`` triangle.
     call cross_product( &
          tangent_s, tangent_t, cross_prod1)
     ! A positive cross product indicates that ``tangent_t`` is
     ! interior to ``tangent_s``. Similar for ``alt_tangent_s``.
-    ! If ``tangent_t`` is interior to both, then the surfaces
+    ! If ``tangent_t`` is interior to both, then the triangles
     ! do more than just "kiss" at the corner, so the corner should
     ! not be ignored.
     if (cross_prod1 >= 0.0_dp) then
@@ -488,9 +488,9 @@ contains
     end if
 
     ! If neither of ``tangent_t`` or ``alt_tangent_t`` are interior
-    ! to the ``s`` surface, one of two things is true. Either
-    ! the two surfaces have no interior intersection (1) or the
-    ! ``s`` surface is bounded by both edges of the ``t`` surface
+    ! to the ``s`` triangle, one of two things is true. Either
+    ! the two triangles have no interior intersection (1) or the
+    ! ``s`` triangle is bounded by both edges of the ``t`` triangle
     ! at the corner intersection (2). To detect (2), we only need
     ! check if ``tangent_s`` is interior to both ``tangent_t``
     ! and ``alt_tangent_t``. ``cross_prod1`` contains
@@ -508,7 +508,7 @@ contains
        tangent_s, tangent_t) result(predicate)
 
     ! NOTE: This assumes that ``intersection_%index_(first|second)``
-    !       are in [1, 2, 3] (marked as the edges of a surface).
+    !       are in [1, 2, 3] (marked as the edges of a triangle).
 
     type(CurveData), intent(in) :: edges_first(3), edges_second(3)
     type(Intersection), intent(in) :: intersection_
@@ -598,7 +598,7 @@ contains
        if (sign1 == sign2) then
           ! If both curvatures are positive, since the curves are
           ! moving in opposite directions, the tangency isn't part of
-          ! the surface intersection.
+          ! the triangle intersection.
           if (sign1 == 1.0_dp) then
              enum_ = IntersectionClassification_OPPOSED
           else
@@ -645,7 +645,7 @@ contains
     ! * Status_EDGE_END      : If either the s- or t-parameter of the
     !                          intersection is equal to ``1.0``, i.e. if the
     !                          intersection is at the end of an edge. Since
-    !                          another edge of the surface will also contain
+    !                          another edge of the triangle will also contain
     !                          that point (at it's beginning), that edge
     !                          should be used.
     ! * Status_SAME_CURVATURE: Via ``classify_tangent_intersection()``.
@@ -972,14 +972,14 @@ contains
 
   end function should_keep
 
-  subroutine surfaces_intersection_points( &
+  subroutine triangles_intersection_points( &
        num_nodes1, nodes1, degree1, &
        num_nodes2, nodes2, degree2, &
        intersections, num_intersections, all_types, status)
 
     ! NOTE: This is **explicitly** not intended for C inter-op.
     ! NOTE: This (and ``add_st_vals``) ignores duplicate nodes (caused when
-    !       an intersection happens at a corner of the surface, which will
+    !       an intersection happens at a corner of the triangle, which will
     !       be at the end of one edge and the start of another). If desired,
     !       a "verify" option could be added (as is done in Python) to make
     !       sure that any "duplicate" intersections (i.e. ones that occur at
@@ -1016,7 +1016,7 @@ contains
     logical(c_bool) :: coincident
     integer(c_int) :: enum_
 
-    ! Compute the edge nodes for the first surface.
+    ! Compute the edge nodes for the first triangle.
     allocate(edges_first(1)%nodes(2, degree1 + 1))
     allocate(edges_first(2)%nodes(2, degree1 + 1))
     allocate(edges_first(3)%nodes(2, degree1 + 1))
@@ -1024,7 +1024,7 @@ contains
          num_nodes1, 2, nodes1, degree1, &
          edges_first(1)%nodes, edges_first(2)%nodes, edges_first(3)%nodes)
 
-    ! Compute the edge nodes for the second surface.
+    ! Compute the edge nodes for the second triangle.
     allocate(edges_second(1)%nodes(2, degree2 + 1))
     allocate(edges_second(2)%nodes(2, degree2 + 1))
     allocate(edges_second(3)%nodes(2, degree2 + 1))
@@ -1097,13 +1097,13 @@ contains
        end if
     end do
 
-  end subroutine surfaces_intersection_points
+  end subroutine triangles_intersection_points
 
   subroutine no_intersections( &
        num_nodes1, nodes1, degree1, &
        num_nodes2, nodes2, degree2, contained)
 
-    ! NOTE: This is a helper for ``surfaces_intersect()``.
+    ! NOTE: This is a helper for ``triangles_intersect()``.
 
     integer(c_int), intent(in) :: num_nodes1
     real(c_double), intent(in) :: nodes1(2, num_nodes1)
@@ -1115,8 +1115,8 @@ contains
     ! Variables outside of signature.
     real(c_double) :: s_val, t_val
 
-    ! If the first corner of ``surface1`` is contained in ``surface2``,
-    ! then the whole surface must be since there are no intersections.
+    ! If the first corner of ``triangle1`` is contained in ``triangle2``,
+    ! then the whole triangle must be since there are no intersections.
     call locate_point( &
          num_nodes2, nodes2, degree2, &
          nodes1(1, 1), nodes1(2, 1), s_val, t_val)
@@ -1125,8 +1125,8 @@ contains
        return
     end if
 
-    ! If the first corner of ``surface2`` is contained in ``surface1``,
-    ! then the whole surface must be since there are no intersections.
+    ! If the first corner of ``triangle2`` is contained in ``triangle1``,
+    ! then the whole triangle must be since there are no intersections.
     call locate_point( &
          num_nodes1, nodes1, degree1, &
          nodes2(1, 1), nodes2(2, 1), s_val, t_val)
@@ -1547,7 +1547,7 @@ contains
        return
     end if
 
-    ! Finally, check if the edges all come from the same surface.
+    ! Finally, check if the edges all come from the same triangle.
     if ( &
          all(segments(:3)%edge_index == [1, 2, 3]) .OR. &
          all(segments(:3)%edge_index == [2, 3, 1]) .OR. &
@@ -1661,12 +1661,12 @@ contains
        end if
     end do
 
-    ! As a final pass, check if the intersection is one of the two surfaces.
+    ! As a final pass, check if the intersection is one of the two triangles.
     call check_contained(num_intersected, segment_ends, segments, contained)
 
   end subroutine interior_combine
 
-  subroutine surfaces_intersect( &
+  subroutine triangles_intersect( &
        num_nodes1, nodes1, degree1, &
        num_nodes2, nodes2, degree2, &
        segment_ends, segments, &
@@ -1688,11 +1688,11 @@ contains
     !                            as ``OPPOSED / IGNORED_CORNER / TANGENT_*``
     !                            but not uniquely one type. (This should
     !                            never occur).
-    ! * Status_NO_CONVERGE     : Via ``surfaces_intersection_points()``.
-    ! * (N >= MAX_CANDIDATES)  : Via ``surfaces_intersection_points()``.
-    ! * Status_BAD_MULTIPLICITY: Via ``surfaces_intersection_points()``.
-    ! * Status_EDGE_END        : Via ``surfaces_intersection_points()``.
-    ! * Status_SAME_CURVATURE  : Via ``surfaces_intersection_points()``.
+    ! * Status_NO_CONVERGE     : Via ``triangles_intersection_points()``.
+    ! * (N >= MAX_CANDIDATES)  : Via ``triangles_intersection_points()``.
+    ! * Status_BAD_MULTIPLICITY: Via ``triangles_intersection_points()``.
+    ! * Status_EDGE_END        : Via ``triangles_intersection_points()``.
+    ! * Status_SAME_CURVATURE  : Via ``triangles_intersection_points()``.
     ! * Status_BAD_INTERIOR    : Via ``interior_combine()``.
 
     integer(c_int), intent(in) :: num_nodes1
@@ -1715,14 +1715,14 @@ contains
     contained = TriangleContained_NEITHER
     status = Status_SUCCESS
 
-    ! If the bounded boxes do not intersect, the surfaces cannot.
+    ! If the bounded boxes do not intersect, the triangles cannot.
     call bbox_intersect( &
          num_nodes1, nodes1, num_nodes2, nodes2, bbox_int)
     if (bbox_int /= BoxIntersectionType_INTERSECTION) then
        return
     end if
 
-    call surfaces_intersection_points( &
+    call triangles_intersection_points( &
          num_nodes1, nodes1, degree1, &
          num_nodes2, nodes2, degree2, &
          intersections, num_intersections, all_types, status)
@@ -1766,14 +1766,14 @@ contains
          num_intersections, intersections(:num_intersections), &
          num_intersected, segment_ends, segments, contained, status)
 
-  end subroutine surfaces_intersect
+  end subroutine triangles_intersect
 
-  subroutine surfaces_intersect_abi( &
+  subroutine triangles_intersect_abi( &
        num_nodes1, nodes1, degree1, &
        num_nodes2, nodes2, degree2, &
        segment_ends_size, segment_ends, segments_size, segments, &
        num_intersected, contained, status) &
-       bind(c, name='BEZ_surface_intersections')
+       bind(c, name='BEZ_triangle_intersections')
 
     ! NOTE: The number of intersections cannot be known beforehand. If
     !       ``segment_ends`` is not large enough, then it will not be
@@ -1793,13 +1793,13 @@ contains
     !                              ``num_intersected`` **OR** if
     !                              ``segments_size`` is smaller than the number
     !                              of segments.
-    ! * Status_UNKNOWN           : Via ``surfaces_intersect()``.
-    ! * Status_NO_CONVERGE       : Via ``surfaces_intersect()``.
-    ! * (N >= MAX_CANDIDATES)    : Via ``surfaces_intersect()``.
-    ! * Status_BAD_MULTIPLICITY  : Via ``surfaces_intersect()``.
-    ! * Status_EDGE_END          : Via ``surfaces_intersect()``.
-    ! * Status_SAME_CURVATURE    : Via ``surfaces_intersect()``.
-    ! * Status_BAD_INTERIOR      : Via ``surfaces_intersect()``.
+    ! * Status_UNKNOWN           : Via ``triangles_intersect()``.
+    ! * Status_NO_CONVERGE       : Via ``triangles_intersect()``.
+    ! * (N >= MAX_CANDIDATES)    : Via ``triangles_intersect()``.
+    ! * Status_BAD_MULTIPLICITY  : Via ``triangles_intersect()``.
+    ! * Status_EDGE_END          : Via ``triangles_intersect()``.
+    ! * Status_SAME_CURVATURE    : Via ``triangles_intersect()``.
+    ! * Status_BAD_INTERIOR      : Via ``triangles_intersect()``.
 
     integer(c_int), intent(in) :: num_nodes1
     real(c_double), intent(in) :: nodes1(2, num_nodes1)
@@ -1817,7 +1817,7 @@ contains
     ! Variables outside of signature.
     integer(c_int) :: num_segments
 
-    call surfaces_intersect( &
+    call triangles_intersect( &
          num_nodes1, nodes1, degree1, &
          num_nodes2, nodes2, degree2, &
          SEGMENT_ENDS_WORKSPACE, SEGMENTS_WORKSPACE, num_intersected, &
@@ -1846,13 +1846,13 @@ contains
 
     segments(:num_segments) = SEGMENTS_WORKSPACE(:num_segments)
 
-  end subroutine surfaces_intersect_abi
+  end subroutine triangles_intersect_abi
 
-  subroutine free_surface_intersections_workspace() &
-       bind(c, name='BEZ_free_surface_intersections_workspace')
+  subroutine free_triangle_intersections_workspace() &
+       bind(c, name='BEZ_free_triangle_intersections_workspace')
 
     ! NOTE: This **should** be run during clean-up for any code which
-    !       invokes ``surfaces_intersect_abi()``.
+    !       invokes ``triangles_intersect_abi()``.
 
     if (allocated(SEGMENT_ENDS_WORKSPACE)) then
        deallocate(SEGMENT_ENDS_WORKSPACE)
@@ -1862,6 +1862,6 @@ contains
        deallocate(SEGMENTS_WORKSPACE)
     end if
 
-  end subroutine free_surface_intersections_workspace
+  end subroutine free_triangle_intersections_workspace
 
-end module surface_intersection
+end module triangle_intersection

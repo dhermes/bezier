@@ -1,6 +1,6 @@
 ###################
-``bezier._surface``
+``bezier._triangle``
 ###################
 
-.. literalinclude:: ../../../src/python/bezier/_surface.pxd
+.. literalinclude:: ../../../src/python/bezier/_triangle.pxd
    :language: cython

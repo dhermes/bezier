@@ -1,19 +1,19 @@
 ###########################
-surface_intersection module
+triangle_intersection module
 ###########################
 
 .. |eacute| unicode:: U+000E9 .. LATIN SMALL LETTER E WITH ACUTE
    :trim:
 
 This is a collection of procedures and types for computing intersections
-between two B |eacute| zier surfaces in :math:`\mathbf{R}^2`. The region(s)
+between two B |eacute| zier triangles in :math:`\mathbf{R}^2`. The region(s)
 of intersection (if non-empty) will be curved polygons defined by
 the B |eacute| zier curve segments that form the exterior.
 
 .. note::
 
     In most of the procedures below both the number of nodes :math:`N` and
-    the degree :math:`d` of a B |eacute| zier surface are provided. It is
+    the degree :math:`d` of a B |eacute| zier triangle are provided. It is
     redundant to require both as arguments since :math:`N = \binom{d + 2}{2}`.
     However, both are provided as arguments to avoid unnecessary
     re-computation, i.e. we expect the caller to know both :math:`N` and
@@ -23,7 +23,7 @@ the B |eacute| zier curve segments that form the exterior.
 Procedures
 **********
 
-.. c:function:: void BEZ_locate_point_surface(const int *num_nodes, \
+.. c:function:: void BEZ_locate_point_triangle(const int *num_nodes, \
                                               const double *nodes, \
                                               const int *degree, \
                                               const double *x_val, \
@@ -32,25 +32,25 @@ Procedures
                                               double *t_val)
 
    This solves the inverse problem :math:`B(s, t) = (x, y)` (if it can be
-   solved). Does so by subdividing the surface until the sub-surfaces are
+   solved). Does so by subdividing the triangle until the sub-triangles are
    sufficiently small, then using Newton's method to narrow in on the
    pre-image of the point.
 
-   This assumes the surface is "valid", i.e. it has positive Jacobian
+   This assumes the triangle is "valid", i.e. it has positive Jacobian
    throughout the unit triangle. (If this were not true, then multiple
    inputs could map to the same output.)
 
    :param num_nodes:
       **[Input]** The number of nodes :math:`N` in the control net of the
-      B |eacute| zier surface.
+      B |eacute| zier triangle.
    :type num_nodes: const int*
    :param nodes:
-      **[Input]** The actual control net of the B |eacute| zier surface as a
+      **[Input]** The actual control net of the B |eacute| zier triangle as a
       :math:`2 \times N` array. This should be laid out in Fortran order, with
       :math:`2 N` total values.
    :type nodes: const double*
    :param degree:
-      **[Input]** The degree :math:`d` of the B |eacute| zier surface.
+      **[Input]** The degree :math:`d` of the B |eacute| zier triangle.
    :type degree: const int*
    :param x_val:
       **[Input]** The :math:`x`\-value of the point being located.
@@ -60,10 +60,10 @@ Procedures
    :type y_val: const double*
    :param double* s_val:
       **[Output]** The first parameter :math:`s` of the solution. If
-      :math:`(x, y)` can't be located on the surface, then ``s_val = -1.0``.
+      :math:`(x, y)` can't be located on the triangle, then ``s_val = -1.0``.
    :param double* t_val:
       **[Output]** The second parameter :math:`t` of the solution. If
-      :math:`(x, y)` can't be located on the surface, then this value
+      :math:`(x, y)` can't be located on the triangle, then this value
       is undefined.
 
    **Signature:**
@@ -71,7 +71,7 @@ Procedures
    .. code-block:: c
 
       void
-      BEZ_locate_point_surface(const int *num_nodes,
+      BEZ_locate_point_triangle(const int *num_nodes,
                                const double *nodes,
                                const int *degree,
                                const double *x_val,
@@ -79,7 +79,7 @@ Procedures
                                double *s_val,
                                double *t_val);
 
-.. c:function:: void BEZ_newton_refine_surface(const int *num_nodes, \
+.. c:function:: void BEZ_newton_refine_triangle(const int *num_nodes, \
                                                const double *nodes, \
                                                const int *degree, \
                                                const double *x_val, \
@@ -101,15 +101,15 @@ Procedures
 
    :param num_nodes:
       **[Input]** The number of nodes :math:`N` in the control net of the
-      B |eacute| zier surface.
+      B |eacute| zier triangle.
    :type num_nodes: const int*
    :param nodes:
-      **[Input]** The actual control net of the B |eacute| zier surface as a
+      **[Input]** The actual control net of the B |eacute| zier triangle as a
       :math:`2 \times N` array. This should be laid out in Fortran order, with
       :math:`2 N` total values.
    :type nodes: const double*
    :param degree:
-      **[Input]** The degree :math:`d` of the B |eacute| zier surface.
+      **[Input]** The degree :math:`d` of the B |eacute| zier triangle.
    :type degree: const int*
    :param x_val:
       **[Input]** The :math:`x`\-value of the point :math:`p`.
@@ -137,7 +137,7 @@ Procedures
    .. code-block:: c
 
       void
-      BEZ_newton_refine_surface(const int *num_nodes,
+      BEZ_newton_refine_triangle(const int *num_nodes,
                                 const double *nodes,
                                 const int *degree,
                                 const double *x_val,
@@ -147,7 +147,7 @@ Procedures
                                 double *updated_s,
                                 double *updated_t);
 
-.. c:function:: void BEZ_surface_intersections(const int *num_nodes1, \
+.. c:function:: void BEZ_triangle_intersections(const int *num_nodes1, \
                                                const double *nodes1, \
                                                const int *degree1, \
                                                const int *num_nodes2, \
@@ -161,10 +161,10 @@ Procedures
                                                TriangleContained *contained, \
                                                Status *status)
 
-   Compute the intersection of two B |eacute| zier surfaces. This will
+   Compute the intersection of two B |eacute| zier triangles. This will
    first compute all intersection points between edges of the first and
-   second surface (nine edge pairs in total). Then, it will classify each
-   point according to which surface is "interior" at that point. Finally,
+   second triangle (nine edge pairs in total). Then, it will classify each
+   point according to which triangle is "interior" at that point. Finally,
    it will form a loop of intersection points using the classifications
    until all intersections have been used or discarded.
 
@@ -188,27 +188,27 @@ Procedures
 
    :param num_nodes1:
       **[Input]** The number of nodes :math:`N_1` in the control net of the
-      first B |eacute| zier surface.
+      first B |eacute| zier triangle.
    :type num_nodes1: const int*
    :param nodes1:
-      **[Input]** The actual control net of the first B |eacute| zier surface
+      **[Input]** The actual control net of the first B |eacute| zier triangle
       as a :math:`2 \times N_1` array. This should be laid out in Fortran
       order, with :math:`2 N_1` total values.
    :type nodes1: const double*
    :param degree1:
-      **[Input]** The degree :math:`d_1` of the first B |eacute| zier surface.
+      **[Input]** The degree :math:`d_1` of the first B |eacute| zier triangle.
    :type degree1: const int*
    :param num_nodes2:
       **[Input]** The number of nodes :math:`N_2` in the control net of the
-      second B |eacute| zier surface.
+      second B |eacute| zier triangle.
    :type num_nodes2: const int*
    :param nodes2:
-      **[Input]** The actual control net of the second B |eacute| zier surface
+      **[Input]** The actual control net of the second B |eacute| zier triangle
       as a :math:`2 \times N_2` array. This should be laid out in Fortran
       order, with :math:`2 N_2` total values.
    :type nodes2: const double*
    :param degree2:
-      **[Input]** The degree :math:`d_2` of the second B |eacute| zier surface.
+      **[Input]** The degree :math:`d_2` of the second B |eacute| zier triangle.
    :type degree1: const int*
    :param segment_ends_size:
       **[Input]** The size of ``segment_ends``, which must be pre-allocated by
@@ -216,7 +216,7 @@ Procedures
    :type segment_ends_size: const int*
    :param int* segment_ends:
       **[Output]** An array (pre-allocated by the caller) of the end indices
-      for each group of segments in ``segments``. For example, if the surfaces
+      for each group of segments in ``segments``. For example, if the triangles
       intersect in two distinct curved polygons, the first of which has four
       sides and the second of which has three, then the first two values in
       ``segment_ends`` will be ``[4, 7]`` and ``num_intersected`` will be
@@ -228,12 +228,12 @@ Procedures
    :param CurvedPolygonSegment* segments:
       **[Output]** An array (pre-allocated by the caller) of the edge segments
       that make up the boundary of the curved polygon(s) that form the
-      intersection of the two surfaces.
+      intersection of the two triangles.
    :param int* num_intersected:
       **[Output]** The number of curved polygons in the intersection of two
-      surfaces.
+      triangles.
    :param TriangleContained* contained:
-      **[Output]** Enum indicating if one surface is **fully** contained in
+      **[Output]** Enum indicating if one triangle is **fully** contained in
       the other.
    :param Status* status:
       **[Output]** The status code for the procedure. Will be
@@ -277,7 +277,7 @@ Procedures
    .. code-block:: c
 
       void
-      BEZ_surface_intersections(const int *num_nodes1,
+      BEZ_triangle_intersections(const int *num_nodes1,
                                 const double *nodes1,
                                 const int *degree1,
                                 const int *num_nodes2,
@@ -291,18 +291,18 @@ Procedures
                                 TriangleContained *contained,
                                 Status *status);
 
-.. c:function:: void BEZ_free_surface_intersections_workspace(void)
+.. c:function:: void BEZ_free_triangle_intersections_workspace(void)
 
    This frees any long-lived workspace(s) used by ``libbezier`` throughout
    the life of a program. It should be called during clean-up for any code
-   which invokes :c:func:`BEZ_surface_intersections`.
+   which invokes :c:func:`BEZ_triangle_intersections`.
 
    **Signature:**
 
    .. code-block:: c
 
       void
-      BEZ_free_surface_intersections_workspace(void);
+      BEZ_free_triangle_intersections_workspace(void);
 
 *****
 Types
@@ -311,8 +311,8 @@ Types
 .. c:type:: CurvedPolygonSegment
 
    Describes an edge of a :class:`.CurvedPolygon` formed when intersecting
-   two curved B |eacute| zier surfaces. The edges of the intersection need
-   not be an entire edge of one of the surfaces. For example, an edge
+   two curved B |eacute| zier triangles. The edges of the intersection need
+   not be an entire edge of one of the triangles. For example, an edge
    :math:`E(s)` may be restricted to
    :math:`E\left(\left[\frac{1}{4}, \frac{7}{8}\right]\right)`.
 
@@ -331,11 +331,11 @@ Types
    .. c:type:: int edge_index
 
       An index describing which edge the segment falls on. The edges
-      of the first surface in the intersection are given index values
-      of ``1``, ``2`` and ``3`` while those of the second surface are
+      of the first triangle in the intersection are given index values
+      of ``1``, ``2`` and ``3`` while those of the second triangle are
       ``4``, ``5`` and ``6``.
 
-   In the header ``bezier/surface_intersection.h``, this is defined as
+   In the header ``bezier/triangle_intersection.h``, this is defined as
 
    .. code-block:: c
 
@@ -347,26 +347,26 @@ Types
 
 .. c:type:: TriangleContained
 
-   This enum is used to indicate if one surface is contained in
-   another when doing surface-surface intersection.
+   This enum is used to indicate if one triangle is contained in
+   another when doing triangle-triangle intersection.
 
    .. c:var:: NEITHER
 
       (``0``)
-      Indicates that neither surface is contained in the other. This
-      could mean the surfaces are disjoint or that they intersect
+      Indicates that neither triangle is contained in the other. This
+      could mean the triangles are disjoint or that they intersect
       in a way other than full containment.
 
    .. c:var:: FIRST
 
       (``1``)
-      Indicates that the first surface (arguments will be ordered) is
+      Indicates that the first triangle (arguments will be ordered) is
       fully contained in the second. This allows for points of tangency,
       shared corners or shared segments along an edge.
 
    .. c:var:: SECOND
 
       (``2``)
-      Indicates that the second surface (arguments will be ordered) is
+      Indicates that the second triangle (arguments will be ordered) is
       fully contained in the first. This allows for points of tangency,
       shared corners or shared segments along an edge.

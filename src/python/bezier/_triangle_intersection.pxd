@@ -10,13 +10,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Cython wrapper for ``surface_intersection.f90``."""
+"""Cython wrapper for ``triangle_intersection.f90``."""
 
 
 from bezier._status cimport Status
 
 
-cdef extern from "bezier/surface_intersection.h":
+cdef extern from "bezier/triangle_intersection.h":
     cpdef enum TriangleContained:
         NEITHER = 0
         FIRST = 1
@@ -27,18 +27,18 @@ cdef extern from "bezier/surface_intersection.h":
         double end
         int edge_index
 
-    void newton_refine_surface "BEZ_newton_refine_surface" (
+    void newton_refine_triangle "BEZ_newton_refine_triangle" (
         const int* num_nodes, const double* nodes,
         const int* degree, const double* x_val, const double* y_val,
         const double* s, const double* t, double* updated_s, double* updated_t)
-    void locate_point_surface "BEZ_locate_point_surface" (
+    void locate_point_triangle "BEZ_locate_point_triangle" (
         const int* num_nodes, const double* nodes,
         const int* degree, const double* x_val, const double* y_val, double* s_val,
         double* t_val)
-    void surface_intersections "BEZ_surface_intersections" (
+    void triangle_intersections "BEZ_triangle_intersections" (
         const int* num_nodes1, const double* nodes1,
         const int* degree1, const int* num_nodes2, const double* nodes2,
         const int* degree2, const int* segment_ends_size, int* segment_ends,
         int* segments_size, CurvedPolygonSegment* segments, int* num_intersected,
         TriangleContained* contained, Status* status) 
-    void free_surface_intersections_workspace "BEZ_free_surface_intersections_workspace" ()
+    void free_triangle_intersections_workspace "BEZ_free_triangle_intersections_workspace" ()

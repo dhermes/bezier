@@ -40,7 +40,7 @@ Surface Changes
 -  Switching from ``int`` to an actual enum for relevant functions with
    output values that are enums:
 
-   -  In ``surface_intersection.h::surface_intersections``, ``contained``
+   -  In ``triangle_intersection.h::triangle_intersections``, ``contained``
       is now a ``SurfaceContained``
       (`0a9c0c3 <https://github.com/dhermes/bezier/commit/0a9c0c3736e95deedeecb8d10284c92ebd39469d>`__)
       and ``status`` is now a ``Status``

@@ -98,9 +98,9 @@ $ /usr/bin/gfortran \
 >   -march=native \
 >   -c \
 >   -c \
->   src/fortran/surface.f90 \
+>   src/fortran/triangle.f90 \
 >   -o \
->   build/temp.linux-x86_64-3.8/src/fortran/surface.o \
+>   build/temp.linux-x86_64-3.8/src/fortran/triangle.o \
 >   -J \
 >   build/temp.linux-x86_64-3.8
 ----------------------------------------
@@ -140,9 +140,9 @@ $ /usr/bin/gfortran \
 >   -march=native \
 >   -c \
 >   -c \
->   src/fortran/surface_intersection.f90 \
+>   src/fortran/triangle_intersection.f90 \
 >   -o \
->   build/temp.linux-x86_64-3.8/src/fortran/surface_intersection.o \
+>   build/temp.linux-x86_64-3.8/src/fortran/triangle_intersection.o \
 >   -J \
 >   build/temp.linux-x86_64-3.8
 ----------------------------------------
@@ -263,9 +263,9 @@ $ ar \
 >   build/temp.linux-x86_64-3.8/src/fortran/status.o \
 >   build/temp.linux-x86_64-3.8/src/fortran/helpers.o \
 >   build/temp.linux-x86_64-3.8/src/fortran/curve.o \
->   build/temp.linux-x86_64-3.8/src/fortran/surface.o \
+>   build/temp.linux-x86_64-3.8/src/fortran/triangle.o \
 >   build/temp.linux-x86_64-3.8/src/fortran/curve_intersection.o \
->   build/temp.linux-x86_64-3.8/src/fortran/surface_intersection.o
+>   build/temp.linux-x86_64-3.8/src/fortran/triangle_intersection.o
 ----------------------------------------
 $ gcc \
 >   -pthread \
@@ -295,9 +295,9 @@ $ gcc \
 >   build/temp.linux-x86_64-3.8/src/fortran/status.o \
 >   build/temp.linux-x86_64-3.8/src/fortran/helpers.o \
 >   build/temp.linux-x86_64-3.8/src/fortran/curve.o \
->   build/temp.linux-x86_64-3.8/src/fortran/surface.o \
+>   build/temp.linux-x86_64-3.8/src/fortran/triangle.o \
 >   build/temp.linux-x86_64-3.8/src/fortran/curve_intersection.o \
->   build/temp.linux-x86_64-3.8/src/fortran/surface_intersection.o \
+>   build/temp.linux-x86_64-3.8/src/fortran/triangle_intersection.o \
 >   build/temp.linux-x86_64-3.8/src/fortran/quadpack/d1mach.o \
 >   build/temp.linux-x86_64-3.8/src/fortran/quadpack/dqelg.o \
 >   build/temp.linux-x86_64-3.8/src/fortran/quadpack/dqpsrt.o \

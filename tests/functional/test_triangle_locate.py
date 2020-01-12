@@ -77,19 +77,19 @@ CASES = (
 
 
 def id_func(case):
-    surface_index, point_index, _, _ = case
-    return f"surface:{surface_index}-point:{point_index}"
+    triangle_index, point_index, _, _ = case
+    return f"triangle:{triangle_index}-point:{point_index}"
 
 
 @pytest.mark.parametrize("case", CASES, ids=id_func)
 def test_locate(case):
-    surface_index, point_index, expected_s, expected_t = case
-    surface = TRIANGLES[surface_index]
+    triangle_index, point_index, expected_s, expected_t = case
+    triangle = TRIANGLES[triangle_index]
 
     point = POINTS[:, [point_index]]
     if expected_s is None and expected_t is None:
-        assert surface.locate(point) is None
+        assert triangle.locate(point) is None
     else:
-        s, t = surface.locate(point)
+        s, t = triangle.locate(point)
         CONFIG.assert_close(s, expected_s)
         CONFIG.assert_close(t, expected_t)

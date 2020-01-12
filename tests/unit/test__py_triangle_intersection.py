@@ -25,9 +25,9 @@ SPACING = np.spacing  # pylint: disable=no-member
 class Test_newton_refine_solve(unittest.TestCase):
     @staticmethod
     def _call_function_under_test(jac_both, x_val, surf_x, y_val, surf_y):
-        from bezier import _py_surface_intersection
+        from bezier import _py_triangle_intersection
 
-        return _py_surface_intersection.newton_refine_solve(
+        return _py_triangle_intersection.newton_refine_solve(
             jac_both, x_val, surf_x, y_val, surf_y
         )
 
@@ -43,9 +43,9 @@ class Test_newton_refine_solve(unittest.TestCase):
 class Test_newton_refine(unittest.TestCase):
     @staticmethod
     def _call_function_under_test(nodes, degree, x_val, y_val, s, t):
-        from bezier import _py_surface_intersection
+        from bezier import _py_triangle_intersection
 
-        return _py_surface_intersection.newton_refine(
+        return _py_triangle_intersection.newton_refine(
             nodes, degree, x_val, y_val, s, t
         )
 
@@ -56,7 +56,7 @@ class Test_newton_refine(unittest.TestCase):
                 [0.0, -0.25, 0.0, 0.5, 0.5, 0.875],
             ]
         )
-        # This surface is given by
+        # This triangle is given by
         #     [(4 s - t^2) / 4, (4 s^2 + 4 s t - t^2 - 4 s + 8 t) / 8]
         s = 0.25
         t = 0.5
@@ -64,7 +64,7 @@ class Test_newton_refine(unittest.TestCase):
         #     [1, -1/4]
         #     [0,  1  ]
         # hence there will be no round-off when applying the inverse.
-        # (x_val, y_val), = surface.evaluate_cartesian(0.5, 0.25)
+        # (x_val, y_val), = triangle.evaluate_cartesian(0.5, 0.25)
         x_val = 0.484375
         y_val = 0.1796875
         new_s, new_t = self._call_function_under_test(
@@ -77,7 +77,7 @@ class Test_newton_refine(unittest.TestCase):
         nodes = np.asfortranarray(
             [[0.0, 0.5, 1.0, 0.0, 0.5, 0.0], [0.0, 0.0, 0.0, 0.5, 0.5, 1.0]]
         )
-        # This surface is given by [s, t].
+        # This triangle is given by [s, t].
         s = 0.375
         t = 0.75
         # Since x(s) = s and y(t) = t, we simply use the same x/y and s/t.
@@ -95,14 +95,14 @@ class Test_update_locate_candidates(unittest.TestCase):
     def _call_function_under_test(
         candidate, next_candidates, x_val, y_val, degree
     ):
-        from bezier import _py_surface_intersection
+        from bezier import _py_triangle_intersection
 
-        return _py_surface_intersection.update_locate_candidates(
+        return _py_triangle_intersection.update_locate_candidates(
             candidate, next_candidates, x_val, y_val, degree
         )
 
     @unittest.mock.patch(
-        "bezier._py_surface_helpers.subdivide_nodes",
+        "bezier._py_triangle_helpers.subdivide_nodes",
         return_value=(
             unittest.mock.sentinel.nodes_a,
             unittest.mock.sentinel.nodes_b,
@@ -143,9 +143,9 @@ class Test_update_locate_candidates(unittest.TestCase):
 class Test_mean_centroid(unittest.TestCase):
     @staticmethod
     def _call_function_under_test(candidates):
-        from bezier import _py_surface_intersection
+        from bezier import _py_triangle_intersection
 
-        return _py_surface_intersection.mean_centroid(candidates)
+        return _py_triangle_intersection.mean_centroid(candidates)
 
     def test_it(self):
         candidates = (
@@ -161,9 +161,9 @@ class Test_mean_centroid(unittest.TestCase):
 class Test_locate_point(unittest.TestCase):
     @staticmethod
     def _call_function_under_test(nodes, degree, x_val, y_val):
-        from bezier import _py_surface_intersection
+        from bezier import _py_triangle_intersection
 
-        return _py_surface_intersection.locate_point(
+        return _py_triangle_intersection.locate_point(
             nodes, degree, x_val, y_val
         )
 
@@ -210,9 +210,9 @@ class Test_locate_point(unittest.TestCase):
 class Test_same_intersection(unittest.TestCase):
     @staticmethod
     def _call_function_under_test(intersection1, intersection2, **kwargs):
-        from bezier import _py_surface_intersection
+        from bezier import _py_triangle_intersection
 
-        return _py_surface_intersection.same_intersection(
+        return _py_triangle_intersection.same_intersection(
             intersection1, intersection2, **kwargs
         )
 
@@ -257,9 +257,9 @@ class Test_same_intersection(unittest.TestCase):
 class Test_verify_duplicates(unittest.TestCase):
     @staticmethod
     def _call_function_under_test(duplicates, uniques):
-        from bezier import _py_surface_intersection
+        from bezier import _py_triangle_intersection
 
-        return _py_surface_intersection.verify_duplicates(duplicates, uniques)
+        return _py_triangle_intersection.verify_duplicates(duplicates, uniques)
 
     def test_empty(self):
         self.assertIsNone(self._call_function_under_test([], []))
@@ -304,9 +304,9 @@ class Test_verify_duplicates(unittest.TestCase):
 class Test_verify_edge_segments(unittest.TestCase):
     @staticmethod
     def _call_function_under_test(edge_infos):
-        from bezier import _py_surface_intersection
+        from bezier import _py_triangle_intersection
 
-        return _py_surface_intersection.verify_edge_segments(edge_infos)
+        return _py_triangle_intersection.verify_edge_segments(edge_infos)
 
     def test_none(self):
         return_value = self._call_function_under_test(None)
@@ -318,18 +318,18 @@ class Test_verify_edge_segments(unittest.TestCase):
         self.assertIsNone(return_value)
 
     def test_bad_params(self):
-        from bezier import _py_surface_intersection
+        from bezier import _py_triangle_intersection
 
         edge_infos = [((0, 0.0, 1.5), (4, 0.25, 1.0), (5, 0.0, 0.75))]
         with self.assertRaises(ValueError) as exc_info:
             self._call_function_under_test(edge_infos)
 
         exc_args = exc_info.exception.args
-        expected = (_py_surface_intersection.BAD_SEGMENT_PARAMS, (0, 0.0, 1.5))
+        expected = (_py_triangle_intersection.BAD_SEGMENT_PARAMS, (0, 0.0, 1.5))
         self.assertEqual(exc_args, expected)
 
     def test_consecutive_segments(self):
-        from bezier import _py_surface_intersection
+        from bezier import _py_triangle_intersection
 
         edge_infos = [
             ((0, 0.25, 0.5), (4, 0.25, 1.0), (5, 0.0, 0.75), (0, 0.0, 0.25))
@@ -339,7 +339,7 @@ class Test_verify_edge_segments(unittest.TestCase):
 
         exc_args = exc_info.exception.args
         expected = (
-            _py_surface_intersection.SEGMENTS_SAME_EDGE,
+            _py_triangle_intersection.SEGMENTS_SAME_EDGE,
             (0, 0.0, 0.25),
             (0, 0.25, 0.5),
         )
@@ -349,9 +349,9 @@ class Test_verify_edge_segments(unittest.TestCase):
 class Test_add_edge_end_unused(unittest.TestCase):
     @staticmethod
     def _call_function_under_test(intersection, duplicates, intersections):
-        from bezier import _py_surface_intersection
+        from bezier import _py_triangle_intersection
 
-        return _py_surface_intersection.add_edge_end_unused(
+        return _py_triangle_intersection.add_edge_end_unused(
             intersection, duplicates, intersections
         )
 
@@ -410,9 +410,9 @@ class Test_add_edge_end_unused(unittest.TestCase):
 class Test_check_unused(unittest.TestCase):
     @staticmethod
     def _call_function_under_test(intersection, duplicates, unused):
-        from bezier import _py_surface_intersection
+        from bezier import _py_triangle_intersection
 
-        return _py_surface_intersection.check_unused(
+        return _py_triangle_intersection.check_unused(
             intersection, duplicates, unused
         )
 
@@ -471,9 +471,9 @@ class Test_add_intersection(unittest.TestCase):
         duplicates,
         intersections,
     ):
-        from bezier import _py_surface_intersection
+        from bezier import _py_triangle_intersection
 
-        return _py_surface_intersection.add_intersection(
+        return _py_triangle_intersection.add_intersection(
             index1,
             s,
             index2,
@@ -591,9 +591,9 @@ class Test_add_intersection(unittest.TestCase):
 class Test_classify_coincident(unittest.TestCase):
     @staticmethod
     def _call_function_under_test(st_vals, coincident):
-        from bezier import _py_surface_intersection
+        from bezier import _py_triangle_intersection
 
-        return _py_surface_intersection.classify_coincident(
+        return _py_triangle_intersection.classify_coincident(
             st_vals, coincident
         )
 
@@ -619,9 +619,9 @@ class Test_classify_coincident(unittest.TestCase):
 class Test_should_use(unittest.TestCase):
     @staticmethod
     def _call_function_under_test(intersection):
-        from bezier import _py_surface_intersection
+        from bezier import _py_triangle_intersection
 
-        return _py_surface_intersection.should_use(intersection)
+        return _py_triangle_intersection.should_use(intersection)
 
     def test_acceptable(self):
         intersection = make_intersect(
@@ -654,12 +654,12 @@ class Test_should_use(unittest.TestCase):
         self.assertFalse(self._call_function_under_test(intersection))
 
 
-class Test_surface_intersections(utils.NumPyTestCase):
+class Test_triangle_intersections(utils.NumPyTestCase):
     @staticmethod
     def _call_function_under_test(edge_nodes1, edge_nodes2, all_intersections):
-        from bezier import _py_surface_intersection
+        from bezier import _py_triangle_intersection
 
-        return _py_surface_intersection.surface_intersections(
+        return _py_triangle_intersection.triangle_intersections(
             edge_nodes1, edge_nodes2, all_intersections
         )
 
@@ -687,14 +687,14 @@ class Test_surface_intersections(utils.NumPyTestCase):
         import bezier
         from bezier import _py_geometric_intersection
 
-        surface1 = bezier.Triangle.from_nodes(
+        triangle1 = bezier.Triangle.from_nodes(
             np.asfortranarray([[0.0, 1.0, 0.0], [0.0, 0.0, 1.0]])
         )
-        surface2 = bezier.Triangle.from_nodes(
+        triangle2 = bezier.Triangle.from_nodes(
             np.asfortranarray([[0.0, -2.0, 1.0], [0.0, 3.0, -3.0]])
         )
-        edge_nodes1 = tuple(edge._nodes for edge in surface1.edges)
-        edge_nodes2 = tuple(edge._nodes for edge in surface2.edges)
+        edge_nodes1 = tuple(edge._nodes for edge in triangle1.edges)
+        edge_nodes2 = tuple(edge._nodes for edge in triangle2.edges)
         all_intersections = _py_geometric_intersection.all_intersections
         result = self._call_function_under_test(
             edge_nodes1, edge_nodes2, all_intersections
@@ -716,9 +716,9 @@ class Test_generic_intersect(utils.NumPyTestCase):
     def _call_function_under_test(
         nodes1, degree1, nodes2, degree2, verify, all_intersections
     ):
-        from bezier import _py_surface_intersection
+        from bezier import _py_triangle_intersection
 
-        return _py_surface_intersection.generic_intersect(
+        return _py_triangle_intersection.generic_intersect(
             nodes1, degree1, nodes2, degree2, verify, all_intersections
         )
 
@@ -748,9 +748,9 @@ class Test_geometric_intersect(utils.NumPyTestCase):
 
     @staticmethod
     def _call_function_under_test(nodes1, degree1, nodes2, degree2, **kwargs):
-        from bezier import _py_surface_intersection
+        from bezier import _py_triangle_intersection
 
-        return _py_surface_intersection.geometric_intersect(
+        return _py_triangle_intersection.geometric_intersect(
             nodes1, degree1, nodes2, degree2, **kwargs
         )
 
@@ -944,9 +944,9 @@ class Test_algebraic_intersect(Test_geometric_intersect):
 
     @staticmethod
     def _call_function_under_test(nodes1, degree1, nodes2, degree2, **kwargs):
-        from bezier import _py_surface_intersection
+        from bezier import _py_triangle_intersection
 
-        return _py_surface_intersection.algebraic_intersect(
+        return _py_triangle_intersection.algebraic_intersect(
             nodes1, degree1, nodes2, degree2, **kwargs
         )
 
@@ -1006,12 +1006,12 @@ def get_enum(str_val):
 
 
 def check_edges(test_case, nodes1, degree1, nodes2, degree2, all_edge_nodes):
-    from bezier import _py_surface_helpers
+    from bezier import _py_triangle_helpers
 
     test_case.assertIsInstance(all_edge_nodes, tuple)
     test_case.assertEqual(len(all_edge_nodes), 6)
-    edge_nodes1 = _py_surface_helpers.compute_edge_nodes(nodes1, degree1)
-    edge_nodes2 = _py_surface_helpers.compute_edge_nodes(nodes2, degree2)
+    edge_nodes1 = _py_triangle_helpers.compute_edge_nodes(nodes1, degree1)
+    edge_nodes2 = _py_triangle_helpers.compute_edge_nodes(nodes2, degree2)
     test_case.assertEqual(edge_nodes1[0], all_edge_nodes[0])
     test_case.assertEqual(edge_nodes1[1], all_edge_nodes[1])
     test_case.assertEqual(edge_nodes1[2], all_edge_nodes[2])

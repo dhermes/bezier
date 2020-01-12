@@ -10,7 +10,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Pure Python helper methods for :mod:`bezier.surface`.
+"""Pure Python helper methods for :mod:`bezier.triangle`.
 
 .. |eacute| unicode:: U+000E9 .. LATIN SMALL LETTER E WITH ACUTE
    :trim:
@@ -33,7 +33,7 @@ _SAME_CURVATURE = "Tangent curves have same curvature."
 _WRONG_CURVE = "Start and end node not defined on same curve"
 CLASSIFICATION_T = _py_intersection_helpers.IntersectionClassification
 # NOTE: The ``SUBDIVIDE`` matrices are public since used in
-#       the ``surface`` module.
+#       the ``triangle`` module.
 LINEAR_SUBDIVIDE_A = (
     np.asfortranarray([[2, 1, 1], [0, 1, 0], [0, 0, 1]], dtype=_FLOAT64) / 2.0
 )
@@ -702,7 +702,7 @@ SHOELACE_QUARTIC = (
 )
 
 
-def polynomial_sign(poly_surface, degree):
+def polynomial_sign(poly_triangle, degree):
     r"""Determine the "sign" of a polynomial on the reference triangle.
 
     .. note::
@@ -723,10 +723,10 @@ def polynomial_sign(poly_surface, degree):
     sign.
 
     Args:
-        poly_surface (numpy.ndarray): 2D array (with 1 row) of control
-            points for a "surface", i.e. a bivariate polynomial.
-        degree (int): The degree of the surface / polynomial given by
-            ``poly_surface``.
+        poly_triangle (numpy.ndarray): 2D array (with 1 row) of control
+            points for a "triangle", i.e. a bivariate polynomial.
+        degree (int): The degree of the triangle / polynomial given by
+            ``poly_triangle``.
 
     Returns:
         int: The sign of the polynomial. Will be one of ``-1``, ``1``
@@ -737,9 +737,9 @@ def polynomial_sign(poly_surface, degree):
         ValueError: If no conclusion is reached after the maximum
             number of subdivisions.
     """
-    # The indices where the corner nodes in a surface are.
+    # The indices where the corner nodes in a triangle are.
     corner_indices = (0, degree, -1)
-    sub_polys = [poly_surface]
+    sub_polys = [poly_triangle]
     signs = set()
     for _ in range(_MAX_POLY_SUBDIVISIONS):
         undecided = []
@@ -798,7 +798,7 @@ def two_by_two_det(mat):
 
 
 def quadratic_jacobian_polynomial(nodes):
-    r"""Compute the Jacobian determinant of a quadratic surface.
+    r"""Compute the Jacobian determinant of a quadratic triangle.
 
     .. note::
 
@@ -807,7 +807,7 @@ def quadratic_jacobian_polynomial(nodes):
        property).
 
     Converts :math:`\det(J(s, t))` to a polynomial on the reference
-    triangle and represents it as a surface object.
+    triangle and represents it as a triangle object.
 
     .. note::
 
@@ -817,7 +817,7 @@ def quadratic_jacobian_polynomial(nodes):
        determinants would fail if there weren't 2 rows.)
 
     Args:
-        nodes (numpy.ndarray): A 2 x 6 array of nodes in a surface.
+        nodes (numpy.ndarray): A 2 x 6 array of nodes in a triangle.
 
     Returns:
         numpy.ndarray: 1 x 6 array, coefficients in Bernstein basis.
@@ -841,7 +841,7 @@ def quadratic_jacobian_polynomial(nodes):
 
 
 def cubic_jacobian_polynomial(nodes):
-    r"""Compute the Jacobian determinant of a cubic surface.
+    r"""Compute the Jacobian determinant of a cubic triangle.
 
     .. note::
 
@@ -850,7 +850,7 @@ def cubic_jacobian_polynomial(nodes):
        property).
 
     Converts :math:`\det(J(s, t))` to a polynomial on the reference
-    triangle and represents it as a surface object.
+    triangle and represents it as a triangle object.
 
     .. note::
 
@@ -860,7 +860,7 @@ def cubic_jacobian_polynomial(nodes):
        determinants would fail if there weren't 2 rows.)
 
     Args:
-        nodes (numpy.ndarray): A 2 x 10 array of nodes in a surface.
+        nodes (numpy.ndarray): A 2 x 10 array of nodes in a triangle.
 
     Returns:
         numpy.ndarray: 1 x 15 array, coefficients in Bernstein basis.
@@ -893,7 +893,7 @@ def cubic_jacobian_polynomial(nodes):
 
 
 def de_casteljau_one_round(nodes, degree, lambda1, lambda2, lambda3):
-    r"""Performs one "round" of the de Casteljau algorithm for surfaces.
+    r"""Performs one "round" of the de Casteljau algorithm for triangles.
 
     .. note::
 
@@ -903,10 +903,10 @@ def de_casteljau_one_round(nodes, degree, lambda1, lambda2, lambda3):
     .. note::
 
        This is a helper function, used by :func:`make_transform` and
-       :func:`specialize_surface` (and :func:`make_transform` is **only**
-       used by :func:`specialize_surface`).
+       :func:`specialize_triangle` (and :func:`make_transform` is **only**
+       used by :func:`specialize_triangle`).
 
-    Converts the ``nodes`` into a basis for a surface one degree smaller
+    Converts the ``nodes`` into a basis for a triangle one degree smaller
     by using the barycentric weights:
 
     .. math::
@@ -921,7 +921,7 @@ def de_casteljau_one_round(nodes, degree, lambda1, lambda2, lambda3):
 
     Args:
         nodes (numpy.ndarray): The nodes to reduce.
-        degree (int): The degree of the surface.
+        degree (int): The degree of the triangle.
         lambda1 (float): Parameter along the reference triangle.
         lambda2 (float): Parameter along the reference triangle.
         lambda3 (float): Parameter along the reference triangle.
@@ -963,7 +963,7 @@ def make_transform(degree, weights_a, weights_b, weights_c):
 
     .. note::
 
-       This is a helper used only by :func:`specialize_surface`.
+       This is a helper used only by :func:`specialize_triangle`.
 
     Applies the de Casteljau to the identity matrix, thus
     effectively caching the algorithm in a transformation matrix.
@@ -975,7 +975,7 @@ def make_transform(degree, weights_a, weights_b, weights_c):
        out by the extra storage required for the 3 matrices.
 
     Args:
-        degree (int): The degree of a candidate surface.
+        degree (int): The degree of a candidate triangle.
         weights_a (numpy.ndarray): Triple (1D array) of barycentric weights
             for a point in the reference triangle
         weights_b (numpy.ndarray): Triple (1D array) of barycentric weights
@@ -1006,7 +1006,7 @@ def reduced_to_matrix(shape, degree, vals_by_weight):
 
     .. note::
 
-       This is a helper used only by :func:`specialize_surface`.
+       This is a helper used only by :func:`specialize_triangle`.
 
     The ``vals_by_weight`` mapping has keys of the form:
     ``(0, ..., 1, ..., 2, ...)`` where the ``0`` corresponds
@@ -1026,7 +1026,7 @@ def reduced_to_matrix(shape, degree, vals_by_weight):
 
     Args:
         shape (tuple): The shape of the result matrix.
-        degree (int): The degree of the surface.
+        degree (int): The degree of the triangle.
         vals_by_weight (Mapping[tuple, numpy.ndarray]): Dictionary
             of reduced nodes according to blending of each of the
             three sets of weights in a reduction.
@@ -1045,8 +1045,8 @@ def reduced_to_matrix(shape, degree, vals_by_weight):
     return result
 
 
-def specialize_surface(nodes, degree, weights_a, weights_b, weights_c):
-    """Specialize a surface to a reparameterization
+def specialize_triangle(nodes, degree, weights_a, weights_b, weights_c):
+    """Specialize a triangle to a reparameterization
 
     .. note::
 
@@ -1054,12 +1054,12 @@ def specialize_surface(nodes, degree, weights_a, weights_b, weights_c):
        will be used if it can be built.
 
     Does so by taking three points (in barycentric form) within the
-    reference triangle and then reparameterizing the surface onto
+    reference triangle and then reparameterizing the triangle onto
     the triangle formed by those three points.
 
     .. note::
 
-       This assumes the surface is degree 1 or greater but doesn't check.
+       This assumes the triangle is degree 1 or greater but doesn't check.
 
     .. note::
 
@@ -1068,8 +1068,8 @@ def specialize_surface(nodes, degree, weights_a, weights_b, weights_c):
        :meth:`Curve.specialize`.
 
     Args:
-        nodes (numpy.ndarray): Control points for a surface.
-        degree (int): The degree of the surface.
+        nodes (numpy.ndarray): Control points for a triangle.
+        degree (int): The degree of the triangle.
         weights_a (numpy.ndarray): Triple (1D array) of barycentric weights
             for a point in the reference triangle
         weights_b (numpy.ndarray): Triple (1D array) of barycentric weights
@@ -1078,7 +1078,7 @@ def specialize_surface(nodes, degree, weights_a, weights_b, weights_c):
             for a point in the reference triangle
 
     Returns:
-        numpy.ndarray: The control points for the specialized surface.
+        numpy.ndarray: The control points for the specialized triangle.
     """
     # Uses A-->0, B-->1, C-->2 to represent the specialization used.
     partial_vals = {
@@ -1103,24 +1103,24 @@ def specialize_surface(nodes, degree, weights_a, weights_b, weights_c):
 
 
 def subdivide_nodes(nodes, degree):
-    """Subdivide a surface into four sub-surfaces.
+    """Subdivide a triangle into four sub-triangles.
 
     .. note::
 
        There is also a Fortran implementation of this function, which
        will be used if it can be built.
 
-    Does so by taking the unit triangle (i.e. the domain of the surface) and
+    Does so by taking the unit triangle (i.e. the domain of the triangle) and
     splitting it into four sub-triangles by connecting the midpoints of each
     side.
 
     Args:
-        nodes (numpy.ndarray): Control points for a surface.
-        degree (int): The degree of the surface.
+        nodes (numpy.ndarray): Control points for a triangle.
+        degree (int): The degree of the triangle.
 
     Returns:
         Tuple[numpy.ndarray, numpy.ndarray, numpy.ndarray, numpy.ndarray]: The
-        nodes for the four sub-surfaces.
+        nodes for the four sub-triangles.
     """
     if degree == 1:
         nodes_a = _py_helpers.matrix_product(nodes, LINEAR_SUBDIVIDE_A)
@@ -1143,28 +1143,28 @@ def subdivide_nodes(nodes, degree):
         nodes_c = _py_helpers.matrix_product(nodes, QUARTIC_SUBDIVIDE_C)
         nodes_d = _py_helpers.matrix_product(nodes, QUARTIC_SUBDIVIDE_D)
     else:
-        nodes_a = specialize_surface(
+        nodes_a = specialize_triangle(
             nodes,
             degree,
             _WEIGHTS_SUBDIVIDE0,
             _WEIGHTS_SUBDIVIDE1,
             _WEIGHTS_SUBDIVIDE2,
         )
-        nodes_b = specialize_surface(
+        nodes_b = specialize_triangle(
             nodes,
             degree,
             _WEIGHTS_SUBDIVIDE3,
             _WEIGHTS_SUBDIVIDE2,
             _WEIGHTS_SUBDIVIDE1,
         )
-        nodes_c = specialize_surface(
+        nodes_c = specialize_triangle(
             nodes,
             degree,
             _WEIGHTS_SUBDIVIDE1,
             _WEIGHTS_SUBDIVIDE4,
             _WEIGHTS_SUBDIVIDE3,
         )
-        nodes_d = specialize_surface(
+        nodes_d = specialize_triangle(
             nodes,
             degree,
             _WEIGHTS_SUBDIVIDE2,
@@ -1183,12 +1183,12 @@ def jacobian_s(nodes, degree, dimension):
        equivalent Fortran implementation.
 
     Args:
-        nodes (numpy.ndarray): Array of nodes in a surface.
-        degree (int): The degree of the surface.
-        dimension (int): The dimension the surface lives in.
+        nodes (numpy.ndarray): Array of nodes in a triangle.
+        degree (int): The degree of the triangle.
+        dimension (int): The dimension the triangle lives in.
 
     Returns:
-        numpy.ndarray: Nodes of the Jacobian surface in
+        numpy.ndarray: Nodes of the Jacobian triangle in
         B |eacute| zier form.
     """
     num_nodes = (degree * (degree + 1)) // 2
@@ -1215,12 +1215,12 @@ def jacobian_t(nodes, degree, dimension):
        equivalent Fortran implementation.
 
     Args:
-        nodes (numpy.ndarray): Array of nodes in a surface.
-        degree (int): The degree of the surface.
-        dimension (int): The dimension the surface lives in.
+        nodes (numpy.ndarray): Array of nodes in a triangle.
+        degree (int): The degree of the triangle.
+        dimension (int): The dimension the triangle lives in.
 
     Returns:
-        numpy.ndarray: Nodes of the Jacobian surface in
+        numpy.ndarray: Nodes of the Jacobian triangle in
         B |eacute| zier form.
     """
     num_nodes = (degree * (degree + 1)) // 2
@@ -1249,12 +1249,12 @@ def jacobian_both(nodes, degree, dimension):
        will be used if it can be built.
 
     Args:
-        nodes (numpy.ndarray): Array of nodes in a surface.
-        degree (int): The degree of the surface.
-        dimension (int): The dimension the surface lives in.
+        nodes (numpy.ndarray): Array of nodes in a triangle.
+        degree (int): The degree of the triangle.
+        dimension (int): The dimension the triangle lives in.
 
     Returns:
-        numpy.ndarray: Nodes of the Jacobian surfaces in
+        numpy.ndarray: Nodes of the Jacobian triangles in
             B |eacute| zier form.
     """
     _, num_nodes = nodes.shape
@@ -1277,15 +1277,15 @@ def jacobian_det(nodes, degree, st_vals):
     .. warning::
 
        This relies on helpers in :mod:`bezier` for computing the
-       Jacobian of the surface. However, these helpers are not
-       part of the public surface and may change or be removed.
+       Jacobian of the triangle. However, these helpers are not
+       part of the public triangle and may change or be removed.
 
     .. testsetup:: jacobian-det
 
        import numpy as np
 
        import bezier
-       from bezier._py_surface_helpers import jacobian_det
+       from bezier._py_triangle_helpers import jacobian_det
 
     .. doctest:: jacobian-det
        :options: +NORMALIZE_WHITESPACE
@@ -1294,14 +1294,14 @@ def jacobian_det(nodes, degree, st_vals):
        ...     [0.0, 1.0, 2.0, 0.0, 1.5, 0.0],
        ...     [0.0, 0.0, 0.0, 1.0, 1.5, 2.0],
        ... ])
-       >>> surface = bezier.Triangle(nodes, degree=2)
+       >>> triangle = bezier.Triangle(nodes, degree=2)
        >>> st_vals = np.asfortranarray([
        ...     [0.25, 0.0  ],
        ...     [0.75, 0.125],
        ...     [0.5 , 0.5  ],
        ... ])
        >>> s_vals, t_vals = st_vals.T
-       >>> surface.evaluate_cartesian_multi(st_vals)
+       >>> triangle.evaluate_cartesian_multi(st_vals)
        array([[0.5 , 1.59375, 1.25 ],
               [0.  , 0.34375, 1.25 ]])
        >>> # B(s, t) = [s(t + 2), t(s + 2)]
@@ -1322,10 +1322,10 @@ def jacobian_det(nodes, degree, st_vals):
 
     Args:
         nodes (numpy.ndarray): Nodes defining a B |eacute| zier
-            surface :math:`B(s, t)`.
-        degree (int): The degree of the surface :math:`B`.
+            triangle :math:`B(s, t)`.
+        degree (int): The degree of the triangle :math:`B`.
         st_vals (numpy.ndarray): ``N x 2`` array of Cartesian
-            inputs to B |eacute| zier surfaces defined by
+            inputs to B |eacute| zier triangles defined by
             :math:`B_s` and :math:`B_t`.
 
     Returns:
@@ -1397,7 +1397,7 @@ def classify_tangent_intersection(
         if sign1 == sign2:
             # If both curvatures are positive, since the curves are
             # moving in opposite directions, the tangency isn't part of
-            # the surface intersection.
+            # the triangle intersection.
             if sign1 == 1.0:
                 return CLASSIFICATION_T.OPPOSED
 
@@ -1483,7 +1483,7 @@ def ignored_double_corner(
     ``t`` are ``0``.
 
     Does so by checking if either edge through the ``t`` corner goes
-    through the interior of the other surface. An interior check
+    through the interior of the other triangle. An interior check
     is done by checking that a few cross products are positive.
 
     Args:
@@ -1493,24 +1493,24 @@ def ignored_double_corner(
         tangent_t (numpy.ndarray): The tangent vector (``2 x 1`` array) to
             the second curve at the intersection.
         edge_nodes1 (Tuple[numpy.ndarray, numpy.ndarray, numpy.ndarray]): The
-            nodes of the three edges of the first surface being intersected.
+            nodes of the three edges of the first triangle being intersected.
         edge_nodes2 (Tuple[numpy.ndarray, numpy.ndarray, numpy.ndarray]): The
-            nodes of the three edges of the second surface being intersected.
+            nodes of the three edges of the second triangle being intersected.
 
     Returns:
         bool: Indicates if the corner is to be ignored.
     """
-    # Compute the other edge for the ``s`` surface.
+    # Compute the other edge for the ``s`` triangle.
     prev_index = (intersection.index_first - 1) % 3
     prev_edge = edge_nodes1[prev_index]
     alt_tangent_s = _py_curve_helpers.evaluate_hodograph(1.0, prev_edge)
-    # First check if ``tangent_t`` is interior to the ``s`` surface.
+    # First check if ``tangent_t`` is interior to the ``s`` triangle.
     cross_prod1 = _py_helpers.cross_product(
         tangent_s.ravel(order="F"), tangent_t.ravel(order="F")
     )
     # A positive cross product indicates that ``tangent_t`` is
     # interior to ``tangent_s``. Similar for ``alt_tangent_s``.
-    # If ``tangent_t`` is interior to both, then the surfaces
+    # If ``tangent_t`` is interior to both, then the triangles
     # do more than just "kiss" at the corner, so the corner should
     # not be ignored.
     if cross_prod1 >= 0.0:
@@ -1540,9 +1540,9 @@ def ignored_double_corner(
             return False
 
     # If neither of ``tangent_t`` or ``alt_tangent_t`` are interior
-    # to the ``s`` surface, one of two things is true. Either
-    # the two surfaces have no interior intersection (1) or the
-    # ``s`` surface is bounded by both edges of the ``t`` surface
+    # to the ``s`` triangle, one of two things is true. Either
+    # the two triangles have no interior intersection (1) or the
+    # ``s`` triangle is bounded by both edges of the ``t`` triangle
     # at the corner intersection (2). To detect (2), we only need
     # check if ``tangent_s`` is interior to both ``tangent_t``
     # and ``alt_tangent_t``. ``cross_prod1`` contains
@@ -1563,7 +1563,7 @@ def ignored_corner(
 
        This is a helper used only by :func:`classify_intersection`.
 
-    An "ignored" corner is one where the surfaces just "kiss" at
+    An "ignored" corner is one where the triangles just "kiss" at
     the point of intersection but their interiors do not meet.
 
     We can determine this by comparing the tangent lines from
@@ -1582,9 +1582,9 @@ def ignored_corner(
         tangent_t (numpy.ndarray): The tangent vector (``2 x 1`` array) to
             the second curve at the intersection.
         edge_nodes1 (Tuple[numpy.ndarray, numpy.ndarray, numpy.ndarray]): The
-            nodes of the three edges of the first surface being intersected.
+            nodes of the three edges of the first triangle being intersected.
         edge_nodes2 (Tuple[numpy.ndarray, numpy.ndarray, numpy.ndarray]): The
-            nodes of the three edges of the second surface being intersected.
+            nodes of the three edges of the second triangle being intersected.
 
     Returns:
         bool: Indicates if the corner is to be ignored.
@@ -1640,7 +1640,7 @@ def classify_intersection(intersection, edge_nodes1, edge_nodes2):
        import bezier
        from bezier import _py_curve_helpers
        from bezier._py_intersection_helpers import Intersection
-       from bezier._py_surface_helpers import classify_intersection
+       from bezier._py_triangle_helpers import classify_intersection
 
        def hodograph(curve, s):
            return _py_curve_helpers.evaluate_hodograph(
@@ -1986,7 +1986,7 @@ def classify_intersection(intersection, edge_nodes1, edge_nodes2):
        make_images.classify_intersection7(s, curve1a, curve1b, curve2)
 
     As above, some intersections at the end of an edge are part of
-    an actual intersection. However, some surfaces may just "kiss" at a
+    an actual intersection. However, some triangles may just "kiss" at a
     corner intersection:
 
     .. image:: ../images/classify_intersection8.png
@@ -1999,16 +1999,16 @@ def classify_intersection(intersection, edge_nodes1, edge_nodes2):
        ...     [0.25, 0.0, 0.0, 0.625, 0.5  , 1.0 ],
        ...     [1.0 , 0.5, 0.0, 0.875, 0.375, 0.75],
        ... ])
-       >>> surface1 = bezier.Triangle(nodes1, degree=2)
+       >>> triangle1 = bezier.Triangle(nodes1, degree=2)
        >>> nodes2 = np.asfortranarray([
        ...     [0.0625, -0.25, -1.0, -0.5  , -1.0, -1.0],
        ...     [0.5   ,  1.0 ,  1.0,  0.125,  0.5,  0.0],
        ... ])
-       >>> surface2 = bezier.Triangle(nodes2, degree=2)
-       >>> curve1, _, _ = surface1.edges
-       >>> edge_nodes1 = [curve.nodes for curve in surface1.edges]
-       >>> curve2, _, _ = surface2.edges
-       >>> edge_nodes2 = [curve.nodes for curve in surface2.edges]
+       >>> triangle2 = bezier.Triangle(nodes2, degree=2)
+       >>> curve1, _, _ = triangle1.edges
+       >>> edge_nodes1 = [curve.nodes for curve in triangle1.edges]
+       >>> curve2, _, _ = triangle2.edges
+       >>> edge_nodes2 = [curve.nodes for curve in triangle2.edges]
        >>> s, t = 0.5, 0.0
        >>> curve1.evaluate(s) == curve2.evaluate(t)
        array([[ True],
@@ -2021,7 +2021,7 @@ def classify_intersection(intersection, edge_nodes1, edge_nodes2):
 
        import make_images
        make_images.classify_intersection8(
-           s, curve1, surface1, curve2, surface2)
+           s, curve1, triangle1, curve2, triangle2)
 
     .. note::
 
@@ -2038,9 +2038,9 @@ def classify_intersection(intersection, edge_nodes1, edge_nodes2):
     Args:
         intersection (.Intersection): An intersection object.
         edge_nodes1 (Tuple[numpy.ndarray, numpy.ndarray, numpy.ndarray]): The
-            nodes of the three edges of the first surface being intersected.
+            nodes of the three edges of the first triangle being intersected.
         edge_nodes2 (Tuple[numpy.ndarray, numpy.ndarray, numpy.ndarray]): The
-            nodes of the three edges of the second surface being intersected.
+            nodes of the three edges of the second triangle being intersected.
 
     Returns:
         IntersectionClassification: The "inside" curve type, based on
@@ -2171,7 +2171,7 @@ def to_front(intersection, intersections, unused):
 
     Returns:
         .Intersection: An intersection to (maybe) move to the beginning
-        of the next edge of the surface.
+        of the next edge of the triangle.
     """
     if intersection.s == 1.0:
         next_index = (intersection.index_first + 1) % 3
@@ -2232,7 +2232,7 @@ def get_next_first(intersection, intersections, to_end=True):
             the end of the first edge or :data:`None`.
 
     Returns:
-        Optional[.Intersection]: The "next" point along a surface of
+        Optional[.Intersection]: The "next" point along a triangle of
         intersection. This will produce the next intersection along the
         current (first) edge or the end of the same edge. If ``to_end`` is
         :data:`False` and there are no other intersections along the current
@@ -2288,7 +2288,7 @@ def get_next_second(intersection, intersections, to_end=True):
             the end of the first edge or :data:`None`.
 
     Returns:
-        Optional[.Intersection]: The "next" point along a surface of
+        Optional[.Intersection]: The "next" point along a triangle of
         intersection. This will produce the next intersection along the
         current (second) edge or the end of the same edge. If ``to_end`` is
         :data:`False` and there are no other intersections along the current
@@ -2352,7 +2352,7 @@ def get_next_coincident(intersection, intersections):
             points to arrive at.
 
     Returns:
-        .Intersection: The "next" point along a surface of intersection.
+        .Intersection: The "next" point along a triangle of intersection.
         This will produce the next intersection along the current (second)
         edge or the end of the same edge.
     """
@@ -2438,7 +2438,7 @@ def get_next(intersection, intersections, unused):
             used yet in an intersection curved polygon
 
     Returns:
-        .Intersection: The "next" point along a surface of intersection.
+        .Intersection: The "next" point along a triangle of intersection.
         This will produce the next intersection along the current edge or
         the end of the current edge.
 
@@ -2495,8 +2495,8 @@ def ends_to_curve(start_node, end_node):
     Returns:
         Tuple[int, float, float]: The 3-tuple of:
 
-        * The edge index along the first surface (if in ``{0, 1, 2}``)
-          or the edge index along the second surface shifted to the right by
+        * The edge index along the first triangle (if in ``{0, 1, 2}``)
+          or the edge index along the second triangle shifted to the right by
           3 (if in ``{3, 4, 5}``)
         * The start parameter along the edge
         * The end parameter along the edge
@@ -2545,43 +2545,43 @@ def ends_to_curve(start_node, end_node):
 
 
 def no_intersections(nodes1, degree1, nodes2, degree2):
-    r"""Determine if one surface is in the other.
+    r"""Determine if one triangle is in the other.
 
     Helper for :func:`combine_intersections` that handles the case
-    of no points of intersection. In this case, either the surfaces
+    of no points of intersection. In this case, either the triangles
     are disjoint or one is fully contained in the other.
 
     To check containment, it's enough to check if one of the corners
-    is contained in the other surface.
+    is contained in the other triangle.
 
     Args:
-        nodes1 (numpy.ndarray): The nodes defining the first surface in
+        nodes1 (numpy.ndarray): The nodes defining the first triangle in
             the intersection (assumed in :math:\mathbf{R}^2`).
-        degree1 (int): The degree of the surface given by ``nodes1``.
-        nodes2 (numpy.ndarray): The nodes defining the second surface in
+        degree1 (int): The degree of the triangle given by ``nodes1``.
+        nodes2 (numpy.ndarray): The nodes defining the second triangle in
             the intersection (assumed in :math:\mathbf{R}^2`).
-        degree2 (int): The degree of the surface given by ``nodes2``.
+        degree2 (int): The degree of the triangle given by ``nodes2``.
 
     Returns:
         Tuple[Optional[list], Optional[bool]]: Pair (2-tuple) of
 
         * Edges info list; will be empty or :data:`None`
         * "Contained" boolean. If not :data:`None`, indicates
-          that one of the surfaces is contained in the other.
+          that one of the triangles is contained in the other.
     """
     # NOTE: This is a circular import.
     # pylint: disable=import-outside-toplevel
-    from bezier import _py_surface_intersection
+    from bezier import _py_triangle_intersection
 
     # pylint: enable=import-outside-toplevel
 
-    located = _py_surface_intersection.locate_point(
+    located = _py_triangle_intersection.locate_point(
         nodes2, degree2, nodes1[0, 0], nodes1[1, 0]
     )
     if located is not None:
         return None, True
 
-    located = _py_surface_intersection.locate_point(
+    located = _py_triangle_intersection.locate_point(
         nodes1, degree1, nodes2[0, 0], nodes2[1, 0]
     )
     if located is not None:
@@ -2593,8 +2593,8 @@ def no_intersections(nodes1, degree1, nodes2, degree2):
 def tangent_only_intersections(all_types):
     """Determine intersection in the case of only-tangent intersections.
 
-    If the only intersections are tangencies, then either the surfaces
-    are tangent but don't meet ("kissing" edges) or one surface is
+    If the only intersections are tangencies, then either the triangles
+    are tangent but don't meet ("kissing" edges) or one triangle is
     internally tangent to the other.
 
     Thus we expect every intersection to be classified as
@@ -2610,14 +2610,14 @@ def tangent_only_intersections(all_types):
     Args:
         all_types (Set[.IntersectionClassification]): The set of all
             intersection classifications encountered among the intersections
-            for the given surface-surface pair.
+            for the given triangle-triangle pair.
 
     Returns:
         Tuple[Optional[list], Optional[bool]]: Pair (2-tuple) of
 
         * Edges info list; will be empty or :data:`None`
         * "Contained" boolean. If not :data:`None`, indicates
-          that one of the surfaces is contained in the other.
+          that one of the triangles is contained in the other.
 
     Raises:
         ValueError: If there are intersections of more than one type among
@@ -2666,7 +2666,7 @@ def basic_interior_combine(intersections, max_edges=10):
 
     Args:
         intersections (List[.Intersection]): Intersections from each of the
-            9 edge-edge pairs from a surface-surface pairing.
+            9 edge-edge pairs from a triangle-triangle pairing.
         max_edges (Optional[int]): The maximum number of allowed / expected
             edges per intersection. This is to avoid infinite loops.
 
@@ -2677,7 +2677,7 @@ def basic_interior_combine(intersections, max_edges=10):
           and contains 3-tuples of edge index, start and end (see the
           output of :func:`ends_to_curve`).
         * "Contained" boolean. If not :data:`None`, indicates
-          that one of the surfaces is contained in the other.
+          that one of the triangles is contained in the other.
 
     Raises:
         RuntimeError: If the number of edges in a curved polygon
@@ -2742,16 +2742,16 @@ def combine_intersections(
 
     Args:
         intersections (List[.Intersection]): Intersections from each of the
-            9 edge-edge pairs from a surface-surface pairing.
-        nodes1 (numpy.ndarray): The nodes defining the first surface in
+            9 edge-edge pairs from a triangle-triangle pairing.
+        nodes1 (numpy.ndarray): The nodes defining the first triangle in
             the intersection (assumed in :math:\mathbf{R}^2`).
-        degree1 (int): The degree of the surface given by ``nodes1``.
-        nodes2 (numpy.ndarray): The nodes defining the second surface in
+        degree1 (int): The degree of the triangle given by ``nodes1``.
+        nodes2 (numpy.ndarray): The nodes defining the second triangle in
             the intersection (assumed in :math:\mathbf{R}^2`).
-        degree2 (int): The degree of the surface given by ``nodes2``.
+        degree2 (int): The degree of the triangle given by ``nodes2``.
         all_types (Set[.IntersectionClassification]): The set of all
             intersection classifications encountered among the intersections
-            for the given surface-surface pair.
+            for the given triangle-triangle pair.
 
     Returns:
         Tuple[Optional[list], Optional[bool]]: Pair (2-tuple) of
@@ -2760,7 +2760,7 @@ def combine_intersections(
           and contains 3-tuples of edge index, start and end (see the
           output of :func:`ends_to_curve`).
         * "Contained" boolean. If not :data:`None`, indicates
-          that one of the surfaces is contained in the other.
+          that one of the triangles is contained in the other.
     """
     if intersections:
         return basic_interior_combine(intersections)
@@ -2773,10 +2773,10 @@ def combine_intersections(
 
 
 def evaluate_barycentric(nodes, degree, lambda1, lambda2, lambda3):
-    r"""Compute a point on a surface.
+    r"""Compute a point on a triangle.
 
     Evaluates :math:`B\left(\lambda_1, \lambda_2, \lambda_3\right)` for a
-    B |eacute| zier surface / triangle defined by ``nodes``.
+    B |eacute| zier triangle / triangle defined by ``nodes``.
 
     .. note::
 
@@ -2784,8 +2784,8 @@ def evaluate_barycentric(nodes, degree, lambda1, lambda2, lambda3):
        will be used if it can be built.
 
     Args:
-        nodes (numpy.ndarray): Control point nodes that define the surface.
-        degree (int): The degree of the surface define by ``nodes``.
+        nodes (numpy.ndarray): Control point nodes that define the triangle.
+        degree (int): The degree of the triangle define by ``nodes``.
         lambda1 (float): Parameter along the reference triangle.
         lambda2 (float): Parameter along the reference triangle.
         lambda3 (float): Parameter along the reference triangle.
@@ -2823,7 +2823,7 @@ def evaluate_barycentric(nodes, degree, lambda1, lambda2, lambda3):
 
 
 def evaluate_barycentric_multi(nodes, degree, param_vals, dimension):
-    r"""Compute multiple points on the surface.
+    r"""Compute multiple points on the triangle.
 
     .. note::
 
@@ -2831,16 +2831,16 @@ def evaluate_barycentric_multi(nodes, degree, param_vals, dimension):
        will be used if it can be built.
 
     Args:
-        nodes (numpy.ndarray): Control point nodes that define the surface.
-        degree (int): The degree of the surface define by ``nodes``.
+        nodes (numpy.ndarray): Control point nodes that define the triangle.
+        degree (int): The degree of the triangle define by ``nodes``.
         param_vals (numpy.ndarray): Array of parameter values (as a
             ``N x 3`` array).
-        dimension (int): The dimension the surface lives in.
+        dimension (int): The dimension the triangle lives in.
 
     Returns:
         numpy.ndarray: The evaluated points, where columns correspond to
         rows of ``param_vals`` and the rows to the dimension of the
-        underlying surface.
+        underlying triangle.
     """
     num_vals, _ = param_vals.shape
     result = np.empty((dimension, num_vals), order="F")
@@ -2852,7 +2852,7 @@ def evaluate_barycentric_multi(nodes, degree, param_vals, dimension):
 
 
 def evaluate_cartesian_multi(nodes, degree, param_vals, dimension):
-    r"""Compute multiple points on the surface.
+    r"""Compute multiple points on the triangle.
 
     .. note::
 
@@ -2860,16 +2860,16 @@ def evaluate_cartesian_multi(nodes, degree, param_vals, dimension):
        will be used if it can be built.
 
     Args:
-        nodes (numpy.ndarray): Control point nodes that define the surface.
-        degree (int): The degree of the surface define by ``nodes``.
+        nodes (numpy.ndarray): Control point nodes that define the triangle.
+        degree (int): The degree of the triangle define by ``nodes``.
         param_vals (numpy.ndarray): Array of parameter values (as a
             ``N x 2`` array).
-        dimension (int): The dimension the surface lives in.
+        dimension (int): The dimension the triangle lives in.
 
     Returns:
         numpy.ndarray: The evaluated points, where columns correspond to
         rows of ``param_vals`` and the rows to the dimension of the
-        underlying surface.
+        underlying triangle.
     """
     num_vals, _ = param_vals.shape
     result = np.empty((dimension, num_vals), order="F")
@@ -2881,7 +2881,7 @@ def evaluate_cartesian_multi(nodes, degree, param_vals, dimension):
 
 
 def compute_edge_nodes(nodes, degree):
-    """Compute the nodes of each edges of a surface.
+    """Compute the nodes of each edges of a triangle.
 
     .. note::
 
@@ -2889,12 +2889,12 @@ def compute_edge_nodes(nodes, degree):
        will be used if it can be built.
 
     Args:
-        nodes (numpy.ndarray): Control point nodes that define the surface.
-        degree (int): The degree of the surface define by ``nodes``.
+        nodes (numpy.ndarray): Control point nodes that define the triangle.
+        degree (int): The degree of the triangle define by ``nodes``.
 
     Returns:
         Tuple[numpy.ndarray, numpy.ndarray, numpy.ndarray]: The nodes in
-        the edges of the surface.
+        the edges of the triangle.
     """
     dimension, _ = np.shape(nodes)
     nodes1 = np.empty((dimension, degree + 1), order="F")

@@ -19,16 +19,16 @@ import pytest
 import bezier
 from bezier import _algebraic_intersection
 from bezier import _py_geometric_intersection
-from bezier import _py_surface_helpers
-from bezier import _py_surface_intersection
+from bezier import _py_triangle_helpers
+from bezier import _py_triangle_intersection
 from bezier import curve
 from tests import utils as base_utils
 from tests.functional import utils
 
 ALGEBRAIC = curve.IntersectionStrategy.ALGEBRAIC
 GEOMETRIC = curve.IntersectionStrategy.GEOMETRIC
-_, INTERSECTIONS = utils.surface_intersections_info()
-SAME_CURVATURE = (_py_surface_helpers._SAME_CURVATURE,)
+_, INTERSECTIONS = utils.triangle_intersections_info()
+SAME_CURVATURE = (_py_triangle_helpers._SAME_CURVATURE,)
 TOO_MANY = _py_geometric_intersection._TOO_MANY_TEMPLATE
 WIGGLES = {
     GEOMETRIC: {
@@ -200,7 +200,7 @@ def check_consecutive_manager():
 
     assert caught_exc is not None
     exc_args = caught_exc.args
-    assert exc_args[0] == _py_surface_intersection.SEGMENTS_SAME_EDGE
+    assert exc_args[0] == _py_triangle_intersection.SEGMENTS_SAME_EDGE
     assert len(exc_args) == 3
 
 
@@ -214,7 +214,7 @@ def extra_verify(strategy, intersections):
         strategy (.IntersectionStrategy): The strategy that was used to
             intersect edges.
         intersections (List[Union[~bezier.curved_polygon.CurvedPolygon, \
-            ~bezier.surface.Triangle]]): List of intersections (possibly empty).
+            ~bezier.triangle.Triangle]]): List of intersections (possibly empty).
     """
     if strategy == GEOMETRIC and bezier._HAS_SPEEDUP:
         edge_infos = [
@@ -222,16 +222,16 @@ def extra_verify(strategy, intersections):
             for curved_polygon in intersections
             if isinstance(curved_polygon, bezier.CurvedPolygon)
         ]
-        _py_surface_intersection.verify_edge_segments(edge_infos)
+        _py_triangle_intersection.verify_edge_segments(edge_infos)
 
 
-def surface_surface_check(strategy, surface1, surface2, *all_intersected):
+def triangle_triangle_check(strategy, triangle1, triangle2, *all_intersected):
     # NOTE: There is no corresponding "enable", but the disable only applies
     #       in this lexical scope.
     # pylint: disable=too-many-locals
-    assert surface1.is_valid
-    assert surface2.is_valid
-    intersections = surface1.intersect(surface2, strategy=strategy)
+    assert triangle1.is_valid
+    assert triangle2.is_valid
+    intersections = triangle1.intersect(triangle2, strategy=strategy)
     extra_verify(strategy, intersections)
 
     if len(intersections) != len(all_intersected):
@@ -242,7 +242,7 @@ def surface_surface_check(strategy, surface1, surface2, *all_intersected):
             len(all_intersected),
         )
 
-    all_edges = surface1._get_edges() + surface2._get_edges()
+    all_edges = triangle1._get_edges() + triangle2._get_edges()
     for intersection, intersected in zip(intersections, all_intersected):
         if isinstance(intersection, bezier.CurvedPolygon):
             assert isinstance(intersected, utils.CurvedPolygonInfo)
@@ -278,9 +278,9 @@ def surface_surface_check(strategy, surface1, surface2, *all_intersected):
             assert isinstance(intersection, bezier.Triangle)
             assert isinstance(intersected, utils.TriangleIntersectionInfo)
             if intersected.first:
-                assert intersection is surface1
+                assert intersection is triangle1
             else:
-                assert intersection is surface2
+                assert intersection is triangle2
 
 
 @pytest.mark.parametrize(
@@ -310,9 +310,9 @@ def test_intersect(strategy, intersection_info):
         context = CONFIG.wiggle(WIGGLES[strategy][id_])
     else:
         context = utils.no_op_manager()
-    surface1 = intersection_info.surface1
-    surface2 = intersection_info.surface2
+    triangle1 = intersection_info.triangle1
+    triangle2 = intersection_info.triangle2
     with context:
-        surface_surface_check(
-            strategy, surface1, surface2, *intersection_info.intersections
+        triangle_triangle_check(
+            strategy, triangle1, triangle2, *intersection_info.intersections
         )

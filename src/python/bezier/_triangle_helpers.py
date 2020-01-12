@@ -10,14 +10,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Helper methods for :mod:`bezier.surface`.
+"""Helper methods for :mod:`bezier.triangle`.
 
 The functions provided by this module have a Cython speedup with the
 exact same interface which calls out to a Fortran implementation. The speedup
 will be used if the extension can be built.
 """
 
-from bezier import _py_surface_helpers
+from bezier import _py_triangle_helpers
 
 try:
     from bezier import _speedup
@@ -27,20 +27,20 @@ except ImportError:  # pragma: NO COVER
 
 # pylint: disable=invalid-name
 if _speedup is None:  # pragma: NO COVER
-    de_casteljau_one_round = _py_surface_helpers.de_casteljau_one_round
-    specialize_surface = _py_surface_helpers.specialize_surface
-    subdivide_nodes = _py_surface_helpers.subdivide_nodes
-    jacobian_both = _py_surface_helpers.jacobian_both
-    jacobian_det = _py_surface_helpers.jacobian_det
-    evaluate_barycentric = _py_surface_helpers.evaluate_barycentric
-    evaluate_barycentric_multi = _py_surface_helpers.evaluate_barycentric_multi
-    evaluate_cartesian_multi = _py_surface_helpers.evaluate_cartesian_multi
-    compute_edge_nodes = _py_surface_helpers.compute_edge_nodes
-    compute_area = _py_surface_helpers.compute_area
+    de_casteljau_one_round = _py_triangle_helpers.de_casteljau_one_round
+    specialize_triangle = _py_triangle_helpers.specialize_triangle
+    subdivide_nodes = _py_triangle_helpers.subdivide_nodes
+    jacobian_both = _py_triangle_helpers.jacobian_both
+    jacobian_det = _py_triangle_helpers.jacobian_det
+    evaluate_barycentric = _py_triangle_helpers.evaluate_barycentric
+    evaluate_barycentric_multi = _py_triangle_helpers.evaluate_barycentric_multi
+    evaluate_cartesian_multi = _py_triangle_helpers.evaluate_cartesian_multi
+    compute_edge_nodes = _py_triangle_helpers.compute_edge_nodes
+    compute_area = _py_triangle_helpers.compute_area
 else:
     de_casteljau_one_round = _speedup.de_casteljau_one_round
-    specialize_surface = _speedup.specialize_surface
-    subdivide_nodes = _speedup.subdivide_nodes_surface
+    specialize_triangle = _speedup.specialize_triangle
+    subdivide_nodes = _speedup.subdivide_nodes_triangle
     jacobian_both = _speedup.jacobian_both
     jacobian_det = _speedup.jacobian_det
     evaluate_barycentric = _speedup.evaluate_barycentric

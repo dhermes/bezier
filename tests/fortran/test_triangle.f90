@@ -10,13 +10,13 @@
 ! See the License for the specific language governing permissions and
 ! limitations under the License.
 
-module test_surface
+module test_triangle
 
   use, intrinsic :: iso_c_binding, only: c_bool, c_double, c_int, c_ptr, c_loc
-  use surface, only: &
+  use triangle, only: &
        de_casteljau_one_round, evaluate_barycentric, &
        evaluate_barycentric_multi, evaluate_cartesian_multi, jacobian_both, &
-       jacobian_det, specialize_surface, subdivide_nodes, compute_edge_nodes, &
+       jacobian_det, specialize_triangle, subdivide_nodes, compute_edge_nodes, &
        shoelace_for_area, compute_area
   use types, only: dp
   use unit_test_helpers, only: &
@@ -26,14 +26,14 @@ module test_surface
        test_de_casteljau_one_round, test_evaluate_barycentric, &
        test_evaluate_barycentric_multi, test_evaluate_cartesian_multi, &
        test_jacobian_both, test_jacobian_det, &
-       test_specialize_surface, test_subdivide_nodes, &
+       test_specialize_triangle, test_subdivide_nodes, &
        subdivide_points_check, test_compute_edge_nodes, &
        test_shoelace_for_area, test_compute_area
-  public surface_all_tests
+  public triangle_all_tests
 
 contains
 
-  subroutine surface_all_tests(success)
+  subroutine triangle_all_tests(success)
     logical(c_bool), intent(inout) :: success
 
     call test_de_casteljau_one_round(success)
@@ -42,13 +42,13 @@ contains
     call test_evaluate_cartesian_multi(success)
     call test_jacobian_both(success)
     call test_jacobian_det(success)
-    call test_specialize_surface(success)
+    call test_specialize_triangle(success)
     call test_subdivide_nodes(success)
     call test_compute_edge_nodes(success)
     call test_shoelace_for_area(success)
     call test_compute_area(success)
 
-  end subroutine surface_all_tests
+  end subroutine triangle_all_tests
 
   subroutine test_de_casteljau_one_round(success)
     logical(c_bool), intent(inout) :: success
@@ -78,7 +78,7 @@ contains
     case_success = all(new_nodes1 == expected1)
     call print_status(name, case_id, case_success, success)
 
-    ! CASE 2: Quadratic surface.
+    ! CASE 2: Quadratic triangle.
     call get_random_nodes(nodes2, 790931, 1483, num_bits=8)
     ! NOTE: Use a fixed seed so the test is deterministic and round
     !       the nodes to 8 bits of precision to avoid round-off.
@@ -103,7 +103,7 @@ contains
     case_success = all(new_nodes2 == expected2)
     call print_status(name, case_id, case_success, success)
 
-    ! CASE 3: Cubic surface.
+    ! CASE 3: Cubic triangle.
     nodes3(:, 1) = [0.0_dp, 0.0_dp]
     nodes3(:, 2) = [3.25_dp, 1.5_dp]
     nodes3(:, 3) = [6.5_dp, 1.5_dp]
@@ -166,7 +166,7 @@ contains
     case_id = 1
     name = "evaluate_barycentric"
 
-    ! CASE 1: Linear surface.
+    ! CASE 1: Linear triangle.
     nodes1(:, 1) = 0
     nodes1(:, 2) = [1.0_dp, 0.5_dp]
     nodes1(:, 3) = [0.0_dp, 1.25_dp]
@@ -179,7 +179,7 @@ contains
     case_success = all(point1 == expected1)
     call print_status(name, case_id, case_success, success)
 
-    ! CASE 2: Quadratic surface.
+    ! CASE 2: Quadratic triangle.
     lambda1 = 0.0_dp
     lambda2 = 0.25_dp
     lambda3 = 0.75_dp
@@ -195,7 +195,7 @@ contains
     case_success = all(point1 == expected1)
     call print_status(name, case_id, case_success, success)
 
-    ! CASE 3: Quadratic surface in 3D.
+    ! CASE 3: Quadratic triangle in 3D.
     nodes3(:, 1) = [0.0_dp, 0.0_dp, 1.0_dp]
     nodes3(:, 2) = [0.5_dp, 0.0_dp, 0.25_dp]
     nodes3(:, 3) = [1.0_dp, 0.5_dp, 0.0_dp]
@@ -211,7 +211,7 @@ contains
     case_success = all(point2 == expected2)
     call print_status(name, case_id, case_success, success)
 
-    ! CASE 4: Cubic surface.
+    ! CASE 4: Cubic triangle.
     nodes4(:, 1) = [0.0_dp, 0.0_dp]
     nodes4(:, 2) = [0.25_dp, 0.0_dp]
     nodes4(:, 3) = [0.75_dp, 0.25_dp]
@@ -231,7 +231,7 @@ contains
     case_success = all(point1 == expected1)
     call print_status(name, case_id, case_success, success)
 
-    ! CASE 5: Quartic (random) surface.
+    ! CASE 5: Quartic (random) triangle.
     call get_random_nodes(nodes5, 64441, 222, num_bits=8)
     ! NOTE: Use a fixed seed so the test is deterministic and round
     !       the nodes to 8 bits of precision to avoid round-off.
@@ -313,7 +313,7 @@ contains
     case_success = all(evaluated == expected)
     call print_status(name, case_id, case_success, success)
 
-    ! CASE 3: Degree zero "surface"
+    ! CASE 3: Degree zero "triangle"
     nodes_deg0(:, 1) = [1.5_dp, 7.75_dp]
     param_vals(1, :) = [0.5_dp, 0.25_dp, 0.25_dp]
     param_vals(2, :) = [0.25_dp, 0.125_dp, 0.625_dp]
@@ -380,7 +380,7 @@ contains
     case_success = all(evaluated2 == expected2)
     call print_status(name, case_id, case_success, success)
 
-    ! CASE 3: Degree zero "surface"
+    ! CASE 3: Degree zero "triangle"
     nodes3(:, 1) = [-1.5_dp, 0.75_dp, 5.0_dp]
     forall (i = 1:16)
        expected3(:, i) = nodes3(:, 1)
@@ -405,7 +405,7 @@ contains
     case_id = 1
     name = "jacobian_both"
 
-    ! CASE 1: Linear surface.
+    ! CASE 1: Linear triangle.
     ! B(s, t) = -2s + 2t + 3
     nodes1(1, :) = [3.0_dp, 1.0_dp, 5.0_dp]
     ! B_s = -2
@@ -416,7 +416,7 @@ contains
     case_success = all(new_nodes1 == expected1)
     call print_status(name, case_id, case_success, success)
 
-    ! CASE 2: Quadratic surface.
+    ! CASE 2: Quadratic triangle.
     ! B(s, t) = [
     !     4 s t - 2 s + 5 t^2 - 6 t + 3,
     !     -s (s - 2 t),
@@ -447,7 +447,7 @@ contains
     case_success = all(new_nodes2 == expected2)
     call print_status(name, case_id, case_success, success)
 
-    ! CASE 3: Cubic surface.
+    ! CASE 3: Cubic triangle.
     ! B(s, t) = [
     !     -2s^3 + 9s^2t + 12st^2 - 12st + 3s - 2t^3 + 6t,
     !     (-10s^3 - 30s^2t + 30s^2 - 36st^2 + 42st -
@@ -497,7 +497,7 @@ contains
     case_id = 1
     name = "jacobian_det"
 
-    ! CASE 1: Linear surface (determinant is area).
+    ! CASE 1: Linear triangle (determinant is area).
     nodes1(:, 1) = 0
     nodes1(:, 2) = [1.0_dp, 0.0_dp]
     nodes1(:, 3) = [0.0_dp, 2.0_dp]
@@ -507,7 +507,7 @@ contains
     case_success = all(evaluated1 == 2.0_dp)
     call print_status(name, case_id, case_success, success)
 
-    ! CASE 2: Quadratic (i.e. non-linear) surface.
+    ! CASE 2: Quadratic (i.e. non-linear) triangle.
     nodes2(:, 1) = 0
     nodes2(:, 2) = [0.5_dp, 0.0_dp]
     nodes2(:, 3) = [1.0_dp, 0.0_dp]
@@ -528,7 +528,7 @@ contains
 
   end subroutine test_jacobian_det
 
-  subroutine test_specialize_surface(success)
+  subroutine test_specialize_triangle(success)
     logical(c_bool), intent(inout) :: success
     ! Variables outside of signature.
     logical :: case_success
@@ -541,7 +541,7 @@ contains
     character(18) :: name
 
     case_id = 1
-    name = "specialize_surface"
+    name = "specialize_triangle"
 
     weights0 = [1.0_dp, 0.0_dp, 0.0_dp]
     weights1 = [0.5_dp, 0.5_dp, 0.0_dp]
@@ -555,7 +555,7 @@ contains
     id_mat = get_id_mat(3)
     allocate(specialized(3, 3))
     allocate(expected(3, 3))
-    call specialize_surface( &
+    call specialize_triangle( &
          3, 3, id_mat, 1, &
          weights0, weights1, weights3, &
          specialized)
@@ -566,7 +566,7 @@ contains
     call print_status(name, case_id, case_success, success)
 
     ! CASE 2: degree == 1, subdivision B
-    call specialize_surface( &
+    call specialize_triangle( &
          3, 3, id_mat, 1, &
          weights4, weights3, weights1, &
          specialized)
@@ -577,7 +577,7 @@ contains
     call print_status(name, case_id, case_success, success)
 
     ! CASE 3: degree == 1, subdivision C
-    call specialize_surface( &
+    call specialize_triangle( &
          3, 3, id_mat, 1, &
          weights1, weights2, weights4, &
          specialized)
@@ -588,7 +588,7 @@ contains
     call print_status(name, case_id, case_success, success)
 
     ! CASE 4: degree == 1, subdivision D
-    call specialize_surface( &
+    call specialize_triangle( &
          3, 3, id_mat, 1, &
          weights3, weights4, weights5, &
          specialized)
@@ -607,7 +607,7 @@ contains
     id_mat = get_id_mat(6)
     allocate(specialized(6, 6))
     allocate(expected(6, 6))
-    call specialize_surface( &
+    call specialize_triangle( &
          6, 6, id_mat, 2, &
          weights0, weights1, weights3, &
          specialized)
@@ -621,7 +621,7 @@ contains
     call print_status(name, case_id, case_success, success)
 
     ! CASE 6: degree == 2, subdivision B
-    call specialize_surface( &
+    call specialize_triangle( &
          6, 6, id_mat, 2, &
          weights4, weights3, weights1, &
          specialized)
@@ -635,7 +635,7 @@ contains
     call print_status(name, case_id, case_success, success)
 
     ! CASE 7: degree == 2, subdivision C
-    call specialize_surface( &
+    call specialize_triangle( &
          6, 6, id_mat, 2, &
          weights1, weights2, weights4, &
          specialized)
@@ -649,7 +649,7 @@ contains
     call print_status(name, case_id, case_success, success)
 
     ! CASE 8: degree == 2, subdivision D
-    call specialize_surface( &
+    call specialize_triangle( &
          6, 6, id_mat, 2, &
          weights3, weights4, weights5, &
          specialized)
@@ -671,7 +671,7 @@ contains
     id_mat = get_id_mat(10)
     allocate(specialized(10, 10))
     allocate(expected(10, 10))
-    call specialize_surface( &
+    call specialize_triangle( &
          10, 10, id_mat, 3, &
          weights0, weights1, weights3, &
          specialized)
@@ -689,7 +689,7 @@ contains
     call print_status(name, case_id, case_success, success)
 
     ! CASE 10: degree == 3, subdivision B
-    call specialize_surface( &
+    call specialize_triangle( &
          10, 10, id_mat, 3, &
          weights4, weights3, weights1, &
          specialized)
@@ -707,7 +707,7 @@ contains
     call print_status(name, case_id, case_success, success)
 
     ! CASE 11: degree == 3, subdivision C
-    call specialize_surface( &
+    call specialize_triangle( &
          10, 10, id_mat, 3, &
          weights1, weights2, weights4, &
          specialized)
@@ -725,7 +725,7 @@ contains
     call print_status(name, case_id, case_success, success)
 
     ! CASE 12: degree == 3, subdivision D
-    call specialize_surface( &
+    call specialize_triangle( &
          10, 10, id_mat, 3, &
          weights3, weights4, weights5, &
          specialized)
@@ -751,7 +751,7 @@ contains
     id_mat = get_id_mat(15)
     allocate(specialized(15, 15))
     allocate(expected(15, 15))
-    call specialize_surface( &
+    call specialize_triangle( &
          15, 15, id_mat, 4, &
          weights0, weights1, weights3, &
          specialized)
@@ -774,7 +774,7 @@ contains
     call print_status(name, case_id, case_success, success)
 
     ! CASE 14: degree == 4, subdivision B
-    call specialize_surface( &
+    call specialize_triangle( &
          15, 15, id_mat, 4, &
          weights4, weights3, weights1, &
          specialized)
@@ -797,7 +797,7 @@ contains
     call print_status(name, case_id, case_success, success)
 
     ! CASE 15: degree == 4, subdivision C
-    call specialize_surface( &
+    call specialize_triangle( &
          15, 15, id_mat, 4, &
          weights1, weights2, weights4, &
          specialized)
@@ -820,7 +820,7 @@ contains
     call print_status(name, case_id, case_success, success)
 
     ! CASE 16: degree == 4, subdivision D
-    call specialize_surface( &
+    call specialize_triangle( &
          15, 15, id_mat, 4, &
          weights3, weights4, weights5, &
          specialized)
@@ -842,7 +842,7 @@ contains
     case_success = all(specialized == expected)
     call print_status(name, case_id, case_success, success)
 
-  end subroutine test_specialize_surface
+  end subroutine test_specialize_triangle
 
   subroutine test_subdivide_nodes(success)
     logical(c_bool), intent(inout) :: success
@@ -869,7 +869,7 @@ contains
     case_id = 1
     name = "subdivide_nodes (Triangle)"
 
-    ! CASE 1: Linear surface.
+    ! CASE 1: Linear triangle.
     nodes1(:, 1) = 0
     nodes1(:, 2) = [1.0_dp, 0.0_dp]
     nodes1(:, 3) = [0.0_dp, 1.0_dp]
@@ -895,12 +895,12 @@ contains
          all(nodes_d1 == expected_d1))
     call print_status(name, case_id, case_success, success)
 
-    ! CASE 2: Evaluate subdivided parts of a linear surface.
+    ! CASE 2: Evaluate subdivided parts of a linear triangle.
     call subdivide_points_check( &
          3, 2, 1, 290289, 111228, case_success)
     call print_status(name, case_id, case_success, success)
 
-    ! CASE 3: Quadratic surface.
+    ! CASE 3: Quadratic triangle.
     nodes2(:, 1) = [0.0_dp, 0.0_dp]
     nodes2(:, 2) = [0.5_dp, 0.25_dp]
     nodes2(:, 3) = [1.0_dp, 0.0_dp]
@@ -941,12 +941,12 @@ contains
          all(nodes_d2 == expected_d2))
     call print_status(name, case_id, case_success, success)
 
-    ! CASE 4: Evaluate subdivided parts of a quadratic surface.
+    ! CASE 4: Evaluate subdivided parts of a quadratic triangle.
     call subdivide_points_check( &
          6, 2, 2, 219803, 7086, case_success)
     call print_status(name, case_id, case_success, success)
 
-    ! CASE 5: Cubic surface.
+    ! CASE 5: Cubic triangle.
     nodes3(:, 1) = [0.0_dp, 0.0_dp]
     nodes3(:, 2) = [3.25_dp, 1.5_dp]
     nodes3(:, 3) = [6.5_dp, 1.5_dp]
@@ -1007,18 +1007,18 @@ contains
          all(nodes_d3 == expected_d3))
     call print_status(name, case_id, case_success, success)
 
-    ! CASE 6: Evaluate subdivided parts of a cubic surface.
+    ! CASE 6: Evaluate subdivided parts of a cubic triangle.
     call subdivide_points_check( &
          10, 2, 3, 439028340, 2184938, case_success)
     call print_status(name, case_id, case_success, success)
 
-    ! CASE 7: Evaluate subdivided parts of a quartic surface.
+    ! CASE 7: Evaluate subdivided parts of a quartic triangle.
     call subdivide_points_check( &
          15, 2, 4, 1029038, 890012, case_success)
     call print_status(name, case_id, case_success, success)
 
-    ! CASE 8: Evaluate subdivided parts of a quantic surface. This
-    !         will use ``specialize_surface`` rather than a hard-coded
+    ! CASE 8: Evaluate subdivided parts of a quantic triangle. This
+    !         will use ``specialize_triangle`` rather than a hard-coded
     !         process.
     call subdivide_points_check( &
          21, 2, 5, 91889, 1303497, case_success)
@@ -1112,7 +1112,7 @@ contains
     case_id = 1
     name = "compute_edge_nodes"
 
-    ! CASE 1: Linear surface.
+    ! CASE 1: Linear triangle.
     allocate(nodes(2, 3))
     allocate(nodes1(2, 2))
     allocate(nodes2(2, 2))
@@ -1129,7 +1129,7 @@ contains
          all(nodes3 == nodes(:, [3, 1])))
     call print_status(name, case_id, case_success, success)
 
-    ! CASE 2: Quadratic surface.
+    ! CASE 2: Quadratic triangle.
     deallocate(nodes)
     deallocate(nodes1)
     deallocate(nodes2)
@@ -1153,7 +1153,7 @@ contains
          all(nodes3 == nodes(:, [6, 4, 1])))
     call print_status(name, case_id, case_success, success)
 
-    ! CASE 3: Cubic surface.
+    ! CASE 3: Cubic triangle.
     deallocate(nodes)
     deallocate(nodes1)
     deallocate(nodes2)
@@ -1330,4 +1330,4 @@ contains
 
   end subroutine test_compute_area
 
-end module test_surface
+end module test_triangle

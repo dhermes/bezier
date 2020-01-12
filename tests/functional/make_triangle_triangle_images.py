@@ -18,12 +18,12 @@ from bezier import _plot_helpers
 from tests.functional import utils
 
 
-_, INTERSECTIONS = utils.surface_intersections_info()
+_, INTERSECTIONS = utils.triangle_intersections_info()
 
 
-def make_curved_polygon(surface1, surface2, curved_polygon_info):
+def make_curved_polygon(triangle1, triangle2, curved_polygon_info):
     if isinstance(curved_polygon_info, utils.CurvedPolygonInfo):
-        base_edges = (surface1._get_edges(), surface2._get_edges())
+        base_edges = (triangle1._get_edges(), triangle2._get_edges())
         edge_list = curved_polygon_info.edge_list
         start_params = curved_polygon_info.start_params
         end_params = curved_polygon_info.end_params
@@ -40,21 +40,21 @@ def make_curved_polygon(surface1, surface2, curved_polygon_info):
     else:
         assert isinstance(curved_polygon_info, utils.TriangleIntersectionInfo)
         if curved_polygon_info.first:
-            return surface1
+            return triangle1
 
         else:
-            return surface2
+            return triangle2
 
 
 def make_plot(intersection_info, save_plot):
-    surface1 = intersection_info.surface1
-    surface2 = intersection_info.surface2
-    ax = surface1.plot(64)
-    surface2.plot(64, ax=ax)
+    triangle1 = intersection_info.triangle1
+    triangle2 = intersection_info.triangle2
+    ax = triangle1.plot(64)
+    triangle2.plot(64, ax=ax)
     color = None
     for curved_polygon_info in intersection_info.intersections:
         curved_polygon = make_curved_polygon(
-            surface1, surface2, curved_polygon_info
+            triangle1, triangle2, curved_polygon_info
         )
         curved_polygon.plot(64, color=color, ax=ax)
         # Color is (R,G,B,A) but we just want (R,G,B).

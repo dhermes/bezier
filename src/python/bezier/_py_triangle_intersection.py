@@ -10,7 +10,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Pure Python helper methods for :mod:`bezier.surface`."""
+"""Pure Python helper methods for :mod:`bezier.triangle`."""
 
 import collections
 import itertools
@@ -21,7 +21,7 @@ from bezier import _algebraic_intersection
 from bezier import _py_geometric_intersection
 from bezier import _py_helpers
 from bezier import _py_intersection_helpers
-from bezier import _py_surface_helpers
+from bezier import _py_triangle_helpers
 
 
 MAX_LOCATE_SUBDIVISIONS = 20
@@ -109,7 +109,7 @@ def newton_refine(nodes, degree, x_val, y_val, s, t):
 
     For example, (with weights
     :math:`\lambda_1 = 1 - s - t, \lambda_2 = s, \lambda_3 = t`)
-    consider the surface
+    consider the triangle
 
     .. math::
 
@@ -144,25 +144,25 @@ def newton_refine(nodes, degree, x_val, y_val, s, t):
            \left[\begin{array}{c} -10 \\ 7 \end{array}\right]
        \end{align*}
 
-    .. image:: ../images/newton_refine_surface.png
+    .. image:: ../images/newton_refine_triangle.png
        :align: center
 
-    .. testsetup:: newton-refine-surface
+    .. testsetup:: newton-refine-triangle
 
        import numpy as np
        import bezier
-       from bezier._py_surface_intersection import newton_refine
+       from bezier._py_triangle_intersection import newton_refine
 
-    .. doctest:: newton-refine-surface
+    .. doctest:: newton-refine-triangle
 
        >>> nodes = np.asfortranarray([
        ...     [0.0, 1.0, 2.0, 2.0, 2.0, 0.0],
        ...     [0.0, 0.0, 0.0, 1.0, 2.0, 2.0],
        ... ])
-       >>> surface = bezier.Triangle(nodes, degree=2)
-       >>> surface.is_valid
+       >>> triangle = bezier.Triangle(nodes, degree=2)
+       >>> triangle.is_valid
        True
-       >>> (x_val,), (y_val,) = surface.evaluate_cartesian(0.25, 0.5)
+       >>> (x_val,), (y_val,) = triangle.evaluate_cartesian(0.25, 0.5)
        >>> x_val, y_val
        (1.25, 1.25)
        >>> s, t = 0.5, 0.25
@@ -172,19 +172,19 @@ def newton_refine(nodes, degree, x_val, y_val, s, t):
        >>> 32 * (new_t - t)
        7.0
 
-    .. testcleanup:: newton-refine-surface
+    .. testcleanup:: newton-refine-triangle
 
        import make_images
-       make_images.newton_refine_surface(
-           surface, x_val, y_val, s, t, new_s, new_t)
+       make_images.newton_refine_triangle(
+           triangle, x_val, y_val, s, t, new_s, new_t)
 
     Args:
-        nodes (numpy.ndarray): Array of nodes in a surface.
-        degree (int): The degree of the surface.
+        nodes (numpy.ndarray): Array of nodes in a triangle.
+        degree (int): The degree of the triangle.
         x_val (float): The :math:`x`-coordinate of a point
-            on the surface.
+            on the triangle.
         y_val (float): The :math:`y`-coordinate of a point
-            on the surface.
+            on the triangle.
         s (float): Approximate :math:`s`-value to be refined.
         t (float): Approximate :math:`t`-value to be refined.
 
@@ -192,7 +192,7 @@ def newton_refine(nodes, degree, x_val, y_val, s, t):
         Tuple[float, float]: The refined :math:`s` and :math:`t` values.
     """
     lambda1 = 1.0 - s - t
-    (surf_x,), (surf_y,) = _py_surface_helpers.evaluate_barycentric(
+    (surf_x,), (surf_y,) = _py_triangle_helpers.evaluate_barycentric(
         nodes, degree, lambda1, s, t
     )
     if surf_x == x_val and surf_y == y_val:
@@ -200,9 +200,9 @@ def newton_refine(nodes, degree, x_val, y_val, s, t):
         return s, t
 
     # NOTE: This function assumes ``dimension==2`` (i.e. since ``x, y``).
-    jac_nodes = _py_surface_helpers.jacobian_both(nodes, degree, 2)
+    jac_nodes = _py_triangle_helpers.jacobian_both(nodes, degree, 2)
     # The degree of the jacobian is one less.
-    jac_both = _py_surface_helpers.evaluate_barycentric(
+    jac_both = _py_triangle_helpers.evaluate_barycentric(
         jac_nodes, degree - 1, lambda1, s, t
     )
     # The first row of the jacobian matrix is B_s (i.e. the
@@ -214,37 +214,37 @@ def newton_refine(nodes, degree, x_val, y_val, s, t):
 
 
 def update_locate_candidates(candidate, next_candidates, x_val, y_val, degree):
-    """Update list of candidate surfaces during geometric search for a point.
+    """Update list of candidate triangles during geometric search for a point.
 
     .. note::
 
        This is used **only** as a helper for :func:`locate_point`.
 
     Checks if the point ``(x_val, y_val)`` is contained in the ``candidate``
-    surface. If not, this function does nothing. If the point is contaned,
-    the four subdivided surfaces from ``candidate`` are added to
+    triangle. If not, this function does nothing. If the point is contaned,
+    the four subdivided triangles from ``candidate`` are added to
     ``next_candidates``.
 
     Args:
         candidate (Tuple[float, float, float, numpy.ndarray]): A 4-tuple
-            describing a surface and its centroid / width. Contains
+            describing a triangle and its centroid / width. Contains
 
             * Three times centroid ``x``-value
             * Three times centroid ``y``-value
-            * "Width" of parameter space for the surface
-            * Control points for the surface
-        next_candidates (list): List of "candidate" sub-surfaces that may
+            * "Width" of parameter space for the triangle
+            * Control points for the triangle
+        next_candidates (list): List of "candidate" sub-triangles that may
             contain the point being located.
         x_val (float): The ``x``-coordinate being located.
         y_val (float): The ``y``-coordinate being located.
-        degree (int): The degree of the surface.
+        degree (int): The degree of the triangle.
     """
     centroid_x, centroid_y, width, candidate_nodes = candidate
     point = np.asfortranarray([x_val, y_val])
     if not _py_helpers.contains_nd(candidate_nodes, point):
         return
 
-    nodes_a, nodes_b, nodes_c, nodes_d = _py_surface_helpers.subdivide_nodes(
+    nodes_a, nodes_b, nodes_c, nodes_d = _py_triangle_helpers.subdivide_nodes(
         candidate_nodes, degree
     )
     half_width = 0.5 * width
@@ -277,8 +277,8 @@ def mean_centroid(candidates):
 
             * Three times centroid ``x``-value
             * Three times centroid ``y``-value
-            * "Width" of a parameter space for a surface
-            * Control points for a surface
+            * "Width" of a parameter space for a triangle
+            * Control points for a triangle
 
             We only use the first two values, which are triple the desired
             value so that we can put off division by three until summing in
@@ -298,31 +298,31 @@ def mean_centroid(candidates):
 
 
 def locate_point(nodes, degree, x_val, y_val):
-    r"""Locate a point on a surface.
+    r"""Locate a point on a triangle.
 
     .. note::
 
        There is also a Fortran implementation of this function, which
        will be used if it can be built.
 
-    Does so by recursively subdividing the surface and rejecting
-    sub-surfaces with bounding boxes that don't contain the point.
-    After the sub-surfaces are sufficiently small, uses Newton's
+    Does so by recursively subdividing the triangle and rejecting
+    sub-triangles with bounding boxes that don't contain the point.
+    After the sub-triangles are sufficiently small, uses Newton's
     method to narrow in on the pre-image of the point.
 
     Args:
-        nodes (numpy.ndarray): Control points for B |eacute| zier surface
+        nodes (numpy.ndarray): Control points for B |eacute| zier triangle
             (assumed to be two-dimensional).
-        degree (int): The degree of the surface.
+        degree (int): The degree of the triangle.
         x_val (float): The :math:`x`-coordinate of a point
-            on the surface.
+            on the triangle.
         y_val (float): The :math:`y`-coordinate of a point
-            on the surface.
+            on the triangle.
 
     Returns:
         Optional[Tuple[float, float]]: The :math:`s` and :math:`t`
         values corresponding to ``x_val`` and ``y_val`` or
-        :data:`None` if the point is not on the ``surface``.
+        :data:`None` if the point is not on the ``triangle``.
     """
     # We track the centroid rather than base_x/base_y/width (by storing triple
     # the centroid -- to avoid division by three until needed). We also need
@@ -342,7 +342,7 @@ def locate_point(nodes, degree, x_val, y_val):
     # that may contain the point.
     s_approx, t_approx = mean_centroid(candidates)
     s, t = newton_refine(nodes, degree, x_val, y_val, s_approx, t_approx)
-    actual = _py_surface_helpers.evaluate_barycentric(
+    actual = _py_triangle_helpers.evaluate_barycentric(
         nodes, degree, 1.0 - s - t, s, t
     )
     expected = np.asfortranarray([x_val, y_val])
@@ -479,7 +479,7 @@ def verify_edge_segments(edge_infos):
 def add_edge_end_unused(intersection, duplicates, intersections):
     """Add intersection that is ``COINCIDENT_UNUSED`` but on an edge end.
 
-    This is a helper for :func:`~._py_surface_intersection.add_intersection`.
+    This is a helper for :func:`~._py_triangle_intersection.add_intersection`.
     It assumes that
 
     * ``intersection`` will have at least one of ``s == 0.0`` or ``t == 0.0``
@@ -576,9 +576,9 @@ def add_intersection(  # pylint: disable=too-many-arguments
             classification of the intersection, if known. If :data:`None`,
             the classification will be computed below.
         edge_nodes1 (Tuple[numpy.ndarray, numpy.ndarray, numpy.ndarray]): The
-            nodes of the three edges of the first surface being intersected.
+            nodes of the three edges of the first triangle being intersected.
         edge_nodes2 (Tuple[numpy.ndarray, numpy.ndarray, numpy.ndarray]): The
-            nodes of the three edges of the second surface being intersected.
+            nodes of the three edges of the second triangle being intersected.
         duplicates (List[.Intersection]): List of duplicate intersections.
         intersections (List[.Intersection]): List of "accepted" (i.e.
             non-duplicate) intersections.
@@ -586,7 +586,7 @@ def add_intersection(  # pylint: disable=too-many-arguments
     # NOTE: There is no corresponding "enable", but the disable only applies
     #       in this lexical scope.
     # pylint: disable=too-many-locals
-    edge_end, is_corner, intersection_args = _py_surface_helpers.handle_ends(
+    edge_end, is_corner, intersection_args = _py_triangle_helpers.handle_ends(
         index1, s, index2, t
     )
     if edge_end:
@@ -611,7 +611,7 @@ def add_intersection(  # pylint: disable=too-many-arguments
 
         # Classify the intersection.
         if interior_curve is None:
-            interior_curve = _py_surface_helpers.classify_intersection(
+            interior_curve = _py_triangle_helpers.classify_intersection(
                 intersection, edge_nodes1, edge_nodes2
             )
         intersection.interior_curve = interior_curve
@@ -623,7 +623,7 @@ def classify_coincident(st_vals, coincident):
 
     .. note::
 
-       This is a helper for :func:`surface_intersections`.
+       This is a helper for :func:`triangle_intersections`.
 
     In the case that ``coincident`` is :data:`True`, then we'll have two
     sets of parameters :math:`(s_1, t_1)` and :math:`(s_2, t_2)`.
@@ -682,8 +682,8 @@ def should_use(intersection):
     return False
 
 
-def surface_intersections(edge_nodes1, edge_nodes2, all_intersections):
-    """Find all intersections among edges of two surfaces.
+def triangle_intersections(edge_nodes1, edge_nodes2, all_intersections):
+    """Find all intersections among edges of two triangles.
 
     This treats intersections which have ``s == 1.0`` or ``t == 1.0``
     as duplicates. The duplicates may be checked by the caller, e.g.
@@ -691,9 +691,9 @@ def surface_intersections(edge_nodes1, edge_nodes2, all_intersections):
 
     Args:
         edge_nodes1 (Tuple[numpy.ndarray, numpy.ndarray, numpy.ndarray]): The
-            nodes of the three edges of the first surface being intersected.
+            nodes of the three edges of the first triangle being intersected.
         edge_nodes2 (Tuple[numpy.ndarray, numpy.ndarray, numpy.ndarray]): The
-            nodes of the three edges of the second surface being intersected.
+            nodes of the three edges of the second triangle being intersected.
         all_intersections (Callable): A helper that intersects B |eacute| zier
             curves. Takes the nodes of each curve as input and returns an
             array (``2 x N``) of intersections.
@@ -745,19 +745,19 @@ def surface_intersections(edge_nodes1, edge_nodes2, all_intersections):
 def generic_intersect(
     nodes1, degree1, nodes2, degree2, verify, all_intersections
 ):
-    r"""Find all intersections among edges of two surfaces.
+    r"""Find all intersections among edges of two triangles.
 
     This treats intersections which have ``s == 1.0`` or ``t == 1.0``
     as duplicates. The duplicates will be checked by :func:`verify_duplicates`
     if ``verify`` is :data:`True`.
 
     Args:
-        nodes1 (numpy.ndarray): The nodes defining the first surface in
+        nodes1 (numpy.ndarray): The nodes defining the first triangle in
             the intersection (assumed in :math:\mathbf{R}^2`).
-        degree1 (int): The degree of the surface given by ``nodes1``.
-        nodes2 (numpy.ndarray): The nodes defining the second surface in
+        degree1 (int): The degree of the triangle given by ``nodes1``.
+        nodes2 (numpy.ndarray): The nodes defining the second triangle in
             the intersection (assumed in :math:\mathbf{R}^2`).
-        degree2 (int): The degree of the surface given by ``nodes2``.
+        degree2 (int): The degree of the triangle given by ``nodes2``.
         verify (Optional[bool]): Indicates if duplicate intersections
             should be checked.
         all_intersections (Callable): A helper that intersects B |eacute| zier
@@ -771,8 +771,8 @@ def generic_intersect(
           and contains 3-tuples of edge index, start and end (see the
           output of :func:`ends_to_curve`).
         * "Contained" boolean. If not :data:`None`, indicates
-          that one of the surfaces is contained in the other.
-        * The nodes of three edges of the first surface being intersected
+          that one of the triangles is contained in the other.
+        * The nodes of three edges of the first triangle being intersected
           followed by the nodes of the three edges of the second.
     """
     bbox_int = _py_geometric_intersection.bbox_intersect(nodes1, nodes2)
@@ -780,13 +780,13 @@ def generic_intersect(
         return [], None, ()
 
     # We need **all** edges (as nodes).
-    edge_nodes1 = _py_surface_helpers.compute_edge_nodes(nodes1, degree1)
-    edge_nodes2 = _py_surface_helpers.compute_edge_nodes(nodes2, degree2)
+    edge_nodes1 = _py_triangle_helpers.compute_edge_nodes(nodes1, degree1)
+    edge_nodes2 = _py_triangle_helpers.compute_edge_nodes(nodes2, degree2)
     # Run through **all** pairs of edges.
-    intersections, duplicates, unused, all_types = surface_intersections(
+    intersections, duplicates, unused, all_types = triangle_intersections(
         edge_nodes1, edge_nodes2, all_intersections
     )
-    edge_infos, contained = _py_surface_helpers.combine_intersections(
+    edge_infos, contained = _py_triangle_helpers.combine_intersections(
         intersections, nodes1, degree1, nodes2, degree2, all_types
     )
     # Verify the duplicates and intersection if need be.
@@ -800,7 +800,7 @@ def generic_intersect(
 
 
 def geometric_intersect(nodes1, degree1, nodes2, degree2, verify):
-    r"""Find all intersections among edges of two surfaces.
+    r"""Find all intersections among edges of two triangles.
 
     .. note::
 
@@ -811,12 +811,12 @@ def geometric_intersect(nodes1, degree1, nodes2, degree2, verify):
     :attr:`~.IntersectionStrategy.GEOMETRIC` intersection strategy.
 
     Args:
-        nodes1 (numpy.ndarray): The nodes defining the first surface in
+        nodes1 (numpy.ndarray): The nodes defining the first triangle in
             the intersection (assumed in :math:\mathbf{R}^2`).
-        degree1 (int): The degree of the surface given by ``nodes1``.
-        nodes2 (numpy.ndarray): The nodes defining the second surface in
+        degree1 (int): The degree of the triangle given by ``nodes1``.
+        nodes2 (numpy.ndarray): The nodes defining the second triangle in
             the intersection (assumed in :math:\mathbf{R}^2`).
-        degree2 (int): The degree of the surface given by ``nodes2``.
+        degree2 (int): The degree of the triangle given by ``nodes2``.
         verify (Optional[bool]): Indicates if duplicate intersections
             should be checked.
 
@@ -827,8 +827,8 @@ def geometric_intersect(nodes1, degree1, nodes2, degree2, verify):
           and contains 3-tuples of edge index, start and end (see the
           output of :func:`ends_to_curve`).
         * "Contained" boolean. If not :data:`None`, indicates
-          that one of the surfaces is contained in the other.
-        * The nodes of three edges of the first surface being intersected
+          that one of the triangles is contained in the other.
+        * The nodes of three edges of the first triangle being intersected
           followed by the nodes of the three edges of the second.
     """
     all_intersections = _py_geometric_intersection.all_intersections
@@ -838,18 +838,18 @@ def geometric_intersect(nodes1, degree1, nodes2, degree2, verify):
 
 
 def algebraic_intersect(nodes1, degree1, nodes2, degree2, verify):
-    r"""Find all intersections among edges of two surfaces.
+    r"""Find all intersections among edges of two triangles.
 
     Uses :func:`generic_intersect` with the
     :attr:`~.IntersectionStrategy.ALGEBRAIC` intersection strategy.
 
     Args:
-        nodes1 (numpy.ndarray): The nodes defining the first surface in
+        nodes1 (numpy.ndarray): The nodes defining the first triangle in
             the intersection (assumed in :math:\mathbf{R}^2`).
-        degree1 (int): The degree of the surface given by ``nodes1``.
-        nodes2 (numpy.ndarray): The nodes defining the second surface in
+        degree1 (int): The degree of the triangle given by ``nodes1``.
+        nodes2 (numpy.ndarray): The nodes defining the second triangle in
             the intersection (assumed in :math:\mathbf{R}^2`).
-        degree2 (int): The degree of the surface given by ``nodes2``.
+        degree2 (int): The degree of the triangle given by ``nodes2``.
         verify (Optional[bool]): Indicates if duplicate intersections
             should be checked.
 
@@ -860,8 +860,8 @@ def algebraic_intersect(nodes1, degree1, nodes2, degree2, verify):
           and contains 3-tuples of edge index, start and end (see the
           output of :func:`ends_to_curve`).
         * "Contained" boolean. If not :data:`None`, indicates
-          that one of the surfaces is contained in the other.
-        * The nodes of three edges of the first surface being intersected
+          that one of the triangles is contained in the other.
+        * The nodes of three edges of the first triangle being intersected
           followed by the nodes of the three edges of the second.
     """
     all_intersections = _algebraic_intersection.all_intersections

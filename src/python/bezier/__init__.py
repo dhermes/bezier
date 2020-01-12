@@ -35,7 +35,7 @@ from bezier import __config__
 from bezier._py_helpers import UnsupportedDegree
 from bezier.curve import Curve
 from bezier.curved_polygon import CurvedPolygon
-from bezier.surface import Triangle
+from bezier.triangle import Triangle
 
 try:
     import bezier._speedup  # noqa: F401

@@ -10,13 +10,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Cython wrapper for ``surface.f90``."""
+"""Cython wrapper for ``triangle.f90``."""
 
 
 from libcpp cimport bool as bool_t
 
 
-cdef extern from "bezier/surface.h":
+cdef extern from "bezier/triangle.h":
     void de_casteljau_one_round "BEZ_de_casteljau_one_round" (
         const int* num_nodes, const int* dimension,
         const double* nodes, const int* degree, const double* lambda1,
@@ -40,11 +40,11 @@ cdef extern from "bezier/surface.h":
         const int* num_nodes, const double* nodes,
         const int* degree, const int* num_vals, const double* param_vals,
         double* evaluated)
-    void specialize_surface "BEZ_specialize_surface" (
+    void specialize_triangle "BEZ_specialize_triangle" (
         const int* num_nodes, const int* dimension,
         const double* nodes, const int* degree, const double* weights_a,
         const double* weights_b, const double* weights_c, double* specialized)
-    void subdivide_nodes_surface "BEZ_subdivide_nodes_surface" (
+    void subdivide_nodes_triangle "BEZ_subdivide_nodes_triangle" (
         const int* num_nodes, const int* dimension,
         const double* nodes, const int* degree, double* nodes_a, double* nodes_b,
         double* nodes_c, double* nodes_d)

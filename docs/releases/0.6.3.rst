@@ -11,7 +11,7 @@ Surface Changes
 
 -  Changed ``RuntimeError('Unexpected number of edges', 11)`` to
    ``RuntimeError('Unknown error has occured.')`` in the speedup
-   that does surface-surface intersection
+   that does triangle-triangle intersection
    (`35ab5d5 <https://github.com/dhermes/bezier/commit/35ab5d5a7d3518fda1ce4478dacee50bc3e56d9c>`__).
    The old error message was a "copy-paste" artifact from the
    ``basic_interior_combine()`` Python helper.

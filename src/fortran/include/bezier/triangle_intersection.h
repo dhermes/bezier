@@ -31,18 +31,18 @@ typedef struct CurvedPolygonSegment {
     int edge_index;
 } CurvedPolygonSegment;
 
-void BEZ_newton_refine_surface(const int* num_nodes, const double* nodes,
+void BEZ_newton_refine_triangle(const int* num_nodes, const double* nodes,
     const int* degree, const double* x_val, const double* y_val,
     const double* s, const double* t, double* updated_s, double* updated_t);
-void BEZ_locate_point_surface(const int* num_nodes, const double* nodes,
+void BEZ_locate_point_triangle(const int* num_nodes, const double* nodes,
     const int* degree, const double* x_val, const double* y_val, double* s_val,
     double* t_val);
-void BEZ_surface_intersections(const int* num_nodes1, const double* nodes1,
+void BEZ_triangle_intersections(const int* num_nodes1, const double* nodes1,
     const int* degree1, const int* num_nodes2, const double* nodes2,
     const int* degree2, const int* segment_ends_size, int* segment_ends,
     int* segments_size, CurvedPolygonSegment* segments, int* num_intersected,
     TriangleContained* contained, Status* status);
-void BEZ_free_surface_intersections_workspace(void);
+void BEZ_free_triangle_intersections_workspace(void);
 
 #if defined(__cplusplus)
 }

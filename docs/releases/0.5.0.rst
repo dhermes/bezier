@@ -56,7 +56,7 @@ Miscellany
    (`34515bd <https://github.com/dhermes/bezier/commit/34515bd6246f57fbb311b4089520a24e8237294a>`__
    and
    `1fc80e5 <https://github.com/dhermes/bezier/commit/1fc80e54ad1b45cb628af06e5a2100eeb9282865>`__)
--  Split ``speedup.f90`` into submodules ``curve.f90``, ``surface.f90``,
+-  Split ``speedup.f90`` into submodules ``curve.f90``, ``triangle.f90``,
    etc.
    (`75349b7 <https://github.com/dhermes/bezier/commit/75349b745063a9bbc623808b3f7bbf6b7641c008>`__,
    `dfd6bba <https://github.com/dhermes/bezier/commit/dfd6bba303ac0a8492fac1f309086b685e52ab59>`__,

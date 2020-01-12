@@ -859,12 +859,12 @@ class Intersection:  # pylint: disable=too-few-public-methods
     Args:
         index_first (int): The index of the first curve within a list of
             curves. Expected to be used to index within the three edges of
-            a surface.
+            a triangle.
         s (float): The parameter along the first curve where the
             intersection occurs.
         index_second (int): The index of the second curve within a list of
             curves. Expected to be used to index within the three edges of
-            a surface.
+            a triangle.
         t (float): The parameter along the second curve where the
             intersection occurs.
         interior_curve (Optional[ \

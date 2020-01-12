@@ -17,7 +17,7 @@
 #include "bezier/curve_intersection.h"
 #include "bezier/helpers.h"
 #include "bezier/status.h"
-#include "bezier/surface.h"
-#include "bezier/surface_intersection.h"
+#include "bezier/triangle.h"
+#include "bezier/triangle_intersection.h"
 
 #endif /* BEZIER_H */

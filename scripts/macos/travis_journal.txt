@@ -108,9 +108,9 @@ $ /usr/local/bin/gfortran \
 >   -march=native \
 >   -c \
 >   -c \
->   src/fortran/surface.f90 \
+>   src/fortran/triangle.f90 \
 >   -o \
->   build/temp.macosx-10.9-x86_64-3.8/src/fortran/surface.o \
+>   build/temp.macosx-10.9-x86_64-3.8/src/fortran/triangle.o \
 >   -J \
 >   build/temp.macosx-10.9-x86_64-3.8
 ----------------------------------------
@@ -154,9 +154,9 @@ $ /usr/local/bin/gfortran \
 >   -march=native \
 >   -c \
 >   -c \
->   src/fortran/surface_intersection.f90 \
+>   src/fortran/triangle_intersection.f90 \
 >   -o \
->   build/temp.macosx-10.9-x86_64-3.8/src/fortran/surface_intersection.o \
+>   build/temp.macosx-10.9-x86_64-3.8/src/fortran/triangle_intersection.o \
 >   -J \
 >   build/temp.macosx-10.9-x86_64-3.8
 ----------------------------------------
@@ -287,9 +287,9 @@ $ ar \
 >   build/temp.macosx-10.9-x86_64-3.8/src/fortran/status.o \
 >   build/temp.macosx-10.9-x86_64-3.8/src/fortran/helpers.o \
 >   build/temp.macosx-10.9-x86_64-3.8/src/fortran/curve.o \
->   build/temp.macosx-10.9-x86_64-3.8/src/fortran/surface.o \
+>   build/temp.macosx-10.9-x86_64-3.8/src/fortran/triangle.o \
 >   build/temp.macosx-10.9-x86_64-3.8/src/fortran/curve_intersection.o \
->   build/temp.macosx-10.9-x86_64-3.8/src/fortran/surface_intersection.o
+>   build/temp.macosx-10.9-x86_64-3.8/src/fortran/triangle_intersection.o
 ----------------------------------------
 $ ranlib \
 >   build/lib.macosx-10.9-x86_64-3.8/bezier/lib/libbezier.a
@@ -328,9 +328,9 @@ $ gcc \
 >   build/temp.macosx-10.9-x86_64-3.8/src/fortran/status.o \
 >   build/temp.macosx-10.9-x86_64-3.8/src/fortran/helpers.o \
 >   build/temp.macosx-10.9-x86_64-3.8/src/fortran/curve.o \
->   build/temp.macosx-10.9-x86_64-3.8/src/fortran/surface.o \
+>   build/temp.macosx-10.9-x86_64-3.8/src/fortran/triangle.o \
 >   build/temp.macosx-10.9-x86_64-3.8/src/fortran/curve_intersection.o \
->   build/temp.macosx-10.9-x86_64-3.8/src/fortran/surface_intersection.o \
+>   build/temp.macosx-10.9-x86_64-3.8/src/fortran/triangle_intersection.o \
 >   build/temp.macosx-10.9-x86_64-3.8/src/fortran/quadpack/d1mach.o \
 >   build/temp.macosx-10.9-x86_64-3.8/src/fortran/quadpack/dqelg.o \
 >   build/temp.macosx-10.9-x86_64-3.8/src/fortran/quadpack/dqpsrt.o \

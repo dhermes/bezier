@@ -80,8 +80,8 @@ Cython declaration files are provided:
      _curve_intersection.pxd
      _helpers.pxd
      _status.pxd
-     _surface.pxd
-     _surface_intersection.pxd
+     _triangle.pxd
+     _triangle_intersection.pxd
 
 For example, ``cimport bezier._curve`` will provide all the functions
 in ``bezier/curve.h``.
@@ -93,5 +93,5 @@ in ``bezier/curve.h``.
    curve_intersection <curve_intersection>
    helpers <helpers>
    status <status>
-   surface <surface>
-   surface_intersection <surface_intersection>
+   triangle <triangle>
+   triangle_intersection <triangle_intersection>

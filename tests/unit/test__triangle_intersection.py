@@ -14,37 +14,37 @@ import threading
 import unittest
 
 from tests import utils as base_utils
-from tests.unit import test__py_surface_intersection
+from tests.unit import test__py_triangle_intersection
 from tests.unit import utils
 
 
 @utils.needs_speedup
 class Test_speedup_newton_refine(
-    test__py_surface_intersection.Test_newton_refine
+    test__py_triangle_intersection.Test_newton_refine
 ):
     @staticmethod
     def _call_function_under_test(nodes, degree, x_val, y_val, s, t):
         from bezier import _speedup
 
-        return _speedup.newton_refine_surface(
+        return _speedup.newton_refine_triangle(
             nodes, degree, x_val, y_val, s, t
         )
 
 
 @utils.needs_speedup
 class Test_speedup_locate_point(
-    test__py_surface_intersection.Test_locate_point
+    test__py_triangle_intersection.Test_locate_point
 ):
     @staticmethod
     def _call_function_under_test(nodes, degree, x_val, y_val):
         from bezier import _speedup
 
-        return _speedup.locate_point_surface(nodes, degree, x_val, y_val)
+        return _speedup.locate_point_triangle(nodes, degree, x_val, y_val)
 
 
 @utils.needs_speedup
 class Test_speedup_geometric_intersect(
-    test__py_surface_intersection.Test_geometric_intersect
+    test__py_triangle_intersection.Test_geometric_intersect
 ):
     BAD_BOUNDARY_ARGS = ("Unexpected number of edges",)
     BAD_BOUNDARY_TYPE = RuntimeError
@@ -54,53 +54,53 @@ class Test_speedup_geometric_intersect(
     def _call_function_under_test(nodes1, degree1, nodes2, degree2, **kwargs):
         from bezier import _speedup
 
-        return _speedup.surface_intersections(
+        return _speedup.triangle_intersections(
             nodes1, degree1, nodes2, degree2, **kwargs
         )
 
     def test_two_curved_polygons(self):
         # Make sure there is enough space so that no resize is needed.
-        sizes = surface_workspace_sizes()
+        sizes = triangle_workspace_sizes()
         segment_ends_size, segments_size = sizes
         self.assertGreaterEqual(segment_ends_size, 2)
         self.assertGreaterEqual(segments_size, 6)
         super_ = super(Test_speedup_geometric_intersect, self)
         super_.test_two_curved_polygons()
         # Make sure the workspace was **not** resized.
-        self.assertEqual(surface_workspace_sizes(), sizes)
+        self.assertEqual(triangle_workspace_sizes(), sizes)
 
     def test_resize_both(self):
-        reset_surface_workspaces(segment_ends_size=1, segments_size=1)
+        reset_triangle_workspaces(segment_ends_size=1, segments_size=1)
         super_ = super(Test_speedup_geometric_intersect, self)
         super_.test_two_curved_polygons()
         # Make sure the sizes were resized from (1, 1).
-        self.assertEqual(surface_workspace_sizes(), (2, 6))
+        self.assertEqual(triangle_workspace_sizes(), (2, 6))
 
     def test_insufficient_segment_ends(self):
         from bezier import _speedup
 
-        reset_surface_workspaces(segment_ends_size=1)
-        sizes = surface_workspace_sizes()
+        reset_triangle_workspaces(segment_ends_size=1)
+        sizes = triangle_workspace_sizes()
         with self.assertRaises(ValueError) as exc_info:
             self._two_curved_polygons(resizes_allowed=0)
         exc_args = exc_info.exception.args
         template = _speedup.SEGMENT_ENDS_TOO_SMALL
         self.assertEqual(exc_args, (template.format(2, 1),))
         # Make sure the workspace was **not** resized.
-        self.assertEqual(surface_workspace_sizes(), sizes)
+        self.assertEqual(triangle_workspace_sizes(), sizes)
 
     def test_insufficient_segments(self):
         from bezier import _speedup
 
-        reset_surface_workspaces(segment_ends_size=2, segments_size=2)
-        sizes = surface_workspace_sizes()
+        reset_triangle_workspaces(segment_ends_size=2, segments_size=2)
+        sizes = triangle_workspace_sizes()
         with self.assertRaises(ValueError) as exc_info:
             self._two_curved_polygons(resizes_allowed=0)
         exc_args = exc_info.exception.args
         template = _speedup.SEGMENTS_TOO_SMALL
         self.assertEqual(exc_args, (template.format(6, 2),))
         # Make sure the workspace was **not** resized.
-        self.assertEqual(surface_workspace_sizes(), sizes)
+        self.assertEqual(triangle_workspace_sizes(), sizes)
 
 
 @utils.needs_speedup
@@ -125,17 +125,17 @@ class Test_speedup__type_info(unittest.TestCase):
 
 
 @utils.needs_speedup
-class Test_reset_surface_workspaces(unittest.TestCase):
+class Test_reset_triangle_workspaces(unittest.TestCase):
     @staticmethod
     def _call_function_under_test(**kwargs):
-        return reset_surface_workspaces(**kwargs)
+        return reset_triangle_workspaces(**kwargs)
 
     def test_it(self):
         return_value = self._call_function_under_test(
             segment_ends_size=1, segments_size=2
         )
         self.assertIsNone(return_value)
-        self.assertEqual(surface_workspace_sizes(), (1, 2))
+        self.assertEqual(triangle_workspace_sizes(), (1, 2))
 
     @unittest.expectedFailure
     def test_threadsafe(self):
@@ -160,35 +160,35 @@ class Test_reset_surface_workspaces(unittest.TestCase):
         # unchanged (i.e. should have ``sizes_main``). What we'll actually
         # observe is ``(sizes2, sizes1, sizes2)``.
         expected = (sizes1, sizes2, sizes_main)
-        actual = (worker.sizes1, worker.sizes2, surface_workspace_sizes())
+        actual = (worker.sizes1, worker.sizes2, triangle_workspace_sizes())
         self.assertEqual(actual, expected)
 
 
 @utils.needs_speedup
-class Test_surface_workspace_sizes(unittest.TestCase):
+class Test_triangle_workspace_sizes(unittest.TestCase):
     @staticmethod
     def _call_function_under_test():
-        return surface_workspace_sizes()
+        return triangle_workspace_sizes()
 
     def test_it(self):
-        reset_surface_workspaces(segment_ends_size=3, segments_size=5)
+        reset_triangle_workspaces(segment_ends_size=3, segments_size=5)
         self.assertEqual(self._call_function_under_test(), (3, 5))
-        reset_surface_workspaces(segment_ends_size=1)
+        reset_triangle_workspaces(segment_ends_size=1)
         self.assertEqual(self._call_function_under_test(), (1, 5))
-        reset_surface_workspaces(segments_size=2)
+        reset_triangle_workspaces(segments_size=2)
         self.assertEqual(self._call_function_under_test(), (1, 2))
 
 
-def reset_surface_workspaces(**kwargs):
+def reset_triangle_workspaces(**kwargs):
     from bezier import _speedup
 
-    return _speedup.reset_surface_workspaces(**kwargs)
+    return _speedup.reset_triangle_workspaces(**kwargs)
 
 
-def surface_workspace_sizes():
+def triangle_workspace_sizes():
     from bezier import _speedup
 
-    return _speedup.surface_workspace_sizes()
+    return _speedup.triangle_workspace_sizes()
 
 
 class WorkspaceThreadedAccess:
@@ -201,20 +201,20 @@ class WorkspaceThreadedAccess:
 
     def event1(self, sizes):
         # NOTE: There is no need to ``wait`` since this is the first event.
-        reset_surface_workspaces(
+        reset_triangle_workspaces(
             segment_ends_size=sizes[0], segments_size=sizes[1]
         )
         self.barrier1.set()
 
     def event2(self):
         self.barrier1.wait()
-        result = surface_workspace_sizes()
+        result = triangle_workspace_sizes()
         self.barrier2.set()
         return result
 
     def event3(self, sizes):
         self.barrier2.wait()
-        reset_surface_workspaces(
+        reset_triangle_workspaces(
             segment_ends_size=sizes[0], segments_size=sizes[1]
         )
         self.barrier3.set()
@@ -222,7 +222,7 @@ class WorkspaceThreadedAccess:
     def event4(self):
         self.barrier3.wait()
         # NOTE: There is no barrier to ``set`` since this is the last event.
-        return surface_workspace_sizes()
+        return triangle_workspace_sizes()
 
     def task1(self, sizes):
         self.event1(sizes)

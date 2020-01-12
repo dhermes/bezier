@@ -10,18 +10,18 @@
 ! See the License for the specific language governing permissions and
 ! limitations under the License.
 
-module surface
+module triangle
 
   use, intrinsic :: iso_c_binding, only: &
        c_double, c_int, c_bool, c_ptr, c_f_pointer
   use types, only: dp
   use curve, only: evaluate_curve_barycentric
   implicit none
-  private specialize_workspace_sizes, specialize_surface_one_round
+  private specialize_workspace_sizes, specialize_triangle_one_round
   public &
        de_casteljau_one_round, evaluate_barycentric, &
        evaluate_barycentric_multi, evaluate_cartesian_multi, jacobian_both, &
-       jacobian_det, specialize_surface, subdivide_nodes, compute_edge_nodes, &
+       jacobian_det, specialize_triangle, subdivide_nodes, compute_edge_nodes, &
        shoelace_for_area, compute_area
 
 contains
@@ -31,7 +31,7 @@ contains
        lambda1, lambda2, lambda3, new_nodes) &
        bind(c, name='BEZ_de_casteljau_one_round')
 
-    ! NOTE: This is de Casteljau on a Bezier surface / triangle.
+    ! NOTE: This is de Casteljau on a Bezier triangle / triangle.
 
     integer(c_int), intent(in) :: num_nodes, dimension_
     real(c_double), intent(in) :: nodes(dimension_, num_nodes)
@@ -79,7 +79,7 @@ contains
        lambda1, lambda2, lambda3, point) &
        bind(c, name='BEZ_evaluate_barycentric')
 
-    ! NOTE: This evaluation is on a Bezier surface / triangle.
+    ! NOTE: This evaluation is on a Bezier triangle / triangle.
     ! NOTE: This assumes degree >= 1.
 
     integer(c_int), intent(in) :: num_nodes, dimension_
@@ -104,7 +104,7 @@ contains
        num_nodes, dimension_, nodes, degree, num_vals, param_vals, evaluated) &
        bind(c, name='BEZ_evaluate_barycentric_multi')
 
-    ! NOTE: This evaluation is on a Bezier surface / triangle.
+    ! NOTE: This evaluation is on a Bezier triangle / triangle.
     ! NOTE: This assumes degree >= 1.
 
     integer(c_int), intent(in) :: num_nodes, dimension_
@@ -158,7 +158,7 @@ contains
        num_nodes, dimension_, nodes, degree, num_vals, param_vals, evaluated) &
        bind(c, name='BEZ_evaluate_cartesian_multi')
 
-    ! NOTE: This evaluation is on a Bezier surface / triangle.
+    ! NOTE: This evaluation is on a Bezier triangle / triangle.
     ! NOTE: This mostly copies evaluate_barycentric_multi but does not just
     !       call it directly. This is to avoid copying param_vals.
 
@@ -280,7 +280,7 @@ contains
 
   subroutine specialize_workspace_sizes(degree, size_odd, size_even)
 
-    ! NOTE: This is a helper for ``specialize_surface()``.
+    ! NOTE: This is a helper for ``specialize_triangle()``.
 
     integer(c_int), intent(in) :: degree
     integer(c_int), intent(out) :: size_odd, size_even
@@ -298,7 +298,7 @@ contains
 
   end subroutine specialize_workspace_sizes
 
-  subroutine specialize_surface_one_round( &
+  subroutine specialize_triangle_one_round( &
        dimension_, num_read, read_nodes, num_write, write_nodes, &
        size_read, size_write, step, local_degree, &
        weights_a, weights_b, weights_c)
@@ -352,12 +352,12 @@ contains
        read_index = new_read + 1
     end do
 
-  end subroutine specialize_surface_one_round
+  end subroutine specialize_triangle_one_round
 
-  subroutine specialize_surface( &
+  subroutine specialize_triangle( &
        num_nodes, dimension_, nodes, degree, &
        weights_a, weights_b, weights_c, specialized) &
-       bind(c, name='BEZ_specialize_surface')
+       bind(c, name='BEZ_specialize_triangle')
 
     ! This re-parameterizes by "specializing" to a subregion of the unit
     ! triangle. This happens in waves by applying one round of de Casteljau
@@ -463,20 +463,20 @@ contains
        size_new = size + delta_size
        if (step == 1) then
           ! Read from `nodes`, write to `workspace_odd`.
-          call specialize_surface_one_round( &
+          call specialize_triangle_one_round( &
                dimension_, num_nodes, nodes, size_odd, workspace_odd, &
                size, size_new, step, degree + 1 - step, &
                weights_a, weights_b, weights_c)
        else if (is_even) then
           ! Read from `workspace_odd`, write to `workspace_even`.
-          call specialize_surface_one_round( &
+          call specialize_triangle_one_round( &
                dimension_, size_odd, workspace_odd, &
                size_even, workspace_even, &
                size, size_new, step, degree + 1 - step, &
                weights_a, weights_b, weights_c)
        else
           ! Read from `workspace_even`, write to `workspace_odd`.
-          call specialize_surface_one_round( &
+          call specialize_triangle_one_round( &
                dimension_, size_even, workspace_even, &
                size_odd, workspace_odd, &
                size, size_new, step, degree + 1 - step, &
@@ -497,12 +497,12 @@ contains
        specialized = workspace_even(:, 1:num_nodes)
     end if
 
-  end subroutine specialize_surface
+  end subroutine specialize_triangle
 
   subroutine subdivide_nodes( &
        num_nodes, dimension_, nodes, degree, &
        nodes_a, nodes_b, nodes_c, nodes_d) &
-       bind(c, name='BEZ_subdivide_nodes_surface')
+       bind(c, name='BEZ_subdivide_nodes_triangle')
 
     integer(c_int), intent(in) :: num_nodes, dimension_
     real(c_double), intent(in) :: nodes(dimension_, num_nodes)
@@ -739,25 +739,25 @@ contains
        nodes_d(:, 14) = 0.5_dp * (nodes(:, 14) + nodes(:, 15))
        nodes_d(:, 15) = nodes(:, 15)
     else
-       call specialize_surface( &
+       call specialize_triangle( &
             num_nodes, dimension_, nodes, degree, &
             [1.0_dp, 0.0_dp, 0.0_dp], &
             [0.5_dp, 0.5_dp, 0.0_dp], &
             [0.5_dp, 0.0_dp, 0.5_dp], &
             nodes_a)
-       call specialize_surface( &
+       call specialize_triangle( &
             num_nodes, dimension_, nodes, degree, &
             [0.0_dp, 0.5_dp, 0.5_dp], &
             [0.5_dp, 0.0_dp, 0.5_dp], &
             [0.5_dp, 0.5_dp, 0.0_dp], &
             nodes_b)
-       call specialize_surface( &
+       call specialize_triangle( &
             num_nodes, dimension_, nodes, degree, &
             [0.5_dp, 0.5_dp, 0.0_dp], &
             [0.0_dp, 1.0_dp, 0.0_dp], &
             [0.0_dp, 0.5_dp, 0.5_dp], &
             nodes_c)
-       call specialize_surface( &
+       call specialize_triangle( &
             num_nodes, dimension_, nodes, degree, &
             [0.5_dp, 0.0_dp, 0.5_dp], &
             [0.0_dp, 0.5_dp, 0.5_dp], &
@@ -871,4 +871,4 @@ contains
 
   end subroutine compute_area
 
-end module surface
+end module triangle

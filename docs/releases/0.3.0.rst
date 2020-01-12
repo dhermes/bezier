@@ -16,17 +16,17 @@ Performance Optimizations
 -  Adding ``_verify`` switches to selectively disable overly defensive
    value checking. Added to ``CurvedPolygon``
    `constructor <http://bezier.readthedocs.io/en/0.3.0/reference/bezier.curved_polygon.html#bezier.curved_polygon.CurvedPolygon>`__,
-   ``Surface.evaluate_barycentric()`` (`doc <http://bezier.readthedocs.io/en/0.3.0/reference/bezier.surface.html#bezier.surface.Surface.evaluate_barycentric>`__),
-   ``Surface.evaluate_cartesian()`` (`doc <http://bezier.readthedocs.io/en/0.3.0/reference/bezier.surface.html#bezier.surface.Surface.evaluate_cartesian>`__),
-   ``Surface.evaluate_multi()`` (`doc <http://bezier.readthedocs.io/en/0.3.0/reference/bezier.surface.html#bezier.surface.Surface.evaluate_multi>`__)
+   ``Surface.evaluate_barycentric()`` (`doc <http://bezier.readthedocs.io/en/0.3.0/reference/bezier.triangle.html#bezier.triangle.Surface.evaluate_barycentric>`__),
+   ``Surface.evaluate_cartesian()`` (`doc <http://bezier.readthedocs.io/en/0.3.0/reference/bezier.triangle.html#bezier.triangle.Surface.evaluate_cartesian>`__),
+   ``Surface.evaluate_multi()`` (`doc <http://bezier.readthedocs.io/en/0.3.0/reference/bezier.triangle.html#bezier.triangle.Surface.evaluate_multi>`__)
    and
-   ``Surface.intersect()`` (`doc <http://bezier.readthedocs.io/en/0.3.0/reference/bezier.surface.html#bezier.surface.Surface.intersect>`__).
+   ``Surface.intersect()`` (`doc <http://bezier.readthedocs.io/en/0.3.0/reference/bezier.triangle.html#bezier.triangle.Surface.intersect>`__).
    Internal callers with already verified data now skip verification
    steps
 -  `Bailing out
    early <https://github.com/dhermes/bezier/commit/db816eb5a748bb997adcc2d7d9008638e22a824c>`__
-   if surface bounding boxes are disjoint in ``Surface.intersect()``
-   `method <http://bezier.readthedocs.io/en/0.3.0/reference/bezier.surface.html#bezier.surface.Surface.intersect>`__
+   if triangle bounding boxes are disjoint in ``Surface.intersect()``
+   `method <http://bezier.readthedocs.io/en/0.3.0/reference/bezier.triangle.html#bezier.triangle.Surface.intersect>`__
 
 Breaking Changes
 ----------------
@@ -34,11 +34,11 @@ Breaking Changes
 -  Requiring ``degree`` in ``Curve``
    (`doc <http://bezier.readthedocs.io/en/0.3.0/reference/bezier.curve.html#bezier.curve.Curve>`__)
    and ``Surface``
-   (`doc <http://bezier.readthedocs.io/en/0.3.0/reference/bezier.surface.html#bezier.surface.Surface>`__)
+   (`doc <http://bezier.readthedocs.io/en/0.3.0/reference/bezier.triangle.html#bezier.triangle.Surface>`__)
    constructors, but adding ``Curve.from_nodes()``
    (`doc <http://bezier.readthedocs.io/en/0.3.0/reference/bezier.curve.html#bezier.curve.Curve.from_nodes>`__)
    and ``Surface.from_nodes()``
-   (`doc <http://bezier.readthedocs.io/en/0.3.0/reference/bezier.surface.html#bezier.surface.Surface.from_nodes>`__)
+   (`doc <http://bezier.readthedocs.io/en/0.3.0/reference/bezier.triangle.html#bezier.triangle.Surface.from_nodes>`__)
    factories to accept nodes only (computing the degree in the
    constructor every time is a waste of flops, especially if the caller
    knows the degree)
@@ -46,20 +46,20 @@ Breaking Changes
    public ``Curve.copy()``
    (`doc <http://bezier.readthedocs.io/en/0.2.1/reference/bezier.curve.html#bezier.curve.Curve.copy>`__)
    and ``Surface.copy()``
-   (`doc <http://bezier.readthedocs.io/en/0.2.1/reference/bezier.surface.html#bezier.surface.Surface.copy>`__)
+   (`doc <http://bezier.readthedocs.io/en/0.2.1/reference/bezier.triangle.html#bezier.triangle.Surface.copy>`__)
 -  `Removing <https://github.com/dhermes/bezier/commit/3393b9010c26b55a9c29afc2702426bb179b85a1>`__
    custom equality checks for ``Curve``
    (`doc <http://bezier.readthedocs.io/en/0.2.1/reference/bezier.curve.html#bezier.curve.Curve.__eq__>`__)
    and ``Surface``
-   (`doc <http://bezier.readthedocs.io/en/0.2.1/reference/bezier.surface.html#bezier.surface.Surface.__eq__>`__)
+   (`doc <http://bezier.readthedocs.io/en/0.2.1/reference/bezier.triangle.html#bezier.triangle.Surface.__eq__>`__)
    objects. The previous implementation did not factor in all relevant
    values
 -  Returning ``1xD`` arrays `instead of
    flattened <https://github.com/dhermes/bezier/commit/b5e5b327594c6143956ed98703f596ff82b7501a>`__
    ``D``-dimensional 1D arrays from
    ``Curve.evaluate()`` (`doc <http://bezier.readthedocs.io/en/0.3.0/reference/bezier.curve.html#bezier.curve.Curve.evaluate>`__),
-   ``Surface.evaluate_barycentric()`` (`doc <http://bezier.readthedocs.io/en/0.3.0/reference/bezier.surface.html#bezier.surface.Surface.evaluate_barycentric>`__),
-   ``Surface.evaluate_cartesian()`` (`doc <http://bezier.readthedocs.io/en/0.3.0/reference/bezier.surface.html#bezier.surface.Surface.evaluate_cartesian>`__),
+   ``Surface.evaluate_barycentric()`` (`doc <http://bezier.readthedocs.io/en/0.3.0/reference/bezier.triangle.html#bezier.triangle.Surface.evaluate_barycentric>`__),
+   ``Surface.evaluate_cartesian()`` (`doc <http://bezier.readthedocs.io/en/0.3.0/reference/bezier.triangle.html#bezier.triangle.Surface.evaluate_cartesian>`__),
    and related helpers
 -  Renaming ``Intersection.left/right``
    `properties <http://bezier.readthedocs.io/en/0.2.1/algorithm-helpers.html#bezier._intersection_helpers.Intersection.left>`__
@@ -72,17 +72,17 @@ Breaking Changes
 Bug Fixes
 ---------
 
--  Handling cases where one corner of a surface touches another but
+-  Handling cases where one corner of a triangle touches another but
    their interiors don't intersect (in the ``Surface.intersect()``
-   `method <http://bezier.readthedocs.io/en/0.3.0/reference/bezier.surface.html#bezier.surface.Surface.intersect>`__).
+   `method <http://bezier.readthedocs.io/en/0.3.0/reference/bezier.triangle.html#bezier.triangle.Surface.intersect>`__).
    Adding ``ignored_corner`` classification to handle these curve-curve
-   intersecions that don't contribute to a surface-surface intersection
+   intersecions that don't contribute to a triangle-triangle intersection
 -  Throwing exception in the ``Curve.locate()``
    `method <http://bezier.readthedocs.io/en/0.3.0/reference/bezier.curve.html#bezier.curve.Curve.locate>`__
    when the subdivided intervals are very far apart
    (`#13 <https://github.com/dhermes/bezier/issues/13>`__)
 -  Improving ``Surface.is_valid``
-   `property <http://bezier.readthedocs.io/en/0.3.0/reference/bezier.surface.html#bezier.surface.Surface.is_valid>`__
+   `property <http://bezier.readthedocs.io/en/0.3.0/reference/bezier.triangle.html#bezier.triangle.Surface.is_valid>`__
    by considering the signs of the Jacobian determinant at corner nodes
    (`#12 <https://github.com/dhermes/bezier/issues/12>`__)
 

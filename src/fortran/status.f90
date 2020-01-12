@@ -43,12 +43,12 @@ module status
   ! SAME_CURVATURE: Classification of a curve-curve intersection failed due to
   !                 two curves having identical at a tangent intersection.
   integer(c_int), parameter :: Status_SAME_CURVATURE = 4
-  ! BAD_INTERIOR: Caused by a failure during the process of surface-surface
+  ! BAD_INTERIOR: Caused by a failure during the process of triangle-triangle
   !               intersection. Occurs when the corners and edge-edge
   !               intersections can't be converted into the curved polygon(s)
-  !               that make up the intersection of the two surfaces.
+  !               that make up the intersection of the two triangles.
   integer(c_int), parameter :: Status_BAD_INTERIOR = 5
-  ! EDGE_END: A surface-surface intersection point occurs at the **end** of
+  ! EDGE_END: A triangle-triangle intersection point occurs at the **end** of
   !           an edge (only intersections at the beginning of an edge should
   !           be used).
   integer(c_int), parameter :: Status_EDGE_END = 6

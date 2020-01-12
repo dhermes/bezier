@@ -19,13 +19,13 @@ This library provides:
 
 Dive in and take a look!
 
-.. image:: https://raw.githubusercontent.com/dhermes/bezier/master/docs/images/surfaces6Q_and_7Q.png
+.. image:: https://raw.githubusercontent.com/dhermes/bezier/master/docs/images/triangles6Q_and_7Q.png
    :align: center
 
 Why B |eacute| zier?
 --------------------
 
-A B |eacute| zier curve (and surface, etc.) is a parametric curve
+A B |eacute| zier curve (and triangle, etc.) is a parametric curve
 that uses the `Bernstein basis`_:
 
 .. image:: https://raw.githubusercontent.com/dhermes/bezier/master/docs/images/bernstein_basis.png
@@ -47,11 +47,11 @@ non-negative weights ``s`` and ``1 - s``).
 
 Due to their simple form, B |eacute| zier curves:
 
-* can easily model geometric objects as parametric curves, surfaces, etc.
+* can easily model geometric objects as parametric curves, triangles, etc.
 * can be computed in an efficient and numerically stable way via
   `de Casteljau's algorithm`_
 * can utilize convex optimization techniques for many algorithms (such as
-  curve-curve intersection), since curves (and surfaces, etc.)
+  curve-curve intersection), since curves (and triangles, etc.)
   are convex combinations of the basis
 
 Many applications -- as well as the history of their development --
@@ -196,7 +196,7 @@ License
 details, see `the LICENSE`_.
 
 .. _Curves: https://bezier.readthedocs.io/en/latest/python/reference/bezier.curve.html
-.. _Triangles: https://bezier.readthedocs.io/en/latest/python/reference/bezier.surface.html
+.. _Triangles: https://bezier.readthedocs.io/en/latest/python/reference/bezier.triangle.html
 .. _package: https://bezier.readthedocs.io/en/latest/python/reference/bezier.html
 .. _DEVELOPMENT doc: https://github.com/dhermes/bezier/blob/master/DEVELOPMENT.rst
 .. _the LICENSE: https://github.com/dhermes/bezier/blob/master/LICENSE

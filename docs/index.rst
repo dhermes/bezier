@@ -25,17 +25,17 @@
 This library provides:
 
 * Support for B |eacute| zier :mod:`Curves <bezier.curve>`
-* Support for B |eacute| zier :mod:`Triangles <bezier.surface>`
+* Support for B |eacute| zier :mod:`Triangles <bezier.triangle>`
 
 Dive in and take a look!
 
-.. image:: images/surfaces6Q_and_7Q.png
+.. image:: images/triangles6Q_and_7Q.png
    :align: center
 
 Why B |eacute| zier?
 --------------------
 
-A B |eacute| zier curve (and surface, etc.) is a parametric curve
+A B |eacute| zier curve (and triangle, etc.) is a parametric curve
 that uses the `Bernstein basis`_:
 
 .. math::
@@ -61,11 +61,11 @@ non-negative weights :math:`s` and :math:`1 - s`).
 
 Due to their simple form, B |eacute| zier curves:
 
-* can easily model geometric objects as parametric curves, surfaces, etc.
+* can easily model geometric objects as parametric curves, triangles, etc.
 * can be computed in an efficient and numerically stable way via
   `de Casteljau's algorithm`_
 * can utilize convex optimization techniques for many algorithms (such as
-  curve-curve intersection), since curves (and surfaces, etc.)
+  curve-curve intersection), since curves (and triangles, etc.)
   are convex combinations of the basis
 
 Many applications -- as well as the history of their development --

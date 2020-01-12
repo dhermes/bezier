@@ -117,7 +117,7 @@ IMG_PREFIX = (
 )
 EXTRA_LINKS = """\
 .. _Curves: https://bezier.readthedocs.io/en/{rtd_version}/python/reference/bezier.curve.html
-.. _Triangles: https://bezier.readthedocs.io/en/{rtd_version}/python/reference/bezier.surface.html
+.. _Triangles: https://bezier.readthedocs.io/en/{rtd_version}/python/reference/bezier.triangle.html
 .. _package: https://bezier.readthedocs.io/en/{rtd_version}/python/reference/bezier.html
 .. _DEVELOPMENT doc: https://github.com/dhermes/bezier/blob/{revision}/DEVELOPMENT.rst
 """
@@ -341,7 +341,7 @@ def populate_readme(revision, rtd_version, **extra_kwargs):
     sphinx_modules = []
     to_replace = functools.partial(mod_replace, sphinx_modules=sphinx_modules)
     readme_contents = MOD_EXPR.sub(to_replace, readme_contents)
-    if sphinx_modules != ["bezier.curve", "bezier.surface"]:
+    if sphinx_modules != ["bezier.curve", "bezier.triangle"]:
         raise ValueError("Unexpected sphinx_modules", sphinx_modules)
 
     sphinx_docs = []

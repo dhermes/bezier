@@ -15,7 +15,7 @@
 Includes functions for:
 
 * Converting floating point arrays to rational SymPy matrices
-* Computing B |eacute| zier curve and surface polynomial representations
+* Computing B |eacute| zier curve and triangle polynomial representations
 * Implicitizing parametric equations
 
 .. |eacute| unicode:: U+000E9 .. LATIN SMALL LETTER E WITH ACUTE
@@ -161,8 +161,8 @@ def implicitize_curve(nodes, degree):
 
 
 @require_sympy
-def surface_weights(degree, s, t):
-    """Compute de Casteljau weights for a surface.
+def triangle_weights(degree, s, t):
+    """Compute de Casteljau weights for a triangle.
 
     .. note::
 
@@ -170,12 +170,12 @@ def surface_weights(degree, s, t):
        code using SymPy is (for now) assumed not to be performance critical.
 
     Args:
-        degree (int): The degree of a surface.
+        degree (int): The degree of a triangle.
         s (sympy.Symbol): The first symbol to be used in the weights.
         t (sympy.Symbol): The second symbol to be used in the weights.
 
     Returns:
-        sympy.Matrix: The de Casteljau weights for the surface as an ``N x 1``
+        sympy.Matrix: The de Casteljau weights for the triangle as an ``N x 1``
         matrix, where ``N == (degree + 1)(degree + 2) / 2``.
     """
     lambda1 = 1 - s - t
@@ -195,24 +195,24 @@ def surface_weights(degree, s, t):
 
 
 @require_sympy
-def surface_as_polynomial(nodes, degree):
+def triangle_as_polynomial(nodes, degree):
     """Convert ``nodes`` into a SymPy polynomial array :math:`B(s, t)`.
 
     Args:
-        nodes (numpy.ndarray): Nodes defining a B |eacute| zier surface.
-        degree (int): The degree of the surface. This is assumed to
+        nodes (numpy.ndarray): Nodes defining a B |eacute| zier triangle.
+        degree (int): The degree of the triangle. This is assumed to
             correctly correspond to the number of ``nodes``.
 
     Returns:
         Tuple[sympy.Symbol, sympy.Symbol, sympy.Matrix]: Triple of
         * The symbol ``s`` used in the polynomial
         * The symbol ``t`` used in the polynomial
-        * The surface :math:`B(s, t)`.
+        * The triangle :math:`B(s, t)`.
     """
     nodes_sym = to_symbolic(nodes)
 
     s, t = sympy.symbols("s, t")
-    b_polynomial = nodes_sym * surface_weights(degree, s, t)
+    b_polynomial = nodes_sym * triangle_weights(degree, s, t)
     b_polynomial.simplify()
 
     factored = [value.factor() for value in b_polynomial]
@@ -221,12 +221,12 @@ def surface_as_polynomial(nodes, degree):
 
 @require_sympy
 def implicitize_3d(x_fn, y_fn, z_fn, s, t):
-    """Implicitize a 3D parametric surface.
+    """Implicitize a 3D parametric triangle.
 
     Args:
-        x_fn (sympy.Expr): Function :math:`x(s)` in the surface.
-        y_fn (sympy.Expr): Function :math:`y(s)` in the surface.
-        z_fn (sympy.Expr): Function :math:`y(s)` in the surface.
+        x_fn (sympy.Expr): Function :math:`x(s)` in the triangle.
+        y_fn (sympy.Expr): Function :math:`y(s)` in the triangle.
+        z_fn (sympy.Expr): Function :math:`y(s)` in the triangle.
         s (sympy.Symbol): The first symbol used to define ``x_fn``, ``y_fn``
             and ``z_fn``.
         t (sympy.Symbol): The second symbol used to define ``x_fn``, ``y_fn``
@@ -234,7 +234,7 @@ def implicitize_3d(x_fn, y_fn, z_fn, s, t):
 
     Returns:
         sympy.Expr: The implicitized function :math:`f(x, y, z)` such that the
-        surface satisfies :math:`f(x(s, t), y(s, t), z(s, t)) = 0`.
+        triangle satisfies :math:`f(x(s, t), y(s, t), z(s, t)) = 0`.
     """
     x_sym, y_sym, z_sym = sympy.symbols("x, y, z")
 
@@ -244,24 +244,24 @@ def implicitize_3d(x_fn, y_fn, z_fn, s, t):
 
 
 @require_sympy
-def implicitize_surface(nodes, degree):
-    """Implicitize a 3D parametric surface, given the nodes.
+def implicitize_triangle(nodes, degree):
+    """Implicitize a 3D parametric triangle, given the nodes.
 
     .. note::
 
        This function assumes (but does not check) that the caller has verified
-       ``nodes`` represents a 3D surface. If it **does not**, this function
+       ``nodes`` represents a 3D triangle. If it **does not**, this function
        will error out when tuple-unpacking the polynomial.
 
     Args:
-        nodes (numpy.ndarray): Nodes defining a B |eacute| zier surface.
-        degree (int): The degree of the surface. This is assumed to
+        nodes (numpy.ndarray): Nodes defining a B |eacute| zier triangle.
+        degree (int): The degree of the triangle. This is assumed to
             correctly correspond to the number of ``nodes``.
 
     Returns:
         sympy.Expr: The implicitized function :math:`f(x, y, z)` such that the
-        surface satisfies :math:`f(x(s, t), y(s, t), z(s, t)) = 0`.
+        triangle satisfies :math:`f(x(s, t), y(s, t), z(s, t)) = 0`.
     """
-    s, t, b_polynomial = surface_as_polynomial(nodes, degree)
+    s, t, b_polynomial = triangle_as_polynomial(nodes, degree)
     x_fn, y_fn, z_fn = b_polynomial
     return implicitize_3d(x_fn, y_fn, z_fn, s, t)

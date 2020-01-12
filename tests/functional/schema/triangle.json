@@ -1,10 +1,10 @@
 {
     "$schema": "http://json-schema.org/draft-04/schema#",
-    "description": "A description of a B\\u00e9zier surface.",
+    "description": "A description of a B\\u00e9zier triangle.",
     "type": "object",
     "properties": {
         "control_points": {
-            "description": "A list of x-y coordinates of the control points on the surface.",
+            "description": "A list of x-y coordinates of the control points on the triangle.",
             "type": "array",
             "items": {
                 "description": "An x-y coordinate pair for a single control point.",
@@ -19,7 +19,7 @@
             "maxItems": 2
         },
         "note": {
-            "description": "Description of the surface / patch within surface.",
+            "description": "Description of the triangle / patch within triangle.",
             "type": "string"
         }
     },

@@ -10,7 +10,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Helper methods for :mod:`bezier.surface`.
+"""Helper methods for :mod:`bezier.triangle`.
 
 The functions provided by this module have a Cython speedup with the
 exact same interface which calls out to a Fortran implementation. The speedup
@@ -19,7 +19,7 @@ will be used if the extension can be built.
 
 import atexit
 
-from bezier import _py_surface_intersection
+from bezier import _py_triangle_intersection
 
 try:
     from bezier import _speedup
@@ -29,12 +29,12 @@ except ImportError:  # pragma: NO COVER
 
 # pylint: disable=invalid-name
 if _speedup is None:  # pragma: NO COVER
-    newton_refine = _py_surface_intersection.newton_refine
-    locate_point = _py_surface_intersection.locate_point
-    geometric_intersect = _py_surface_intersection.geometric_intersect
+    newton_refine = _py_triangle_intersection.newton_refine
+    locate_point = _py_triangle_intersection.locate_point
+    geometric_intersect = _py_triangle_intersection.geometric_intersect
 else:
-    newton_refine = _speedup.newton_refine_surface
-    locate_point = _speedup.locate_point_surface
-    geometric_intersect = _speedup.surface_intersections
-    atexit.register(_speedup.free_surface_intersections_workspace)
+    newton_refine = _speedup.newton_refine_triangle
+    locate_point = _speedup.locate_point_triangle
+    geometric_intersect = _speedup.triangle_intersections
+    atexit.register(_speedup.free_triangle_intersections_workspace)
 # pylint: enable=invalid-name

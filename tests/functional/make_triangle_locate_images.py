@@ -14,16 +14,16 @@ import matplotlib.pyplot as plt
 import seaborn
 
 from bezier import _plot_helpers
-from tests.functional import test_surface_locate
+from tests.functional import test_triangle_locate
 from tests.functional import utils
 
 
-def make_plot(surface_index, point_index, save_plot):
-    surface = test_surface_locate.TRIANGLES[surface_index]
-    point = test_surface_locate.POINTS[:, [point_index]]
-    name = f"test_surface{surface_index}_and_point{point_index}"
+def make_plot(triangle_index, point_index, save_plot):
+    triangle = test_triangle_locate.TRIANGLES[triangle_index]
+    point = test_triangle_locate.POINTS[:, [point_index]]
+    name = f"test_triangle{triangle_index}_and_point{point_index}"
 
-    ax = surface.plot(64)
+    ax = triangle.plot(64)
     ax.plot(
         point[0, :], point[1, :], color="black", marker="o", linestyle="None"
     )
@@ -40,9 +40,9 @@ def make_plot(surface_index, point_index, save_plot):
 def main():
     parser = utils.get_parser()
     args = parser.parse_args()
-    for case in test_surface_locate.CASES:
-        surface_index, point_index, _, _ = case
-        make_plot(surface_index, point_index, args.save_plot)
+    for case in test_triangle_locate.CASES:
+        triangle_index, point_index, _, _ = case
+        make_plot(triangle_index, point_index, args.save_plot)
 
 
 if __name__ == "__main__":

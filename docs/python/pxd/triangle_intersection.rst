@@ -1,6 +1,6 @@
 ################################
-``bezier._surface_intersection``
+``bezier._triangle_intersection``
 ################################
 
-.. literalinclude:: ../../../src/python/bezier/_surface_intersection.pxd
+.. literalinclude:: ../../../src/python/bezier/_triangle_intersection.pxd
    :language: cython

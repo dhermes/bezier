@@ -148,7 +148,7 @@ def make_subdivision_matrices(degree):
 def subdivide_nodes(nodes):
     """Subdivide a curve into two sub-curves.
 
-    Does so by taking the unit interval (i.e. the domain of the surface) and
+    Does so by taking the unit interval (i.e. the domain of the triangle) and
     splitting it into two sub-intervals by splitting down the middle.
 
     .. note::

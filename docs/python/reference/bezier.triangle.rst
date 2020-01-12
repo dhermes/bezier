@@ -1,7 +1,7 @@
-bezier.surface module
+bezier.triangle module
 =====================
 
-.. automodule:: bezier.surface
+.. automodule:: bezier.triangle
    :members:
    :inherited-members:
    :undoc-members:

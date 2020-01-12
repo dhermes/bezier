@@ -36,10 +36,10 @@ void BEZ_jacobian_both(const int* num_nodes, const int* dimension,
 void BEZ_jacobian_det(const int* num_nodes, const double* nodes,
     const int* degree, const int* num_vals, const double* param_vals,
     double* evaluated);
-void BEZ_specialize_surface(const int* num_nodes, const int* dimension,
+void BEZ_specialize_triangle(const int* num_nodes, const int* dimension,
     const double* nodes, const int* degree, const double* weights_a,
     const double* weights_b, const double* weights_c, double* specialized);
-void BEZ_subdivide_nodes_surface(const int* num_nodes, const int* dimension,
+void BEZ_subdivide_nodes_triangle(const int* num_nodes, const int* dimension,
     const double* nodes, const int* degree, double* nodes_a, double* nodes_b,
     double* nodes_c, double* nodes_d);
 void BEZ_compute_edge_nodes(const int* num_nodes, const int* dimension,
