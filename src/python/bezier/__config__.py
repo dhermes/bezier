@@ -39,7 +39,7 @@ def add_dll_directory(extra_dll_dir):
         return
 
     if OS_ADD_DLL_DIRECTORY is not None:
-        OS_ADD_DLL_DIRECTORY(extra_dll_dir)
+        OS_ADD_DLL_DIRECTORY(extra_dll_dir)  # pylint: disable=not-callable
         return
 
     path = os.environ.get("PATH", "")
