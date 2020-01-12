@@ -13,8 +13,8 @@ Documentation
    contains a page for each "module" which corresponds to the underlying
    Fortran module. Each module documents the routines in the corresponding
    header file, e.g. the
-   `triangle <http://bezier.readthedocs.io/en/0.9.0/abi/triangle.html>`__
-   document corresponds to the ``bezier/triangle.h`` header. Fully working
+   `surface <http://bezier.readthedocs.io/en/0.9.0/abi/surface.html>`__
+   document corresponds to the ``bezier/surface.h`` header. Fully working
    C examples have been added for each routine in ``bezier/curve.h`` and for
    the enum in ``bezier/status.h``.
 -  Adding section about environment variables to
@@ -57,8 +57,8 @@ ABI Changes
 New Features
 ~~~~~~~~~~~~
 
--  Added ``triangle.h::compute_area`` helper that can be used to compute the
-   area of both a triangle and a curved polygon
+-  Added ``surface.h::compute_area`` helper that can be used to compute the
+   area of both a surface and a curved polygon
    (`d4d7249 <https://github.com/dhermes/bezier/commit/d4d7249729dffd4994df1af899084ceb89dde8fc>`__).
 
 Breaking Changes
@@ -81,7 +81,7 @@ New Features
 ~~~~~~~~~~~~
 
 -  Added implementation for ``Surface.area``
-   `property <http://bezier.readthedocs.io/en/0.9.0/python/reference/bezier.triangle.html#bezier.triangle.Surface.area>`__
+   `property <http://bezier.readthedocs.io/en/0.9.0/python/reference/bezier.surface.html#bezier.surface.Surface.area>`__
    and ``CurvedPolygon.area``
    `property <http://bezier.readthedocs.io/en/0.9.0/python/reference/bezier.curved_polygon.html#bezier.curved_polygon.CurvedPolygon.area>`__
    (`eb6077e <https://github.com/dhermes/bezier/commit/eb6077eab4f6ca0d72de6194f1789a2d0eada8b0>`__).
@@ -98,9 +98,9 @@ Non-Public API
 -  Removing cached values for ``Curve.length``
    `property <http://bezier.readthedocs.io/en/0.9.0/python/reference/bezier.curve.html#bezier.curve.Curve.length>`__,
    ``Surface.area``
-   `property <http://bezier.readthedocs.io/en/0.9.0/python/reference/bezier.triangle.html#bezier.triangle.Surface.area>`__
+   `property <http://bezier.readthedocs.io/en/0.9.0/python/reference/bezier.surface.html#bezier.surface.Surface.area>`__
    and ``Surface.is_valid``
-   `property <http://bezier.readthedocs.io/en/0.9.0/python/reference/bezier.triangle.html#bezier.triangle.Surface.is_valid>`__
+   `property <http://bezier.readthedocs.io/en/0.9.0/python/reference/bezier.surface.html#bezier.surface.Surface.is_valid>`__
    (`34d48d6 <https://github.com/dhermes/bezier/commit/34d48d6900963734d7fb82f13bd3f37416cc6efe>`__).
 
 Build
@@ -132,7 +132,7 @@ Miscellany
    (`f21b52d <https://github.com/dhermes/bezier/commit/f21b52d562daf6c86ddaba326aeee8362361e20f>`__).
 -  Adding project URLs and keywords for PyPI
    (`cfb070d <https://github.com/dhermes/bezier/commit/cfb070d651fba4e7df06216a159f623d57036f02>`__).
--  Added 20 new triangle-triangle functional tests
+-  Added 20 new surface-surface functional tests
    (`9fd9c1e <https://github.com/dhermes/bezier/commit/9fd9c1e26138034539e91aed04c97ec497a9e4b2>`__).
    See `#121 <https://github.com/dhermes/bezier/issues/121>`__ for more
    information.

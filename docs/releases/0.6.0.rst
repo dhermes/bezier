@@ -23,7 +23,7 @@ Performance Optimizations
 -  Implemented curve-curve intersection completely in Fortran (e.g.
    `4a8f801 <https://github.com/dhermes/bezier/commit/4a8f80177b56f1241e96e973639cfc8a1273e080>`__)
    which resulted in a 10x speedup when called from Python. Also
-   implemented triangle-triangle intersection completely in Fortran,
+   implemented surface-surface intersection completely in Fortran,
    resulting in a 3x speedup.
 
 Python Changes
@@ -33,7 +33,7 @@ New Features
 ~~~~~~~~~~~~
 
 -  Added ``CurvedPolygon._metadata`` to track where edges originated,
-   e.g. from a triangle-triangle intersection
+   e.g. from a surface-surface intersection
    (`871d23d <https://github.com/dhermes/bezier/commit/871d23d640e9333f5e7ae02e29ca878c80176682>`__).
    This is used for sanity checking in functional tests
    (`e253da2 <https://github.com/dhermes/bezier/commit/e253da2e507b4edf1627ddd753a6e5e73e563684>`__).
@@ -65,13 +65,13 @@ New Features
    -  ``_helpers_speedup.pyx::vector_close``
    -  ``_helpers_speedup.pyx::in_interval``
    -  ``_helpers_speedup.pyx::ulps_away``
-   -  ``_triangle_speedup.pyx::specialize_triangle``
-   -  ``_triangle_speedup.pyx::subdivide_nodes``
-   -  ``_triangle_speedup.pyx::compute_edge_nodes``
-   -  ``_triangle_intersection_speedup.pyx::newton_refine``
-   -  ``_triangle_intersection_speedup.pyx::locate_point``
-   -  ``_triangle_intersection_speedup.pyx::triangle_intersections``
-   -  ``_triangle_intersection_speedup.pyx::free_triangle_intersections_workspace``
+   -  ``_surface_speedup.pyx::specialize_surface``
+   -  ``_surface_speedup.pyx::subdivide_nodes``
+   -  ``_surface_speedup.pyx::compute_edge_nodes``
+   -  ``_surface_intersection_speedup.pyx::newton_refine``
+   -  ``_surface_intersection_speedup.pyx::locate_point``
+   -  ``_surface_intersection_speedup.pyx::surface_intersections``
+   -  ``_surface_intersection_speedup.pyx::free_surface_intersections_workspace``
 
 Breaking Changes
 ~~~~~~~~~~~~~~~~
@@ -81,14 +81,14 @@ Breaking Changes
    ``s-t`` parameters rather than ``x-y`` values
    (`c309998 <https://github.com/dhermes/bezier/commit/c309998f705de7467e1222e41467190739ff3118>`__).
 -  ``Surface.intersect()``
-   `returns <http://bezier.readthedocs.io/en/0.6.0/reference/bezier.triangle.html#bezier.triangle.Surface.intersect>`__
-   a list with a single ``Surface`` when one of the two triangles
+   `returns <http://bezier.readthedocs.io/en/0.6.0/reference/bezier.surface.html#bezier.surface.Surface.intersect>`__
+   a list with a single ``Surface`` when one of the two surfaces
    is contained in the other
    (`05b1fd9 <https://github.com/dhermes/bezier/commit/05b1fd98c5caea015b87819abdd2d6631ccc9bd4>`__).
 -  ``Surface.is_valid`` will only
-   `return <http://bezier.readthedocs.io/en/0.6.0/reference/bezier.triangle.html#bezier.triangle.Surface.is_valid>`__
+   `return <http://bezier.readthedocs.io/en/0.6.0/reference/bezier.surface.html#bezier.surface.Surface.is_valid>`__
    ``True`` if the map ``B(s, t)`` determined by the
-   triangle has everywhere positive Jacobian. Previously a negative
+   surface has everywhere positive Jacobian. Previously a negative
    Jacobian was also allowed
    (`260fb51 <https://github.com/dhermes/bezier/commit/260fb512a67376a7b62b41c37377306c743c8b61>`__).
 -  Removed data members from ``Curve``:
@@ -127,10 +127,10 @@ New Features
 ~~~~~~~~~~~~
 
 -  Fully implemented curve-curve intersection (as
-   ``curve_intersection.h::curve_intersections``) and triangle-triangle
-   intersection (as ``triangle_intersection.h::triangle_intersections``)
+   ``curve_intersection.h::curve_intersections``) and surface-surface
+   intersection (as ``surface_intersection.h::surface_intersections``)
    at the ABI level.
--  Added the ``triangle_intersection.h`` header file and implementations
+-  Added the ``surface_intersection.h`` header file and implementations
    for the described functions
    (`fafd9ff <https://github.com/dhermes/bezier/commit/fafd9ff181755e9b204372f1b94dd10578a16382>`__).
 -  Newly added functions
@@ -165,27 +165,27 @@ New Features
       (`3c0af5d <https://github.com/dhermes/bezier/commit/3c0af5d32aa494efc15cb23a3bf1d15c0b5859b1>`__)
    -  ``helpers.h::ulps_away``
       (`0197237 <https://github.com/dhermes/bezier/commit/01972377303afa9a41c79533ee967b8bcc526435>`__)
-   -  ``triangle.h::specialize_triangle``
+   -  ``surface.h::specialize_surface``
       (`eb8693e <https://github.com/dhermes/bezier/commit/eb8693e823f7a2af3fb6682f76a667b20d419e5d>`__,
       `fcd5bad <https://github.com/dhermes/bezier/commit/fcd5bad6fe47499c23db32092e7a749e2e866f92>`__)
-   -  ``triangle.h::subdivide_nodes_triangle``
+   -  ``surface.h::subdivide_nodes_surface``
       (`6027210 <https://github.com/dhermes/bezier/commit/602721004887cd17e977e7255c7f574cd321d032>`__,
       `4fc5f2a <https://github.com/dhermes/bezier/commit/4fc5f2a552a91ef738f062ff1578d2865672c9f6>`__,
       `8beb1ac <https://github.com/dhermes/bezier/commit/8beb1ace5934d7bce03cb19c483aa1aec57ec06b>`__,
       `0b2b1f3 <https://github.com/dhermes/bezier/commit/0b2b1f3edeab418bbacc8cd60a419a201cfdd038>`__,
       `d27b86f <https://github.com/dhermes/bezier/commit/d27b86f417c4f6227c08bfc0c50da88584d7996b>`__,
       `88c302b <https://github.com/dhermes/bezier/commit/88c302b5d070d512339bd1b16960a4e43025005c>`__)
-   -  ``triangle.h::compute_edge_nodes``
+   -  ``surface.h::compute_edge_nodes``
       (`2d02590 <https://github.com/dhermes/bezier/commit/2d02590ed972dba902958a07598b95f8099a7295>`__,
       `f86649a <https://github.com/dhermes/bezier/commit/f86649aa1f631a11ad314754a236719dd6f0c714>`__)
-   -  ``triangle_intersection.h::newton_refine_triangle``
+   -  ``surface_intersection.h::newton_refine_surface``
       (`93c288d <https://github.com/dhermes/bezier/commit/93c288d5e5865986aa2627ea81f12b6370099865>`__)
-   -  ``triangle_intersection.h::locate_point_triangle``
+   -  ``surface_intersection.h::locate_point_surface``
       (`325ea47 <https://github.com/dhermes/bezier/commit/325ea479665947016844b3ea37cbccf5962f5876>`__,
       `ca134e6 <https://github.com/dhermes/bezier/commit/ca134e63f1061b99404e3dfedefdd5d8cf5956ea>`__,
       `bf69852 <https://github.com/dhermes/bezier/commit/bf698525d99f2424717ba4a8559ea2ab84abe6cb>`__)
-   -  ``triangle_intersection.h::triangle_intersections``
-   -  ``triangle_intersection.h::free_triangle_intersections_workspace``
+   -  ``surface_intersection.h::surface_intersections``
+   -  ``surface_intersection.h::free_surface_intersections_workspace``
 
 -  Added
    `status.h <https://github.com/dhermes/bezier/blob/0.6.0/src/bezier/include/bezier/status.h>`__
