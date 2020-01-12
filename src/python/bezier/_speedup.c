@@ -2609,51 +2609,50 @@ static const char __pyx_k_evaluate_hodograph[] = "evaluate_hodograph";
 static const char __pyx_k_intersections_size[] = "intersections_size";
 static const char __pyx_k_locate_point_curve[] = "locate_point_curve";
 static const char __pyx_k_simple_convex_hull[] = "simple_convex_hull";
-static const char __pyx_k_specialize_triangle[] = "specialize_triangle";
 static const char __pyx_k_strided_and_direct[] = "<strided and direct>";
 static const char __pyx_k_NotImplementedError[] = "NotImplementedError";
 static const char __pyx_k_curve_intersections[] = "curve_intersections";
 static const char __pyx_k_newton_refine_curve[] = "newton_refine_curve";
+static const char __pyx_k_specialize_triangle[] = "specialize_triangle";
 static const char __pyx_k_Jacobian_is_singular[] = "Jacobian is singular.";
 static const char __pyx_k_evaluate_barycentric[] = "evaluate_barycentric";
-static const char __pyx_k_locate_point_triangle[] = "locate_point_triangle";
 static const char __pyx_k_strided_and_indirect[] = "<strided and indirect>";
 static const char __pyx_k_contiguous_and_direct[] = "<contiguous and direct>";
 static const char __pyx_k_curves_workspace_size[] = "curves_workspace_size";
-static const char __pyx_k_newton_refine_triangle[] = "newton_refine_triangle";
+static const char __pyx_k_locate_point_triangle[] = "locate_point_triangle";
 static const char __pyx_k_reduce_pseudo_inverse[] = "reduce_pseudo_inverse";
 static const char __pyx_k_subdivide_nodes_curve[] = "subdivide_nodes_curve";
-static const char __pyx_k_triangle_intersections[] = "triangle_intersections";
 static const char __pyx_k_MemoryView_of_r_object[] = "<MemoryView of %r object>";
 static const char __pyx_k_SEGMENT_ENDS_TOO_SMALL[] = "SEGMENT_ENDS_TOO_SMALL";
 static const char __pyx_k_de_casteljau_one_round[] = "de_casteljau_one_round";
+static const char __pyx_k_newton_refine_triangle[] = "newton_refine_triangle";
 static const char __pyx_k_reset_curves_workspace[] = "reset_curves_workspace";
+static const char __pyx_k_triangle_intersections[] = "triangle_intersections";
 static const char __pyx_k_unused_not_implemented[] = "unused_not_implemented";
 static const char __pyx_k_MemoryView_of_r_at_0x_x[] = "<MemoryView of %r at 0x%x>";
 static const char __pyx_k_SUBDIVISION_NO_CONVERGE[] = "SUBDIVISION_NO_CONVERGE";
 static const char __pyx_k_contiguous_and_indirect[] = "<contiguous and indirect>";
-static const char __pyx_k_subdivide_nodes_triangle[] = "subdivide_nodes_triangle";
-static const char __pyx_k_triangle_workspace_sizes[] = "triangle_workspace_sizes";
 static const char __pyx_k_Cannot_index_with_type_s[] = "Cannot index with type '%s'";
 static const char __pyx_k_evaluate_cartesian_multi[] = "evaluate_cartesian_multi";
-static const char __pyx_k_reset_triangle_workspaces[] = "reset_triangle_workspaces";
+static const char __pyx_k_subdivide_nodes_triangle[] = "subdivide_nodes_triangle";
+static const char __pyx_k_triangle_workspace_sizes[] = "triangle_workspace_sizes";
 static const char __pyx_k_Invalid_shape_in_axis_d_d[] = "Invalid shape in axis %d: %d.";
 static const char __pyx_k_Unknown_error_has_occured[] = "Unknown error has occured.";
+static const char __pyx_k_reset_triangle_workspaces[] = "reset_triangle_workspaces";
 static const char __pyx_k_Unexpected_number_of_edges[] = "Unexpected number of edges";
 static const char __pyx_k_evaluate_barycentric_multi[] = "evaluate_barycentric_multi";
 static const char __pyx_k_evaluate_multi_barycentric[] = "evaluate_multi_barycentric";
 static const char __pyx_k_itemsize_0_for_cython_array[] = "itemsize <= 0 for cython.array";
 static const char __pyx_k_ndarray_is_not_C_contiguous[] = "ndarray is not C contiguous";
-static const char __pyx_k_triangle_intersections_resize[] = "_triangle_intersections_resize";
 static const char __pyx_k_newton_refine_curve_intersect[] = "newton_refine_curve_intersect";
-static const char __pyx_k_triangle_intersections_success[] = "_triangle_intersections_success";
+static const char __pyx_k_triangle_intersections_resize[] = "_triangle_intersections_resize";
 static const char __pyx_k_unable_to_allocate_array_data[] = "unable to allocate array data.";
 static const char __pyx_k_src_python_bezier__speedup_pyx[] = "src/python/bezier/_speedup.pyx";
 static const char __pyx_k_strided_and_direct_or_indirect[] = "<strided and direct or indirect>";
+static const char __pyx_k_triangle_intersections_success[] = "_triangle_intersections_success.<locals>.genexpr";
 static const char __pyx_k_Assumed_the_requested_tolerance[] = "Assumed: the requested tolerance cannot be achieved";
 static const char __pyx_k_Unsupported_multiplicity_Newton[] = "Unsupported multiplicity.\n\nNewton's method failed to converge to a solution under the\nfollowing assumptions:\n\n- The starting ``s-t`` values were already near a solution\n- The root / solution has multiplicity 1 or 2\n  - 1: The root is \"simple\", i.e. the curves are not tangent\n       and have no self-intersections at the point of intersection.\n  - 2: The root is a double root, i.e. the curves are tangent\n       but have different curvatures at the point of intersection.\n\nThe failure to converge may have been caused by one of:\n\n- The root was of multiplicity greater than 2\n- The curves don't actually intersect, though they come very close\n- Numerical issues caused the iteration to leave the region\n  of convergence\n";
 static const char __pyx_k_numpy_core_multiarray_failed_to[] = "numpy.core.multiarray failed to import";
-static const char __pyx_k_triangle_intersections_success_l[] = "_triangle_intersections_success.<locals>.genexpr";
 static const char __pyx_k_unknown_dtype_code_in_numpy_pxd[] = "unknown dtype code in numpy.pxd (%d)";
 static const char __pyx_k_Buffer_view_does_not_expose_stri[] = "Buffer view does not expose strides";
 static const char __pyx_k_Can_only_create_a_buffer_that_is[] = "Can only create a buffer that is contiguous in memory.";
@@ -2683,11 +2682,12 @@ static const char __pyx_k_Tangent_curves_have_same_curvatu[] = "Tangent curves h
 static const char __pyx_k_The_number_of_candidate_intersec[] = "The number of candidate intersections is too high.\n{:d} candidate pairs.";
 static const char __pyx_k_Unable_to_convert_item_to_object[] = "Unable to convert item to object";
 static const char __pyx_k_free_curve_intersections_workspa[] = "free_curve_intersections_workspace";
-static const char __pyx_k_free_triangle_intersections_works[] = "free_triangle_intersections_workspace";
+static const char __pyx_k_free_triangle_intersections_work[] = "free_triangle_intersections_workspace";
 static const char __pyx_k_got_differing_extents_in_dimensi[] = "got differing extents in dimension %d (got %d and %d)";
 static const char __pyx_k_ndarray_is_not_Fortran_contiguou[] = "ndarray is not Fortran contiguous";
 static const char __pyx_k_no_default___reduce___due_to_non[] = "no default __reduce__ due to non-trivial __cinit__";
 static const char __pyx_k_numpy_core_umath_failed_to_impor[] = "numpy.core.umath failed to import";
+static const char __pyx_k_triangle_intersections_success_2[] = "_triangle_intersections_success";
 static const char __pyx_k_unable_to_allocate_shape_and_str[] = "unable to allocate shape and strides.";
 static const char __pyx_k_Did_not_have_enough_space_for_se_2[] = "Did not have enough space for segments. Needed space for {:d} `CurvedPolygonSegment`-s but only had space for {:d}.";
 static const char __pyx_k_Format_string_allocated_too_shor_2[] = "Format string allocated too short.";
@@ -2835,7 +2835,7 @@ static PyObject *__pyx_n_s_format;
 static PyObject *__pyx_n_s_fortran;
 static PyObject *__pyx_n_u_fortran;
 static PyObject *__pyx_n_s_free_curve_intersections_workspa;
-static PyObject *__pyx_n_s_free_triangle_intersections_works;
+static PyObject *__pyx_n_s_free_triangle_intersections_work;
 static PyObject *__pyx_n_s_full_reduce;
 static PyObject *__pyx_n_s_genexpr;
 static PyObject *__pyx_n_s_get_curvature;
@@ -2978,17 +2978,17 @@ static PyObject *__pyx_n_s_subdivide_nodes_curve;
 static PyObject *__pyx_n_s_subdivide_nodes_triangle;
 static PyObject *__pyx_n_s_success;
 static PyObject *__pyx_n_s_supported;
-static PyObject *__pyx_n_s_triangle_intersections;
-static PyObject *__pyx_n_s_triangle_intersections_resize;
-static PyObject *__pyx_n_s_triangle_intersections_success;
-static PyObject *__pyx_n_s_triangle_intersections_success_l;
-static PyObject *__pyx_n_s_triangle_workspace_sizes;
 static PyObject *__pyx_n_s_t;
 static PyObject *__pyx_n_s_t_val;
 static PyObject *__pyx_n_s_tangent_vec;
 static PyObject *__pyx_n_s_test;
 static PyObject *__pyx_n_s_throw;
 static PyObject *__pyx_n_s_top;
+static PyObject *__pyx_n_s_triangle_intersections;
+static PyObject *__pyx_n_s_triangle_intersections_resize;
+static PyObject *__pyx_n_s_triangle_intersections_success;
+static PyObject *__pyx_n_s_triangle_intersections_success_2;
+static PyObject *__pyx_n_s_triangle_workspace_sizes;
 static PyObject *__pyx_n_s_triples;
 static PyObject *__pyx_n_s_type_info;
 static PyObject *__pyx_kp_s_unable_to_allocate_array_data;
@@ -3054,7 +3054,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_72newton_refine_triangle(CYTHON_UNUS
 static PyObject *__pyx_pf_6bezier_8_speedup_74locate_point_triangle(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_nodes, int __pyx_v_degree, double __pyx_v_x_val, double __pyx_v_y_val); /* proto */
 static PyObject *__pyx_pf_6bezier_8_speedup_76reset_triangle_workspaces(CYTHON_UNUSED PyObject *__pyx_self, int __pyx_v_segment_ends_size, int __pyx_v_segments_size); /* proto */
 static PyObject *__pyx_pf_6bezier_8_speedup_78triangle_workspace_sizes(CYTHON_UNUSED PyObject *__pyx_self); /* proto */
-static PyObject *__pyx_pf_6bezier_8_speedup_30_triangle_intersections_success_genexpr(PyObject *__pyx_self); /* proto */
+static PyObject *__pyx_pf_6bezier_8_speedup_31_triangle_intersections_success_genexpr(PyObject *__pyx_self); /* proto */
 static PyObject *__pyx_pf_6bezier_8_speedup_80_triangle_intersections_success(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_nodes1, int __pyx_v_degree1, __Pyx_memviewslice __pyx_v_nodes2, int __pyx_v_degree2, int __pyx_v_num_intersected); /* proto */
 static PyObject *__pyx_pf_6bezier_8_speedup_82_triangle_intersections_resize(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_nodes1, int __pyx_v_degree1, __Pyx_memviewslice __pyx_v_nodes2, int __pyx_v_degree2, int __pyx_v_segment_ends_size, int __pyx_v_segments_size, int __pyx_v_num_intersected, int __pyx_v_resizes_allowed); /* proto */
 static PyObject *__pyx_pf_6bezier_8_speedup_84triangle_intersections(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_nodes1, int __pyx_v_degree1, __Pyx_memviewslice __pyx_v_nodes2, int __pyx_v_degree2, CYTHON_UNUSED int __pyx_v_verify, int __pyx_v_resizes_allowed); /* proto */
@@ -16498,7 +16498,7 @@ static PyObject *__pyx_pw_6bezier_8_speedup_81_triangle_intersections_success(Py
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
-static PyObject *__pyx_gb_6bezier_8_speedup_30_triangle_intersections_success_2generator(__pyx_CoroutineObject *__pyx_generator, CYTHON_UNUSED PyThreadState *__pyx_tstate, PyObject *__pyx_sent_value); /* proto */
+static PyObject *__pyx_gb_6bezier_8_speedup_31_triangle_intersections_success_2generator(__pyx_CoroutineObject *__pyx_generator, CYTHON_UNUSED PyThreadState *__pyx_tstate, PyObject *__pyx_sent_value); /* proto */
 
 /* "bezier/_speedup.pyx":997
  *         triples = tuple(
@@ -16508,7 +16508,7 @@ static PyObject *__pyx_gb_6bezier_8_speedup_30_triangle_intersections_success_2g
  *                 SEGMENTS_WORKSPACE[j].end,
  */
 
-static PyObject *__pyx_pf_6bezier_8_speedup_30_triangle_intersections_success_genexpr(PyObject *__pyx_self) {
+static PyObject *__pyx_pf_6bezier_8_speedup_31_triangle_intersections_success_genexpr(PyObject *__pyx_self) {
   struct __pyx_obj_6bezier_8_speedup___pyx_scope_struct_1_genexpr *__pyx_cur_scope;
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
@@ -16525,7 +16525,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_30_triangle_intersections_success_ge
   __Pyx_INCREF(((PyObject *)__pyx_cur_scope->__pyx_outer_scope));
   __Pyx_GIVEREF(__pyx_cur_scope->__pyx_outer_scope);
   {
-    __pyx_CoroutineObject *gen = __Pyx_Generator_New((__pyx_coroutine_body_t) __pyx_gb_6bezier_8_speedup_30_triangle_intersections_success_2generator, NULL, (PyObject *) __pyx_cur_scope, __pyx_n_s_genexpr, __pyx_n_s_triangle_intersections_success_l, __pyx_n_s_bezier__speedup); if (unlikely(!gen)) __PYX_ERR(0, 997, __pyx_L1_error)
+    __pyx_CoroutineObject *gen = __Pyx_Generator_New((__pyx_coroutine_body_t) __pyx_gb_6bezier_8_speedup_31_triangle_intersections_success_2generator, NULL, (PyObject *) __pyx_cur_scope, __pyx_n_s_genexpr, __pyx_n_s_triangle_intersections_success, __pyx_n_s_bezier__speedup); if (unlikely(!gen)) __PYX_ERR(0, 997, __pyx_L1_error)
     __Pyx_DECREF(__pyx_cur_scope);
     __Pyx_RefNannyFinishContext();
     return (PyObject *) gen;
@@ -16541,7 +16541,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_30_triangle_intersections_success_ge
   return __pyx_r;
 }
 
-static PyObject *__pyx_gb_6bezier_8_speedup_30_triangle_intersections_success_2generator(__pyx_CoroutineObject *__pyx_generator, CYTHON_UNUSED PyThreadState *__pyx_tstate, PyObject *__pyx_sent_value) /* generator body */
+static PyObject *__pyx_gb_6bezier_8_speedup_31_triangle_intersections_success_2generator(__pyx_CoroutineObject *__pyx_generator, CYTHON_UNUSED PyThreadState *__pyx_tstate, PyObject *__pyx_sent_value) /* generator body */
 {
   struct __pyx_obj_6bezier_8_speedup___pyx_scope_struct_1_genexpr *__pyx_cur_scope = ((struct __pyx_obj_6bezier_8_speedup___pyx_scope_struct_1_genexpr *)__pyx_generator->closure);
   PyObject *__pyx_r = NULL;
@@ -16871,7 +16871,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_80_triangle_intersections_success(CY
  *                 SEGMENTS_WORKSPACE[j].start,
  *                 SEGMENTS_WORKSPACE[j].end,
  */
-    __pyx_t_1 = __pyx_pf_6bezier_8_speedup_30_triangle_intersections_success_genexpr(((PyObject*)__pyx_cur_scope)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 997, __pyx_L1_error)
+    __pyx_t_1 = __pyx_pf_6bezier_8_speedup_31_triangle_intersections_success_genexpr(((PyObject*)__pyx_cur_scope)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 997, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
 
     /* "bezier/_speedup.pyx":995
@@ -18776,7 +18776,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_84triangle_intersections(CYTHON_UNUS
  *     elif status == bezier._status.Status.INSUFFICIENT_SPACE:
  */
       __Pyx_XDECREF(__pyx_r);
-      __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_n_s_triangle_intersections_success); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 1124, __pyx_L1_error)
+      __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_n_s_triangle_intersections_success_2); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 1124, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_3);
 
       /* "bezier/_speedup.pyx":1125
@@ -36147,7 +36147,7 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_fortran, __pyx_k_fortran, sizeof(__pyx_k_fortran), 0, 0, 1, 1},
   {&__pyx_n_u_fortran, __pyx_k_fortran, sizeof(__pyx_k_fortran), 0, 1, 0, 1},
   {&__pyx_n_s_free_curve_intersections_workspa, __pyx_k_free_curve_intersections_workspa, sizeof(__pyx_k_free_curve_intersections_workspa), 0, 0, 1, 1},
-  {&__pyx_n_s_free_triangle_intersections_works, __pyx_k_free_triangle_intersections_works, sizeof(__pyx_k_free_triangle_intersections_works), 0, 0, 1, 1},
+  {&__pyx_n_s_free_triangle_intersections_work, __pyx_k_free_triangle_intersections_work, sizeof(__pyx_k_free_triangle_intersections_work), 0, 0, 1, 1},
   {&__pyx_n_s_full_reduce, __pyx_k_full_reduce, sizeof(__pyx_k_full_reduce), 0, 0, 1, 1},
   {&__pyx_n_s_genexpr, __pyx_k_genexpr, sizeof(__pyx_k_genexpr), 0, 0, 1, 1},
   {&__pyx_n_s_get_curvature, __pyx_k_get_curvature, sizeof(__pyx_k_get_curvature), 0, 0, 1, 1},
@@ -36290,17 +36290,17 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_subdivide_nodes_triangle, __pyx_k_subdivide_nodes_triangle, sizeof(__pyx_k_subdivide_nodes_triangle), 0, 0, 1, 1},
   {&__pyx_n_s_success, __pyx_k_success, sizeof(__pyx_k_success), 0, 0, 1, 1},
   {&__pyx_n_s_supported, __pyx_k_supported, sizeof(__pyx_k_supported), 0, 0, 1, 1},
-  {&__pyx_n_s_triangle_intersections, __pyx_k_triangle_intersections, sizeof(__pyx_k_triangle_intersections), 0, 0, 1, 1},
-  {&__pyx_n_s_triangle_intersections_resize, __pyx_k_triangle_intersections_resize, sizeof(__pyx_k_triangle_intersections_resize), 0, 0, 1, 1},
-  {&__pyx_n_s_triangle_intersections_success, __pyx_k_triangle_intersections_success, sizeof(__pyx_k_triangle_intersections_success), 0, 0, 1, 1},
-  {&__pyx_n_s_triangle_intersections_success_l, __pyx_k_triangle_intersections_success_l, sizeof(__pyx_k_triangle_intersections_success_l), 0, 0, 1, 1},
-  {&__pyx_n_s_triangle_workspace_sizes, __pyx_k_triangle_workspace_sizes, sizeof(__pyx_k_triangle_workspace_sizes), 0, 0, 1, 1},
   {&__pyx_n_s_t, __pyx_k_t, sizeof(__pyx_k_t), 0, 0, 1, 1},
   {&__pyx_n_s_t_val, __pyx_k_t_val, sizeof(__pyx_k_t_val), 0, 0, 1, 1},
   {&__pyx_n_s_tangent_vec, __pyx_k_tangent_vec, sizeof(__pyx_k_tangent_vec), 0, 0, 1, 1},
   {&__pyx_n_s_test, __pyx_k_test, sizeof(__pyx_k_test), 0, 0, 1, 1},
   {&__pyx_n_s_throw, __pyx_k_throw, sizeof(__pyx_k_throw), 0, 0, 1, 1},
   {&__pyx_n_s_top, __pyx_k_top, sizeof(__pyx_k_top), 0, 0, 1, 1},
+  {&__pyx_n_s_triangle_intersections, __pyx_k_triangle_intersections, sizeof(__pyx_k_triangle_intersections), 0, 0, 1, 1},
+  {&__pyx_n_s_triangle_intersections_resize, __pyx_k_triangle_intersections_resize, sizeof(__pyx_k_triangle_intersections_resize), 0, 0, 1, 1},
+  {&__pyx_n_s_triangle_intersections_success, __pyx_k_triangle_intersections_success, sizeof(__pyx_k_triangle_intersections_success), 0, 0, 1, 1},
+  {&__pyx_n_s_triangle_intersections_success_2, __pyx_k_triangle_intersections_success_2, sizeof(__pyx_k_triangle_intersections_success_2), 0, 0, 1, 1},
+  {&__pyx_n_s_triangle_workspace_sizes, __pyx_k_triangle_workspace_sizes, sizeof(__pyx_k_triangle_workspace_sizes), 0, 0, 1, 1},
   {&__pyx_n_s_triples, __pyx_k_triples, sizeof(__pyx_k_triples), 0, 0, 1, 1},
   {&__pyx_n_s_type_info, __pyx_k_type_info, sizeof(__pyx_k_type_info), 0, 0, 1, 1},
   {&__pyx_kp_s_unable_to_allocate_array_data, __pyx_k_unable_to_allocate_array_data, sizeof(__pyx_k_unable_to_allocate_array_data), 0, 0, 1, 0},
@@ -37319,7 +37319,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   __pyx_tuple__127 = PyTuple_Pack(22, __pyx_n_s_nodes1, __pyx_n_s_degree1, __pyx_n_s_nodes2, __pyx_n_s_degree2, __pyx_n_s_num_intersected, __pyx_n_s_begin_index, __pyx_n_s_end_index, __pyx_n_s_i, __pyx_n_s_j, __pyx_n_s_num_nodes, __pyx_n_s_dimension, __pyx_n_s_edge_nodes1, __pyx_n_s_edge_nodes2, __pyx_n_s_edge_nodes3, __pyx_n_s_edge_nodes4, __pyx_n_s_edge_nodes5, __pyx_n_s_edge_nodes6, __pyx_n_s_curved_polygons, __pyx_n_s_triples, __pyx_n_s_all_edge_nodes, __pyx_n_s_genexpr, __pyx_n_s_genexpr); if (unlikely(!__pyx_tuple__127)) __PYX_ERR(0, 970, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__127);
   __Pyx_GIVEREF(__pyx_tuple__127);
-  __pyx_codeobj__128 = (PyObject*)__Pyx_PyCode_New(5, 0, 22, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__127, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_python_bezier__speedup_pyx, __pyx_n_s_triangle_intersections_success, 970, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__128)) __PYX_ERR(0, 970, __pyx_L1_error)
+  __pyx_codeobj__128 = (PyObject*)__Pyx_PyCode_New(5, 0, 22, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__127, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_python_bezier__speedup_pyx, __pyx_n_s_triangle_intersections_success_2, 970, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__128)) __PYX_ERR(0, 970, __pyx_L1_error)
 
   /* "bezier/_speedup.pyx":1049
  *
@@ -37352,7 +37352,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
  *     bezier._triangle_intersection.free_triangle_intersections_workspace()
  *
  */
-  __pyx_codeobj__133 = (PyObject*)__Pyx_PyCode_New(0, 0, 0, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_python_bezier__speedup_pyx, __pyx_n_s_free_triangle_intersections_works, 1156, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__133)) __PYX_ERR(0, 1156, __pyx_L1_error)
+  __pyx_codeobj__133 = (PyObject*)__Pyx_PyCode_New(0, 0, 0, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_python_bezier__speedup_pyx, __pyx_n_s_free_triangle_intersections_work, 1156, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__133)) __PYX_ERR(0, 1156, __pyx_L1_error)
 
   /* "bezier/_speedup.pyx":1160
  *
@@ -38664,7 +38664,7 @@ if (!__Pyx_RefNanny) {
  */
   __pyx_t_2 = PyCFunction_NewEx(&__pyx_mdef_6bezier_8_speedup_81_triangle_intersections_success, NULL, __pyx_n_s_bezier__speedup); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 970, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_triangle_intersections_success, __pyx_t_2) < 0) __PYX_ERR(0, 970, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_triangle_intersections_success_2, __pyx_t_2) < 0) __PYX_ERR(0, 970, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
   /* "bezier/_speedup.pyx":1049
@@ -38700,7 +38700,7 @@ if (!__Pyx_RefNanny) {
  */
   __pyx_t_2 = PyCFunction_NewEx(&__pyx_mdef_6bezier_8_speedup_87free_triangle_intersections_workspace, NULL, __pyx_n_s_bezier__speedup); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 1156, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_free_triangle_intersections_works, __pyx_t_2) < 0) __PYX_ERR(0, 1156, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_free_triangle_intersections_work, __pyx_t_2) < 0) __PYX_ERR(0, 1156, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
   /* "bezier/_speedup.pyx":1160
