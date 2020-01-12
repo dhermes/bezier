@@ -193,6 +193,20 @@ JOSS_IMG = """
 .. |JOSS| image:: http://joss.theoj.org/papers/10.21105/joss.00267/status.svg
    :target: https://dx.doi.org/10.21105/joss.00267
    :alt: "Journal of Open Source Science" DOI for ``bezier``"""
+CITATION = """\
+   @article{Hermes2017,
+     doi = {10.21105/joss.00267},
+     url = {https://doi.org/10.21105%2Fjoss.00267},
+     year = {2017},
+     month = {Aug},
+     publisher = {The Open Journal},
+     volume = {2},
+     number = {16},
+     pages = {267},
+     author = {Danny Hermes},
+     title = {Helper for B{\\'{e}}zier Curves, Triangles, and Higher Order Objects},
+     journal = {The Journal of Open Source Software}
+   }"""
 
 
 def inline_math(match):
@@ -318,6 +332,7 @@ def populate_readme(revision, rtd_version, **extra_kwargs):
         "zenodo_img": ZENODO_IMG,
         "joss": " |JOSS|",
         "joss_img": JOSS_IMG,
+        "citation": CITATION,
     }
     template_kwargs.update(**extra_kwargs)
     readme_contents = template.format(**template_kwargs)
@@ -384,6 +399,7 @@ def release_readme_verify():
         appveyor_path="/build/{appveyor_build}",
         coveralls_badge=COVERALLS_BADGE_RELEASE,
         coveralls_path="builds/{coveralls_build}",
+        citation=CITATION.replace("{", "{{").replace("}", "}}"),
     )
     with open(RELEASE_README_FILE, "r") as file_obj:
         contents = file_obj.read()
@@ -449,6 +465,7 @@ def _index_verify(index_file, **extra_kwargs):
         "zenodo_img": ZENODO_IMG,
         "joss": " |JOSS|",
         "joss_img": JOSS_IMG,
+        "citation": CITATION,
     }
     template_kwargs.update(**extra_kwargs)
     expected = template.format(**template_kwargs)
