@@ -6,7 +6,7 @@
 Python Changes
 --------------
 
-Triangle Changes
+Surface Changes
 ~~~~~~~~~~~~~~~
 
 -  Stopped raising
@@ -18,7 +18,7 @@ Triangle Changes
 ABI Changes
 -----------
 
-Triangle Changes
+Surface Changes
 ~~~~~~~~~~~~~~~
 
 -  Removed ``Status_WIGGLE_FAIL`` enum and re-numbered all larger ``Status``

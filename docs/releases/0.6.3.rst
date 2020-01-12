@@ -6,7 +6,7 @@
 Python Changes
 --------------
 
-Triangle Changes
+Surface Changes
 ~~~~~~~~~~~~~~~
 
 -  Changed ``RuntimeError('Unexpected number of edges', 11)`` to

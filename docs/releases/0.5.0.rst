@@ -49,9 +49,9 @@ Miscellany
    `#36 <https://github.com/dhermes/bezier/pull/36>`__
 -  Using Fortran-contiguous arrays in ``_check_non_simple()``.
    (`b06c78e <https://github.com/dhermes/bezier/commit/b06c78e50d53bf673bcf0b71fa84b36c8df564d8>`__)
--  Moving most of ``Curve.subdivide()`` and ``Triangle.subdivide()``
+-  Moving most of ``Curve.subdivide()`` and ``Surface.subdivide()``
    logic into helpers. This is part of an effort to make all helpers
-   take low-level data types rather than ``Curve``\ s, ``Triangle``\ s,
+   take low-level data types rather than ``Curve``\ s, ``Surface``\ s,
    etc.
    (`34515bd <https://github.com/dhermes/bezier/commit/34515bd6246f57fbb311b4089520a24e8237294a>`__
    and
