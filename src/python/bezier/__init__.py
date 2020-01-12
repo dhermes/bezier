@@ -23,6 +23,8 @@ Plotting utilities are also provided.
 
 .. autoclass:: UnsupportedDegree
    :members:
+
+.. autodata:: Surface
 """
 
 import os

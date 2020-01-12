@@ -4,3 +4,4 @@
 
 .. literalinclude:: ../../../src/python/bezier/_triangle_intersection.pxd
    :language: cython
+   :lines: 13-
