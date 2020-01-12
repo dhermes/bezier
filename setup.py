@@ -23,7 +23,7 @@ import setup_helpers_macos
 import setup_helpers_windows
 
 
-VERSION = "0.11.0"  # Also in ``codemeta.json`` and ``__init__.py``.
+VERSION = "0.11.1.dev1"  # Also in ``codemeta.json`` and ``__init__.py``.
 AUTHOR = "Danny Hermes"  # Also in ``__init__.py``.
 README_FILENAME = os.path.join(os.path.dirname(__file__), "README.rst")
 NUMPY_MESSAGE = """\
