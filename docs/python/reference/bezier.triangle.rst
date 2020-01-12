@@ -1,5 +1,5 @@
 bezier.triangle module
-=====================
+======================
 
 .. automodule:: bezier.triangle
    :members:

@@ -1,6 +1,6 @@
-###########################
+############################
 triangle_intersection module
-###########################
+############################
 
 .. |eacute| unicode:: U+000E9 .. LATIN SMALL LETTER E WITH ACUTE
    :trim:
