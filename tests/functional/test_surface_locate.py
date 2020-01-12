@@ -11,9 +11,9 @@
 # limitations under the License.
 
 import numpy as np
+import pytest
 
 import bezier
-from bezier import _plot_helpers
 from tests.functional import utils
 
 
@@ -48,88 +48,48 @@ SURFACE4 = bezier.Surface.from_nodes(
     ),
     copy=False,
 )
+SURFACES = {
+    1: SURFACE1,
+    2: SURFACE2,
+    3: SURFACE3,
+    4: SURFACE4,
+}
 POINTS = np.asfortranarray(
     [[0.0, 0.25, 0.59375, 0.265625, 1.25], [0.0, 0.25, 0.25, 0.73046875, 1.25]]
 )
+S_VAL1, _ = utils.real_roots([4, -32, -56, -24, 5])
+_, T_VAL1 = utils.real_roots([4, 8, -16, 44, -11])
+(S_VAL2,) = utils.real_roots([2, -5, 15, -3])
+(T_VAL2,) = utils.real_roots([14, -61, 74, -15])
+(S_VAL3,) = utils.real_roots([64, 101, 34, -5])
+(T_VAL3,) = utils.real_roots([128, -192, 91, -8])
+CASES = (
+    (1, 0, 0.0, 0.0),
+    (1, 1, 0.25, 0.25),
+    (2, 1, S_VAL1, T_VAL1),
+    (2, 2, 0.5, 0.25),
+    (2, 4, None, None),
+    (3, 1, S_VAL2, T_VAL2),
+    (3, 3, 0.125, 0.75),
+    (4, 2, S_VAL3, T_VAL3),
+    (4, 4, 0.25, 0.5),
+)
 
 
-def make_plot(surface, point):
-    # NOTE: We import the plotting library at runtime to
-    #       avoid the cost for users that only want to compute.
-    #       The ``matplotlib`` import is a tad expensive.
-    import matplotlib.pyplot as plt
-    import seaborn
-
-    seaborn.set()  # Required in `seaborn >= 0.8`
-    ax = surface.plot(64)
-    ax.plot(
-        point[0, :], point[1, :], color="black", marker="o", linestyle="None"
-    )
-    ax.axis("scaled")
-    _plot_helpers.add_plot_boundary(ax)
-    if CONFIG.save_plot:
-        CONFIG.save_fig()
-    else:
-        plt.title(CONFIG.current_test)
-        plt.show()
-    plt.close(ax.figure)
+def id_func(case):
+    surface_index, point_index, _, _ = case
+    return f"surface:{surface_index}-point:{point_index}"
 
 
-def check_point(surface, point_ind, expected_s, expected_t):
-    point = POINTS[:, [point_ind]]
+@pytest.mark.parametrize("case", CASES, ids=id_func)
+def test_locate(case):
+    surface_index, point_index, expected_s, expected_t = case
+    surface = SURFACES[surface_index]
+
+    point = POINTS[:, [point_index]]
     if expected_s is None and expected_t is None:
         assert surface.locate(point) is None
     else:
         s, t = surface.locate(point)
         CONFIG.assert_close(s, expected_s)
         CONFIG.assert_close(t, expected_t)
-    if not CONFIG.running:
-        return
-
-    make_plot(surface, point)
-
-
-def test_surface1_and_point0():
-    check_point(SURFACE1, 0, 0.0, 0.0)
-
-
-def test_surface1_and_point1():
-    check_point(SURFACE1, 1, 0.25, 0.25)
-
-
-def test_surface2_and_point1():
-    s, _ = utils.real_roots([4, -32, -56, -24, 5])
-    _, t = utils.real_roots([4, 8, -16, 44, -11])
-    check_point(SURFACE2, 1, s, t)
-
-
-def test_surface2_and_point2():
-    check_point(SURFACE2, 2, 0.5, 0.25)
-
-
-def test_surface2_and_point4():
-    check_point(SURFACE2, 4, None, None)
-
-
-def test_surface3_and_point1():
-    (s,) = utils.real_roots([2, -5, 15, -3])
-    (t,) = utils.real_roots([14, -61, 74, -15])
-    check_point(SURFACE3, 1, s, t)
-
-
-def test_surface3_and_point3():
-    check_point(SURFACE3, 3, 0.125, 0.75)
-
-
-def test_surface4_and_point2():
-    (s,) = utils.real_roots([64, 101, 34, -5])
-    (t,) = utils.real_roots([128, -192, 91, -8])
-    check_point(SURFACE4, 2, s, t)
-
-
-def test_surface4_and_point4():
-    check_point(SURFACE4, 4, 0.25, 0.5)
-
-
-if __name__ == "__main__":
-    CONFIG.run(globals())

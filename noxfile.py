@@ -264,6 +264,8 @@ def docs_images(session):
     # ``surface_intersections.json``.
     modules_to_run.extend(
         (
+            get_path("tests", "functional", "make_segment_box_images.py"),
+            get_path("tests", "functional", "make_surface_locate_images.py"),
             get_path("tests", "functional", "make_curve_curve_images.py"),
             get_path("tests", "functional", "make_surface_surface_images.py"),
         )

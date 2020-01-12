@@ -18,7 +18,6 @@ from bezier import _plot_helpers
 from tests.functional import utils
 
 
-CONFIG = utils.Config()
 _, INTERSECTIONS = utils.surface_intersections_info()
 
 
@@ -64,10 +63,7 @@ def make_plot(intersection_info, save_plot):
     _plot_helpers.add_plot_boundary(ax)
     filename = intersection_info.img_filename
     if save_plot:
-        # NOTE: This is an abuse of ``current_test``, but we don't need
-        #       a full-fledged ``Config``, we **just** need ``save_fig``.
-        CONFIG.current_test = filename
-        CONFIG.save_fig()
+        utils.save_fig(filename)
     else:
         plt.title(filename)
         plt.show()

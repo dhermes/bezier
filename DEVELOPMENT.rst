@@ -169,8 +169,7 @@ To run the coverage report locally:
    $ PYTHONPATH=src/python/ python -m pytest \
    >   --cov=bezier \
    >   --cov=tests.unit \
-   >   tests/unit/ \
-   >   tests/functional/test_segment_box.py
+   >   tests/unit/
 
 Slow Tests
 ==========
@@ -422,8 +421,8 @@ To regenerate all the images:
    >   -d docs/build/doctrees \
    >   docs \
    >   docs/build/doctest
-   $ python tests/functional/test_segment_box.py --save-plot
-   $ python tests/functional/test_surface_locate.py --save-plot
+   $ python tests/functional/make_segment_box_images.py
+   $ python tests/functional/make_surface_locate_images.py
    $ python tests/functional/make_curve_curve_images.py
    $ python tests/functional/make_surface_surface_images.py
    $ unset MATPLOTLIBRC GENERATE_IMAGES PYTHONPATH

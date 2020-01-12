@@ -14,32 +14,25 @@ import matplotlib.pyplot as plt
 import seaborn
 
 from bezier import _plot_helpers
+from tests.functional import test_surface_locate
 from tests.functional import utils
 
 
-_, INTERSECTIONS = utils.curve_intersections_info()
+def make_plot(surface_index, point_index, save_plot):
+    surface = test_surface_locate.SURFACES[surface_index]
+    point = test_surface_locate.POINTS[:, [point_index]]
+    name = f"test_surface{surface_index}_and_point{point_index}"
 
-
-def make_plot(intersection_info, save_plot):
-    curve1 = intersection_info.curve1
-    curve2 = intersection_info.curve2
-    intersection_pts = intersection_info.intersections
-    ax = curve1.plot(64)
-    curve2.plot(64, ax=ax)
+    ax = surface.plot(64)
     ax.plot(
-        intersection_pts[0, :],
-        intersection_pts[1, :],
-        marker="o",
-        linestyle="None",
-        color="black",
+        point[0, :], point[1, :], color="black", marker="o", linestyle="None"
     )
     ax.axis("scaled")
     _plot_helpers.add_plot_boundary(ax)
-    filename = intersection_info.img_filename
     if save_plot:
-        utils.save_fig(filename)
+        utils.save_fig(name)
     else:
-        plt.title(filename)
+        plt.title(name.replace("_", r"\_"))
         plt.show()
     plt.close(ax.figure)
 
@@ -47,8 +40,9 @@ def make_plot(intersection_info, save_plot):
 def main():
     parser = utils.get_parser()
     args = parser.parse_args()
-    for intersection_info in INTERSECTIONS:
-        make_plot(intersection_info, args.save_plot)
+    for case in test_surface_locate.CASES:
+        surface_index, point_index, _, _ = case
+        make_plot(surface_index, point_index, args.save_plot)
 
 
 if __name__ == "__main__":

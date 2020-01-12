@@ -19,11 +19,9 @@
 import argparse
 import contextlib
 import enum
-import inspect
 import io
 import json
 import os
-import types
 
 import numpy as np
 
@@ -35,19 +33,6 @@ SPACING = np.spacing  # pylint: disable=no-member
 FNL_TESTS_DIR = os.path.abspath(os.path.dirname(__file__))
 _DOCS_DIR = os.path.abspath(os.path.join(FNL_TESTS_DIR, "..", "..", "docs"))
 IMAGES_DIR = os.path.join(_DOCS_DIR, "images")
-
-
-def _start_line(func):
-    """Get the start line (in source) of a function.
-
-    Args:
-        func (~types.FunctionType): A Python function object.
-
-    Returns:
-        int: The start line (in source).
-    """
-    _, line = inspect.getsourcelines(func)
-    return line
 
 
 def get_parser():
@@ -238,6 +223,21 @@ def ulps_away(value1, value2, num_bits=1, eps=0.5 ** 40):
     return abs(value1 - value2) <= num_bits * abs(local_epsilon)
 
 
+def save_fig(filename):
+    """Save the current figure.
+
+    Saves the file in the ``${GIT_ROOT}/docs/images`` directory.
+    """
+    # NOTE: We import the plotting library at runtime to
+    #       avoid the cost for users that only want to compute.
+    #       The ``matplotlib`` import is a tad expensive.
+    import matplotlib.pyplot as plt
+
+    path = os.path.join(IMAGES_DIR, filename)
+    plt.savefig(path, bbox_inches="tight")
+    print(f"Saved {filename}")
+
+
 class IncorrectCount(ValueError):
     """Custom exception for a "very bad" answer.
 
@@ -254,31 +254,7 @@ class Config:
     """
 
     def __init__(self):
-        self.running = False
-        self.save_plot = False
-        self.current_test = None
-        self.parser = get_parser()
         self._wiggle = 8
-
-    def _run(self, mod_globals):
-        """Run all tests, in source order.
-
-        Args:
-            mod_globals (dict): The globals from a module.
-        """
-        found = []
-        for key, value in mod_globals.items():
-            if not key.lower().startswith("test"):
-                continue
-
-            if not isinstance(value, types.FunctionType):
-                continue
-
-            found.append(value)
-        found.sort(key=_start_line)
-        for func in found:
-            self.current_test = func.__name__
-            func()
 
     @contextlib.contextmanager
     def wiggle(self, wiggle):
@@ -309,45 +285,6 @@ class Config:
             approximated.hex(), exact.hex(), self._wiggle
         )
         assert ulps_away(exact, approximated, num_bits=self._wiggle), msg
-
-    def run(self, mod_globals):
-        """Run all tests, in source order.
-
-        Args:
-            mod_globals (dict): The globals from a module.
-        """
-        running = self.running
-        save_plot = self.save_plot
-        try:
-            self.running = True
-            args = self.parser.parse_args()
-            self.save_plot = args.save_plot
-            self._run(mod_globals)
-        finally:
-            self.running = running
-            self.save_plot = save_plot
-            self.current_test = None
-
-    def save_fig(self, extra=""):
-        """Save the current figure.
-
-        Uses the ``current_test`` for the filename and puts it
-        in the ``${GIT_ROOT}/docs/images`` directory.
-
-        Args:
-            extra (Optional[str]): Extra information to put in the filename.
-                Filename defaults to ``{current_test}.png`` but if ``extra``
-                is passed, it will be ``{current_test}{extra}.png``.
-        """
-        # NOTE: We import the plotting library at runtime to
-        #       avoid the cost for users that only want to compute.
-        #       The ``matplotlib`` import is a tad expensive.
-        import matplotlib.pyplot as plt
-
-        filename = "{}{}.png".format(self.current_test, extra)
-        path = os.path.join(IMAGES_DIR, filename)
-        plt.savefig(path, bbox_inches="tight")
-        print("Saved {}".format(filename))
 
 
 class CurveInfo:  # pylint: disable=too-few-public-methods
