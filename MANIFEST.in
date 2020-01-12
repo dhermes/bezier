@@ -1,5 +1,6 @@
 include README.rst LICENSE
 include setup_helpers.py setup_helpers_macos.py setup_helpers_windows.py
+graft src/fortran
 graft src/python/bezier
 global-exclude *.so *.pyd
 global-exclude *.o *.obj
