@@ -2982,8 +2982,9 @@ def compute_area(edges):
        There is also a Fortran implementation of this function, which
        will be used if it can be built.
 
-    Uses Green's theorem to compute the area exactly. See :attr:`.Triangle.area`
-    and :attr:`.CurvedPolygon.area` for more information.
+    Uses Green's theorem to compute the area exactly. See
+    :attr:`.Triangle.area` and :attr:`.CurvedPolygon.area` for more
+    information.
 
     Args:
         edges (Tuple[numpy.ndarray]): A list of ``2 x N`` arrays, each of which

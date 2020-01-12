@@ -30,9 +30,9 @@ from bezier import _py_helpers
 from bezier import _py_intersection_helpers
 from bezier import _py_triangle_helpers
 from bezier import _py_triangle_intersection
+from bezier import _symbolic
 from bezier import _triangle_helpers
 from bezier import _triangle_intersection
-from bezier import _symbolic
 from bezier import curve as _curve_mod
 from bezier import curved_polygon
 
@@ -429,7 +429,8 @@ class Triangle(_base.Base):
            :align: center
 
         .. testsetup:: triangle-barycentric, triangle-barycentric-fail1,
-                       triangle-barycentric-fail2, triangle-barycentric-no-verify
+                       triangle-barycentric-fail2,
+                       triangle-barycentric-no-verify
 
            import numpy as np
            import bezier
@@ -776,8 +777,8 @@ class Triangle(_base.Base):
            make_images.triangle_subdivide2(triangle, sub_triangle_b)
 
         Returns:
-            Tuple[Triangle, Triangle, Triangle, Triangle]: The lower left, central,
-            lower right and upper left sub-triangles (in that order).
+            Tuple[Triangle, Triangle, Triangle, Triangle]: The lower left,
+            central, lower right and upper left sub-triangles (in that order).
         """
         (
             nodes_a,
@@ -1010,7 +1011,8 @@ class Triangle(_base.Base):
 
         Returns:
             List[Union[~bezier.curved_polygon.CurvedPolygon, \
-            ~bezier.triangle.Triangle]]: List of intersections (possibly empty).
+            ~bezier.triangle.Triangle]]: List of intersections (possibly
+            empty).
 
         Raises:
             TypeError: If ``other`` is not a triangle (and ``_verify=True``).

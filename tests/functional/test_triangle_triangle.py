@@ -214,7 +214,8 @@ def extra_verify(strategy, intersections):
         strategy (.IntersectionStrategy): The strategy that was used to
             intersect edges.
         intersections (List[Union[~bezier.curved_polygon.CurvedPolygon, \
-            ~bezier.triangle.Triangle]]): List of intersections (possibly empty).
+            ~bezier.triangle.Triangle]]): List of intersections (possibly
+            empty).
     """
     if strategy == GEOMETRIC and bezier._HAS_SPEEDUP:
         edge_infos = [

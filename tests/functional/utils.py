@@ -916,8 +916,8 @@ class TriangleIntersectionsInfo:
 
         Args:
             info (dict): The JSON data of the triangle intersection.
-            triangles (Dict[str, TriangleInfo]): An already parsed dictionary of
-                triangle information.
+            triangles (Dict[str, TriangleInfo]): An already parsed dictionary
+                of triangle information.
 
         Returns:
             TriangleIntersectionsInfo: The intersection info parsed from
