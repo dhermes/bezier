@@ -77,7 +77,7 @@ contains
     ! Variables outside of signature.
     logical :: case_success
     integer :: case_id
-    character(23) :: name
+    character(24) :: name
     real(c_double) :: nodes(2, 6)
     real(c_double) :: updated_s, updated_t
 
@@ -132,7 +132,7 @@ contains
     real(c_double), allocatable :: nodes(:, :)
     real(c_double) :: x_val, y_val, s_val, t_val
     real(c_double) :: expected_s, expected_t
-    character(23) :: name
+    character(24) :: name
 
     case_id = 1
     name = "newton_refine (Triangle)"
@@ -957,7 +957,7 @@ contains
     ! Variables outside of signature.
     logical :: case_success
     integer :: case_id
-    character(28) :: name
+    character(29) :: name
     real(c_double) :: linear1(2, 3), linear2(2, 3)
     real(c_double) :: quadratic1(2, 6), quadratic2(2, 6)
     type(Intersection), allocatable :: intersections(:)
@@ -1755,7 +1755,7 @@ contains
     ! Variables outside of signature.
     logical :: case_success
     integer :: case_id
-    character(18) :: name
+    character(19) :: name
     integer(c_int) :: num_intersected, contained, status
     real(c_double) :: linear1(2, 3), linear2(2, 3)
     real(c_double) :: quadratic1(2, 6), quadratic2(2, 6)
@@ -2082,7 +2082,7 @@ contains
     ! Variables outside of signature.
     logical :: case_success
     integer :: case_id
-    character(22) :: name
+    character(23) :: name
     real(c_double) :: linear1(2, 3), linear2(2, 3)
     real(c_double) :: quadratic1(2, 6), quadratic2(2, 6)
     integer(c_int) :: num_intersected, contained, status

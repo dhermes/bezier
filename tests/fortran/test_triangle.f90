@@ -538,7 +538,7 @@ contains
     real(c_double) :: &
          weights0(3), weights1(3), weights2(3), weights3(3), &
          weights4(3), weights5(3)
-    character(18) :: name
+    character(19) :: name
 
     case_id = 1
     name = "specialize_triangle"
@@ -864,7 +864,7 @@ contains
     real(c_double) :: expected_a3(2, 10), expected_b3(2, 10)
     real(c_double) :: expected_c3(2, 10), expected_d3(2, 10)
     integer :: case_id
-    character(25) :: name
+    character(26) :: name
 
     case_id = 1
     name = "subdivide_nodes (Triangle)"
