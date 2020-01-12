@@ -10,8 +10,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef BEZIER_SURFACE_H
-#define BEZIER_SURFACE_H
+#ifndef BEZIER_TRIANGLE_H
+#define BEZIER_TRIANGLE_H
 
 #include <stdbool.h>
 
@@ -52,4 +52,4 @@ void BEZ_compute_area(int* num_edges, int* sizes,
 }
 #endif
 
-#endif /* BEZIER_SURFACE_H */
+#endif /* BEZIER_TRIANGLE_H */

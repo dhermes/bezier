@@ -663,12 +663,12 @@ _QUARTIC_BERNSTEIN_FACTOR = 36.0
 # List of constants for ``basic_interior_combine()``. In each constant, each
 # row is a return value of ``ends_to_curve()``. The second and third constant
 # are just obtained from the first by rotating the rows.
-FIRST_SURFACE_INFO = (
+FIRST_TRIANGLE_INFO = (
     ((0, 0.0, 1.0), (1, 0.0, 1.0), (2, 0.0, 1.0)),
     ((1, 0.0, 1.0), (2, 0.0, 1.0), (0, 0.0, 1.0)),
     ((2, 0.0, 1.0), (0, 0.0, 1.0), (1, 0.0, 1.0)),
 )
-SECOND_SURFACE_INFO = (
+SECOND_TRIANGLE_INFO = (
     ((3, 0.0, 1.0), (4, 0.0, 1.0), (5, 0.0, 1.0)),
     ((4, 0.0, 1.0), (5, 0.0, 1.0), (3, 0.0, 1.0)),
     ((5, 0.0, 1.0), (3, 0.0, 1.0), (4, 0.0, 1.0)),
@@ -2713,10 +2713,10 @@ def basic_interior_combine(intersections, max_edges=10):
         )
         result.append(edge_info)
     if len(result) == 1:
-        if result[0] in FIRST_SURFACE_INFO:
+        if result[0] in FIRST_TRIANGLE_INFO:
             return None, True
 
-        elif result[0] in SECOND_SURFACE_INFO:
+        elif result[0] in SECOND_TRIANGLE_INFO:
             return None, False
 
     return result, None

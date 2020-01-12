@@ -10,8 +10,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef BEZIER_SURFACE_INTERSECTION_H
-#define BEZIER_SURFACE_INTERSECTION_H
+#ifndef BEZIER_TRIANGLE_INTERSECTION_H
+#define BEZIER_TRIANGLE_INTERSECTION_H
 
 #include "bezier/status.h"
 
@@ -48,4 +48,4 @@ void BEZ_free_surface_intersections_workspace(void);
 }
 #endif
 
-#endif /* BEZIER_SURFACE_INTERSECTION_H */
+#endif /* BEZIER_TRIANGLE_INTERSECTION_H */

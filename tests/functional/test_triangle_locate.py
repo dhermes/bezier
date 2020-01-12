@@ -19,12 +19,12 @@ from tests.functional import utils
 
 CONFIG = utils.Config()
 # F1 = sympy.Matrix([[s, t]])
-SURFACE1 = bezier.Triangle.from_nodes(
+TRIANGLE1 = bezier.Triangle.from_nodes(
     np.asfortranarray([[0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]), copy=False
 )
 # F2 = sympy.Matrix([[
 #     (-t**2 + 2 * s + t) / 2, (s**2 + 2 * s * t - s + 2 * t) / 2]])
-SURFACE2 = bezier.Triangle.from_nodes(
+TRIANGLE2 = bezier.Triangle.from_nodes(
     np.asfortranarray(
         [[0.0, 0.5, 1.0, 0.25, 0.75, 0.0], [0.0, -0.25, 0.0, 0.5, 0.75, 1.0]]
     ),
@@ -32,7 +32,7 @@ SURFACE2 = bezier.Triangle.from_nodes(
 )
 # F3 = sympy.Matrix([[
 #     -(2 * s * t - 4 * s - t) / 4, (s**2 - s * t + 4 * t) / 4]])
-SURFACE3 = bezier.Triangle.from_nodes(
+TRIANGLE3 = bezier.Triangle.from_nodes(
     np.asfortranarray(
         [
             [0.0, 0.5, 1.0, 0.125, 0.375, 0.25],
@@ -42,17 +42,17 @@ SURFACE3 = bezier.Triangle.from_nodes(
     copy=False,
 )
 # F4 = sympy.Matrix([[2 * (s + 2 * t) * (1 - t), 2 * t * (s + 1)]])
-SURFACE4 = bezier.Triangle.from_nodes(
+TRIANGLE4 = bezier.Triangle.from_nodes(
     np.asfortranarray(
         [[0.0, 1.0, 2.0, 2.0, 2.0, 0.0], [0.0, 0.0, 0.0, 1.0, 2.0, 2.0]]
     ),
     copy=False,
 )
-SURFACES = {
-    1: SURFACE1,
-    2: SURFACE2,
-    3: SURFACE3,
-    4: SURFACE4,
+TRIANGLES = {
+    1: TRIANGLE1,
+    2: TRIANGLE2,
+    3: TRIANGLE3,
+    4: TRIANGLE4,
 }
 POINTS = np.asfortranarray(
     [[0.0, 0.25, 0.59375, 0.265625, 1.25], [0.0, 0.25, 0.25, 0.73046875, 1.25]]
@@ -84,7 +84,7 @@ def id_func(case):
 @pytest.mark.parametrize("case", CASES, ids=id_func)
 def test_locate(case):
     surface_index, point_index, expected_s, expected_t = case
-    surface = SURFACES[surface_index]
+    surface = TRIANGLES[surface_index]
 
     point = POINTS[:, [point_index]]
     if expected_s is None and expected_t is None:

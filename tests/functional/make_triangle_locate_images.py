@@ -19,7 +19,7 @@ from tests.functional import utils
 
 
 def make_plot(surface_index, point_index, save_plot):
-    surface = test_surface_locate.SURFACES[surface_index]
+    surface = test_surface_locate.TRIANGLES[surface_index]
     point = test_surface_locate.POINTS[:, [point_index]]
     name = f"test_surface{surface_index}_and_point{point_index}"
 
