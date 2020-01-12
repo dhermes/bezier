@@ -23,8 +23,8 @@ Performance Optimizations
    -  using Newton's method to refine a curve-curve intersection
 
 -  `Adding <https://github.com/dhermes/bezier/commit/dcf40f4c9ed2167e96fc8f4675aeedcc2d811a0b>`__
-   ``_verify`` switch to ``Surface.locate()``
-   (`doc <http://bezier.readthedocs.io/en/0.4.0/reference/bezier.surface.html#bezier.surface.Surface.locate>`__)
+   ``_verify`` switch to ``Triangle.locate()``
+   (`doc <http://bezier.readthedocs.io/en/0.4.0/reference/bezier.surface.html#bezier.surface.Triangle.locate>`__)
    and ``Curve.intersect()``
    (`doc <http://bezier.readthedocs.io/en/0.4.0/reference/bezier.curve.html#bezier.curve.Curve.intersect>`__)
    to selectively disable overly defensive value checking. (Making sure
@@ -37,7 +37,7 @@ Performance Optimizations
    `6064e4c <https://github.com/dhermes/bezier/commit/6064e4c314d8d717873d46e6ef35c0bbc9772728>`__,
    `f1804f4 <https://github.com/dhermes/bezier/commit/f1804f442f190d0bc36782e940ee0b8a68c5ecd6>`__)
 -  Using Horner's method in ``Curve.evaluate_multi()`` and
-   ``Surface.evaluate_barycentric()``, rather than inferior (sometimes
+   ``Triangle.evaluate_barycentric()``, rather than inferior (sometimes
    non-vectorized) approaches
    (`dee8181 <https://github.com/dhermes/bezier/commit/dee81813e34d5f69c52f48aa90f7c11eb4ddc3ec>`__,
    `2611e64 <https://github.com/dhermes/bezier/commit/2611e64a735e46317cce08a41270d61024705fd9>`__)
@@ -51,8 +51,8 @@ New Features
 
 -  `Adding <https://github.com/dhermes/bezier/commit/e72ca20f0f4ee0f6399b56805b30fe67a02aa04f>`__
    optional ``strategy`` argument (one of geometric or algebraic) to the
-   ``Surface.intersect()``
-   `method <http://bezier.readthedocs.io/en/0.4.0/reference/bezier.surface.html#bezier.surface.Surface.intersect>`__
+   ``Triangle.intersect()``
+   `method <http://bezier.readthedocs.io/en/0.4.0/reference/bezier.surface.html#bezier.surface.Triangle.intersect>`__
 
    -  Added "algebraic" ``IntersectionStrategy``
       `enum <http://bezier.readthedocs.io/en/0.4.0/reference/bezier.curve.html#bezier.curve.IntersectionStrategy>`__
@@ -75,8 +75,8 @@ Interface Changes
    `Removing <https://github.com/dhermes/bezier/commit/828f4238971b12a9d494ce38387cec855d063c91>`__
    ``show`` keyword from ``Curve.plot()``
    (`doc <http://bezier.readthedocs.io/en/0.4.0/reference/bezier.curve.html#bezier.curve.Curve.plot>`__),
-   ``Surface.plot()``
-   (`doc <http://bezier.readthedocs.io/en/0.4.0/reference/bezier.surface.html#bezier.surface.Surface.plot>`__)
+   ``Triangle.plot()``
+   (`doc <http://bezier.readthedocs.io/en/0.4.0/reference/bezier.surface.html#bezier.surface.Triangle.plot>`__)
    and ``CurvedPolygon.plot()``
    (`doc <http://bezier.readthedocs.io/en/0.4.0/reference/bezier.curved_polygon.html#bezier.curved_polygon.CurvedPolygon.plot>`__)
 -  `Adding <https://github.com/dhermes/bezier/commit/ce838a2aaef2281f06603d1c76324a3aa8289cf9>`__
@@ -87,14 +87,14 @@ Interface Changes
    `method <http://bezier.readthedocs.io/en/0.4.0/reference/bezier.curve.html#bezier.curve.Curve.plot>`__
 -  (**Breaking change**)
    `Splitting <https://github.com/dhermes/bezier/commit/cea88285b8c9002a57efd88e69b5bd2ef46e7ca7>`__
-   the ``Surface.evaluate_multi()``
-   `method <http://bezier.readthedocs.io/en/0.3.0/reference/bezier.surface.html#bezier.surface.Surface.evaluate_multi>`__
-   into ``Surface.evaluate_barycentric_multi()``
-   (`doc <http://bezier.readthedocs.io/en/0.4.0/reference/bezier.surface.html#bezier.surface.Surface.evaluate_barycentric_multi>`__)
-   and ``Surface.evaluate_cartesian_multi()``
-   (`doc <http://bezier.readthedocs.io/en/0.4.0/reference/bezier.surface.html#bezier.surface.Surface.evaluate_cartesian_multi>`__)
+   the ``Triangle.evaluate_multi()``
+   `method <http://bezier.readthedocs.io/en/0.3.0/reference/bezier.surface.html#bezier.surface.Triangle.evaluate_multi>`__
+   into ``Triangle.evaluate_barycentric_multi()``
+   (`doc <http://bezier.readthedocs.io/en/0.4.0/reference/bezier.surface.html#bezier.surface.Triangle.evaluate_barycentric_multi>`__)
+   and ``Triangle.evaluate_cartesian_multi()``
+   (`doc <http://bezier.readthedocs.io/en/0.4.0/reference/bezier.surface.html#bezier.surface.Triangle.evaluate_cartesian_multi>`__)
 -  `Adding <https://github.com/dhermes/bezier/commit/f0fca088ac6f70c39f9f5af457c29e3c82f094b5>`__
-   ``__dict__`` helpers on ``Curve``, ``CurvedPolygon`` and ``Surface``.
+   ``__dict__`` helpers on ``Curve``, ``CurvedPolygon`` and ``Triangle``.
    These are ``@property``\ s intended only for REPL use, since classes
    with ``__slots__`` no longer have a ``__dict__`` attribute.
 

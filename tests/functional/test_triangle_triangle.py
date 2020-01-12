@@ -214,7 +214,7 @@ def extra_verify(strategy, intersections):
         strategy (.IntersectionStrategy): The strategy that was used to
             intersect edges.
         intersections (List[Union[~bezier.curved_polygon.CurvedPolygon, \
-            ~bezier.surface.Surface]]): List of intersections (possibly empty).
+            ~bezier.surface.Triangle]]): List of intersections (possibly empty).
     """
     if strategy == GEOMETRIC and bezier._HAS_SPEEDUP:
         edge_infos = [
@@ -275,8 +275,8 @@ def surface_surface_check(strategy, surface1, surface2, *all_intersected):
                 CONFIG.assert_close(edge._nodes[0, 0], node[0])
                 CONFIG.assert_close(edge._nodes[1, 0], node[1])
         else:
-            assert isinstance(intersection, bezier.Surface)
-            assert isinstance(intersected, utils.SurfaceIntersectionInfo)
+            assert isinstance(intersection, bezier.Triangle)
+            assert isinstance(intersected, utils.TriangleIntersectionInfo)
             if intersected.first:
                 assert intersection is surface1
             else:

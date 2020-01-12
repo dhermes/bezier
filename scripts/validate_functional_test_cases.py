@@ -90,7 +90,7 @@ def verify_surfaces(exit_status):
     """
     surfaces_file = DATA_DIR / "surfaces.json"
     surface_schema_file = SCHEMA_DIR / "surface.json"
-    failed = _verify_map(surfaces_file, surface_schema_file, "Surface")
+    failed = _verify_map(surfaces_file, surface_schema_file, "Triangle")
     if failed:
         return exit_status | 2
 
@@ -168,7 +168,7 @@ def verify_surface_intersections(exit_status):
     intersections_file = DATA_DIR / "surface_intersections.json"
     intersections_schema_file = SCHEMA_DIR / "surface_intersection.json"
     failed = _verify_list(
-        intersections_file, intersections_schema_file, "Surface Intersection"
+        intersections_file, intersections_schema_file, "Triangle Intersection"
     )
     if failed:
         return exit_status | 8

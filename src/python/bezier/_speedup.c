@@ -18386,7 +18386,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_84surface_intersections(CYTHON_UNUSE
   int __pyx_v_segment_ends_size;
   int __pyx_v_segments_size;
   int __pyx_v_num_intersected;
-  enum SurfaceContained __pyx_v_contained;
+  enum TriangleContained __pyx_v_contained;
   enum Status __pyx_v_status;
   CYTHON_UNUSED PyObject *__pyx_v__ = NULL;
   PyObject *__pyx_r = NULL;
@@ -18708,7 +18708,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_84surface_intersections(CYTHON_UNUSE
  *     )
  *
  *     if status == bezier._status.Status.SUCCESS:             # <<<<<<<<<<<<<<
- *         if contained == bezier._surface_intersection.SurfaceContained.FIRST:
+ *         if contained == bezier._surface_intersection.TriangleContained.FIRST:
  *             return None, True, ()
  */
   switch (__pyx_v_status) {
@@ -18717,18 +18717,18 @@ static PyObject *__pyx_pf_6bezier_8_speedup_84surface_intersections(CYTHON_UNUSE
     /* "bezier/_speedup.pyx":1117
  *
  *     if status == bezier._status.Status.SUCCESS:
- *         if contained == bezier._surface_intersection.SurfaceContained.FIRST:             # <<<<<<<<<<<<<<
+ *         if contained == bezier._surface_intersection.TriangleContained.FIRST:             # <<<<<<<<<<<<<<
  *             return None, True, ()
- *         elif contained == bezier._surface_intersection.SurfaceContained.SECOND:
+ *         elif contained == bezier._surface_intersection.TriangleContained.SECOND:
  */
     switch (__pyx_v_contained) {
       case FIRST:
 
       /* "bezier/_speedup.pyx":1118
  *     if status == bezier._status.Status.SUCCESS:
- *         if contained == bezier._surface_intersection.SurfaceContained.FIRST:
+ *         if contained == bezier._surface_intersection.TriangleContained.FIRST:
  *             return None, True, ()             # <<<<<<<<<<<<<<
- *         elif contained == bezier._surface_intersection.SurfaceContained.SECOND:
+ *         elif contained == bezier._surface_intersection.TriangleContained.SECOND:
  *             return None, False, ()
  */
       __Pyx_XDECREF(__pyx_r);
@@ -18739,16 +18739,16 @@ static PyObject *__pyx_pf_6bezier_8_speedup_84surface_intersections(CYTHON_UNUSE
       /* "bezier/_speedup.pyx":1117
  *
  *     if status == bezier._status.Status.SUCCESS:
- *         if contained == bezier._surface_intersection.SurfaceContained.FIRST:             # <<<<<<<<<<<<<<
+ *         if contained == bezier._surface_intersection.TriangleContained.FIRST:             # <<<<<<<<<<<<<<
  *             return None, True, ()
- *         elif contained == bezier._surface_intersection.SurfaceContained.SECOND:
+ *         elif contained == bezier._surface_intersection.TriangleContained.SECOND:
  */
       break;
       case SECOND:
 
       /* "bezier/_speedup.pyx":1120
  *             return None, True, ()
- *         elif contained == bezier._surface_intersection.SurfaceContained.SECOND:
+ *         elif contained == bezier._surface_intersection.TriangleContained.SECOND:
  *             return None, False, ()             # <<<<<<<<<<<<<<
  *         else:
  *             # Assumes, but does not check, that ``contained`` is equal to
@@ -18759,9 +18759,9 @@ static PyObject *__pyx_pf_6bezier_8_speedup_84surface_intersections(CYTHON_UNUSE
       goto __pyx_L0;
 
       /* "bezier/_speedup.pyx":1119
- *         if contained == bezier._surface_intersection.SurfaceContained.FIRST:
+ *         if contained == bezier._surface_intersection.TriangleContained.FIRST:
  *             return None, True, ()
- *         elif contained == bezier._surface_intersection.SurfaceContained.SECOND:             # <<<<<<<<<<<<<<
+ *         elif contained == bezier._surface_intersection.TriangleContained.SECOND:             # <<<<<<<<<<<<<<
  *             return None, False, ()
  *         else:
  */
@@ -18870,7 +18870,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_84surface_intersections(CYTHON_UNUSE
  *     )
  *
  *     if status == bezier._status.Status.SUCCESS:             # <<<<<<<<<<<<<<
- *         if contained == bezier._surface_intersection.SurfaceContained.FIRST:
+ *         if contained == bezier._surface_intersection.TriangleContained.FIRST:
  *             return None, True, ()
  */
     break;
@@ -36430,9 +36430,9 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
 
   /* "bezier/_speedup.pyx":1118
  *     if status == bezier._status.Status.SUCCESS:
- *         if contained == bezier._surface_intersection.SurfaceContained.FIRST:
+ *         if contained == bezier._surface_intersection.TriangleContained.FIRST:
  *             return None, True, ()             # <<<<<<<<<<<<<<
- *         elif contained == bezier._surface_intersection.SurfaceContained.SECOND:
+ *         elif contained == bezier._surface_intersection.TriangleContained.SECOND:
  *             return None, False, ()
  */
   __pyx_tuple__9 = PyTuple_Pack(3, Py_None, Py_True, __pyx_empty_tuple); if (unlikely(!__pyx_tuple__9)) __PYX_ERR(0, 1118, __pyx_L1_error)
@@ -36441,7 +36441,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
 
   /* "bezier/_speedup.pyx":1120
  *             return None, True, ()
- *         elif contained == bezier._surface_intersection.SurfaceContained.SECOND:
+ *         elif contained == bezier._surface_intersection.TriangleContained.SECOND:
  *             return None, False, ()             # <<<<<<<<<<<<<<
  *         else:
  *             # Assumes, but does not check, that ``contained`` is equal to

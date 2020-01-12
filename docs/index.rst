@@ -25,7 +25,7 @@
 This library provides:
 
 * Support for B |eacute| zier :mod:`Curves <bezier.curve>`
-* Support for B |eacute| zier :mod:`Surfaces <bezier.surface>`
+* Support for B |eacute| zier :mod:`Triangles <bezier.surface>`
 
 Dive in and take a look!
 

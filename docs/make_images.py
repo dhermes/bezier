@@ -301,7 +301,7 @@ def curve_intersect(curve1, curve2, s_vals):
 
 
 def surface_constructor(surface):
-    """Image for :class`.Surface` docstring."""
+    """Image for :class`.Triangle` docstring."""
     if NO_IMAGES:
         return
 
@@ -365,7 +365,7 @@ def surface_constructor(surface):
 
 
 def surface_evaluate_barycentric(surface, point):
-    """Image for :meth`.Surface.evaluate_barycentric` docstring."""
+    """Image for :meth`.Triangle.evaluate_barycentric` docstring."""
     if NO_IMAGES:
         return
 
@@ -380,7 +380,7 @@ def surface_evaluate_barycentric(surface, point):
 
 
 def surface_evaluate_cartesian_multi(surface, points):
-    """Image for :meth`.Surface.evaluate_cartesian_multi` docstring."""
+    """Image for :meth`.Triangle.evaluate_cartesian_multi` docstring."""
     if NO_IMAGES:
         return
 
@@ -421,7 +421,7 @@ def surface_evaluate_cartesian_multi(surface, points):
 
 
 def surface_evaluate_barycentric_multi(surface, points):
-    """Image for :meth`.Surface.evaluate_barycentric_multi` docstring."""
+    """Image for :meth`.Triangle.evaluate_barycentric_multi` docstring."""
     if NO_IMAGES:
         return
 
@@ -470,7 +470,7 @@ def surface_evaluate_barycentric_multi(surface, points):
 
 
 def surface_is_valid1(surface):
-    """Image for :meth`.Surface.is_valid` docstring."""
+    """Image for :meth`.Triangle.is_valid` docstring."""
     if NO_IMAGES:
         return
 
@@ -482,7 +482,7 @@ def surface_is_valid1(surface):
 
 
 def surface_is_valid2(surface):
-    """Image for :meth`.Surface.is_valid` docstring."""
+    """Image for :meth`.Triangle.is_valid` docstring."""
     if NO_IMAGES:
         return
 
@@ -494,7 +494,7 @@ def surface_is_valid2(surface):
 
 
 def surface_is_valid3(surface):
-    """Image for :meth`.Surface.is_valid` docstring."""
+    """Image for :meth`.Triangle.is_valid` docstring."""
     if NO_IMAGES:
         return
 
@@ -534,11 +534,11 @@ def surface_is_valid3(surface):
 
 
 def surface_subdivide1():
-    """Image for :meth`.Surface.subdivide` docstring."""
+    """Image for :meth`.Triangle.subdivide` docstring."""
     if NO_IMAGES:
         return
 
-    surface = bezier.Surface.from_nodes(
+    surface = bezier.Triangle.from_nodes(
         np.asfortranarray([[0.0, 1.0, 0.0], [0.0, 0.0, 1.0]])
     )
     surf_a, surf_b, surf_c, surf_d = surface.subdivide()
@@ -599,7 +599,7 @@ def add_edges(ax, surface, s_vals, color):
 
 
 def surface_subdivide2(surface, sub_surface_b):
-    """Image for :meth`.Surface.subdivide` docstring."""
+    """Image for :meth`.Triangle.subdivide` docstring."""
     if NO_IMAGES:
         return
 
@@ -661,7 +661,7 @@ def curved_polygon_constructor2(curved_poly):
 
 
 def surface_locate(surface, point):
-    """Image for :meth`.Surface.locate` docstring."""
+    """Image for :meth`.Triangle.locate` docstring."""
     if NO_IMAGES:
         return
 
@@ -717,7 +717,7 @@ def newton_refine_surface(surface, x_val, y_val, s, t, new_s, new_t):
 
     figure, (ax1, ax2) = plt.subplots(1, 2)
     # Plot features of the parameter space in ax1.
-    tri_surf = bezier.Surface.from_nodes(
+    tri_surf = bezier.Triangle.from_nodes(
         np.asfortranarray([[0.0, 1.0, 0.0], [0.0, 0.0, 1.0]])
     )
     tri_surf.plot(2, ax=ax1)
@@ -800,12 +800,12 @@ def classify_intersection1(s, curve1, tangent1, curve2, tangent2):
     if NO_IMAGES:
         return
 
-    surface1 = bezier.Surface.from_nodes(
+    surface1 = bezier.Triangle.from_nodes(
         np.asfortranarray(
             [[1.0, 1.75, 2.0, 1.0, 1.5, 1.0], [0.0, 0.25, 1.0, 1.0, 1.5, 2.0]]
         )
     )
-    surface2 = bezier.Surface.from_nodes(
+    surface2 = bezier.Triangle.from_nodes(
         np.asfortranarray(
             [
                 [0.0, 1.6875, 2.0, 0.25, 1.25, 0.5],
@@ -842,12 +842,12 @@ def classify_intersection2(s, curve1, curve2):
     if NO_IMAGES:
         return
 
-    surface1 = bezier.Surface.from_nodes(
+    surface1 = bezier.Triangle.from_nodes(
         np.asfortranarray(
             [[1.0, 1.5, 2.0, 1.25, 1.75, 1.5], [0.0, 1.0, 0.0, 1.0, 1.0, 2.0]]
         )
     )
-    surface2 = bezier.Surface.from_nodes(
+    surface2 = bezier.Triangle.from_nodes(
         np.asfortranarray(
             [[0.0, 1.5, 3.0, 0.75, 2.25, 1.5], [0.0, 1.0, 0.0, 2.0, 2.0, 4.0]]
         )
@@ -863,7 +863,7 @@ def classify_intersection3(s, curve1, curve2):
     if NO_IMAGES:
         return
 
-    surface1 = bezier.Surface.from_nodes(
+    surface1 = bezier.Triangle.from_nodes(
         np.asfortranarray(
             [
                 [2.0, 1.5, 1.0, 1.75, 1.25, 1.5],
@@ -871,7 +871,7 @@ def classify_intersection3(s, curve1, curve2):
             ]
         )
     )
-    surface2 = bezier.Surface.from_nodes(
+    surface2 = bezier.Triangle.from_nodes(
         np.asfortranarray(
             [
                 [3.0, 1.5, 0.0, 2.25, 0.75, 1.5],
@@ -890,7 +890,7 @@ def classify_intersection4(s, curve1, curve2):
     if NO_IMAGES:
         return
 
-    surface1 = bezier.Surface.from_nodes(
+    surface1 = bezier.Triangle.from_nodes(
         np.asfortranarray(
             [
                 [2.0, 1.5, 1.0, 1.75, 1.25, 1.5],
@@ -898,7 +898,7 @@ def classify_intersection4(s, curve1, curve2):
             ]
         )
     )
-    surface2 = bezier.Surface.from_nodes(
+    surface2 = bezier.Triangle.from_nodes(
         np.asfortranarray(
             [[0.0, 1.5, 3.0, 0.75, 2.25, 1.5], [0.0, 1.0, 0.0, 2.0, 2.0, 4.0]]
         )
@@ -914,7 +914,7 @@ def classify_intersection5(s, curve1, curve2):
     if NO_IMAGES:
         return
 
-    surface1 = bezier.Surface.from_nodes(
+    surface1 = bezier.Triangle.from_nodes(
         np.asfortranarray(
             [
                 [1.0, 1.5, 2.0, 1.25, 1.75, 1.5],
@@ -922,7 +922,7 @@ def classify_intersection5(s, curve1, curve2):
             ]
         )
     )
-    surface2 = bezier.Surface.from_nodes(
+    surface2 = bezier.Triangle.from_nodes(
         np.asfortranarray(
             [
                 [3.0, 1.5, 0.0, 2.25, 0.75, 1.5],
@@ -939,7 +939,7 @@ def classify_intersection5(s, curve1, curve2):
     # Now add the "degenerate" intersection polygons. The first
     # comes from specializing to
     # left1(0.5, 1.0)-left2(0.0, 0.25)-right1(0.375, 0.5)
-    surface3 = bezier.Surface.from_nodes(
+    surface3 = bezier.Triangle.from_nodes(
         np.asfortranarray(
             [
                 [1.5, 1.75, 2.0, 1.6875, 1.9375, 1.875],
@@ -951,7 +951,7 @@ def classify_intersection5(s, curve1, curve2):
     surface3.plot(256, ax=ax1)
     # The second comes from specializing to
     # left1(0.0, 0.5)-right1(0.5, 0.625)-left3(0.75, 1.0)
-    surface4 = bezier.Surface.from_nodes(
+    surface4 = bezier.Triangle.from_nodes(
         np.asfortranarray(
             [
                 [1.0, 1.25, 1.5, 1.0625, 1.3125, 1.125],
@@ -978,7 +978,7 @@ def classify_intersection6(s, curve1, curve2):
     if NO_IMAGES:
         return
 
-    surface1 = bezier.Surface.from_nodes(
+    surface1 = bezier.Triangle.from_nodes(
         np.asfortranarray(
             [
                 [-0.125, -0.125, 0.375, -0.0625, 0.1875, 0.0],
@@ -986,7 +986,7 @@ def classify_intersection6(s, curve1, curve2):
             ]
         )
     )
-    surface2 = bezier.Surface.from_nodes(
+    surface2 = bezier.Triangle.from_nodes(
         np.asfortranarray(
             [
                 [-0.25, -0.25, 0.75, 0.125, 0.625, 0.5],
@@ -1005,7 +1005,7 @@ def classify_intersection7(s, curve1a, curve1b, curve2):
     if NO_IMAGES:
         return
 
-    surface1 = bezier.Surface.from_nodes(
+    surface1 = bezier.Triangle.from_nodes(
         np.asfortranarray(
             [
                 [0.0, 4.5, 9.0, 0.0, 4.5, 0.0],
@@ -1013,7 +1013,7 @@ def classify_intersection7(s, curve1a, curve1b, curve2):
             ]
         )
     )
-    surface2 = bezier.Surface.from_nodes(
+    surface2 = bezier.Triangle.from_nodes(
         np.asfortranarray(
             [
                 [11.25, 9.0, 2.75, 8.125, 3.875, 5.0],
@@ -1180,7 +1180,7 @@ def classify_intersection9(s, curve1, curve2):
     if NO_IMAGES:
         return
 
-    surface1 = bezier.Surface.from_nodes(
+    surface1 = bezier.Triangle.from_nodes(
         np.asfortranarray(
             [
                 [0.0, 20.0, 40.0, 10.0, 30.0, 20.0],
@@ -1188,7 +1188,7 @@ def classify_intersection9(s, curve1, curve2):
             ]
         )
     )
-    surface2 = bezier.Surface.from_nodes(
+    surface2 = bezier.Triangle.from_nodes(
         np.asfortranarray(
             [
                 [40.0, 20.0, 0.0, 30.0, 10.0, 20.0],
@@ -1241,7 +1241,7 @@ def curve_elevate(curve, elevated):
 
 
 def surface_elevate(surface, elevated):
-    """Image for :meth:`.surface.Surface.elevate` docstring."""
+    """Image for :meth:`.surface.Triangle.elevate` docstring."""
     if NO_IMAGES:
         return
 
@@ -1263,12 +1263,12 @@ def surface_elevate(surface, elevated):
 
 
 def unit_triangle():
-    """Image for :class:`.surface.Surface` docstring."""
+    """Image for :class:`.surface.Triangle` docstring."""
     if NO_IMAGES:
         return
 
     nodes = np.asfortranarray([[0.0, 1.0, 0.0], [0.0, 0.0, 1.0]])
-    surface = bezier.Surface(nodes, degree=1)
+    surface = bezier.Triangle(nodes, degree=1)
     ax = surface.plot(256)
     ax.axis("scaled")
     _plot_helpers.add_plot_boundary(ax)

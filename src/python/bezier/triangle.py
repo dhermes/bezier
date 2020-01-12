@@ -10,7 +10,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Helper for B |eacute| zier Surfaces / Triangles.
+"""Helper for B |eacute| zier Triangles / Triangles.
 
 .. |eacute| unicode:: U+000E9 .. LATIN SMALL LETTER E WITH ACUTE
    :trim:
@@ -46,7 +46,7 @@ _LOCATE_ERROR_TEMPLATE = (
 _STRATEGY = _py_intersection_helpers.IntersectionStrategy
 
 
-class Surface(_base.Base):
+class Triangle(_base.Base):
     r"""Represents a B |eacute| zier `surface`_.
 
     .. _surface: https://en.wikipedia.org/wiki/B%C3%A9zier_triangle
@@ -160,9 +160,9 @@ class Surface(_base.Base):
        ...     [0.0, 0.5, 1.0 , 0.125, 0.375, 0.25],
        ...     [0.0, 0.0, 0.25, 0.5  , 0.375, 1.0 ],
        ... ])
-       >>> surface = bezier.Surface(nodes, degree=2)
+       >>> surface = bezier.Triangle(nodes, degree=2)
        >>> surface
-       <Surface (degree=2, dimension=2)>
+       <Triangle (degree=2, dimension=2)>
 
     .. testcleanup:: surface-constructor
 
@@ -193,14 +193,14 @@ class Surface(_base.Base):
     )
 
     def __init__(self, nodes, degree, *, copy=True, verify=True):
-        super(Surface, self).__init__(nodes, copy=copy)
+        super(Triangle, self).__init__(nodes, copy=copy)
         self._degree = degree
         self._edges = None
         self._verify_degree(verify)
 
     @classmethod
     def from_nodes(cls, nodes, copy=True):
-        """Create a :class:`.Surface` from nodes.
+        """Create a :class:`.Triangle` from nodes.
 
         Computes the ``degree`` based on the shape of ``nodes``.
 
@@ -214,7 +214,7 @@ class Surface(_base.Base):
                 freely mutate ``nodes`` after passing in.
 
         Returns:
-            Surface: The constructed surface.
+            Triangle: The constructed surface.
         """
         nodes_np = _base.sequence_to_array(nodes)
         _, num_nodes = nodes_np.shape
@@ -371,7 +371,7 @@ class Surface(_base.Base):
            ...     [0.0,  0.5   , 1.0, 0.1875, 0.625, 0.0],
            ...     [0.0, -0.1875, 0.0, 0.5   , 0.625, 1.0],
            ... ])
-           >>> surface = bezier.Surface(nodes, degree=2)
+           >>> surface = bezier.Triangle(nodes, degree=2)
            >>> edge1, _, _ = surface.edges
            >>> edge1
            <Curve (degree=2, dimension=2)>
@@ -437,7 +437,7 @@ class Surface(_base.Base):
                [0.0, 0.5, 1.0 , 0.125, 0.375, 0.25],
                [0.0, 0.0, 0.25, 0.5  , 0.375, 1.0 ],
            ])
-           surface = bezier.Surface(nodes, degree=2)
+           surface = bezier.Triangle(nodes, degree=2)
 
         .. doctest:: surface-barycentric
            :options: +NORMALIZE_WHITESPACE
@@ -446,7 +446,7 @@ class Surface(_base.Base):
            ...     [0.0, 0.5, 1.0 , 0.125, 0.375, 0.25],
            ...     [0.0, 0.0, 0.25, 0.5  , 0.375, 1.0 ],
            ... ])
-           >>> surface = bezier.Surface(nodes, degree=2)
+           >>> surface = bezier.Triangle(nodes, degree=2)
            >>> point = surface.evaluate_barycentric(0.125, 0.125, 0.75)
            >>> point
            array([[0.265625  ],
@@ -533,9 +533,9 @@ class Surface(_base.Base):
            ...     [0.0, 1.0 , 2.0, -1.5, -0.5, -3.0],
            ...     [0.0, 0.75, 1.0,  1.0,  1.5,  2.0],
            ... ])
-           >>> surface = bezier.Surface(nodes, degree=2)
+           >>> surface = bezier.Triangle(nodes, degree=2)
            >>> surface
-           <Surface (degree=2, dimension=2)>
+           <Triangle (degree=2, dimension=2)>
            >>> param_vals = np.asfortranarray([
            ...     [0.   , 0.25, 0.75 ],
            ...     [1.   , 0.  , 0.   ],
@@ -613,7 +613,7 @@ class Surface(_base.Base):
            ...     [0.0, 0.5, 1.0  , 0.0, 0.5, 0.25],
            ...     [0.0, 0.5, 0.625, 0.5, 0.5, 1.0 ],
            ... ])
-           >>> surface = bezier.Surface(nodes, degree=2)
+           >>> surface = bezier.Triangle(nodes, degree=2)
            >>> point = surface.evaluate_cartesian(0.125, 0.375)
            >>> point
            array([[0.16015625],
@@ -656,9 +656,9 @@ class Surface(_base.Base):
            ...     [0.0, 2.0, -3.0],
            ...     [0.0, 1.0,  2.0],
            ... ])
-           >>> surface = bezier.Surface(nodes, degree=1)
+           >>> surface = bezier.Triangle(nodes, degree=1)
            >>> surface
-           <Surface (degree=1, dimension=2)>
+           <Triangle (degree=1, dimension=2)>
            >>> param_vals = np.asfortranarray([
            ...     [0.0  , 0.0  ],
            ...     [0.125, 0.625],
@@ -761,10 +761,10 @@ class Surface(_base.Base):
            ...     [-1.0, 0.5, 2.0, 0.25, 2.0, 0.0],
            ...     [ 0.0, 0.5, 0.0, 1.75, 3.0, 4.0],
            ... ])
-           >>> surface = bezier.Surface(nodes, degree=2)
+           >>> surface = bezier.Triangle(nodes, degree=2)
            >>> _, sub_surface_b, _, _ = surface.subdivide()
            >>> sub_surface_b
-           <Surface (degree=2, dimension=2)>
+           <Triangle (degree=2, dimension=2)>
            >>> sub_surface_b.nodes
            array([[ 1.5 ,  0.6875, -0.125 , 1.1875, 0.4375, 0.5  ],
                   [ 2.5 ,  2.3125,  1.875 , 1.3125, 1.3125, 0.25 ]])
@@ -776,7 +776,7 @@ class Surface(_base.Base):
            make_images.surface_subdivide2(surface, sub_surface_b)
 
         Returns:
-            Tuple[Surface, Surface, Surface, Surface]: The lower left, central,
+            Tuple[Triangle, Triangle, Triangle, Triangle]: The lower left, central,
             lower right and upper left sub-surfaces (in that order).
         """
         (
@@ -786,10 +786,10 @@ class Surface(_base.Base):
             nodes_d,
         ) = _surface_helpers.subdivide_nodes(self._nodes, self._degree)
         return (
-            Surface(nodes_a, self._degree, copy=False, verify=False),
-            Surface(nodes_b, self._degree, copy=False, verify=False),
-            Surface(nodes_c, self._degree, copy=False, verify=False),
-            Surface(nodes_d, self._degree, copy=False, verify=False),
+            Triangle(nodes_a, self._degree, copy=False, verify=False),
+            Triangle(nodes_b, self._degree, copy=False, verify=False),
+            Triangle(nodes_c, self._degree, copy=False, verify=False),
+            Triangle(nodes_d, self._degree, copy=False, verify=False),
         )
 
     def _compute_valid(self):
@@ -856,7 +856,7 @@ class Surface(_base.Base):
            ...     [0.0, 1.0, 2.0],
            ...     [0.0, 1.0, 2.0],
            ... ])
-           >>> surface = bezier.Surface(nodes, degree=1)
+           >>> surface = bezier.Triangle(nodes, degree=1)
            >>> surface.is_valid
            False
 
@@ -876,7 +876,7 @@ class Surface(_base.Base):
            ...     [0.0, 0.5  , 1.0, -0.125, 0.5, 0.0],
            ...     [0.0, 0.125, 0.0,  0.5  , 0.5, 1.0],
            ... ])
-           >>> surface = bezier.Surface(nodes, degree=2)
+           >>> surface = bezier.Triangle(nodes, degree=2)
            >>> surface.is_valid
            True
 
@@ -896,7 +896,7 @@ class Surface(_base.Base):
            ...     [1.0, 0.0, 1.0, 0.0, 0.0, 0.0],
            ...     [0.0, 0.0, 1.0, 0.0, 0.0, 1.0],
            ... ])
-           >>> surface = bezier.Surface(nodes, degree=2)
+           >>> surface = bezier.Triangle(nodes, degree=2)
            >>> surface.is_valid
            False
 
@@ -946,7 +946,7 @@ class Surface(_base.Base):
            ...     [0.0,  0.5 , 1.0, 0.25, 0.75, 0.0],
            ...     [0.0, -0.25, 0.0, 0.5 , 0.75, 1.0],
            ... ])
-           >>> surface = bezier.Surface(nodes, degree=2)
+           >>> surface = bezier.Triangle(nodes, degree=2)
            >>> point = np.asfortranarray([
            ...     [0.59375],
            ...     [0.25   ],
@@ -1000,7 +1000,7 @@ class Surface(_base.Base):
         """Find the common intersection with another surface.
 
         Args:
-            other (Surface): Other surface to intersect with.
+            other (Triangle): Other surface to intersect with.
             strategy (Optional[~bezier.curve.IntersectionStrategy]): The
                 intersection algorithm to use. Defaults to geometric.
             _verify (Optional[bool]): Indicates if extra caution should be
@@ -1010,7 +1010,7 @@ class Surface(_base.Base):
 
         Returns:
             List[Union[~bezier.curved_polygon.CurvedPolygon, \
-            ~bezier.surface.Surface]]: List of intersections (possibly empty).
+            ~bezier.surface.Triangle]]: List of intersections (possibly empty).
 
         Raises:
             TypeError: If ``other`` is not a surface (and ``_verify=True``).
@@ -1020,7 +1020,7 @@ class Surface(_base.Base):
                 :class:`.IntersectionStrategy`.
         """
         if _verify:
-            if not isinstance(other, Surface):
+            if not isinstance(other, Triangle):
                 raise TypeError(
                     "Can only intersect with another surface",
                     "Received",
@@ -1098,10 +1098,10 @@ class Surface(_base.Base):
            ...     [0.0, 1.5, 3.0, 0.75, 2.25, 0.0],
            ...     [0.0, 0.0, 0.0, 1.5 , 2.25, 3.0],
            ... ])
-           >>> surface = bezier.Surface(nodes, degree=2)
+           >>> surface = bezier.Triangle(nodes, degree=2)
            >>> elevated = surface.elevate()
            >>> elevated
-           <Surface (degree=3, dimension=2)>
+           <Triangle (degree=3, dimension=2)>
            >>> elevated.nodes
            array([[0. , 1. , 2. , 3. , 0.5 , 1.5 , 2.5 , 0.5 , 1.5 , 0. ],
                   [0. , 0. , 0. , 0. , 1.  , 1.25, 1.5 , 2.  , 2.5 , 3. ]])
@@ -1112,7 +1112,7 @@ class Surface(_base.Base):
            make_images.surface_elevate(surface, elevated)
 
         Returns:
-            Surface: The degree-elevated surface.
+            Triangle: The degree-elevated surface.
         """
         _, num_nodes = self._nodes.shape
         # (d + 1)(d + 2)/2 --> (d + 2)(d + 3)/2
@@ -1145,7 +1145,7 @@ class Surface(_base.Base):
         # Hold off on division until the end, to (attempt to) avoid round-off.
         denominator = self._degree + 1.0
         new_nodes /= denominator
-        return Surface(new_nodes, self._degree + 1, copy=False, verify=False)
+        return Triangle(new_nodes, self._degree + 1, copy=False, verify=False)
 
     # Return type doc appears missing to Pylint because of the use of the
     # :class:`sympy.Matrix ...` aliases.
@@ -1164,7 +1164,7 @@ class Surface(_base.Base):
            ...     [0.0, 0.0, 1.0,  0.0, 0.0,  0.0],
            ...     [0.0, 0.0, 0.0,  0.0, 0.0,  1.0],
            ... ])
-           >>> surface = bezier.Surface(nodes, degree=2)
+           >>> surface = bezier.Triangle(nodes, degree=2)
            >>> surface.to_symbolic()
            Matrix([
            [s - t],
@@ -1194,7 +1194,7 @@ class Surface(_base.Base):
            ...     [0.0, 0.0, 1.0,  0.0, 0.0,  0.0],
            ...     [0.0, 0.0, 0.0,  0.0, 0.0,  1.0],
            ... ])
-           >>> surface = bezier.Surface(nodes, degree=2)
+           >>> surface = bezier.Triangle(nodes, degree=2)
            >>> surface.implicitize()
            (x**4 - 2*x**2*y - 2*x**2*z + y**2 - 2*y*z + z**2)**2
 
@@ -1223,7 +1223,7 @@ def _make_intersection(edge_info, all_edge_nodes):
 
     .. note::
 
-       This is a helper used only by :meth:`.Surface.intersect`.
+       This is a helper used only by :meth:`.Triangle.intersect`.
 
     Args:
         edge_info (Tuple[Tuple[int, float, float], ...]): Information

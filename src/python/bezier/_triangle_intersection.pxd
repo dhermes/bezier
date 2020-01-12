@@ -17,7 +17,7 @@ from bezier._status cimport Status
 
 
 cdef extern from "bezier/surface_intersection.h":
-    cpdef enum SurfaceContained:
+    cpdef enum TriangleContained:
         NEITHER = 0
         FIRST = 1
         SECOND = 2
@@ -40,5 +40,5 @@ cdef extern from "bezier/surface_intersection.h":
         const int* degree1, const int* num_nodes2, const double* nodes2,
         const int* degree2, const int* segment_ends_size, int* segment_ends,
         int* segments_size, CurvedPolygonSegment* segments, int* num_intersected,
-        SurfaceContained* contained, Status* status) 
+        TriangleContained* contained, Status* status) 
     void free_surface_intersections_workspace "BEZ_free_surface_intersections_workspace" ()

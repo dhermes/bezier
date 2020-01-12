@@ -15,7 +15,7 @@
 This library provides:
 
 * Support for B |eacute| zier `Curves`_
-* Support for B |eacute| zier `Surfaces`_
+* Support for B |eacute| zier `Triangles`_
 
 Dive in and take a look!
 
@@ -196,7 +196,7 @@ License
 details, see `the LICENSE`_.
 
 .. _Curves: https://bezier.readthedocs.io/en/latest/python/reference/bezier.curve.html
-.. _Surfaces: https://bezier.readthedocs.io/en/latest/python/reference/bezier.surface.html
+.. _Triangles: https://bezier.readthedocs.io/en/latest/python/reference/bezier.surface.html
 .. _package: https://bezier.readthedocs.io/en/latest/python/reference/bezier.html
 .. _DEVELOPMENT doc: https://github.com/dhermes/bezier/blob/master/DEVELOPMENT.rst
 .. _the LICENSE: https://github.com/dhermes/bezier/blob/master/LICENSE

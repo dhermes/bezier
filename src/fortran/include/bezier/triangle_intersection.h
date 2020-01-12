@@ -19,11 +19,11 @@
 extern "C" {
 #endif
 
-typedef enum SurfaceContained {
+typedef enum TriangleContained {
     NEITHER = 0,
     FIRST = 1,
     SECOND = 2,
-} SurfaceContained;
+} TriangleContained;
 
 typedef struct CurvedPolygonSegment {
     double start;
@@ -41,7 +41,7 @@ void BEZ_surface_intersections(const int* num_nodes1, const double* nodes1,
     const int* degree1, const int* num_nodes2, const double* nodes2,
     const int* degree2, const int* segment_ends_size, int* segment_ends,
     int* segments_size, CurvedPolygonSegment* segments, int* num_intersected,
-    SurfaceContained* contained, Status* status);
+    TriangleContained* contained, Status* status);
 void BEZ_free_surface_intersections_workspace(void);
 
 #if defined(__cplusplus)

@@ -140,14 +140,14 @@ def surface_intersections_info():
     with io.open(filename, "r", encoding="utf-8") as file_obj:
         surface_json = json.load(file_obj)
     surfaces = {
-        id_: SurfaceInfo.from_json(id_, info)
+        id_: TriangleInfo.from_json(id_, info)
         for id_, info in surface_json.items()
     }
     filename = os.path.join(FNL_TESTS_DIR, "surface_intersections.json")
     with io.open(filename, "r", encoding="utf-8") as file_obj:
         intersections_json = json.load(file_obj)
     intersections = [
-        SurfaceIntersectionsInfo.from_json(info, surfaces)
+        TriangleIntersectionsInfo.from_json(info, surfaces)
         for info in intersections_json
     ]
     return surfaces, intersections
@@ -172,7 +172,7 @@ def id_func(value):
 
     Args:
         value (Union[.IntersectionStrategy, CurveIntersectionInfo, \
-            SurfaceIntersectionsInfo]: Either intersection info or an
+            TriangleIntersectionsInfo]: Either intersection info or an
             intersection strategy.
 
     Returns:
@@ -599,7 +599,7 @@ class CurveIntersectionInfo:
 # pylint: enable=too-many-instance-attributes
 
 
-class SurfaceInfo:  # pylint: disable=too-few-public-methods
+class TriangleInfo:  # pylint: disable=too-few-public-methods
     """Information about a surface from ``surfaces.json``.
 
     The ``surfaces.json`` file contains a dictionary where each key is the ID
@@ -616,12 +616,12 @@ class SurfaceInfo:  # pylint: disable=too-few-public-methods
     def __init__(self, id_, control_points, note=None):
         self.id_ = id_
         self.control_points = control_points
-        self.surface = bezier.Surface.from_nodes(control_points, copy=False)
+        self.surface = bezier.Triangle.from_nodes(control_points, copy=False)
         self.note = note
 
     @classmethod
     def from_json(cls, id_, info):
-        """Convert JSON surface info into ``SurfaceInfo``.
+        """Convert JSON surface info into ``TriangleInfo``.
 
         This involves parsing the dictionary and converting some stringified
         values (rationals and IEEE-754) to Python ``float``-s.
@@ -631,7 +631,7 @@ class SurfaceInfo:  # pylint: disable=too-few-public-methods
             info (dict): The JSON data of the surface.
 
         Returns:
-            SurfaceInfo: The surface info parsed from the JSON.
+            TriangleInfo: The surface info parsed from the JSON.
         """
         control_points = info.pop("control_points")
         control_points = np.asfortranarray(_convert_float(control_points))
@@ -644,7 +644,7 @@ class SurfaceInfo:  # pylint: disable=too-few-public-methods
 # pylint: disable=too-few-public-methods
 
 
-class SurfaceIntersectionInfo:
+class TriangleIntersectionInfo:
     """Basic wrapper indicating an intersection is one of the two surfaces.
 
     Args:
@@ -654,7 +654,7 @@ class SurfaceIntersectionInfo:
 
     def __init__(self, first):
         self.first = first
-        # Will be set later by the `SurfaceIntersectionsInfo` constructor.
+        # Will be set later by the `TriangleIntersectionsInfo` constructor.
         self.parent = None
 
 
@@ -708,7 +708,7 @@ class CurvedPolygonInfo:
         start_param_polys=None,
         end_param_polys=None,
     ):
-        # Will be set later by the `SurfaceIntersectionsInfo` constructor.
+        # Will be set later by the `TriangleIntersectionsInfo` constructor.
         self.parent = None
         self.nodes = nodes
         self.edge_list = edge_list
@@ -801,13 +801,13 @@ class CurvedPolygonInfo:
                 intersection (i.e. one is fully contained in the other).
 
         Returns:
-            Union[SurfaceIntersectionInfo, CurvedPolygonInfo]: A basic
+            Union[TriangleIntersectionInfo, CurvedPolygonInfo]: A basic
             object containing surface information (if one of the surfaces is
             contained in the other) or the curved polygon info parsed from
             the JSON.
         """
         if isinstance(info, bool):
-            return SurfaceIntersectionInfo(info)
+            return TriangleIntersectionInfo(info)
 
         else:
             nodes = np.asfortranarray(_convert_float(info.pop("nodes")))
@@ -837,7 +837,7 @@ class CurvedPolygonInfo:
 # pylint: enable=too-few-public-methods
 
 
-class SurfaceIntersectionsInfo:
+class TriangleIntersectionsInfo:
     """Information about an intersection from ``surface_intersections.json``.
 
     The ``surface_intersections.json`` file contains a list of intersection
@@ -846,11 +846,11 @@ class SurfaceIntersectionsInfo:
 
     Args:
         id_ (int): The intersection ID.
-        surface1_info (SurfaceInfo): The surface information for the first
+        surface1_info (TriangleInfo): The surface information for the first
             surface in the intersection.
-        surface2_info (SurfaceInfo): The surface information for the second
+        surface2_info (TriangleInfo): The surface information for the second
             surface in the intersection.
-        intersections (List[Union[SurfaceIntersectionInfo, \
+        intersections (List[Union[TriangleIntersectionInfo, \
             CurvedPolygonInfo]]): The info for each intersection region.
         note (Optional[str]): A note about the intersection(s) (e.g. why
             unique / problematic).
@@ -892,7 +892,7 @@ class SurfaceIntersectionsInfo:
         """The first B |eacute| zier surface in the intersection.
 
         Returns:
-            ~bezier.surface.Surface: The first B |eacute| zier surface.
+            ~bezier.surface.Triangle: The first B |eacute| zier surface.
         """
         return self.surface1_info.surface
 
@@ -901,7 +901,7 @@ class SurfaceIntersectionsInfo:
         """The second B |eacute| zier surface in the intersection.
 
         Returns:
-            ~bezier.surface.Surface: The second B |eacute| zier surface.
+            ~bezier.surface.Triangle: The second B |eacute| zier surface.
         """
         return self.surface2_info.surface
 
@@ -916,11 +916,11 @@ class SurfaceIntersectionsInfo:
 
         Args:
             info (dict): The JSON data of the surface intersection.
-            surfaces (Dict[str, SurfaceInfo]): An already parsed dictionary of
+            surfaces (Dict[str, TriangleInfo]): An already parsed dictionary of
                 surface information.
 
         Returns:
-            SurfaceIntersectionsInfo: The intersection info parsed from
+            TriangleIntersectionsInfo: The intersection info parsed from
                 the JSON.
         """
         id_ = info.pop("id")

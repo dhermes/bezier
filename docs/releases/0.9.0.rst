@@ -80,8 +80,8 @@ Python Changes
 New Features
 ~~~~~~~~~~~~
 
--  Added implementation for ``Surface.area``
-   `property <http://bezier.readthedocs.io/en/0.9.0/python/reference/bezier.surface.html#bezier.surface.Surface.area>`__
+-  Added implementation for ``Triangle.area``
+   `property <http://bezier.readthedocs.io/en/0.9.0/python/reference/bezier.surface.html#bezier.surface.Triangle.area>`__
    and ``CurvedPolygon.area``
    `property <http://bezier.readthedocs.io/en/0.9.0/python/reference/bezier.curved_polygon.html#bezier.curved_polygon.CurvedPolygon.area>`__
    (`eb6077e <https://github.com/dhermes/bezier/commit/eb6077eab4f6ca0d72de6194f1789a2d0eada8b0>`__).
@@ -97,10 +97,10 @@ Non-Public API
    -  ``bezier._geometric_intersection.get_max_candidates()``
 -  Removing cached values for ``Curve.length``
    `property <http://bezier.readthedocs.io/en/0.9.0/python/reference/bezier.curve.html#bezier.curve.Curve.length>`__,
-   ``Surface.area``
-   `property <http://bezier.readthedocs.io/en/0.9.0/python/reference/bezier.surface.html#bezier.surface.Surface.area>`__
-   and ``Surface.is_valid``
-   `property <http://bezier.readthedocs.io/en/0.9.0/python/reference/bezier.surface.html#bezier.surface.Surface.is_valid>`__
+   ``Triangle.area``
+   `property <http://bezier.readthedocs.io/en/0.9.0/python/reference/bezier.surface.html#bezier.surface.Triangle.area>`__
+   and ``Triangle.is_valid``
+   `property <http://bezier.readthedocs.io/en/0.9.0/python/reference/bezier.surface.html#bezier.surface.Triangle.is_valid>`__
    (`34d48d6 <https://github.com/dhermes/bezier/commit/34d48d6900963734d7fb82f13bd3f37416cc6efe>`__).
 
 Build

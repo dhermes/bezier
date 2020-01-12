@@ -159,7 +159,7 @@ def newton_refine(nodes, degree, x_val, y_val, s, t):
        ...     [0.0, 1.0, 2.0, 2.0, 2.0, 0.0],
        ...     [0.0, 0.0, 0.0, 1.0, 2.0, 2.0],
        ... ])
-       >>> surface = bezier.Surface(nodes, degree=2)
+       >>> surface = bezier.Triangle(nodes, degree=2)
        >>> surface.is_valid
        True
        >>> (x_val,), (y_val,) = surface.evaluate_cartesian(0.25, 0.5)

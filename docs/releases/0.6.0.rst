@@ -80,13 +80,13 @@ Breaking Changes
    `returns <http://bezier.readthedocs.io/en/0.6.0/reference/bezier.curve.html#bezier.curve.Curve.intersect>`__
    ``s-t`` parameters rather than ``x-y`` values
    (`c309998 <https://github.com/dhermes/bezier/commit/c309998f705de7467e1222e41467190739ff3118>`__).
--  ``Surface.intersect()``
-   `returns <http://bezier.readthedocs.io/en/0.6.0/reference/bezier.surface.html#bezier.surface.Surface.intersect>`__
-   a list with a single ``Surface`` when one of the two surfaces
+-  ``Triangle.intersect()``
+   `returns <http://bezier.readthedocs.io/en/0.6.0/reference/bezier.surface.html#bezier.surface.Triangle.intersect>`__
+   a list with a single ``Triangle`` when one of the two surfaces
    is contained in the other
    (`05b1fd9 <https://github.com/dhermes/bezier/commit/05b1fd98c5caea015b87819abdd2d6631ccc9bd4>`__).
--  ``Surface.is_valid`` will only
-   `return <http://bezier.readthedocs.io/en/0.6.0/reference/bezier.surface.html#bezier.surface.Surface.is_valid>`__
+-  ``Triangle.is_valid`` will only
+   `return <http://bezier.readthedocs.io/en/0.6.0/reference/bezier.surface.html#bezier.surface.Triangle.is_valid>`__
    ``True`` if the map ``B(s, t)`` determined by the
    surface has everywhere positive Jacobian. Previously a negative
    Jacobian was also allowed
@@ -106,7 +106,7 @@ Breaking Changes
    -  ``end``
       (`39ee98b <https://github.com/dhermes/bezier/commit/39ee98b5add3333b90f73279b304dbb1fd0f2c54>`__)
 
--  Removed data members from ``Surface``:
+-  Removed data members from ``Triangle``:
 
    -  ``base_x``
       (`dea75e3 <https://github.com/dhermes/bezier/commit/dea75e3f2999e52f74c3d2603a4e162ae3eb2ef2>`__)

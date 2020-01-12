@@ -28,8 +28,8 @@ module test_surface_intersection
        IntersectionClassification_TANGENT_BOTH, &
        IntersectionClassification_COINCIDENT, &
        IntersectionClassification_COINCIDENT_UNUSED, &
-       SurfaceContained_NEITHER, &
-       SurfaceContained_FIRST, SurfaceContained_SECOND, newton_refine, &
+       TriangleContained_NEITHER, &
+       TriangleContained_FIRST, TriangleContained_SECOND, newton_refine, &
        locate_point, classify_intersection, update_edge_end_unused, &
        find_corner_unused, add_st_vals, should_keep, &
        surfaces_intersection_points, is_first, is_second, &
@@ -82,7 +82,7 @@ contains
     real(c_double) :: updated_s, updated_t
 
     case_id = 1
-    name = "newton_refine (Surface)"
+    name = "newton_refine (Triangle)"
 
     ! CASE 1: Quadratic surface.
     ! NOTE: This surface is given by
@@ -135,7 +135,7 @@ contains
     character(23) :: name
 
     case_id = 1
-    name = "newton_refine (Surface)"
+    name = "newton_refine (Triangle)"
 
     ! CASE 1: B(s, t) = (s, t), match.
     allocate(nodes(2, 3))
@@ -1582,7 +1582,7 @@ contains
          segment_check(segments(2), 0.0_dp, 0.25_dp, 1) .AND. &
          segment_check(segments(3), 0.75_dp, 1.0_dp, 6) .AND. &
          segment_check(segments(4), 0.0_dp, 0.25_dp, 4) .AND. &
-         contained == SurfaceContained_NEITHER .AND. &
+         contained == TriangleContained_NEITHER .AND. &
          status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
@@ -1616,7 +1616,7 @@ contains
          segment_check(segments(4), 0.3125_dp, 0.375_dp, 1) .AND. &
          segment_check(segments(5), 0.75_dp, 1.0_dp, 4) .AND. &
          segment_check(segments(6), 0.0_dp, 0.25_dp, 5) .AND. &
-         contained == SurfaceContained_NEITHER .AND. &
+         contained == TriangleContained_NEITHER .AND. &
          status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
@@ -1652,7 +1652,7 @@ contains
          segment_check(segments(1), 0.1875_dp, 1.0_dp, 1) .AND. &
          segment_check(segments(2), 0.0_dp, 0.375_dp, 2) .AND. &
          segment_check(segments(3), 0.5625_dp, 1.0_dp, 5) .AND. &
-         contained == SurfaceContained_NEITHER .AND. &
+         contained == TriangleContained_NEITHER .AND. &
          status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
@@ -1680,7 +1680,7 @@ contains
          size(segments) == 3 .AND. &  ! Unchanged
          segment_check(segments(1), 0.140625_dp, 0.84375_dp, 4) .AND. &
          segment_check(segments(2), 0.140625_dp, 0.84375_dp, 1) .AND. &
-         contained == SurfaceContained_NEITHER .AND. &
+         contained == TriangleContained_NEITHER .AND. &
          status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
@@ -1693,7 +1693,7 @@ contains
          contained, status)
     case_success = ( &
          num_intersected == 0 .AND. &
-         contained == SurfaceContained_FIRST .AND. &
+         contained == TriangleContained_FIRST .AND. &
          status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
@@ -1708,7 +1708,7 @@ contains
          contained, status)
     case_success = ( &
          num_intersected == 0 .AND. &
-         contained == SurfaceContained_SECOND .AND. &
+         contained == TriangleContained_SECOND .AND. &
          status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
@@ -1730,7 +1730,7 @@ contains
          segment_check(segments(1), 0.0_dp, 1.0_dp, 3) .AND. &
          segment_check(segments(2), 0.0_dp, 1.0_dp, 1) .AND. &
          segment_check(segments(3), 0.0_dp, 1.0_dp, 4) .AND. &
-         contained == SurfaceContained_NEITHER .AND. &
+         contained == TriangleContained_NEITHER .AND. &
          status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
@@ -1783,7 +1783,7 @@ contains
          num_intersected == 0 .AND. &
          .NOT. allocated(segment_ends) .AND. &
          .NOT. allocated(segments) .AND. &
-         contained == SurfaceContained_NEITHER .AND. &
+         contained == TriangleContained_NEITHER .AND. &
          status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
@@ -1809,11 +1809,11 @@ contains
          num_intersected == 0 .AND. &
          .NOT. allocated(segments) .AND. &
          .NOT. allocated(segment_ends) .AND. &
-         contained == SurfaceContained_NEITHER .AND. &
+         contained == TriangleContained_NEITHER .AND. &
          status == Status_BAD_MULTIPLICITY)
     call print_status(name, case_id, case_success, success)
 
-    ! CASE 3: Surface 2 contained in surface 1.
+    ! CASE 3: Triangle 2 contained in surface 1.
     linear1(:, 1) = 0
     linear1(:, 2) = [5.0_dp, 0.0_dp]
     linear1(:, 3) = [0.0_dp, 5.0_dp]
@@ -1829,11 +1829,11 @@ contains
          num_intersected == 0 .AND. &
          .NOT. allocated(segment_ends) .AND. &
          .NOT. allocated(segments) .AND. &
-         contained == SurfaceContained_SECOND .AND. &
+         contained == TriangleContained_SECOND .AND. &
          status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
-    ! CASE 4: Surface 1 contained in surface 2 (re-uses all data from CASE 3).
+    ! CASE 4: Triangle 1 contained in surface 2 (re-uses all data from CASE 3).
     call surfaces_intersect( &
          3, linear2, 1, 3, linear1, 1, &
          segment_ends, segments, &
@@ -1842,11 +1842,11 @@ contains
          num_intersected == 0 .AND. &
          .NOT. allocated(segment_ends) .AND. &
          .NOT. allocated(segments) .AND. &
-         contained == SurfaceContained_FIRST .AND. &
+         contained == TriangleContained_FIRST .AND. &
          status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
-    ! CASE 5: Surfaces disjoint with overlapping bounding boxes (re-uses
+    ! CASE 5: Triangles disjoint with overlapping bounding boxes (re-uses
     !         ``linear1`` from previous cases).
     linear2(:, 1) = [7.0_dp, 2.0_dp]
     linear2(:, 2) = [7.0_dp, 3.0_dp]
@@ -1860,11 +1860,11 @@ contains
          num_intersected == 0 .AND. &
          .NOT. allocated(segment_ends) .AND. &
          .NOT. allocated(segments) .AND. &
-         contained == SurfaceContained_NEITHER .AND. &
+         contained == TriangleContained_NEITHER .AND. &
          status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
-    ! CASE 6: Surfaces intersect.
+    ! CASE 6: Triangles intersect.
     linear1(:, 1) = 0
     linear1(:, 2) = [8.0_dp, 0.0_dp]
     linear1(:, 3) = [0.0_dp, 8.0_dp]
@@ -1888,7 +1888,7 @@ contains
          segment_check(segments(4), 0.5_dp, 0.625_dp, 2) .AND. &
          segment_check(segments(5), 0.125_dp, 0.5_dp, 4) .AND. &
          segment_check(segments(6), 0.375_dp, 0.875_dp, 3) .AND. &
-         contained == SurfaceContained_NEITHER .AND. &
+         contained == TriangleContained_NEITHER .AND. &
          status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
@@ -1914,7 +1914,7 @@ contains
          num_intersected == 0 .AND. &
          allocated(segment_ends) .AND. &  ! Though unused, not de-allocated.
          allocated(segments) .AND. &  ! Though unused, not de-allocated.
-         contained == SurfaceContained_NEITHER .AND. &
+         contained == TriangleContained_NEITHER .AND. &
          status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
@@ -1934,7 +1934,7 @@ contains
          num_intersected == 0 .AND. &
          allocated(segment_ends) .AND. &  ! Though unused, not de-allocated.
          allocated(segments) .AND. &  ! Though unused, not de-allocated.
-         contained == SurfaceContained_NEITHER .AND. &
+         contained == TriangleContained_NEITHER .AND. &
          status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
@@ -1960,7 +1960,7 @@ contains
          num_intersected == 0 .AND. &
          allocated(segment_ends) .AND. &  ! Though unused, not de-allocated.
          allocated(segments) .AND. &  ! Though unused, not de-allocated.
-         contained == SurfaceContained_FIRST .AND. &
+         contained == TriangleContained_FIRST .AND. &
          status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
@@ -1974,7 +1974,7 @@ contains
          num_intersected == 0 .AND. &
          allocated(segment_ends) .AND. &  ! Though unused, not de-allocated.
          allocated(segments) .AND. &  ! Though unused, not de-allocated.
-         contained == SurfaceContained_SECOND .AND. &
+         contained == TriangleContained_SECOND .AND. &
          status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
@@ -2018,7 +2018,7 @@ contains
          segment_check(segments(1), start, end_, 4) .AND. &
          segment_check(segments(2), 0.97192953004411586_dp, 1.0_dp, 2) .AND. &
          segment_check(segments(3), 0.0_dp, 0.029255079571205871_dp, 3) .AND. &
-         contained == SurfaceContained_NEITHER .AND. &
+         contained == TriangleContained_NEITHER .AND. &
          status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
@@ -2042,7 +2042,7 @@ contains
          num_intersected, contained, status)
     case_success = ( &
          num_intersected == 0 .AND. &
-         contained == SurfaceContained_NEITHER .AND. &
+         contained == TriangleContained_NEITHER .AND. &
          status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
@@ -2053,11 +2053,11 @@ contains
          num_intersected, contained, status)
     case_success = ( &
          num_intersected == 0 .AND. &
-         contained == SurfaceContained_NEITHER .AND. &
+         contained == TriangleContained_NEITHER .AND. &
          status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
-    ! CASE 14: Surfaces are disjoint, but bounding boxes are not.
+    ! CASE 14: Triangles are disjoint, but bounding boxes are not.
     linear1(:, 1) = 0
     linear1(:, 2) = [8.0_dp, 0.0_dp]
     linear1(:, 3) = [0.0_dp, 8.0_dp]
@@ -2071,7 +2071,7 @@ contains
          num_intersected, contained, status)
     case_success = ( &
          num_intersected == 0 .AND. &
-         contained == SurfaceContained_NEITHER .AND. &
+         contained == TriangleContained_NEITHER .AND. &
          status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
@@ -2111,7 +2111,7 @@ contains
          num_intersected, contained, status)
     case_success = ( &
          num_intersected == 0 .AND. &
-         contained == SurfaceContained_NEITHER .AND. &
+         contained == TriangleContained_NEITHER .AND. &
          status == Status_BAD_MULTIPLICITY)
     call print_status(name, case_id, case_success, success)
 
@@ -2134,7 +2134,7 @@ contains
     case_success = ( &
          num_intersected == 2 .AND. &
          all(segment_ends(:2) == [-1337, -42]) .AND. &  ! Unchanged.
-         contained == SurfaceContained_NEITHER .AND. &
+         contained == TriangleContained_NEITHER .AND. &
          status == Status_INSUFFICIENT_SPACE)
     call print_status(name, case_id, case_success, success)
 
@@ -2147,7 +2147,7 @@ contains
     case_success = ( &
          num_intersected == 2 .AND. &
          all(segment_ends(:2) == [3, 6]) .AND. &  ! Changed.
-         contained == SurfaceContained_NEITHER .AND. &
+         contained == TriangleContained_NEITHER .AND. &
          status == Status_INSUFFICIENT_SPACE)
     call print_status(name, case_id, case_success, success)
 
@@ -2166,7 +2166,7 @@ contains
          segment_check(segments(4), 0.3125_dp, 0.375_dp, 1) .AND. &
          segment_check(segments(5), 0.75_dp, 1.0_dp, 4) .AND. &
          segment_check(segments(6), 0.0_dp, 0.25_dp, 5) .AND. &
-         contained == SurfaceContained_NEITHER .AND. &
+         contained == TriangleContained_NEITHER .AND. &
          status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
 
@@ -2183,7 +2183,7 @@ contains
          num_intersected, contained, status)
     case_success = ( &
          num_intersected == 0 .AND. &
-         contained == SurfaceContained_NEITHER .AND. &
+         contained == TriangleContained_NEITHER .AND. &
          status == Status_SUCCESS)
     call print_status(name, case_id, case_success, success)
 

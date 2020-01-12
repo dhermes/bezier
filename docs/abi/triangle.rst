@@ -534,7 +534,7 @@ Procedures
                                                  double *nodes_d)
 
    Subdivides a B |eacute| zier surface into four sub-surfaces that cover
-   the original surface. See :meth:`.Surface.subdivide` for more
+   the original surface. See :meth:`.Triangle.subdivide` for more
    details
 
    :param num_nodes:

@@ -158,7 +158,7 @@ Procedures
                                                const int *segments_size, \
                                                CurvedPolygonSegment *segments, \
                                                int *num_intersected, \
-                                               SurfaceContained *contained, \
+                                               TriangleContained *contained, \
                                                Status *status)
 
    Compute the intersection of two B |eacute| zier surfaces. This will
@@ -232,7 +232,7 @@ Procedures
    :param int* num_intersected:
       **[Output]** The number of curved polygons in the intersection of two
       surfaces.
-   :param SurfaceContained* contained:
+   :param TriangleContained* contained:
       **[Output]** Enum indicating if one surface is **fully** contained in
       the other.
    :param Status* status:
@@ -288,7 +288,7 @@ Procedures
                                 const int *segments_size,
                                 CurvedPolygonSegment *segments,
                                 int *num_intersected,
-                                SurfaceContained *contained,
+                                TriangleContained *contained,
                                 Status *status);
 
 .. c:function:: void BEZ_free_surface_intersections_workspace(void)
@@ -345,7 +345,7 @@ Types
         int edge_index;
       } CurvedPolygonSegment;
 
-.. c:type:: SurfaceContained
+.. c:type:: TriangleContained
 
    This enum is used to indicate if one surface is contained in
    another when doing surface-surface intersection.

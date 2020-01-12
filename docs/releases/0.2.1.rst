@@ -7,10 +7,10 @@
    `method <http://bezier.readthedocs.io/en/0.2.1/reference/bezier.curve.html#bezier.curve.Curve.locate>`__
    and ``_curve_helpers.newton_refine()``
    `helper <http://bezier.readthedocs.io/en/0.2.1/algorithm-helpers.html#bezier._curve_helpers.newton_refine>`__
--  Adding optional ``color`` to ``Surface.plot()``
-   `method <http://bezier.readthedocs.io/en/0.2.1/reference/bezier.surface.html#bezier.surface.Surface.plot>`__
--  Adding ``Surface.elevate()``
-   `method <http://bezier.readthedocs.io/en/0.2.1/reference/bezier.surface.html#bezier.surface.Surface.elevate>`__
+-  Adding optional ``color`` to ``Triangle.plot()``
+   `method <http://bezier.readthedocs.io/en/0.2.1/reference/bezier.surface.html#bezier.surface.Triangle.plot>`__
+-  Adding ``Triangle.elevate()``
+   `method <http://bezier.readthedocs.io/en/0.2.1/reference/bezier.surface.html#bezier.surface.Triangle.elevate>`__
    for degree elevation
 -  Fixing nodes defining the `self-intersecting
    curve <http://bezier.readthedocs.io/en/0.2.1/curve-curve-intersection.html#detecting-self-intersections>`__

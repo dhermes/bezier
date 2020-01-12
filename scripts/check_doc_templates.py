@@ -117,7 +117,7 @@ IMG_PREFIX = (
 )
 EXTRA_LINKS = """\
 .. _Curves: https://bezier.readthedocs.io/en/{rtd_version}/python/reference/bezier.curve.html
-.. _Surfaces: https://bezier.readthedocs.io/en/{rtd_version}/python/reference/bezier.surface.html
+.. _Triangles: https://bezier.readthedocs.io/en/{rtd_version}/python/reference/bezier.surface.html
 .. _package: https://bezier.readthedocs.io/en/{rtd_version}/python/reference/bezier.html
 .. _DEVELOPMENT doc: https://github.com/dhermes/bezier/blob/{revision}/DEVELOPMENT.rst
 """

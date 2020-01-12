@@ -35,7 +35,7 @@ from bezier import __config__
 from bezier._py_helpers import UnsupportedDegree
 from bezier.curve import Curve
 from bezier.curved_polygon import CurvedPolygon
-from bezier.surface import Surface
+from bezier.surface import Triangle
 
 try:
     import bezier._speedup  # noqa: F401
@@ -59,7 +59,7 @@ __all__ = [
     "get_dll",
     "get_include",
     "get_lib",
-    "Surface",
+    "Triangle",
     "UnsupportedDegree",
 ]
 

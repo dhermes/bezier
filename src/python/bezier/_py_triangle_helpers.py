@@ -707,8 +707,8 @@ def polynomial_sign(poly_surface, degree):
 
     .. note::
 
-       This is used **only** by :meth:`Surface._compute_valid` (which is
-       in turn used to compute / cache the :attr:`Surface.is_valid`
+       This is used **only** by :meth:`Triangle._compute_valid` (which is
+       in turn used to compute / cache the :attr:`Triangle.is_valid`
        property).
 
     Checks if a polynomial :math:`p(s, t)` is positive, negative
@@ -802,8 +802,8 @@ def quadratic_jacobian_polynomial(nodes):
 
     .. note::
 
-       This is used **only** by :meth:`Surface._compute_valid` (which is
-       in turn used to compute / cache the :attr:`Surface.is_valid`
+       This is used **only** by :meth:`Triangle._compute_valid` (which is
+       in turn used to compute / cache the :attr:`Triangle.is_valid`
        property).
 
     Converts :math:`\det(J(s, t))` to a polynomial on the reference
@@ -845,8 +845,8 @@ def cubic_jacobian_polynomial(nodes):
 
     .. note::
 
-       This is used **only** by :meth:`Surface._compute_valid` (which is
-       in turn used to compute / cache the :attr:`Surface.is_valid`
+       This is used **only** by :meth:`Triangle._compute_valid` (which is
+       in turn used to compute / cache the :attr:`Triangle.is_valid`
        property).
 
     Converts :math:`\det(J(s, t))` to a polynomial on the reference
@@ -1064,7 +1064,7 @@ def specialize_surface(nodes, degree, weights_a, weights_b, weights_c):
     .. note::
 
        This is used **only** as a helper for :func:`subdivide_nodes`, however
-       it may be worth adding this to :class:`Surface` as an analogue to
+       it may be worth adding this to :class:`Triangle` as an analogue to
        :meth:`Curve.specialize`.
 
     Args:
@@ -1294,7 +1294,7 @@ def jacobian_det(nodes, degree, st_vals):
        ...     [0.0, 1.0, 2.0, 0.0, 1.5, 0.0],
        ...     [0.0, 0.0, 0.0, 1.0, 1.5, 2.0],
        ... ])
-       >>> surface = bezier.Surface(nodes, degree=2)
+       >>> surface = bezier.Triangle(nodes, degree=2)
        >>> st_vals = np.asfortranarray([
        ...     [0.25, 0.0  ],
        ...     [0.75, 0.125],
@@ -1618,10 +1618,10 @@ def classify_intersection(intersection, edge_nodes1, edge_nodes2):
 
     .. note::
 
-       This is a helper used only by :meth:`.Surface.intersect`.
+       This is a helper used only by :meth:`.Triangle.intersect`.
 
     This is intended to be a helper for forming a :class:`.CurvedPolygon`
-    from the edge intersections of two :class:`.Surface`-s. In order
+    from the edge intersections of two :class:`.Triangle`-s. In order
     to move from one intersection to another (or to the end of an edge),
     the interior edge must be determined at the point of intersection.
 
@@ -1999,12 +1999,12 @@ def classify_intersection(intersection, edge_nodes1, edge_nodes2):
        ...     [0.25, 0.0, 0.0, 0.625, 0.5  , 1.0 ],
        ...     [1.0 , 0.5, 0.0, 0.875, 0.375, 0.75],
        ... ])
-       >>> surface1 = bezier.Surface(nodes1, degree=2)
+       >>> surface1 = bezier.Triangle(nodes1, degree=2)
        >>> nodes2 = np.asfortranarray([
        ...     [0.0625, -0.25, -1.0, -0.5  , -1.0, -1.0],
        ...     [0.5   ,  1.0 ,  1.0,  0.125,  0.5,  0.0],
        ... ])
-       >>> surface2 = bezier.Surface(nodes2, degree=2)
+       >>> surface2 = bezier.Triangle(nodes2, degree=2)
        >>> curve1, _, _ = surface1.edges
        >>> edge_nodes1 = [curve.nodes for curve in surface1.edges]
        >>> curve2, _, _ = surface2.edges
@@ -2097,7 +2097,7 @@ def handle_ends(index1, s, index2, t):
 
     .. note::
 
-       This is a helper used only by :meth:`.Surface.intersect`.
+       This is a helper used only by :meth:`.Triangle.intersect`.
 
     Does nothing if the intersection happens in the middle of two
     edges.
@@ -2729,10 +2729,10 @@ def combine_intersections(
 
     .. note::
 
-       This is a helper used only by :meth:`.Surface.intersect`.
+       This is a helper used only by :meth:`.Triangle.intersect`.
 
     Does so assuming each intersection lies on an edge of one of
-    two :class:`.Surface`-s.
+    two :class:`.Triangle`-s.
 
     .. note ::
 
@@ -2982,7 +2982,7 @@ def compute_area(edges):
        There is also a Fortran implementation of this function, which
        will be used if it can be built.
 
-    Uses Green's theorem to compute the area exactly. See :attr:`.Surface.area`
+    Uses Green's theorem to compute the area exactly. See :attr:`.Triangle.area`
     and :attr:`.CurvedPolygon.area` for more information.
 
     Args:

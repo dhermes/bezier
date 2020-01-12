@@ -9,8 +9,8 @@ Python Changes
 Documentation
 ~~~~~~~~~~~~~
 
--  Noting that ``Surface.intersect()`` can return a list of either
-   ``CurvedPolygon`` or ``Surface`` instances
+-  Noting that ``Triangle.intersect()`` can return a list of either
+   ``CurvedPolygon`` or ``Triangle`` instances
    (`16e77d7 <https://github.com/dhermes/bezier/commit/16e77d74c526a216c0c2a74d4536cd1d9f93bcff>`__).
 
 Breaking Changes
@@ -34,14 +34,14 @@ Non-Public API
 ABI Changes
 -----------
 
-Surface Changes
+Triangle Changes
 ~~~~~~~~~~~~~~~
 
 -  Switching from ``int`` to an actual enum for relevant functions with
    output values that are enums:
 
    -  In ``surface_intersection.h::surface_intersections``, ``contained``
-      is now a ``SurfaceContained``
+      is now a ``TriangleContained``
       (`0a9c0c3 <https://github.com/dhermes/bezier/commit/0a9c0c3736e95deedeecb8d10284c92ebd39469d>`__)
       and ``status`` is now a ``Status``
       (`c356c32 <https://github.com/dhermes/bezier/commit/c356c32b33781b03785b8868f59efd6ad3076a51>`__)

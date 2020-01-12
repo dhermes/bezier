@@ -50,12 +50,12 @@ This library provides support for
 - Specialization / reparameterization
 - Self-intersection / singularity check for 2D surfaces
 
--![Surface-surface intersection example](https://raw.githubusercontent.com/dhermes/bezier/0.11.0/docs/images/surfaces6Q_and_7Q.png)
+-![Triangle-surface intersection example](https://raw.githubusercontent.com/dhermes/bezier/0.11.0/docs/images/surfaces6Q_and_7Q.png)
 
 [1]: https://en.wikipedia.org/wiki/B%C3%A9zier_curve
 [2]: https://en.wikipedia.org/wiki/B%C3%A9zier_triangle
 [3]: https://bezier.readthedocs.io/en/0.11.0/algorithms/curve-curve-intersection.html
 [4]: https://bezier.readthedocs.io/en/0.11.0/python/reference/bezier.curve.html#bezier.curve.Curve.locate
-[5]: https://bezier.readthedocs.io/en/0.11.0/python/reference/bezier.surface.html#bezier.surface.Surface.locate
+[5]: https://bezier.readthedocs.io/en/0.11.0/python/reference/bezier.surface.html#bezier.surface.Triangle.locate
 
 # References

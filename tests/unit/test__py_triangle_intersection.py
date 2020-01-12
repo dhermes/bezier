@@ -687,10 +687,10 @@ class Test_surface_intersections(utils.NumPyTestCase):
         import bezier
         from bezier import _py_geometric_intersection
 
-        surface1 = bezier.Surface.from_nodes(
+        surface1 = bezier.Triangle.from_nodes(
             np.asfortranarray([[0.0, 1.0, 0.0], [0.0, 0.0, 1.0]])
         )
-        surface2 = bezier.Surface.from_nodes(
+        surface2 = bezier.Triangle.from_nodes(
             np.asfortranarray([[0.0, -2.0, 1.0], [0.0, 3.0, -3.0]])
         )
         edge_nodes1 = tuple(edge._nodes for edge in surface1.edges)

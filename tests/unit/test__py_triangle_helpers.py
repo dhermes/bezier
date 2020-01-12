@@ -849,7 +849,7 @@ class Test_jacobian_det(utils.NumPyTestCase):
 
         nodes = np.asfortranarray([[0.0, 1.0, 0.0], [0.0, 0.0, 2.0]])
         degree = 1
-        surface = bezier.Surface(nodes, degree=degree, copy=False)
+        surface = bezier.Triangle(nodes, degree=degree, copy=False)
         self.assertTrue(surface.is_valid)
         st_vals = np.asfortranarray(RANDOM((13, 2)))
         result = self._call_function_under_test(nodes, degree, st_vals)
@@ -863,7 +863,7 @@ class Test_jacobian_det(utils.NumPyTestCase):
             [[0.0, 0.5, 1.0, 0.0, 1.0, 0.0], [0.0, 0.0, 0.0, 0.5, 1.0, 1.0]]
         )
         degree = 2
-        surface = bezier.Surface(nodes, degree=degree, copy=False)
+        surface = bezier.Triangle(nodes, degree=degree, copy=False)
         self.assertTrue(surface.is_valid)
         # B(s, t) = [s(t + 1), t(s + 1)]
         st_vals = np.asfortranarray(
@@ -909,7 +909,7 @@ class Test_classify_intersection(unittest.TestCase):
     def test_corner_start(self):
         import bezier
 
-        surface = bezier.Surface.from_nodes(
+        surface = bezier.Triangle.from_nodes(
             np.asfortranarray([[1.0, 0.0, 2.0], [1.0, 0.0, 0.0]])
         )
         edge_nodes1 = tuple(edge._nodes for edge in surface.edges)
@@ -952,9 +952,9 @@ class Test_classify_intersection(unittest.TestCase):
     def test_ignored_corner(self):
         import bezier
 
-        surface1 = bezier.Surface(UNIT_TRIANGLE, 1)
+        surface1 = bezier.Triangle(UNIT_TRIANGLE, 1)
         edge_nodes1 = tuple(edge._nodes for edge in surface1.edges)
-        surface2 = bezier.Surface.from_nodes(
+        surface2 = bezier.Triangle.from_nodes(
             np.asfortranarray([[0.0, -1.0, 0.0], [0.0, 0.0, -1.0]])
         )
         edge_nodes2 = tuple(edge._nodes for edge in surface2.edges)
@@ -1123,11 +1123,11 @@ class Test_ignored_double_corner(unittest.TestCase):
     def test_ignored(self):
         import bezier
 
-        surface1 = bezier.Surface.from_nodes(
+        surface1 = bezier.Triangle.from_nodes(
             np.asfortranarray([[1.0, 1.5, 0.5], [0.0, 0.25, 1.0]])
         )
         edge_nodes1 = tuple(edge._nodes for edge in surface1.edges)
-        surface2 = bezier.Surface(UNIT_TRIANGLE, 1)
+        surface2 = bezier.Triangle(UNIT_TRIANGLE, 1)
         edge_nodes2 = tuple(edge._nodes for edge in surface2.edges)
         intersection = make_intersect(0, 0.0, 1, 0.0)
         tangent_s = np.asfortranarray([[0.5], [0.25]])
@@ -1140,9 +1140,9 @@ class Test_ignored_double_corner(unittest.TestCase):
     def test_overlap_first(self):
         import bezier
 
-        surface1 = bezier.Surface(UNIT_TRIANGLE, 1)
+        surface1 = bezier.Triangle(UNIT_TRIANGLE, 1)
         edge_nodes1 = tuple(edge._nodes for edge in surface1.edges)
-        surface2 = bezier.Surface.from_nodes(
+        surface2 = bezier.Triangle.from_nodes(
             np.asfortranarray([[1.0, 1.0, 0.5], [0.0, 1.0, 0.25]])
         )
         edge_nodes2 = tuple(edge._nodes for edge in surface2.edges)
@@ -1157,11 +1157,11 @@ class Test_ignored_double_corner(unittest.TestCase):
     def test_overlap_second(self):
         import bezier
 
-        surface1 = bezier.Surface.from_nodes(
+        surface1 = bezier.Triangle.from_nodes(
             np.asfortranarray([[1.0, 1.0, 0.5], [0.0, 1.0, 0.25]])
         )
         edge_nodes1 = tuple(edge._nodes for edge in surface1.edges)
-        surface2 = bezier.Surface(UNIT_TRIANGLE, 1)
+        surface2 = bezier.Triangle(UNIT_TRIANGLE, 1)
         edge_nodes2 = tuple(edge._nodes for edge in surface2.edges)
         intersection = make_intersect(0, 0.0, 1, 0.0)
         tangent_s = np.asfortranarray([[0.0], [1.0]])
@@ -1174,11 +1174,11 @@ class Test_ignored_double_corner(unittest.TestCase):
     def test_segment_contained(self):
         import bezier
 
-        surface1 = bezier.Surface.from_nodes(
+        surface1 = bezier.Triangle.from_nodes(
             np.asfortranarray([[0.0, 1.0, 0.5], [0.0, 0.5, 1.0]])
         )
         edge_nodes1 = tuple(edge._nodes for edge in surface1.edges)
-        surface2 = bezier.Surface(UNIT_TRIANGLE, 1)
+        surface2 = bezier.Triangle(UNIT_TRIANGLE, 1)
         edge_nodes2 = tuple(edge._nodes for edge in surface2.edges)
         intersection = make_intersect(0, 0.0, 0, 0.0)
         tangent_s = np.asfortranarray([[1.0], [0.5]])
@@ -1210,7 +1210,7 @@ class Test_ignored_corner(utils.NumPyTestCase):
     def test_s_corner(self):
         import bezier
 
-        surface = bezier.Surface(UNIT_TRIANGLE, degree=1, copy=False)
+        surface = bezier.Triangle(UNIT_TRIANGLE, degree=1, copy=False)
         edge_nodes1 = tuple(edge._nodes for edge in surface.edges)
         edge_nodes2 = ()
         intersection = make_intersect(2, 0.0, None, 0.5)
@@ -1240,7 +1240,7 @@ class Test_ignored_corner(utils.NumPyTestCase):
     def test_t_corner(self):
         import bezier
 
-        surface = bezier.Surface(UNIT_TRIANGLE, degree=1, copy=False)
+        surface = bezier.Triangle(UNIT_TRIANGLE, degree=1, copy=False)
         edge_nodes1 = ()
         edge_nodes2 = tuple(edge._nodes for edge in surface.edges)
         intersection = make_intersect(None, 0.5, 1, 0.0)
@@ -2038,7 +2038,7 @@ class Test_combine_intersections(utils.NumPyTestCase):
             [[0.0, 0.5, 1.0, 0.25, 0.75, 0.5], [0.0, -0.5, 0.0, 0.5, 0.5, 1.0]]
         )
         nodes2 = np.asfortranarray([[-1.0, 2.0, 0.5], [-0.25, -0.25, 1.5]])
-        # Surface1-Edge0(0.5) = Surface2-Edge2(0.5)
+        # Triangle1-Edge0(0.5) = Triangle2-Edge2(0.5)
         enum_val = get_enum("TANGENT_FIRST")
         all_types = set([enum_val])
         edges_info, contained = self._call_function_under_test(

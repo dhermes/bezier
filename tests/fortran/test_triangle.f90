@@ -867,7 +867,7 @@ contains
     character(25) :: name
 
     case_id = 1
-    name = "subdivide_nodes (Surface)"
+    name = "subdivide_nodes (Triangle)"
 
     ! CASE 1: Linear surface.
     nodes1(:, 1) = 0

@@ -127,7 +127,7 @@ Breaking Changes
 -  Removed ``set_similar_ulps()`` and ``get_similar_ulps()``
    (`c998445 <https://github.com/dhermes/bezier/commit/c998445026a5487c59af17c9cbdfc9a6cf4d72c0>`__).
 
-Surface Changes
+Triangle Changes
 ~~~~~~~~~~~~~~~
 
 -  Added ``SINGULAR`` status enum for cases when a linear system can't be
@@ -149,7 +149,7 @@ Non-Public API
 Python Changes
 --------------
 
--  (**Bug fix**) The ``0.7.0`` release broke ``Surface.plot()`` and
+-  (**Bug fix**) The ``0.7.0`` release broke ``Triangle.plot()`` and
    ``CurvedPolygon.plot()`` (when the nodes were transposed, the plotting
    helpers were not correctly updated). The ``add_patch()`` helper was
    fixed to account for the changes in data layout

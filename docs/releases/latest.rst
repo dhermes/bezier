@@ -21,8 +21,8 @@ New Features
 
 -  Loosened type constraints in ``Curve``
    `constructor <https://bezier.readthedocs.io/en/0.11.0/python/reference/bezier.curve.html#bezier.curve.Curve>`__
-   and ``Surface``
-   `constructor <https://bezier.readthedocs.io/en/0.11.0/python/reference/bezier.surface.html#bezier.surface.Surface>`__;
+   and ``Triangle``
+   `constructor <https://bezier.readthedocs.io/en/0.11.0/python/reference/bezier.surface.html#bezier.surface.Triangle>`__;
    now any sequence type is accepted rather than **only** NumPy arrays
    (`68f7dc7 <https://github.com/dhermes/bezier/commit/68f7dc7c1f26bb678d09b4221fd917531fb79860>`__,
    `a8c68a3 <https://github.com/dhermes/bezier/commit/a8c68a3368a1edf90cd76cd6ff77ab698b6c3907>`__,
@@ -30,8 +30,8 @@ New Features
    Fixed `#146 <https://github.com/dhermes/bezier/issues/146>`__.
 -  Added ``copy`` and ``verify`` arguments to ``Curve``
    `constructor <https://bezier.readthedocs.io/en/0.11.0/python/reference/bezier.curve.html#bezier.curve.Curve>`__
-   and ``Surface``
-   `constructor <https://bezier.readthedocs.io/en/0.11.0/python/reference/bezier.surface.html#bezier.surface.Surface>`__
+   and ``Triangle``
+   `constructor <https://bezier.readthedocs.io/en/0.11.0/python/reference/bezier.surface.html#bezier.surface.Triangle>`__
    (`#163 <https://github.com/dhermes/bezier/pull/163>`__).
    Fixed `#158 <https://github.com/dhermes/bezier/issues/158>`__.
 -  Added `SymPy <https://docs.sympy.org/>`__-based helpers for "exact"
@@ -43,10 +43,10 @@ New Features
       `function <https://bezier.readthedocs.io/en/0.11.0/python/reference/bezier.curve.html#bezier.curve.Curve.implicitize>`__
    -  ``Curve.to_symbolic()``
       `function <https://bezier.readthedocs.io/en/0.11.0/python/reference/bezier.curve.html#bezier.curve.Curve.to_symbolic>`__
-   -  ``Surface.implicitize()``
-      `function <https://bezier.readthedocs.io/en/0.11.0/python/reference/bezier.surface.html#bezier.surface.Surface.implicitize>`__
-   -  ``Surface.to_symbolic()``
-      `function <https://bezier.readthedocs.io/en/0.11.0/python/reference/bezier.surface.html#bezier.surface.Surface.to_symbolic>`__
+   -  ``Triangle.implicitize()``
+      `function <https://bezier.readthedocs.io/en/0.11.0/python/reference/bezier.surface.html#bezier.surface.Triangle.implicitize>`__
+   -  ``Triangle.to_symbolic()``
+      `function <https://bezier.readthedocs.io/en/0.11.0/python/reference/bezier.surface.html#bezier.surface.Triangle.to_symbolic>`__
 
 Internals
 ~~~~~~~~~

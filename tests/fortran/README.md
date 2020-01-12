@@ -1,4 +1,4 @@
-# Unit Tests for Fortran Surface of `libbezier`
+# Unit Tests for Fortran Triangle of `libbezier`
 
 This is so that the Fortran source can evolve without having to have an
 equivalent Python function for every piece of code.

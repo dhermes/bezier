@@ -23,7 +23,7 @@ from tests.unit import test__symbolic
 from tests.unit import utils
 
 
-class TestSurface(utils.NumPyTestCase):
+class TestTriangle(utils.NumPyTestCase):
 
     REF_TRIANGLE = utils.ref_triangle_uniform_nodes(5)
     REF_TRIANGLE3 = utils.ref_triangle_uniform_nodes(3)
@@ -37,7 +37,7 @@ class TestSurface(utils.NumPyTestCase):
     def _get_target_class():
         from bezier import surface
 
-        return surface.Surface
+        return surface.Triangle
 
     def _make_one(self, *args, **kwargs):
         klass = self._get_target_class()
@@ -118,7 +118,7 @@ class TestSurface(utils.NumPyTestCase):
     def test___repr__(self):
         nodes = np.zeros((3, 15), order="F")
         surface = self._make_one(nodes, 4)
-        expected = "<Surface (degree=4, dimension=3)>"
+        expected = "<Triangle (degree=4, dimension=3)>"
         self.assertEqual(repr(surface), expected)
 
     def test__get_degree_valid(self):
@@ -819,9 +819,9 @@ class Test__make_intersection(utils.NumPyTestCase):
         import bezier
 
         nodes1 = np.asfortranarray([[0.0, 1.0, 0.0], [0.0, 0.0, 1.0]])
-        surface1 = bezier.Surface(nodes1, degree=1, copy=False)
+        surface1 = bezier.Triangle(nodes1, degree=1, copy=False)
         nodes2 = np.asfortranarray([[0.25, -0.75, 0.25], [0.25, 0.25, -0.75]])
-        surface2 = bezier.Surface(nodes2, degree=1, copy=False)
+        surface2 = bezier.Triangle(nodes2, degree=1, copy=False)
         edge_nodes = tuple(edge._nodes for edge in surface1.edges) + tuple(
             edge._nodes for edge in surface2.edges
         )

@@ -44,8 +44,8 @@ module surface_intersection
        IntersectionClassification_TANGENT_BOTH, &
        IntersectionClassification_COINCIDENT, &
        IntersectionClassification_COINCIDENT_UNUSED, &
-       SurfaceContained_NEITHER, &
-       SurfaceContained_FIRST, SurfaceContained_SECOND, newton_refine, &
+       TriangleContained_NEITHER, &
+       TriangleContained_FIRST, TriangleContained_SECOND, newton_refine, &
        locate_point, classify_intersection, update_edge_end_unused, &
        find_corner_unused, add_st_vals, should_keep, &
        surfaces_intersection_points, is_first, is_second, &
@@ -95,10 +95,10 @@ module surface_intersection
   integer(c_int), parameter :: IntersectionClassification_TANGENT_BOTH = 6
   integer(c_int), parameter :: IntersectionClassification_COINCIDENT = 7
   integer(c_int), parameter :: IntersectionClassification_COINCIDENT_UNUSED = 8
-  ! Values of SurfaceContained enum:
-  integer(c_int), parameter :: SurfaceContained_NEITHER = 0
-  integer(c_int), parameter :: SurfaceContained_FIRST = 1
-  integer(c_int), parameter :: SurfaceContained_SECOND = 2
+  ! Values of TriangleContained enum:
+  integer(c_int), parameter :: TriangleContained_NEITHER = 0
+  integer(c_int), parameter :: TriangleContained_FIRST = 1
+  integer(c_int), parameter :: TriangleContained_SECOND = 2
   ! Threshold where a vector cross-product (u x v) is considered
   ! to be "zero". This is a "hack", since it doesn't take ||u||
   ! or ||v|| into account.
@@ -1121,7 +1121,7 @@ contains
          num_nodes2, nodes2, degree2, &
          nodes1(1, 1), nodes1(2, 1), s_val, t_val)
     if (s_val /= LOCATE_MISS) then
-       contained = SurfaceContained_FIRST
+       contained = TriangleContained_FIRST
        return
     end if
 
@@ -1131,12 +1131,12 @@ contains
          num_nodes1, nodes1, degree1, &
          nodes2(1, 1), nodes2(2, 1), s_val, t_val)
     if (s_val /= LOCATE_MISS) then
-       contained = SurfaceContained_SECOND
+       contained = TriangleContained_SECOND
        return
     end if
 
     ! If neither corner is contained, then there is no intersection.
-    contained = SurfaceContained_NEITHER
+    contained = TriangleContained_NEITHER
 
   end subroutine no_intersections
 
@@ -1526,7 +1526,7 @@ contains
     type(CurvedPolygonSegment), intent(in) :: segments(:)
     integer(c_int), intent(out) :: contained
 
-    contained = SurfaceContained_NEITHER
+    contained = TriangleContained_NEITHER
 
     ! Only consider cases where there is exactly one curved polygon.
     if (num_intersected /= 1) then
@@ -1553,13 +1553,13 @@ contains
          all(segments(:3)%edge_index == [2, 3, 1]) .OR. &
          all(segments(:3)%edge_index == [3, 1, 2])) then
        num_intersected = 0
-       contained = SurfaceContained_FIRST
+       contained = TriangleContained_FIRST
     else if ( &
          all(segments(:3)%edge_index == [4, 5, 6]) .OR. &
          all(segments(:3)%edge_index == [5, 6, 4]) .OR. &
          all(segments(:3)%edge_index == [6, 4, 5])) then
        num_intersected = 0
-       contained = SurfaceContained_SECOND
+       contained = TriangleContained_SECOND
     end if
 
   end subroutine check_contained
@@ -1611,7 +1611,7 @@ contains
     end if
 
     status = Status_SUCCESS
-    contained = SurfaceContained_NEITHER
+    contained = TriangleContained_NEITHER
 
     ! Set all of the unused indices.
     unused = [ (i, i = 1, num_intersections) ]
@@ -1672,7 +1672,7 @@ contains
        segment_ends, segments, &
        num_intersected, contained, status)
 
-    ! NOTE: ``contained`` will be a ``SurfaceContained`` enum.
+    ! NOTE: ``contained`` will be a ``TriangleContained`` enum.
     ! NOTE: ``num_intersected`` will be the **actual** size of
     !       ``segment_ends``. The size is de-coupled from the allocated
     !       size since we want to allow re-use.
@@ -1712,7 +1712,7 @@ contains
     integer(c_int) :: num_intersections, all_types
 
     num_intersected = 0
-    contained = SurfaceContained_NEITHER
+    contained = TriangleContained_NEITHER
     status = Status_SUCCESS
 
     ! If the bounded boxes do not intersect, the surfaces cannot.
@@ -1741,10 +1741,10 @@ contains
        else if (all_types == 2**IntersectionClassification_IGNORED_CORNER) then
           return
        else if (all_types == 2**IntersectionClassification_TANGENT_FIRST) then
-          contained = SurfaceContained_FIRST
+          contained = TriangleContained_FIRST
           return
        else if (all_types == 2**IntersectionClassification_TANGENT_SECOND) then
-          contained = SurfaceContained_SECOND
+          contained = TriangleContained_SECOND
           return
        else if (all_types == &
             2**IntersectionClassification_COINCIDENT_UNUSED) then

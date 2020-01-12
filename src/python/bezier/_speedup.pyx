@@ -45,7 +45,7 @@ cimport bezier._status
 cimport bezier._surface
 cimport bezier._surface_intersection
 from bezier._surface_intersection cimport CurvedPolygonSegment
-from bezier._surface_intersection cimport SurfaceContained
+from bezier._surface_intersection cimport TriangleContained
 
 
 cdef double EPS = 0.5**40
@@ -1088,7 +1088,7 @@ def surface_intersections(
     cdef int segment_ends_size
     cdef int segments_size
     cdef int num_intersected
-    cdef SurfaceContained contained
+    cdef TriangleContained contained
     cdef bezier._status.Status status
 
     # NOTE: We don't check that there are 2 rows.
@@ -1114,9 +1114,9 @@ def surface_intersections(
     )
 
     if status == bezier._status.Status.SUCCESS:
-        if contained == bezier._surface_intersection.SurfaceContained.FIRST:
+        if contained == bezier._surface_intersection.TriangleContained.FIRST:
             return None, True, ()
-        elif contained == bezier._surface_intersection.SurfaceContained.SECOND:
+        elif contained == bezier._surface_intersection.TriangleContained.SECOND:
             return None, False, ()
         else:
             # Assumes, but does not check, that ``contained`` is equal to

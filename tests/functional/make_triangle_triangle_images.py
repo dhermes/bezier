@@ -38,7 +38,7 @@ def make_curved_polygon(surface1, surface2, curved_polygon_info):
         return bezier.CurvedPolygon(*edges)
 
     else:
-        assert isinstance(curved_polygon_info, utils.SurfaceIntersectionInfo)
+        assert isinstance(curved_polygon_info, utils.TriangleIntersectionInfo)
         if curved_polygon_info.first:
             return surface1
 
