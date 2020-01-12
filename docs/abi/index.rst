@@ -28,7 +28,7 @@ structure.
 Installation
 ************
 
-Currently (as of October 19, 2018) there is no direct support for building
+Currently (as of January 11, 2020) there is no direct support for building
 ``libbezier`` or for installing the header files.
 
 However, the :doc:`../python/binary-extension` document explains how to locate

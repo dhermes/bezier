@@ -4,8 +4,8 @@ Binary Extension
 
 .. note::
 
-   This content was last updated October 19, 2018 (as part of the
-   ``0.9.0`` release). Much of the content is tested automatically to keep
+   This content was last updated January 11, 2020 (as part of the
+   ``0.11.0`` release). Much of the content is tested automatically to keep
    from getting stale, but some of the console code blocks are not. As a
    result, this material may be out of date. If anything does not seem
    correct --- or even if the explanation is insufficient --- please
