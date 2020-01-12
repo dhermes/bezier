@@ -1,121 +1,18 @@
-Latest Release (``0.11.0``)
-===========================
+Latest Release (``0.12.0.dev1``)
+================================
 
 |pypi| |docs|
 
-Python Changes
---------------
-
-Packaging
-~~~~~~~~~
-
--  Explicit support for Python 3.8 has been added
-   (`#161 <https://github.com/dhermes/bezier/pull/161>`__). On Windows this
-   required using the ``os.add_dll_directory()``
-   `function <https://docs.python.org/3/library/os.html#os.add_dll_directory>`__
-   to load ``bezier.dll`` (in earlier Python version, the DLL directory was
-   added by modifying ``%PATH%``).
-
-New Features
-~~~~~~~~~~~~
-
--  Loosened type constraints in ``Curve``
-   `constructor <https://bezier.readthedocs.io/en/0.11.0/python/reference/bezier.curve.html#bezier.curve.Curve>`__
-   and ``Surface``
-   `constructor <https://bezier.readthedocs.io/en/0.11.0/python/reference/bezier.surface.html#bezier.surface.Surface>`__;
-   now any sequence type is accepted rather than **only** NumPy arrays
-   (`68f7dc7 <https://github.com/dhermes/bezier/commit/68f7dc7c1f26bb678d09b4221fd917531fb79860>`__,
-   `a8c68a3 <https://github.com/dhermes/bezier/commit/a8c68a3368a1edf90cd76cd6ff77ab698b6c3907>`__,
-   `f5c7869 <https://github.com/dhermes/bezier/commit/f5c7869e86b196aca3db272a2e85413357864bc7>`__).
-   Fixed `#146 <https://github.com/dhermes/bezier/issues/146>`__.
--  Added ``copy`` and ``verify`` arguments to ``Curve``
-   `constructor <https://bezier.readthedocs.io/en/0.11.0/python/reference/bezier.curve.html#bezier.curve.Curve>`__
-   and ``Surface``
-   `constructor <https://bezier.readthedocs.io/en/0.11.0/python/reference/bezier.surface.html#bezier.surface.Surface>`__
-   (`#163 <https://github.com/dhermes/bezier/pull/163>`__).
-   Fixed `#158 <https://github.com/dhermes/bezier/issues/158>`__.
--  Added `SymPy <https://docs.sympy.org/>`__-based helpers for "exact"
-   representations
-   (`#164 <https://github.com/dhermes/bezier/pull/164>`__).
-   Fixed `#157 <https://github.com/dhermes/bezier/issues/157>`__.
-
-   -  ``Curve.implicitize()``
-      `function <https://bezier.readthedocs.io/en/0.11.0/python/reference/bezier.curve.html#bezier.curve.Curve.implicitize>`__
-   -  ``Curve.to_symbolic()``
-      `function <https://bezier.readthedocs.io/en/0.11.0/python/reference/bezier.curve.html#bezier.curve.Curve.to_symbolic>`__
-   -  ``Surface.implicitize()``
-      `function <https://bezier.readthedocs.io/en/0.11.0/python/reference/bezier.surface.html#bezier.surface.Surface.implicitize>`__
-   -  ``Surface.to_symbolic()``
-      `function <https://bezier.readthedocs.io/en/0.11.0/python/reference/bezier.surface.html#bezier.surface.Surface.to_symbolic>`__
-
-Internals
-~~~~~~~~~
-
--  Re-factored non-public modules so that algorithms implemented in pure Python
-   **only** invoke other algorithms written in pure Python
-   (`#160 <https://github.com/dhermes/bezier/pull/160>`__). Previously
-   these algorithms invoked the equivalent Fortran speedup if present for a
-   given function. Fixed
-   `#159 <https://github.com/dhermes/bezier/issues/159>`__.
-
-Miscellany
-~~~~~~~~~~
-
--  Moved ``*.f90`` Fortran files **out** of Python source tree
-   (`#152 <https://github.com/dhermes/bezier/pull/152>`__).
-
-ABI Changes
------------
-
 Breaking Changes
-~~~~~~~~~~~~~~~~
+----------------
 
--  Added ``BEZ_`` prefix for exported ABI names
-   (`#167 <https://github.com/dhermes/bezier/pull/167>`__).
-   Fixed `#166 <https://github.com/dhermes/bezier/issues/166>`__.
+-  Rename ``Surface`` to ``Triangle``
+   (`#172 <https://github.com/dhermes/bezier/pull/172>`__).
+   Fixed `#132 <https://github.com/dhermes/bezier/issues/132>`__.
 
-Additive Changes
-~~~~~~~~~~~~~~~~
-
--  Changed all ``[in]`` arguments in C headers to ``const`` pointers
-   (`#169 <https://github.com/dhermes/bezier/pull/169>`__).
-   Fixed `#168 <https://github.com/dhermes/bezier/issues/168>`__.
-
-Bug Fixes
----------
-
--  Explicitly handle length 0 curves (with an error) in the
-   ``compute_length()`` Fortran
-   `subroutine <https://bezier.readthedocs.io/en/0.11.0/abi/curve.html#c.BEZ_compute_length>`__
-   that is used by the ``Curve.length``
-   `property <https://bezier.readthedocs.io/en/0.11.0/python/reference/bezier.curve.html#bezier.curve.Curve.length>`__
-   (`a24368f <https://github.com/dhermes/bezier/commit/a24368fc690b2c6d6a676b9d569f25b5919c400d>`__).
-   Fixed `#148 <https://github.com/dhermes/bezier/issues/148>`__.
--  Fixed high-degree error in the ``Curve.evaluate()``
-   `method <https://bezier.readthedocs.io/en/0.11.0/python/reference/bezier.curve.html#bezier.curve.Curve.evaluate>`__,
-   via the ``evaluate_curve_barycentric()`` Fortran
-   `subroutine <https://bezier.readthedocs.io/en/0.11.0/abi/curve.html#c.BEZ_evaluate_curve_barycentric>`__
-   (`5768824 <https://github.com/dhermes/bezier/commit/57688243b9264ca7ea48423f100e8f516ba2fa2f>`__).
-   Fixed `#156 <https://github.com/dhermes/bezier/issues/156>`__. The code uses
-   :math:`\binom{n}{k + 1} = \frac{n - k}{k + 1} \binom{n}{k}` to update the
-   value and :math:`(30 - 14) \binom{30}{14}` overflows a 32-bit signed
-   integer.
-
-Documentation
--------------
-
--  Updated install instructions to show how to disable the binary extension
-   via ``BEZIER_NO_EXTENSION``
-   (`6262594 <https://github.com/dhermes/bezier/commit/626259493997a9d83924d100900189f32b87e6c5>`__,
-   `00c1e61 <https://github.com/dhermes/bezier/commit/00c1e619688b93a6a079288be40153a9157fa6c5>`__).
-   Fixed `#147 <https://github.com/dhermes/bezier/issues/147>`__.
--  Added "Citation" section to landing page
-   (`9885063 <https://github.com/dhermes/bezier/commit/9885063a2e3795e0bec35a4fc1574dc294d359e0>`__).
-   Fixed `#150 <https://github.com/dhermes/bezier/issues/150>`__.
-
-.. |pypi| image:: https://img.shields.io/pypi/v/bezier/0.11.0.svg
-   :target: https://pypi.org/project/bezier/0.11.0/
-   :alt: PyPI link to release 0.11.0
-.. |docs| image:: https://readthedocs.org/projects/bezier/badge/?version=0.11.0
-   :target: https://bezier.readthedocs.io/en/0.11.0/
-   :alt: Documentation for release 0.11.0
+.. |pypi| image:: https://img.shields.io/pypi/v/bezier/0.12.0.svg
+   :target: https://pypi.org/project/bezier/0.12.0/
+   :alt: PyPI link to release 0.12.0
+.. |docs| image:: https://readthedocs.org/projects/bezier/badge/?version=0.12.0
+   :target: https://bezier.readthedocs.io/en/0.12.0/
+   :alt: Documentation for release 0.12.0
