@@ -13,7 +13,7 @@
 r"""Helper for B |eacute| zier Curves, Triangles, and Higher Order Objects.
 
 Intended to perform basic operations on B |eacute| zier objects such
-as intersections, length/area/etc. computations, subdivision,
+as intersections, length / area / etc. computations, subdivision,
 implicitization and other relevant information.
 
 Plotting utilities are also provided.
@@ -59,9 +59,16 @@ __all__ = [
     "get_dll",
     "get_include",
     "get_lib",
+    "Surface",
     "Triangle",
     "UnsupportedDegree",
 ]
+
+Surface = Triangle
+"""Legacy alias for B |eacute| zier Surface class.
+
+This will be deprecated in a future release.
+"""
 
 
 def get_include():
