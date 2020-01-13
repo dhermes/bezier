@@ -3,6 +3,10 @@ version: 1.0.{build}.{branch}
 
 build: false
 
+branches:
+  only:
+    - master
+
 matrix:
   fast_finish: true
 
