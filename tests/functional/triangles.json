@@ -1,0 +1,1255 @@
+{
+    "1L": {
+        "control_points": [
+            [0, 1, 0],
+            [0, 0, 1]
+        ]
+    },
+    "2L": {
+        "control_points": [
+            ["-1/8", 1, "1/8"],
+            ["-1/16", "1/2", "3/8"]
+        ]
+    },
+    "3L": {
+        "control_points": [
+            ["1/4", "5/4", "1/4"],
+            ["-1/8", "-1/8", "7/8"]
+        ]
+    },
+    "4L": {
+        "control_points": [
+            ["-5/4", "5/4", 0],
+            [0, 0, "35/16"]
+        ]
+    },
+    "5L": {
+        "control_points": [
+            ["1/2", "25/8", "-17/8"],
+            ["-5/32", "1/2", "1/2"]
+        ]
+    },
+    "6L": {
+        "control_points": [
+            ["1/4", "-3/4", "1/4"],
+            ["1/4", "1/4", "-3/4"]
+        ]
+    },
+    "7L": {
+        "control_points": [
+            [0, -1, -1],
+            ["1/2", 1, 0]
+        ]
+    },
+    "8L": {
+        "control_points": [
+            ["1/8", "3/4", "5/4"],
+            ["3/4", "1/8", "5/4"]
+        ]
+    },
+    "9L": {
+        "control_points": [
+            [0, "7/8", "1/4"],
+            ["1/8", 0, "3/4"]
+        ]
+    },
+    "10L": {
+        "control_points": [
+            [0, -2, 1],
+            [0, 3, -3]
+        ]
+    },
+    "11L": {
+        "control_points": [
+            ["9/4", "17/8", "37/16"],
+            ["97/32", "23/8", "91/32"]
+        ]
+    },
+    "12L": {
+        "control_points": [
+            [-4, 16, -4],
+            ["1/2", "11/2", 15]
+        ]
+    },
+    "13L": {
+        "control_points": [
+            [-8, 8, 0],
+            [0, 0, 8]
+        ]
+    },
+    "14L": {
+        "control_points": [
+            ["0x1.6863885e407edp-1", "0x1.6924a2e5e142fp-1", "0x1.5b8b094c47a96p-1"],
+            ["-0x1.5131e4761e6fep-1", "-0x1.3d3d1ffab5baep-1", "-0x1.4ad6b9944f548p-1"]
+        ],
+        "note": "This triangle and 48Q are from a real-world case, so the values do not have a rational or algebraic representation."
+    },
+    "15L": {
+        "control_points": [
+            ["0x1.bf8ad4846373bp-1", "0x1.c93025aa5981cp-1", "0x1.bf8ad4846373bp-1"],
+            ["0x1.3131d8b46f55bp-3", "0x1.286f6bfe8d295p-3", "0x1.67983f1ad5bc2p-3"]
+        ],
+        "note": "This triangle and 49Q are from a real-world case, so the values do not have a rational or algebraic representation."
+    },
+    "1Q": {
+        "control_points": [
+            [0, "1/2", 1, "1/4", "3/4", 0],
+            [0, "-1/4", 0, "1/2", "3/4", 1]
+        ],
+        "note": "This triangle is ``identical'' to triangle 45Q."
+    },
+    "2Q": {
+        "control_points": [
+            ["-1/4", "1/16", "3/4", "1/4", "15/16", "3/4"],
+            ["3/4", "1/16", "-1/4", "15/16", "1/4", "3/4"]
+        ]
+    },
+    "3Q": {
+        "control_points": [
+            [0, "1/2", 1, "3/16", "11/8", 1],
+            [0, "1/4", 0, "15/16", "3/4", 1]
+        ]
+    },
+    "4Q": {
+        "control_points": [
+            [0, "1/2", 1, "1/8", "9/16", "3/16"],
+            ["1/4", 0, "1/4", "5/8", "5/8", 1]
+        ]
+    },
+    "5Q": {
+        "control_points": [
+            ["1/4", "3/4", "9/8", "7/16", "7/8", "5/8"],
+            ["3/32", "5/8", "3/8", "17/32", "3/4", 1]
+        ]
+    },
+    "6Q": {
+        "control_points": [
+            [0, "3/8", 1, "1/4", "3/4", "1/2"],
+            [0, "3/8", 0, "1/2", "1/2", 1]
+        ]
+    },
+    "7Q": {
+        "control_points": [
+            [1, "5/8", 0, "3/4", "1/4", "1/2"],
+            ["3/8", "-1/8", "3/8", "-3/16", "-3/16", "-3/4"]
+        ]
+    },
+    "8Q": {
+        "control_points": [
+            [0, "1/2", 1, 0, 4, 0],
+            [0, 0, 0, "1/2", 4, 1]
+        ]
+    },
+    "9Q": {
+        "control_points": [
+            ["3/2", 2, "5/2", "-3/2", "5/2", "5/2"],
+            [0, 0, 0, 4, "1/2", 1]
+        ]
+    },
+    "10Q": {
+        "control_points": [
+            [1, "1/2", 0, "3/4", "1/4", "1/2"],
+            [0, "1/4", 0, "-3/8", "-3/8", "-3/4"]
+        ]
+    },
+    "11Q": {
+        "control_points": [
+            [0, "1/2", 1, "1/8", "5/8", "3/16"],
+            ["3/16", "-1/16", "3/16", "9/16", "9/16", "15/16"]
+        ]
+    },
+    "12Q": {
+        "control_points": [
+            [1, "1/2", 0, "3/4", "1/4", "1/2"],
+            ["1/16", "5/16", "1/16", "-5/16", "-5/16", "-11/16"]
+        ]
+    },
+    "13Q": {
+        "control_points": [
+            ["1/4", "1/2", "3/4", "3/8", "5/8", "1/2"],
+            ["5/32", "3/32", "5/32", "3/8", "3/8", "5/8"]
+        ],
+        "note": "The bottom edge of this triangle lies entirely on the bottom edge of triangle 4Q."
+    },
+    "14Q": {
+        "control_points": [
+            ["1/4", "1/2", "3/4", "3/8", "5/8", "1/2"],
+            ["7/32", "5/32", "7/32", "7/16", "7/16", "11/16"]
+        ],
+        "note": "This triangle is triangle 13Q shifted by [0, 1/16]."
+    },
+    "15Q": {
+        "control_points": [
+            [0, 1, 2, 1, 1, 0],
+            [0, "7/8", "7/4", 1, "15/8", 2]
+        ]
+    },
+    "16Q": {
+        "control_points": [
+            [1, 0, 1, 0, 0, -1],
+            [0, 1, 2, "7/8", "15/8", "7/4"]
+        ]
+    },
+    "17Q": {
+        "control_points": [
+            ["1/2", "83/128", "51/64", "45/128", "1/2", "13/64"],
+            ["-3/4", "-7/16", "-1/8", "-7/16", 0, "-1/8"]
+        ]
+    },
+    "18Q": {
+        "control_points": [
+            ["3/4", "1/4", "-1/4", "5/8", "1/8", "1/2"],
+            ["3/32", "7/32", "-5/32", "-21/64", "-29/64", "-3/4"]
+        ]
+    },
+    "19Q": {
+        "control_points": [
+            [0, "-1/4", "-1/2", "1/4", 0, "1/2"],
+            [0, "-1/8", "-3/8", "-3/8", "-9/16", "-3/4"]
+        ]
+    },
+    "20Q": {
+        "control_points": [
+            [1, 1, 0, 0, "-1/2", -1],
+            [0, 1, 1, 0, "1/2", 0]
+        ]
+    },
+    "21Q": {
+        "control_points": [
+            [1, 1, "-1/2", "1/4", "-1/2", "-1/2"],
+            [0, "3/2", "3/2", "1/8", "7/8", "1/4"]
+        ]
+    },
+    "22Q": {
+        "control_points": [
+            ["-25/16", 0, "25/16", "-15/32", "15/32", 0],
+            ["-5/16", "5/16", "-5/16", "145/128", "145/128", "155/64"]
+        ]
+    },
+    "23Q": {
+        "control_points": [
+            [-1, 0, 1, "-3/4", "3/4", 0],
+            ["1/8", "-1/8", "1/8", "19/16", "19/16", "15/8"]
+        ]
+    },
+    "24Q": {
+        "control_points": [
+            ["3/4", "11/16", "19/64", "1/4", "29/128", "1/128"],
+            ["25/32", "25/32", "7/8", "1/2", "7/8", "9/16"]
+        ]
+    },
+    "25Q": {
+        "control_points": [
+            ["31/32", "21/32", "21/64", "29/32", "19/64", "5/32"],
+            ["31/32", "25/32", "5/8", "17/32", "7/16", "7/64"]
+        ]
+    },
+    "26Q": {
+        "control_points": [
+            [0, "1/2", 1, 0, 1, 0],
+            [0, 0, 0, "1/2", 1, 1]
+        ]
+    },
+    "27Q": {
+        "control_points": [
+            [2, 2, 2, 1, "3/2", 1],
+            [0, "1/2", 1, 0, 1, 1]
+        ]
+    },
+    "28Q": {
+        "control_points": [
+            ["3/2", "25/16", "11/8", "3/4", "5/8", "3/16"],
+            [0, "1/2", 1, "-3/16", "1/2", 0]
+        ]
+    },
+    "29Q": {
+        "control_points": [
+            ["-1/2", "5/16", "5/4", "-1/4", "1/8", 0],
+            ["-1/2", "-1/4", 0, "5/16", "1/8", "5/4"]
+        ]
+    },
+    "30Q": {
+        "control_points": [
+            ["-1/4", "3/16", "5/8", "-1/4", "3/16", "-1/4"],
+            ["-1/4", "-1/4", "-1/4", "3/16", "3/16", "5/8"]
+        ],
+        "note": "This is a degree-elevated linear triangle."
+    },
+    "31Q": {
+        "control_points": [
+            [0, "1/2", 1, "1/16", "7/16", "-1/8"],
+            [-1, "-1/2", 0, "-1/2", 0, 0]
+        ]
+    },
+    "32Q": {
+        "control_points": [
+            ["9/4", "35/16", "17/8", "73/32", "71/32", "37/16"],
+            ["97/32", "189/64", "23/8", "47/16", "183/64", "91/32"]
+        ],
+        "note": "This is triangle 11L degree-elevated from linear to quadratic."
+    },
+    "33Q": {
+        "control_points": [
+            ["285/128", "277/128", "269/128", "569/256", "553/256", "1137/512"],
+            [3, "47/16", "23/8", "47/16", "23/8", "23/8"]
+        ],
+        "note": "Edge 1 (0-indexed) is curve 54, which has a ``bad'' parameterization, but this is not a problem for `s` in [0, 1]."
+    },
+    "34Q": {
+        "control_points": [
+            [1, "5/8", 0, "3/4", "-1/4", "1/2"],
+            ["3/8", "-1/8", "3/8", "-3/16", "-7/16", "-3/4"]
+        ],
+        "note": "This triangle is 7Q, with the left edge (edge 1, 0-indexed) changed to a quadratic."
+    },
+    "35Q": {
+        "control_points": [
+            [0, "1/2", 1, "1/2", 1, 1],
+            [0, "1/4", 0, "5/8", "5/8", "5/4"]
+        ]
+    },
+    "36Q": {
+        "control_points": [
+            [0, 2, 4, 2, "9/4", "1/2"],
+            [0, "-1/2", -1, 1, "3/2", 4]
+        ]
+    },
+    "37Q": {
+        "control_points": [
+            [1, -1, "1/2", -1, "-5/4", -3],
+            [0, 1, 4, "-1/2", "3/2", -1]
+        ]
+    },
+    "38Q": {
+        "control_points": [
+            [4, 0, -4, 2, -2, 0],
+            [3, -5, 3, -3, -3, -9]
+        ]
+    },
+    "39Q": {
+        "control_points": [
+            [1, "1/4", 0, 0, "-1/2", -1],
+            [0, "1/4", 1, "-1/2", 0, -1]
+        ]
+    },
+    "40Q": {
+        "control_points": [
+            ["1/4", "1/2", "3/4", "3/8", "5/8", "1/2"],
+            [0, "1/4", 0, "1/4", "1/4", "1/2"]
+        ]
+    },
+    "41Q": {
+        "control_points": [
+            ["15/16", "19/16", "7/16", "-1/32", "-9/32", -1],
+            ["-9/16", "11/16", "15/16", "-9/32", "15/32", 0]
+        ],
+        "note": "This is derived from triangle 20Q by reparameterizing the curved edge onto [-1/4, 3/4] and then connecting the third corner to the new edge ends."
+    },
+    "42Q": {
+        "control_points": [
+            [0, "1/8", "5/4", "5/8", "5/4", "5/4"],
+            ["5/4", "1/8", 0, "5/4", "5/8", "5/4"]
+        ]
+    },
+    "43Q": {
+        "control_points": [
+            ["1/8", "1/2", "15/8", "11/16", "25/16", "5/4"],
+            ["3/4", "-1/8", 0, 1, "5/8", "5/4"]
+        ]
+    },
+    "44Q": {
+        "control_points": [
+            ["1/8", "-1/8", "-3/8", "3/8", "1/8", "5/8"],
+            ["-3/16", "-5/16", "-9/16", "-9/16", "-3/4", "-15/16"]
+        ],
+        "note": "This is derived from triangle 19Q via a shift by [1/8, -3/16]."
+    },
+    "45Q": {
+        "control_points": [
+            [1, "3/4", 0, "1/2", "1/4", 0],
+            [0, "3/4", 1, "-1/4", "1/2", 0]
+        ],
+        "note": "This is just triangle 1Q with the egdes relabled 1->3, 2->1, 3->2."
+    },
+    "46Q": {
+        "control_points": [
+            [0, "1/2" , 1, "1/5", "7/10", 0],
+            [0, "-1/5", 0, "1/2", "7/10", 1]
+        ]
+    },
+    "47Q": {
+        "control_points": [
+            ["1/2", "33/16", "29/8", "-17/16", "1/2", "-21/8"],
+            ["-1/8", "3/16", "1/2", "3/16", "1/2", "1/2"]
+        ]
+    },
+    "48Q": {
+        "control_points": [
+            [
+                "0x1.63e1b4c544d3ap-1",
+                "0x1.6c074b46d2b9ep-1",
+                "0x1.740dd73c29145p-1",
+                "0x1.63dfc219c43e0p-1",
+                "0x1.6c0143822c9c2p-1",
+                "0x1.63f54b194fe80p-1"
+            ], [
+                "-0x1.424da10fb674dp-1",
+                "-0x1.3a7d6b25aa9edp-1",
+                "-0x1.32aa53fca29dep-1",
+                "-0x1.3a5101ace41bep-1",
+                "-0x1.3287cd06d793dp-1",
+                "-0x1.3249ee51aadb0p-1"
+            ]
+        ],
+        "note": "This triangle and 14L are from a real-world case, so the values do not have a rational or algebraic representation."
+    },
+    "49Q": {
+        "control_points": [
+            [
+                "0x1.bf84f70f66400p-1",
+                "0x1.bfa4807c92afap-1",
+                "0x1.bfc409e9bf1f5p-1",
+                "0x1.baf2d5f8dd22ap-1",
+                "0x1.bb16e0bec6c6ap-1",
+                "0x1.b663431f7e597p-1"
+            ], [
+                "0x1.6017a1182b9b6p-3",
+                "0x1.725d85f3802ebp-3",
+                "0x1.84a36aced4c22p-3",
+                "0x1.6015c9959e8b7p-3",
+                "0x1.725b379ff4c0fp-3",
+                "0x1.605a965800eb2p-3"
+            ]
+        ],
+        "note": "This triangle and 15L are from a real-world case, so the values do not have a rational or algebraic representation."
+    },
+    "50Q": {
+        "control_points": [
+            [
+                "-0x1.ed0cf603c1befp-1",
+                "-0x1.f6713e54a23bep-1",
+                -1,
+                "-0x1.f6867b01e0df8p-1",
+                -1,
+                -1
+            ], [
+                "-0x1.b72990e8efa44p-1",
+                "-0x1.ade7b16d037d8p-1",
+                "-0x1.a492492492494p-1",
+                "-0x1.b7027f4fe5890p-1",
+                "-0x1.adb6db6db6db8p-1",
+                "-0x1.b6db6db6db6dcp-1"
+            ]
+        ],
+        "note": "This triangle and 51Q are from a real-world case, so the values do not have a rational or algebraic representation."
+    },
+    "51Q": {
+        "control_points": [
+            [
+                "-0x1.0649249249249p+0",
+                "-0x1.016db6db6db6fp+0",
+                "-0x1.f924924924925p-1",
+                "-0x1.fd97edd78b894p-1",
+                "-0x1.f3e11269d4adep-1",
+                "-0x1.ee9d928a84c98p-1"
+            ], [
+                "-0x1.9800000000001p-1",
+                "-0x1.a1b6db6db6db8p-1",
+                "-0x1.ab6db6db6db6fp-1",
+                "-0x1.94960f9a0a6aep-1",
+                "-0x1.9e4ceb07c1464p-1",
+                "-0x1.912c1f3414d5bp-1"
+            ]
+        ],
+        "note": "This triangle and 50Q are from a real-world case, so the values do not have a rational or algebraic representation."
+    },
+    "52Q": {
+        "control_points": [
+            [
+                "-0x1.a492492492494p-1",
+                "-0x1.ade21be379073p-1",
+                "-0x1.b720a1a678806p-1",
+                "-0x1.a4bd899a5474ep-1",
+                "-0x1.ae04b5db47908p-1",
+                "-0x1.a4e8ca1016a08p-1"
+            ], [
+                1,
+                "0x1.f6ae3b7116bc0p-1",
+                "0x1.ed6e8afe15bf0p-1",
+                "0x1.f6ae3b7116bc1p-1",
+                "0x1.ed6580f0219b9p-1",
+                "0x1.ed5c76e22d77ep-1"
+            ]
+        ],
+        "note": "This triangle is part of a real-world intersection case with triangle 53Q, so the values do not have a rational or algebraic representation."
+    },
+    "53Q": {
+        "control_points": [
+            [
+                "-0x1.ab6db6db6db6fp-1",
+                "-0x1.a1b6db6db6db8p-1",
+                "-0x1.9800000000001p-1",
+                "-0x1.ab6db6db6db6fp-1",
+                "-0x1.a1b6db6db6db7p-1",
+                "-0x1.ab6db6db6db6ep-1"
+            ], [
+                "0x1.f924924924925p-1",
+                "0x1.016db6db6db6ep+0",
+                "0x1.064924924924ap+0",
+                "0x1.016db6db6db6ep+0",
+                "0x1.064924924924ap+0",
+                "0x1.0649249249249p+0"
+            ]
+        ],
+        "note": "This triangle is part of a real-world intersection case with triangle 52Q, so the values do not have a rational or algebraic representation."
+    },
+    "54Q": {
+        "control_points": [
+            [
+                "-0x1.a492492492494p-1",
+                "-0x1.a8ef7a9807f9ap-1",
+                "-0x1.ad574a621cfb8p-1",
+                "-0x1.a924924924926p-1",
+                "-0x1.ad8712e7e9eb8p-1",
+                "-0x1.adb6db6db6db8p-1"
+            ], [
+                -1,
+                "-0x1.fb8621db1407dp-1",
+                "-0x1.f707618306cc6p-1",
+                -1,
+                "-0x1.fb83b0c183664p-1",
+                -1
+            ]
+        ],
+        "note": "This triangle is part of a real-world intersection case with triangle 55Q, so the values do not have a rational or algebraic representation."
+    },
+    "55Q": {
+        "control_points": [
+            [
+                "-0x1.a1b6db6db6db7p-1",
+                "-0x1.a692492492491p-1",
+                "-0x1.ab6db6db6db6ep-1",
+                "-0x1.a692492492493p-1",
+                "-0x1.ab6db6db6db6dp-1",
+                "-0x1.ab6db6db6db6ep-1"
+            ], [
+                "-0x1.016db6db6db6ep+0",
+                "-0x1.fe00000000001p-1",
+                "-0x1.f924924924926p-1",
+                "-0x1.016db6db6db70p+0",
+                "-0x1.fe00000000002p-1",
+                "-0x1.016db6db6db6ep+0"
+            ]
+        ],
+        "note": "This triangle is part of a real-world intersection case with triangles 54Q and 68Q, so the values do not have a rational or algebraic representation."
+    },
+    "56Q": {
+        "control_points": [
+            [
+                "-0x1.db433d80f06fcp-1",
+                "-0x1.d6c0e1de4d214p-1",
+                "-0x1.d249249249249p-1",
+                "-0x1.d6aba5310e7d9p-1",
+                "-0x1.d22e98b9bad83p-1",
+                "-0x1.d2140ce12c8bap-1"
+            ], [
+                "-0x1.f6eef683607b6p-1",
+                "-0x1.fb79ec5b40df8p-1",
+                -1,
+                "-0x1.f6f1679cf11cep-1",
+                "-0x1.fb79ec5b40df6p-1",
+                "-0x1.f6f3d8b681becp-1"
+            ]
+        ],
+        "note": "This triangle is part of a real-world intersection case with triangles 57Q and 71Q, so the values do not have a rational or algebraic representation."
+    },
+    "57Q": {
+        "control_points": [
+            [
+                "-0x1.c892492492493p-1",
+                "-0x1.cd6db6db6db6dp-1",
+                "-0x1.d24924924924ap-1",
+                "-0x1.cd6db6db6db6ep-1",
+                "-0x1.d24924924924ap-1",
+                "-0x1.d24924924924bp-1"
+            ], [
+                "-0x1.016db6db6db6ep+0",
+                "-0x1.fe00000000003p-1",
+                "-0x1.f924924924926p-1",
+                "-0x1.016db6db6db6ep+0",
+                "-0x1.fe00000000002p-1",
+                "-0x1.016db6db6db6ep+0"
+            ]
+        ],
+        "note": "This triangle is part of a real-world intersection case with triangle 56Q, so the values do not have a rational or algebraic representation."
+    },
+    "58Q": {
+        "control_points": [
+            [
+                -1,
+                "-0x1.fb8357164ecccp-1",
+                "-0x1.f7025aeda3c84p-1",
+                -1,
+                "-0x1.fb812d76d1e42p-1",
+                -1
+            ], [
+                "0x1.a492492492491p-1",
+                "0x1.a90df92642395p-1",
+                "0x1.ad8e2e2eec3b6p-1",
+                "0x1.a924924924925p-1",
+                "0x1.ada284ce518b9p-1",
+                "0x1.adb6db6db6db6p-1"
+            ]
+        ],
+        "note": "This triangle is part of a real-world intersection case with triangles 59Q and 83Q, so the values do not have a rational or algebraic representation."
+    },
+    "59Q": {
+        "control_points": [
+            [
+                "-0x1.016db6db6db6ep+0",
+                "-0x1.fe00000000001p-1",
+                "-0x1.f924924924926p-1",
+                "-0x1.016db6db6db70p+0",
+                "-0x1.fe00000000002p-1",
+                "-0x1.016db6db6db6ep+0"
+            ], [
+                "0x1.a1b6db6db6db6p-1",
+                "0x1.a692492492492p-1",
+                "0x1.ab6db6db6db6dp-1",
+                "0x1.a69249249248ep-1",
+                "0x1.ab6db6db6db6ep-1",
+                "0x1.ab6db6db6db6dp-1"
+            ]
+        ],
+        "note": "This triangle is part of a real-world intersection case with triangle 58Q, so the values do not have a rational or algebraic representation."
+    },
+    "60Q": {
+        "control_points": [
+            [
+                "-0x1.a492492492494p-1",
+                "-0x1.ad4cac0b7da9cp-1",
+                "-0x1.b631884ce6514p-1",
+                "-0x1.adb6db6db6db8p-1",
+                "-0x1.b6867b01e0df8p-1",
+                "-0x1.b6db6db6db6dcp-1"
+            ], [
+                -1,
+                "-0x1.f70c43b6280fcp-1",
+                "-0x1.ee04fe9fcb120p-1",
+                -1,
+                "-0x1.f7027f4fe5890p-1",
+                -1
+            ]
+        ],
+        "note": "This triangle is part of a real-world intersection case with triangle 61Q, so the values do not have a rational or algebraic representation."
+    },
+    "61Q": {
+        "control_points": [
+            [
+                "-0x1.ab6db6db6db6ep-1",
+                "-0x1.a1b6db6db6db8p-1",
+                "-0x1.9800000000001p-1",
+                "-0x1.9c735b8e66f71p-1",
+                "-0x1.92bc8020b01bbp-1",
+                "-0x1.8d79004160376p-1"
+            ], [
+                "-0x1.f924924924926p-1",
+                "-0x1.016db6db6db6ep+0",
+                "-0x1.0649249249249p+0",
+                "-0x1.f5baa1e32efd4p-1",
+                "-0x1.ff717d50e5d8cp-1",
+                "-0x1.f250b17d39681p-1"
+            ]
+        ],
+        "note": "This triangle is part of a real-world intersection case with triangle 60Q, so the values do not have a rational or algebraic representation."
+    },
+    "62Q": {
+        "control_points": [
+            [
+                "0x1.ede51b58cb251p-1",
+                "0x1.f6f855a9c81bcp-1",
+                1,
+                "0x1.edeae3562dae4p-1",
+                "0x1.f6f855a9c81bcp-1",
+                "0x1.edf0ab5390377p-1"
+            ], [
+                "-0x1.b688c0e4e97c4p-1",
+                "-0x1.ad832f6a7fa48p-1",
+                "-0x1.a492492492494p-1",
+                "-0x1.ad59d90186abcp-1",
+                "-0x1.a45e9d215b124p-1",
+                "-0x1.a42af11e23db4p-1"
+            ]
+        ],
+        "note": "This triangle is part of a real-world intersection case with triangle 63Q, so the values do not have a rational or algebraic representation."
+    },
+    "63Q": {
+        "control_points": [
+            [
+                "0x1.0649249249249p+0",
+                "0x1.016db6db6db6fp+0",
+                "0x1.f924924924924p-1",
+                "0x1.064924924924ap+0",
+                "0x1.016db6db6db6ep+0",
+                "0x1.0649249249249p+0"
+            ], [
+                "-0x1.9800000000001p-1",
+                "-0x1.a1b6db6db6db7p-1",
+                "-0x1.ab6db6db6db6ep-1",
+                "-0x1.a1b6db6db6db8p-1",
+                "-0x1.ab6db6db6db6cp-1",
+                "-0x1.ab6db6db6db6fp-1"
+            ]
+        ],
+        "note": "This triangle is part of a real-world intersection case with triangle 62Q, so the values do not have a rational or algebraic representation."
+    },
+    "64Q": {
+        "control_points": [
+            [
+                1,
+                "0x1.f6f855a9c81bcp-1",
+                "0x1.ede51b58cb251p-1",
+                1,
+                "0x1.f6f28dac65928p-1",
+                1
+            ], [
+                "-0x1.a492492492494p-1",
+                "-0x1.ad832f6a7fa48p-1",
+                "-0x1.b688c0e4e97c4p-1",
+                "-0x1.adb6db6db6db8p-1",
+                "-0x1.b6b2174de2750p-1",
+                "-0x1.b6db6db6db6dcp-1"
+            ]
+        ],
+        "note": "This triangle is part of a real-world intersection case with triangle 65Q, so the values do not have a rational or algebraic representation."
+    },
+    "65Q": {
+        "control_points": [
+            [
+                "0x1.f924924924924p-1",
+                "0x1.016db6db6db6ep+0",
+                "0x1.0649249249249p+0",
+                "0x1.f79b27380e77cp-1",
+                "0x1.00a90152e2a9bp+0",
+                "0x1.f611bc26f85d4p-1"
+            ], [
+                "-0x1.ab6db6db6db6ep-1",
+                "-0x1.a1b6db6db6db8p-1",
+                "-0x1.9800000000001p-1",
+                "-0x1.9f1e84091c4ecp-1",
+                "-0x1.9567a89b65734p-1",
+                "-0x1.92cf5136cae69p-1"
+            ]
+        ],
+        "note": "This triangle is part of a real-world intersection case with triangle 64Q, so the values do not have a rational or algebraic representation."
+    },
+    "66Q": {
+        "control_points": [
+            [
+                "0x1.a492492492491p-1",
+                "0x1.add3c360a3896p-1",
+                "0x1.b709ada1efb75p-1",
+                "0x1.a4af31177ef71p-1",
+                "0x1.adeae3562dae3p-1",
+                "0x1.a4cc190a6ba52p-1"
+            ], [
+                -1,
+                "-0x1.f6a7c1b3a436cp-1",
+                "-0x1.ed642e9bc4e9dp-1",
+                "-0x1.f6a7c1b3a436cp-1",
+                "-0x1.ed59d90186abap-1",
+                "-0x1.ed4f8367486d8p-1"
+            ]
+        ],
+        "note": "This triangle is part of a real-world intersection case with triangle 67Q, so the values do not have a rational or algebraic representation."
+    },
+    "67Q": {
+        "control_points": [
+            [
+                "0x1.ab6db6db6db6dp-1",
+                "0x1.a1b6db6db6db6p-1",
+                "0x1.97fffffffffffp-1",
+                "0x1.ab6db6db6db6ep-1",
+                "0x1.a1b6db6db6db6p-1",
+                "0x1.ab6db6db6db6dp-1"
+            ], [
+                "-0x1.f924924924925p-1",
+                "-0x1.016db6db6db6ep+0",
+                "-0x1.0649249249249p+0",
+                "-0x1.016db6db6db6ep+0",
+                "-0x1.064924924924ap+0",
+                "-0x1.0649249249249p+0"
+            ]
+        ],
+        "note": "This triangle is part of a real-world intersection case with triangle 66Q, so the values do not have a rational or algebraic representation."
+    },
+    "68Q": {
+        "control_points": [
+            [
+                "-0x1.ad574a621cfb8p-1",
+                "-0x1.a8ef7a9807f9ap-1",
+                "-0x1.a492492492494p-1",
+                "-0x1.a8bfb2123b097p-1",
+                "-0x1.a45d317375b03p-1",
+                "-0x1.a42819c259176p-1"
+            ], [
+                "-0x1.f707618306cc6p-1",
+                "-0x1.fb8621db1407cp-1",
+                -1,
+                "-0x1.f709d29c976e2p-1",
+                "-0x1.fb8621db1407ep-1",
+                "-0x1.f70c43b6280fcp-1"
+            ]
+        ],
+        "note": "This triangle is part of a real-world intersection case with triangle 55Q, so the values do not have a rational or algebraic representation."
+    },
+    "69Q": {
+        "control_points": [
+            [
+                -1,
+                "-0x1.fb389f2a511dep-1",
+                "-0x1.f67bdcab418dbp-1",
+                "-0x1.fb389f2a511e0p-1",
+                "-0x1.f6768d7ff1e4ep-1",
+                "-0x1.f6713e54a23c0p-1"
+            ], [
+                "-0x1.a492492492494p-1",
+                "-0x1.a93cfd48cae35p-1",
+                "-0x1.ade2cf39e23a2p-1",
+                "-0x1.a4aab424389a2p-1",
+                "-0x1.a952f72ee092ap-1",
+                "-0x1.a4c31f23deeb4p-1"
+            ]
+        ],
+        "note": "This triangle is part of a real-world intersection case with triangle 70Q, so the values do not have a rational or algebraic representation."
+    },
+    "70Q": {
+        "control_points": [
+            [
+                "-0x1.f924924924925p-1",
+                "-0x1.fe00000000004p-1",
+                "-0x1.016db6db6db6ep+0",
+                "-0x1.fe00000000002p-1",
+                "-0x1.016db6db6db6ep+0",
+                "-0x1.016db6db6db6ep+0"
+            ], [
+                "-0x1.ab6db6db6db6fp-1",
+                "-0x1.a692492492494p-1",
+                "-0x1.a1b6db6db6db8p-1",
+                "-0x1.ab6db6db6db70p-1",
+                "-0x1.a692492492494p-1",
+                "-0x1.ab6db6db6db6fp-1"
+            ]
+        ],
+        "note": "This triangle is part of a real-world intersection case with triangle 69Q, so the values do not have a rational or algebraic representation."
+    },
+    "71Q": {
+        "control_points": [
+            [
+                "-0x1.dc00000000001p-1",
+                "-0x1.d724924924926p-1",
+                "-0x1.d24924924924bp-1",
+                "-0x1.d724924924925p-1",
+                "-0x1.d24924924924bp-1",
+                "-0x1.d24924924924ap-1"
+            ], [
+                "-0x1.f924924924927p-1",
+                "-0x1.fe00000000002p-1",
+                "-0x1.016db6db6db6ep+0",
+                "-0x1.f924924924927p-1",
+                "-0x1.fe00000000003p-1",
+                "-0x1.f924924924926p-1"
+            ]
+        ],
+        "note": "This triangle is part of a real-world intersection case with triangle 56Q, so the values do not have a rational or algebraic representation."
+    },
+    "72Q": {
+        "control_points": [
+            [
+                "0x1.a492492492491p-1",
+                "0x1.a93306429ae94p-1",
+                "0x1.add0df61f244cp-1",
+                "0x1.a4a0bd1e08a02p-1",
+                "0x1.a940083cb89e0p-1",
+                "0x1.a4af31177ef71p-1"
+            ], [
+                -1,
+                "-0x1.fb53e0d9d21b6p-1",
+                "-0x1.f6acec80c355dp-1",
+                "-0x1.fb53e0d9d21b4p-1",
+                "-0x1.f6aa571a33c66p-1",
+                "-0x1.f6a7c1b3a436cp-1"
+            ]
+        ],
+        "note": "This triangle is part of a real-world intersection case with triangle 73Q, so the values do not have a rational or algebraic representation."
+    },
+    "73Q": {
+        "control_points": [
+            [
+                "0x1.ab6db6db6db6dp-1",
+                "0x1.a692492492493p-1",
+                "0x1.a1b6db6db6db6p-1",
+                "0x1.ab6db6db6db6ep-1",
+                "0x1.a692492492492p-1",
+                "0x1.ab6db6db6db6dp-1"
+            ], [
+                "-0x1.f924924924925p-1",
+                "-0x1.fe00000000004p-1",
+                "-0x1.016db6db6db6ep+0",
+                "-0x1.fe00000000002p-1",
+                "-0x1.016db6db6db6ep+0",
+                "-0x1.016db6db6db6ep+0"
+            ]
+        ],
+        "note": "This triangle is part of a real-world intersection case with triangle 72Q, so the values do not have a rational or algebraic representation."
+    },
+    "74Q": {
+        "control_points": [
+            [
+                "0x1.f6f571ab16d72p-1",
+                "0x1.fb7c2ad4e40dcp-1",
+                1,
+                "0x1.f6f6e3aa6f796p-1",
+                "0x1.fb7c2ad4e40dep-1",
+                "0x1.f6f855a9c81bcp-1"
+            ], [
+                "-0x1.ad885a379ec3ap-1",
+                "-0x1.a90abc4788f6ep-1",
+                "-0x1.a492492492494p-1",
+                "-0x1.a8f37bac7ceb2p-1",
+                "-0x1.a4787322f6adcp-1",
+                "-0x1.a45e9d215b124p-1"
+            ]
+        ],
+        "note": "This triangle is part of a real-world intersection case with triangle 75Q, so the values do not have a rational or algebraic representation."
+    },
+    "75Q": {
+        "control_points": [
+            [
+                "0x1.016db6db6db6ep+0",
+                "255/256",
+                "0x1.f924924924924p-1",
+                "0x1.016db6db6db6ep+0",
+                "255/256",
+                "0x1.016db6db6db6ep+0"
+            ], [
+                "-0x1.a1b6db6db6db7p-1",
+                "-0x1.a692492492491p-1",
+                "-0x1.ab6db6db6db6ep-1",
+                "-0x1.a692492492493p-1",
+                "-0x1.ab6db6db6db6dp-1",
+                "-0x1.ab6db6db6db6ep-1"
+            ]
+        ],
+        "note": "This triangle is part of a real-world intersection case with triangle 74Q, so the values do not have a rational or algebraic representation."
+    },
+    "76Q": {
+        "control_points": [
+            [
+                "0x1.f6e6fdb1a0802p-1",
+                "0x1.fb74f0d828e24p-1",
+                1,
+                "0x1.f6e86fb0f922ap-1",
+                "0x1.fb74f0d828e26p-1",
+                "0x1.f6e9e1b051c4cp-1"
+            ], [
+                "-0x1.db590ba6f13a8p-1",
+                "-0x1.d6ce82b60da00p-1",
+                "-0x1.d249249249249p-1",
+                "-0x1.d6c42d1bcf61fp-1",
+                "-0x1.d23c39917b56fp-1",
+                "-0x1.d22f4e90ad892p-1"
+            ]
+        ],
+        "note": "This triangle is part of a real-world intersection case with triangles 77Q and 78Q, so the values do not have a rational or algebraic representation."
+    },
+    "77Q": {
+        "control_points": [
+            [
+                "0x1.016db6db6db6ep+0",
+                "255/256",
+                "0x1.f924924924924p-1",
+                "0x1.016db6db6db6ep+0",
+                "255/256",
+                "0x1.016db6db6db6ep+0"
+            ], [
+                "-0x1.c892492492493p-1",
+                "-0x1.cd6db6db6db6dp-1",
+                "-0x1.d24924924924ap-1",
+                "-0x1.cd6db6db6db6ep-1",
+                "-0x1.d24924924924ap-1",
+                "-0x1.d24924924924bp-1"
+            ]
+        ],
+        "note": "This triangle is part of a real-world intersection case with triangle 76Q, so the values do not have a rational or algebraic representation."
+    },
+    "78Q": {
+        "control_points": [
+            [
+                "0x1.f924924924924p-1",
+                "255/256",
+                "0x1.016db6db6db6ep+0",
+                "0x1.f924924924924p-1",
+                "255/256",
+                "0x1.f924924924924p-1"
+            ], [
+                "-0x1.dc00000000001p-1",
+                "-0x1.d724924924926p-1",
+                "-0x1.d24924924924bp-1",
+                "-0x1.d724924924925p-1",
+                "-0x1.d24924924924bp-1",
+                "-0x1.d24924924924ap-1"
+            ]
+        ],
+        "note": "This triangle is part of a real-world intersection case with triangle 76Q, so the values do not have a rational or algebraic representation."
+    },
+    "79Q": {
+        "control_points": [
+            [
+                "0x1.d249249249249p-1",
+                "0x1.d6e2a7b396996p-1",
+                "0x1.db7946d632c95p-1",
+                "0x1.d2505e8f04503p-1",
+                "0x1.d6e86fb0f9229p-1",
+                "0x1.d257988bbf7bap-1"
+            ], [
+                -1,
+                "-0x1.fb60cbda9fe92p-1",
+                "-0x1.f6c6c2825ef15p-1",
+                "-0x1.fb60cbda9fe92p-1",
+                "-0x1.f6c42d1bcf61cp-1",
+                "-0x1.f6c197b53fd24p-1"
+            ]
+        ],
+        "note": "This triangle is part of a real-world intersection case with triangle 80Q, so the values do not have a rational or algebraic representation."
+    },
+    "80Q": {
+        "control_points": [
+            [
+                "0x1.d249249249248p-1",
+                "0x1.cd6db6db6db6ep-1",
+                "0x1.c892492492491p-1",
+                "0x1.d24924924924ap-1",
+                "0x1.cd6db6db6db6ep-1",
+                "0x1.d249249249249p-1"
+            ], [
+                "-0x1.f924924924926p-1",
+                "-0x1.fe00000000001p-1",
+                "-0x1.016db6db6db6fp+0",
+                "-0x1.fe00000000002p-1",
+                "-0x1.016db6db6db6fp+0",
+                "-0x1.016db6db6db6ep+0"
+            ]
+        ],
+        "note": "This triangle is part of a real-world intersection case with triangle 79Q, so the values do not have a rational or algebraic representation."
+    },
+    "81Q": {
+        "control_points": [
+            [
+                "-0x1.a492492492494p-1",
+                "-0x1.a93a328405a84p-1",
+                "-0x1.adddc8a47f360p-1",
+                "-0x1.a4a7e95f735f1p-1",
+                "-0x1.a94da91f69d57p-1",
+                "-0x1.a4bd899a5474ep-1"
+            ], [
+                1,
+                "0x1.fb571db88b5dep-1",
+                "0x1.f6b2c07810cdcp-1",
+                "0x1.fb571db88b5e0p-1",
+                "0x1.f6b07df493c4ep-1",
+                "0x1.f6ae3b7116bc0p-1"
+            ]
+        ],
+        "note": "This triangle is part of a real-world intersection case with triangle 82Q, so the values do not have a rational or algebraic representation."
+    },
+    "82Q": {
+        "control_points": [
+            [
+                "-0x1.ab6db6db6db6fp-1",
+                "-0x1.a692492492494p-1",
+                "-0x1.a1b6db6db6db8p-1",
+                "-0x1.ab6db6db6db70p-1",
+                "-0x1.a692492492494p-1",
+                "-0x1.ab6db6db6db6fp-1"
+            ], [
+                "0x1.f924924924925p-1",
+                "0x1.fe00000000004p-1",
+                "0x1.016db6db6db6ep+0",
+                "0x1.fe00000000002p-1",
+                "0x1.016db6db6db70p+0",
+                "0x1.016db6db6db6ep+0"
+            ]
+        ],
+        "note": "This triangle is part of a real-world intersection case with triangle 81Q, so the values do not have a rational or algebraic representation."
+    },
+    "83Q": {
+        "control_points": [
+            [
+                "-0x1.f8c9bdf052c5cp-1",
+                "-0x1.f8f7281cbbac3p-1",
+                "-0x1.f924924924926p-1",
+                "-0x1.fdd295d39719cp-1",
+                "-0x1.fe00000000002p-1",
+                "-0x1.016db6db6db6ep+0"
+            ], [
+                "0x1.a05435f7aebf7p-1",
+                "0x1.a5e0f6698e3b2p-1",
+                "0x1.ab6db6db6db6dp-1",
+                "0x1.a10588b2b2cd7p-1",
+                "0x1.a692492492493p-1",
+                "0x1.a1b6db6db6db6p-1"
+            ]
+        ],
+        "note": "This triangle is part of a real-world intersection case with triangle 58Q, so the values do not have a rational or algebraic representation."
+    },
+    "84Q": {
+        "control_points": [
+            [
+                -1,
+                "-0x1.fb7ab0985b2a4p-1",
+                "-0x1.f6f10df1bc838p-1",
+                -1,
+                "-0x1.fb7886f8de41cp-1",
+                -1
+            ], [
+                "0x1.c924924924924p-1",
+                "0x1.cda94c58c8a61p-1",
+                "0x1.d2328b6f66cbap-1",
+                "0x1.cdb6db6db6db6p-1",
+                "0x1.d23dd800d7f84p-1",
+                "0x1.d249249249249p-1"
+            ]
+        ],
+        "note": "This triangle is part of a real-world intersection case with triangle 85Q, so the values do not have a rational or algebraic representation."
+    },
+    "85Q": {
+        "control_points": [
+            [
+                "-0x1.f924924924927p-1",
+                "-0x1.fe00000000002p-1",
+                "-0x1.016db6db6db6ep+0",
+                "-0x1.f924924924927p-1",
+                "-0x1.fe00000000003p-1",
+                "-0x1.f924924924926p-1"
+            ], [
+                "119/128",
+                "0x1.d724924924924p-1",
+                "0x1.d249249249247p-1",
+                "0x1.d724924924926p-1",
+                "0x1.d249249249246p-1",
+                "0x1.d249249249248p-1"
+            ]
+        ],
+        "note": "This triangle is part of a real-world intersection case with triangle 84Q, so the values do not have a rational or algebraic representation."
+    },
+    "86Q": {
+        "control_points": [
+            [
+                "-0x1.d249249249249p-1",
+                "-0x1.d6e63dd44bf8cp-1",
+                "-0x1.db7f03d754fb9p-1",
+                "-0x1.d253f4afb9af9p-1",
+                "-0x1.d6eee4523f9b1p-1",
+                "-0x1.d25ec4cd2a3a6p-1"
+            ], [
+                1,
+                "0x1.fb626a49fc8a6p-1",
+                "0x1.f6c9599af326bp-1",
+                "0x1.fb626a49fc8a9p-1",
+                "0x1.f6c71717761dbp-1",
+                "0x1.f6c4d493f914ep-1"
+            ]
+        ],
+        "note": "This triangle is part of a real-world intersection case with triangle 87Q, so the values do not have a rational or algebraic representation."
+    },
+    "87Q": {
+        "control_points": [
+            [
+                "-0x1.d24924924924ap-1",
+                "-0x1.cd6db6db6db6ep-1",
+                "-0x1.c892492492493p-1",
+                "-0x1.d24924924924ap-1",
+                "-0x1.cd6db6db6db6ep-1",
+                "-0x1.d24924924924bp-1"
+            ], [
+                "0x1.f924924924924p-1",
+                "255/256",
+                "0x1.016db6db6db6ep+0",
+                "255/256",
+                "0x1.016db6db6db6ep+0",
+                "0x1.016db6db6db6ep+0"
+            ]
+        ],
+        "note": "This triangle is part of a real-world intersection case with triangle 86Q, so the values do not have a rational or algebraic representation."
+    },
+    "1C": {
+        "control_points": [
+            [0, 3, 9, 12, 0, 5, 8, 0, 4, 0],
+            [0, 9, -3, 6, 6, 5, 10, 12, 14, 18]
+        ]
+    },
+    "2C": {
+        "control_points": [
+            [0, "1/3", "2/3", 1, "1/6", "1/2", "5/6", "1/6", "1/2", 0],
+            [0, "-1/6", "-1/6", 0, "1/3", "1/3", "1/2", "2/3", "5/6", 1]
+        ],
+        "note": "This is triangle 1Q, but degree-elevated to a cubic triangle."
+    },
+    "3C": {
+        "control_points": [
+            [
+                "0x1.369ba68472b75p-3",
+                "0x1.409ed25ee0f68p-3",
+                "0x1.4adcf93075358p-3",
+                "0x1.5555555555553p-3",
+                "0x1.44fb2fb54d6abp-3",
+                "0x1.4eef6235c2a80p-3",
+                "0x1.5915dcbeae18fp-3",
+                "0x1.535f028b90c2ap-3",
+                "0x1.5d3ff20ca458cp-3",
+                "0x1.61c71f073cc01p-3"
+            ], [
+                "-0x1.f59baaff49e70p-1",
+                "-0x1.f918e3dfd6917p-1",
+                "-0x1.fc8f879b43fabp-1",
+                -1,
+                "-0x1.f59969b819c1cp-1",
+                "-0x1.f916eb07c00b0p-1",
+                "-0x1.fc8f879b43fabp-1",
+                "-0x1.f595446c5b8acp-1",
+                "-0x1.f914f22fa9859p-1",
+                "-0x1.f58f3b1c0f41dp-1"
+            ]
+        ],
+        "note": "This triangle and 4C are from a real-world case, so the values do not have a rational or algebraic representation."
+    },
+    "4C": {
+        "control_points": [
+            [
+                "0x1.6d9bc7a99ce60p-3",
+                "0x1.6d421c712f1f9p-3",
+                "0x1.6cc4cad228b7fp-3",
+                "0x1.6c39f4c490645p-3",
+                "0x1.5e123b961ee05p-3",
+                "0x1.5db2a26c6a5b8p-3",
+                "0x1.5d378e43c0010p-3",
+                "0x1.4e89fba3680cfp-3",
+                "0x1.4e24e33e0486cp-3",
+                "0x1.3f0307d1786cbp-3"
+            ], [
+                "-0x1.f58ab325f427fp-1",
+                "-0x1.f10f371230103p-1",
+                "-0x1.eca3ae04c9187p-1",
+                "-0x1.e843f8a3cf153p-1",
+                "-0x1.f590228da381dp-1",
+                "-0x1.f115da7b69f93p-1",
+                "-0x1.ecabb82c2bc80p-1",
+                "-0x1.f59660a5e7ca4p-1",
+                "-0x1.f11d917abfc97p-1",
+                "-0x1.f59d6d6ec1001p-1"
+            ]
+        ],
+        "note": "This triangle and 3C are from a real-world case, so the values do not have a rational or algebraic representation."
+    }
+}

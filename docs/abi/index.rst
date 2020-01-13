@@ -21,8 +21,8 @@ structure.
    curve_intersection
    helpers
    status
-   surface
-   surface_intersection
+   triangle
+   triangle_intersection
 
 ************
 Installation

@@ -106,10 +106,10 @@ class Test_add_patch(utils.NumPyTestCase):
 
     @staticmethod
     def _get_info(nodes):
-        from bezier import surface as surface_mod
+        from bezier import triangle as triangle_mod
 
-        surface = surface_mod.Surface(nodes, 1, copy=False)
-        edges = surface._get_edges()
+        triangle = triangle_mod.Triangle(nodes, 1, copy=False)
+        edges = triangle._get_edges()
         expected = np.empty((2, 7), order="F")
         expected[:, 0] = 0.5 * (nodes[:, 0] + nodes[:, 1])
         expected[:, 1] = nodes[:, 1]

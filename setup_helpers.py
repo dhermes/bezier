@@ -81,9 +81,9 @@ FORTRAN_MODULES = (
     "status",
     "helpers",
     "curve",
-    "surface",
+    "triangle",
     "curve_intersection",
-    "surface_intersection",
+    "triangle_intersection",
 )
 FORTRAN_INCLUDE_DIR = os.path.join("src", "fortran", "include")
 FORTRAN_SOURCE_FILENAME = os.path.join("src", "fortran", "{}.f90")

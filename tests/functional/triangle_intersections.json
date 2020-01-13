@@ -1,0 +1,1762 @@
+[
+    {
+        "triangle1": "1Q",
+        "triangle2": "3Q",
+        "id": 1,
+        "intersections": [
+            {
+                "nodes": [
+                    [1, 0],
+                    ["0x1.b3814fc520094p-2", "0x1.951b989d86b44p-1"],
+                    ["0x1.e3902ffacd381p-4", "0x1.875633d1f12bep-2"],
+                    [0, 0]
+                ],
+                "start_params": [
+                    0,
+                    "0x1.b05d9249bd0f1p-2",
+                    "0x1.3c54e617076a1p-1",
+                    0
+                ],
+                "start_param_polys": [
+                    [0, 1],
+                    [12, -28, 5, -18, 9],
+                    [-244, 320, 91, 49],
+                    [0, 1]
+                ],
+                "end_params": [
+                    "0x1.5dad785d7b57dp-1",
+                    "0x1.8b3631b4a4202p-1",
+                    1,
+                    1
+                ],
+                "end_param_polys": [
+                    [-131, 200, 4, -48, 36],
+                    [-128, 88, 63, 49],
+                    [-1, 1],
+                    [-1, 1]
+                ],
+                "edge_list": [1, 5, 2, 3]
+            }
+        ]
+    }, {
+        "triangle1": "1L",
+        "triangle2": "3L",
+        "id": 2,
+        "intersections": [
+            {
+                "nodes": [
+                    ["1/4", 0],
+                    [1, 0],
+                    ["1/4", "3/4"]
+                ],
+                "start_params": [
+                    "1/4",
+                    0,
+                    "1/8"
+                ],
+                "end_params": [
+                    1,
+                    "3/4",
+                    "7/8"
+                ],
+                "edge_list": [0, 1, 5]
+            }
+        ]
+    }, {
+        "triangle1": "1Q",
+        "triangle2": "2Q",
+        "id": 3,
+        "intersections": [
+            {
+                "nodes": [
+                    ["0x1.0720ad954785ap-1", "-0x1.ff9a64abf6237p-4"],
+                    ["0x1.9b36174dc0245p-1", "-0x1.43cae8b404cfdp-4"],
+                    ["0x1.ae14d9f3b87dap-1", "0x1.665c7eaaac924p-2"],
+                    ["0x1.665c7eaaac924p-2", "0x1.ae14d9f3b87dap-1"],
+                    ["0x1.1ecd1d985d392p-4", "0x1.a9c7d37bb78c1p-1"],
+                    ["0x1.68a193f04e2b7p-4", "0x1.d33874bafeb64p-3"]
+                ],
+                "start_params": [
+                    "0x1.0720ad954785ap-1",
+                    "0x1.5e1a8ba5fd981p-3",
+                    "0x1.051965619dcb8p-2",
+                    "0x1.99a38155536dcp-2",
+                    "0x1.58e0b21121cfep-3",
+                    "0x1.b846154f4a17ep-2"
+                ],
+                "start_param_polys": [
+                    [10, -21, 3],
+                    [20, -116, -3, -18, 9],
+                    [23, -100, 56, -72, 12],
+                    [64, -160, 25, -66, 9],
+                    [23, -140, 24, -24, 12],
+                    [-44, 36, 181, -66, 9]
+                ],
+                "end_params": [
+                    "0x1.9b36174dc0245p-1",
+                    "0x1.332e3f5556492p-1",
+                    "0x1.7d734d4f311a4p-1",
+                    "0x1.5c265c4cf458ep-1",
+                    "0x1.8b31e2d140527p-1",
+                    "0x1.a389fd1563251p-1"
+                ],
+                "end_param_polys": [
+                    [-105, 140, 0, -24, 12],
+                    [-128, 272, -119, 30, 9],
+                    [-81, 156, -88, 24, 12],
+                    [84, -116, -3, -18, 9],
+                    [-96, -12, 213, -54, 9],
+                    [-38, 39, 9]
+                ],
+                "edge_list": [0, 4, 1, 5, 2, 3]
+            }
+        ]
+    }, {
+        "triangle1": "10Q",
+        "triangle2": "18Q",
+        "id": 4,
+        "intersections": [
+            {
+                "nodes": [
+                    [0, 0],
+                    ["1/2", "-3/4"],
+                    ["3/4", "3/32"]
+                ],
+                "start_params": [
+                    0,
+                    0,
+                    0
+                ],
+                "end_params": [
+                    1,
+                    1,
+                    "3/4"
+                ],
+                "edge_list": [1, 5, 3]
+            }
+        ]
+    }, {
+        "triangle1": "10Q",
+        "triangle2": "19Q",
+        "id": 5,
+        "note": "These triangles do not intersect. However, they share an entire edge (edge 1 of 10Q and edge 2 of 19Q).",
+        "intersections": []
+    }, {
+        "triangle1": "3Q",
+        "triangle2": "4Q",
+        "id": 6,
+        "intersections": [
+            {
+                "nodes": [
+                    ["0x1.a60d77b0f5461p-2", "0x1.8fb5c4ada7847p-1"],
+                    ["0x1.d5f30c47e44bbp-5", "0x1.c8a052e8c3322p-3"],
+                    [1, "1/4"]
+                ],
+                "start_params": [
+                    "0x1.bcb600f2baa8cp-2",
+                    "0x1.d5f30c47e44bbp-5",
+                    0
+                ],
+                "start_param_polys": [
+                    [-468, 1008, 145, 14, 49],
+                    [169, -2988, 712, 360, 100],
+                    [0, 1]
+                ],
+                "end_params": [
+                    "0x1.bf4d1aea77580p-1",
+                    1,
+                    "0x1.6a47b0e78a05ep-1"
+                ],
+                "end_param_polys": [
+                    [-96, -88, 321, -130, 25],
+                    [-1, 1],
+                    [-26352, 37200, 412, -532, 49]
+                ],
+                "edge_list": [2, 3, 4]
+            }
+        ]
+    }, {
+        "triangle1": "1Q",
+        "triangle2": "5L",
+        "id": 7,
+        "intersections": [
+            {
+                "nodes": [
+                    [0, 0],
+                    [1, 0],
+                    ["0x1.78dde6e5fd29fp-1", "1/2"],
+                    ["1/8", "1/2"]
+                ],
+                "start_params": [
+                    0,
+                    0,
+                    "0x1.d1f49bd925a6ep-2",
+                    "1/2"
+                ],
+                "start_param_polys": [
+                    [0, 1],
+                    [0, 1],
+                    [1049, -3108, 1764],
+                    [-1, 2]
+                ],
+                "end_params": [
+                    1,
+                    "0x1.8722191a02d61p-2",
+                    "4/7",
+                    1
+                ],
+                "end_param_polys": [
+                    [-1, 1],
+                    [1, -3, 1],
+                    [-4, 7],
+                    [-1, 1]
+                ],
+                "edge_list": [0, 1, 4, 2]
+            }
+        ]
+    }, {
+        "triangle1": "3Q",
+        "triangle2": "5Q",
+        "id": 8,
+        "intersections": [
+            {
+                "nodes": [
+                    ["0x1.5ffbf1646a43ep-1", "0x1.df044f8131ab6p-1"],
+                    ["0x1.295cb92910465p-1", "0x1.c7a0bfd320f74p-1"],
+                    ["1/4", "3/32"],
+                    ["9/8", "3/8"]
+                ],
+                "start_params": [
+                    "0x1.ac579d93b5440p-3",
+                    "0x1.e2f091e94f79dp-4",
+                    0,
+                    0
+                ],
+                "start_param_polys": [
+                    [57, -302, 167, -130, 25],
+                    [11664, -105840, 58908, -2340, 25],
+                    [0, 1],
+                    [0, 1]
+                ],
+                "end_params": [
+                    "0x1.296332cad18aap-2",
+                    1,
+                    1,
+                    "0x1.c0081d372b785p-1"
+                ],
+                "end_param_polys": [
+                    [279, -1212, 901, -130, 25],
+                    [-1, 1],
+                    [-1, 1],
+                    [-6012, 7800, -1064, -20, 25]
+                ],
+                "edge_list": [2, 5, 3, 4]
+            }
+        ]
+    }, {
+        "triangle1": "1L",
+        "triangle2": "2L",
+        "id": 9,
+        "intersections": [
+            {
+                "nodes": [
+                    ["2/3", "1/3"],
+                    ["9/16", "7/16"],
+                    ["1/8", "3/8"],
+                    [0, "5/32"],
+                    [0, 0]
+                ],
+                "start_params": [
+                    "1/3",
+                    "1/2",
+                    0,
+                    "27/32",
+                    "1/9"
+                ],
+                "end_params": [
+                    "7/16",
+                    1,
+                    "1/2",
+                    1,
+                    "19/27"
+                ],
+                "edge_list": [1, 4, 5, 2, 3]
+            }
+        ]
+    }, {
+        "triangle1": "20Q",
+        "triangle2": "21Q",
+        "id": 10,
+        "intersections": [
+            {
+                "nodes": [
+                    [1, 0],
+                    [0, 1],
+                    ["-1/2", "1/2"],
+                    ["-1/2", "1/4"]
+                ],
+                "start_params": [
+                    0,
+                    0,
+                    "4/5",
+                    0
+                ],
+                "end_params": [
+                    1,
+                    "1/2",
+                    1,
+                    1
+                ],
+                "edge_list": [0, 1, 4, 5]
+            }
+        ]
+    }, {
+        "triangle1": "4L",
+        "triangle2": "22Q",
+        "id": 11,
+        "intersections": [
+            true
+        ]
+    }, {
+        "triangle1": "4L",
+        "triangle2": "23Q",
+        "id": 12,
+        "intersections": [
+            false
+        ]
+    }, {
+        "triangle1": "6Q",
+        "triangle2": "7Q",
+        "id": 13,
+        "intersections": [
+            {
+                "nodes": [
+                    ["0x1.f72c3be04b4ecp-4", "0x1.93dc7947568edp-4"],
+                    ["0x1.4992c2bb413cdp-2", "0x1.6a2c9c8740ffbp-3"],
+                    ["0x1.19b38124cf430p-3", "0x1.19b38124cf430p-2"],
+                    ["3/34", "3/17"]
+                ],
+                "start_params": [
+                    "0x1.3ee5877c0969ep-3",
+                    "0x1.7493d4d9eb51ap-1",
+                    "0x1.73263f6d985e8p-1",
+                    "3/17"
+                ],
+                "start_param_polys": [
+                    [2, -13, 1],
+                    [369, -1548, 1504, -104, 4],
+                    [-871, 784, 576],
+                    [-3, 17]
+                ],
+                "end_params": [
+                    "0x1.85ef877c76bcdp-2",
+                    "0x1.c65caf923246ep-1",
+                    "14/17",
+                    "0x1.f72c3be04b4ecp-3"
+                ],
+                "end_param_polys": [
+                    [489, -1908, 1592, 120, 4],
+                    [-13, 4, 12],
+                    [-14, 17],
+                    [25, -102, 1]
+                ],
+                "edge_list": [0, 3, 2, 4]
+            }, {
+                "nodes": [
+                    ["0x1.636735920066ep-1", "0x1.260ab6afe06ccp-3"],
+                    ["0x1.bb55a2b2a6aa8p-1", "0x1.2c05708fb7fcdp-4"],
+                    ["31/34", "3/17"],
+                    ["0x1.c17e2caa2b536p-1", "0x1.f40e9aaea564dp-3"]
+                ],
+                "start_params": [
+                    "0x1.7be81a20a86ffp-1",
+                    "0x1.76ab45654d550p-1",
+                    "3/17",
+                    "0x1.3d03a6aba9593p-3"
+                ],
+                "start_param_polys": [
+                    [489, -1908, 1592, 120, 4],
+                    [-76, 68, 49],
+                    [-3, 17],
+                    [3, -20, 4]
+                ],
+                "end_params": [
+                    "0x1.c7d5dcb8a3aa6p-1",
+                    "14/17",
+                    "0x1.f40e9aaea564dp-3",
+                    "0x1.74703e060324bp-2"
+                ],
+                "end_param_polys": [
+                    [-10, 5, 7],
+                    [-14, 17],
+                    [297, -1232, 64],
+                    [369, -1548, 1504, -104, 4]
+                ],
+                "edge_list": [0, 5, 1, 3]
+            }
+        ]
+    }, {
+        "triangle1": "8Q",
+        "triangle2": "9Q",
+        "id": 14,
+        "intersections": [
+            {
+                "nodes": [
+                    ["5/4", "0x1.59f10d0c73266p-2"],
+                    ["55/28", "39/28"],
+                    ["5/4", "0x1.e05f2a73bea42p+0"],
+                    ["15/28", "39/28"]
+                ],
+                "start_params": [
+                    "0x1.67c43431cc998p-5",
+                    "1/14",
+                    "0x1.a05f2a73bea42p-1",
+                    "11/14"
+                ],
+                "start_param_polys": [
+                    [1, -24, 28],
+                    [-1, 14],
+                    [1, -24, 28],
+                    [-11, 14]
+                ],
+                "end_params": [
+                    "3/14",
+                    "0x1.7e835631056f8p-3",
+                    "13/14",
+                    "0x1.e983bcbce3366p-1"
+                ],
+                "end_param_polys": [
+                    [-3, 14],
+                    [5, -32, 28],
+                    [-13, 14],
+                    [5, -32, 28]
+                ],
+                "edge_list": [1, 5, 1, 5]
+            }
+        ]
+    }, {
+        "triangle1": "4Q",
+        "triangle2": "10Q",
+        "id": 15,
+        "note": "These triangles do not intersect. However, they are tangent at the point TRIANGLE4Q(1/2, 0) = [1/2, 1/8] = TRIANGLE10Q(1/2, 0).",
+        "intersections": []
+    }, {
+        "triangle1": "11Q",
+        "triangle2": "12Q",
+        "id": 16,
+        "intersections": [
+            {
+                "nodes": [
+                    ["0x1.2bec333018867p-3", "1/8"],
+                    ["0x1.b504f333f9de6p-1", "1/8"]
+                ],
+                "start_params": [
+                    "0x1.2bec333018867p-3",
+                    "0x1.2bec333018867p-3"
+                ],
+                "start_param_polys": [
+                    [1, -8, 8],
+                    [1, -8, 8]
+                ],
+                "end_params": [
+                    "0x1.b504f333f9de6p-1",
+                    "0x1.b504f333f9de6p-1"
+                ],
+                "end_param_polys": [
+                    [1, -8, 8],
+                    [1, -8, 8]
+                ],
+                "edge_list": [0, 3]
+            }
+        ]
+    }, {
+        "triangle1": "3Q",
+        "triangle2": "13Q",
+        "id": 17,
+        "intersections": [
+            false
+        ]
+    }, {
+        "triangle1": "10Q",
+        "triangle2": "17Q",
+        "id": 18,
+        "intersections": [
+            false
+        ]
+    }, {
+        "triangle1": "17Q",
+        "triangle2": "10Q",
+        "id": 19,
+        "note": "This is identical to intersection ID 18 (10Q-17Q), but now the ``first'' triangle is the one that is fully interior at the double corner.",
+        "intersections": [
+            true
+        ]
+    }, {
+        "triangle1": "3Q",
+        "triangle2": "14Q",
+        "id": 20,
+        "intersections": [
+            false
+        ]
+    }, {
+        "triangle1": "15Q",
+        "triangle2": "16Q",
+        "id": 21,
+        "intersections": [
+            {
+                "nodes": [
+                    ["1/2", "7/16"],
+                    ["0x1.37d86bafd5e87p-1", "0x1.10dd5e39db2b6p-1"],
+                    ["0x1.c9f4a6923c7f4p-1", "0x1.e360b596dc381p+0"],
+                    ["1/2", "31/16"],
+                    ["0x1.b05acb6e1c062p-4", "0x1.e360b596dc381p+0"],
+                    ["0x1.904f28a0542f3p-2", "0x1.10dd5e39db2b6p-1"]
+                ],
+                "start_params": [
+                    "1/4",
+                    "0x1.10dd5e39db2b6p-2",
+                    "0x1.1b05acb6e1c06p-1",
+                    "1/4",
+                    "0x1.c9f4a6923c7f4p-5",
+                    "0x1.6413ca28150bdp-1"
+                ],
+                "start_param_polys": [
+                    [-1, 4],
+                    [7, -30, 14],
+                    [-39, 70, 1],
+                    [-1, 4],
+                    [1, -18, 2],
+                    [-39, 22, 49]
+                ],
+                "end_params": [
+                    "0x1.37d86bafd5e87p-2",
+                    "0x1.e360b596dc381p-1",
+                    "3/4",
+                    "0x1.c9f4a6923c7f4p-2",
+                    "0x1.779150e3126a5p-1",
+                    "3/4"
+                ],
+                "end_param_polys": [
+                    [32, -120, 49],
+                    [-15, 14, 2],
+                    [-3, 4],
+                    [32, -72, 1],
+                    [-9, 2, 14],
+                    [-3, 4]
+                ],
+                "edge_list": [0, 3, 1, 4, 2, 5]
+            }
+        ]
+    }, {
+        "triangle1": "24Q",
+        "triangle2": "25Q",
+        "id": 22,
+        "intersections": [
+            {
+                "nodes": [
+                    ["3/4", "25/32"],
+                    ["0x1.5267a7a7d12d4p-1", "0x1.965e0549ceeecp-1"],
+                    ["21/64", "5/8"],
+                    ["0x1.48df9c2f89f03p-2", "0x1.2d0629ebf87bfp-1"]
+                ],
+                "start_params": [
+                    0,
+                    "0x1.f23e5cccfe6acp-2",
+                    0,
+                    "0x1.049db87a7335dp-1"
+                ],
+                "start_param_polys": [
+                    [0, 1],
+                    [2256, -10224, 12020, -1116, 27],
+                    [0, 1],
+                    [-153359, -9692, 618410, -14740, 121]
+                ],
+                "end_params": [
+                    "0x1.74f45d5da8f1cp-2",
+                    1,
+                    "0x1.86d5b7ca33b66p-4",
+                    1
+                ],
+                "end_param_polys": [
+                    [1036, -1168, -4640, 72, 81],
+                    [-1, 1],
+                    [-31348, 315936, 132116, -1232, 11],
+                    [-1, 1]
+                ],
+                "edge_list": [0, 3, 4, 2]
+            }
+        ]
+    }, {
+        "triangle1": "1L",
+        "triangle2": "6L",
+        "id": 23,
+        "intersections": [
+            {
+                "nodes": [
+                    [0, 0],
+                    ["1/4", 0],
+                    ["1/4", "1/4"],
+                    [0, "1/4"]
+                ],
+                "start_params": [
+                    0,
+                    "3/4",
+                    0,
+                    "3/4"
+                ],
+                "end_params": [
+                    "1/4",
+                    1,
+                    "1/4",
+                    1
+                ],
+                "edge_list": [0, 5, 3, 2]
+            }
+        ]
+    }, {
+        "triangle1": "26Q",
+        "triangle2": "27Q",
+        "id": 24,
+        "note": "These triangles do not intersect.",
+        "intersections": []
+    }, {
+        "triangle1": "1L",
+        "triangle2": "28Q",
+        "id": 25,
+        "intersections": [
+            {
+                "nodes": [
+                    ["3/16", 0],
+                    [1, 0],
+                    ["0x1.3030daa2f5896p-1", "0x1.9f9e4aba14ed4p-2"]
+                ],
+                "start_params": [
+                    "3/16",
+                    0,
+                    "0x1.3030daa2f5896p-1"
+                ],
+                "start_param_polys": [
+                    [-3, 16],
+                    [0, 1],
+                    [22, -40, 5]
+                ],
+                "end_params": [
+                    1,
+                    "0x1.9f9e4aba14ed4p-2",
+                    1
+                ],
+                "end_param_polys": [
+                    [-1, 1],
+                    [-13, 30, 5],
+                    [-1, 1]
+                ],
+                "edge_list": [0, 1, 4]
+            }
+        ]
+    }, {
+        "triangle1": "1L",
+        "triangle2": "29Q",
+        "id": 26,
+        "intersections": [
+            {
+                "nodes": [
+                    [0, 0],
+                    [1, 0],
+                    ["0x1.e2463000f8560p-1", "0x1.db9cfff07aa02p-5"],
+                    ["0x1.db9cfff07aa02p-5", "0x1.e2463000f8560p-1"],
+                    [0, 1]
+                ],
+                "start_params": [
+                    0,
+                    0,
+                    "0x1.2bec333018867p-3",
+                    "0x1.e2463000f8560p-1",
+                    0
+                ],
+                "start_param_polys": [
+                    [0, 1],
+                    [0, 1],
+                    [1, -8, 8],
+                    [7, -128, 128],
+                    [0, 1]
+                ],
+                "end_params": [
+                    1,
+                    "0x1.db9cfff07aa02p-5",
+                    "0x1.b504f333f9de6p-1",
+                    1,
+                    1
+                ],
+                "end_param_polys": [
+                    [-1, 1],
+                    [7, -128, 128],
+                    [1, -8, 8],
+                    [-1, 1],
+                    [-1, 1]
+                ],
+                "edge_list": [0, 1, 4, 1, 2]
+            }
+        ]
+    }, {
+        "triangle1": "30Q",
+        "triangle2": "31Q",
+        "id": 27,
+        "intersections": [
+            {
+                "nodes": [
+                    ["-3/64", "-1/4"],
+                    ["5/8", "-1/4"],
+                    ["3/8", 0],
+                    ["-1/8", 0]
+                ],
+                "start_params": [
+                    "13/56",
+                    0,
+                    "5/9",
+                    0
+                ],
+                "end_params": [
+                    1,
+                    "2/7",
+                    1,
+                    "1/4"
+                ],
+                "edge_list": [0, 1, 4, 5]
+            }
+        ]
+    }, {
+        "triangle1": "1L",
+        "triangle2": "7L",
+        "id": 28,
+        "note": "These triangles do not intersect. However, one corner of of 7L (TRIANGLE7L(0, 0) = [0, 1/2] = TRIANGLE1L(0, 1/2)) lies on edge 2 of triangle 1L.",
+        "intersections": []
+    }, {
+        "triangle1": "8L",
+        "triangle2": "29Q",
+        "id": 29,
+        "note": "These triangles do not intersect. However, two corners of 8L lie on edge 1: TRIANGLE8L(1, 0) = [3/4, 1/8] = TRIANGLE29Q(3/4, 1/4) and TRIANGLE8L(0, 0) = [1/8, 3/4] = TRIANGLE29Q(1/4, 3/4).",
+        "intersections": []
+    }, {
+        "triangle1": "1L",
+        "triangle2": "9L",
+        "id": 30,
+        "intersections": [
+            false
+        ]
+    }, {
+        "triangle1": "1L",
+        "triangle2": "10L",
+        "id": 31,
+        "note": "These triangles do not intersect. However, they ``kiss'' at a corner of each: TRIANGLE1L(0, 0) = [0, 0] = TRIANGLE10L(0, 0).",
+        "intersections": []
+    }, {
+        "triangle1": "11L",
+        "triangle2": "33Q",
+        "id": 32,
+        "intersections": [
+            {
+                "nodes": [
+                    ["71/32", "383/128"],
+                    ["17/8", "23/8"],
+                    ["1137/512", "23/8"],
+                    ["285/128", 3]
+                ],
+                "start_params": [
+                    "1/4",
+                    "0x1.983e62b67adeep-3",
+                    0,
+                    0
+                ],
+                "start_param_polys": [
+                    [-1, 4],
+                    [-12, 60, 1],
+                    [0, 1],
+                    [0, 1]
+                ],
+                "end_params": [
+                    1,
+                    1,
+                    1,
+                    "1/16"
+                ],
+                "edge_list": [0, 4, 5, 3]
+            }
+        ]
+    }, {
+        "triangle1": "32Q",
+        "triangle2": "33Q",
+        "id": 33,
+        "note": "This is the same as intersection 32, but triangle 32Q is a degree-elevated version of triangle 11L.",
+        "intersections": [
+            {
+                "nodes": [
+                    ["71/32", "383/128"],
+                    ["17/8", "23/8"],
+                    ["1137/512", "23/8"],
+                    ["285/128", 3]
+                ],
+                "start_params": [
+                    "1/4",
+                    "0x1.983e62b67adeep-3",
+                    0,
+                    0
+                ],
+                "start_param_polys": [
+                    [-1, 4],
+                    [-12, 60, 1],
+                    [0, 1],
+                    [0, 1]
+                ],
+                "end_params": [
+                    1,
+                    1,
+                    1,
+                    "1/16"
+                ],
+                "edge_list": [0, 4, 5, 3]
+            }
+        ]
+    }, {
+        "triangle1": "6Q",
+        "triangle2": "34Q",
+        "id": 34,
+        "note": "This is almost identical to intersection ID 13 (6Q-7Q), but triangle 34Q has an edge that goes **outside** of 6Q instead. This way, one of the two curved polygons has 3 sides and the other has 4. (In intersection ID 13, both curved polygons have 4 sides.)",
+        "intersections": [
+            {
+                "nodes": [
+                    [0, 0],
+                    ["0x1.4992c2bb413cdp-2", "0x1.6a2c9c8740ffbp-3"],
+                    ["0x1.19b38124cf430p-3", "0x1.19b38124cf430p-2"]
+                ],
+                "start_params": [
+                    0,
+                    "0x1.7493d4d9eb51ap-1",
+                    "0x1.73263f6d985e8p-1"
+                ],
+                "start_param_polys": [
+                    [0, 1],
+                    [369, -1548, 1504, -104, 4],
+                    [-871, 784, 576]
+                ],
+                "end_params": [
+                    "0x1.85ef877c76bcdp-2",
+                    "0x1.c65caf923246ep-1",
+                    1
+                ],
+                "end_param_polys": [
+                    [489, -1908, 1592, 120, 4],
+                    [-13, 4, 12],
+                    [-1, 1]
+                ],
+                "edge_list": [0, 3, 2]
+            }, {
+                "nodes": [
+                    ["0x1.636735920066ep-1", "0x1.260ab6afe06ccp-3"],
+                    ["0x1.bb55a2b2a6aa8p-1", "0x1.2c05708fb7fcdp-4"],
+                    ["31/34", "3/17"],
+                    ["0x1.c17e2caa2b536p-1", "0x1.f40e9aaea564dp-3"]
+                ],
+                "start_params": [
+                    "0x1.7be81a20a86ffp-1",
+                    "0x1.76ab45654d550p-1",
+                    "3/17",
+                    "0x1.3d03a6aba9593p-3"
+                ],
+                "start_param_polys": [
+                    [489, -1908, 1592, 120, 4],
+                    [-76, 68, 49],
+                    [-3, 17],
+                    [3, -20, 4]
+                ],
+                "end_params": [
+                    "0x1.c7d5dcb8a3aa6p-1",
+                    "14/17",
+                    "0x1.f40e9aaea564dp-3",
+                    "0x1.74703e060324bp-2"
+                ],
+                "end_param_polys": [
+                    [-10, 5, 7],
+                    [-14, 17],
+                    [297, -1232, 64],
+                    [369, -1548, 1504, -104, 4]
+                ],
+                "edge_list": [0, 5, 1, 3]
+            }
+        ]
+    }, {
+        "triangle1": "9L",
+        "triangle2": "1L",
+        "id": 35,
+        "note": "This is identical to intersection ID 30 (1L-9L), but now the ``first'' triangle is the one that is fully interior at the double corner.",
+        "intersections": [
+            true
+        ]
+    }, {
+        "triangle1": "1C",
+        "triangle2": "12L",
+        "id": 36,
+        "intersections": [
+            {
+                "nodes": [
+                    ["0x1.6fb2cdd096c8fp-1", "0x1.adf659ba12d92p+0"],
+                    [6, 3],
+                    ["0x1.6904d322f6937p+3", "0x1.148269917b49cp+2"],
+                    [12, 6],
+                    ["28/3", "26/3"],
+                    [0, "131/10"],
+                    [0, "3/2"]
+                ],
+                "start_params": [
+                    "0x1.313a572006267p-4",
+                    "1/2",
+                    "0x1.d9d8b51bff3b3p-1",
+                    0,
+                    "1/3",
+                    "49/180",
+                    "1/5"
+                ],
+                "start_param_polys": [
+                    [2, -29, 29],
+                    [-1, 2],
+                    [2, -29, 29],
+                    [0, 1],
+                    [-1, 3],
+                    [-49, 180],
+                    [-1, 5]
+                ],
+                "end_params": [
+                    "1/2",
+                    "0x1.87370f4f2ba92p-1",
+                    1,
+                    "2/9",
+                    "4/5",
+                    "11/12",
+                    "0x1.e323c2c3515b6p-3"
+                ],
+                "end_param_polys": [
+                    [-1, 2],
+                    [17585, -97556, 97556],
+                    [-1, 1],
+                    [-2, 9],
+                    [-4, 5],
+                    [-11, 12],
+                    [17585, -97556, 97556]
+                ],
+                "edge_list": [0, 3, 0, 1, 4, 2, 3]
+            }
+        ]
+    }, {
+        "triangle1": "13Q",
+        "triangle2": "35Q",
+        "id": 37,
+        "intersections": [
+            true
+        ]
+    }, {
+        "triangle1": "36Q",
+        "triangle2": "37Q",
+        "id": 38,
+        "intersections": [
+            {
+                "nodes": [
+                    [0, 0],
+                    ["1/2", "-1/8"],
+                    [1, 0],
+                    ["1/2", "16/49"]
+                ],
+                "start_params": [
+                    0,
+                    "7/8",
+                    0,
+                    "6/7"
+                ],
+                "start_param_polys": [
+                    [0, 1],
+                    [-7, 8],
+                    [0, 1],
+                    [-6, 7]
+                ],
+                "end_params": [
+                    "1/8",
+                    1,
+                    "1/7",
+                    1
+                ],
+                "end_param_polys": [
+                    [-1, 8],
+                    [-1, 1],
+                    [-1, 7],
+                    [-1, 1]
+                ],
+                "edge_list": [0, 5, 3, 2]
+            }
+        ]
+    }, {
+        "triangle1": "13L",
+        "triangle2": "38Q",
+        "id": 39,
+        "intersections": [
+            {
+                "nodes": [
+                    [2, 0],
+                    [3, 0],
+                    [4, 3]
+                ],
+                "start_params": [
+                    "5/8",
+                    "3/4",
+                    0
+                ],
+                "start_param_polys": [
+                    [-5, 8],
+                    [-3, 4],
+                    [0, 1]
+                ],
+                "end_params": [
+                    "11/16",
+                    1,
+                    "1/4"
+                ],
+                "end_param_polys": [
+                    [-11, 16],
+                    [-1, 1],
+                    [-1, 4]
+                ],
+                "edge_list": [0, 5, 3]
+            }, {
+                "nodes": [
+                    [-3, 0],
+                    [-2, 0],
+                    [-4, 3]
+                ],
+                "start_params": [
+                    "5/16",
+                    "3/4",
+                    0
+                ],
+                "start_param_polys": [
+                    [-5, 16],
+                    [-3, 4],
+                    [0, 1]
+                ],
+                "end_params": [
+                    "3/8",
+                    1,
+                    "1/4"
+                ],
+                "end_param_polys": [
+                    [-3, 8],
+                    [-1, 1],
+                    [-1, 4]
+                ],
+                "edge_list": [0, 3, 4]
+            }
+        ]
+    }, {
+        "triangle1": "1L",
+        "triangle2": "39Q",
+        "id": 40,
+        "intersections": [
+            {
+                "nodes": [
+                    [0, 0],
+                    [1, 0],
+                    [0, 1]
+                ],
+                "start_params": [
+                    0,
+                    0,
+                    0
+                ],
+                "start_param_polys": [
+                    [0, 1],
+                    [0, 1],
+                    [0, 1]
+                ],
+                "end_params": [
+                    1,
+                    1,
+                    1
+                ],
+                "end_param_polys": [
+                    [-1, 1],
+                    [-1, 1],
+                    [-1, 1]
+                ],
+                "edge_list": [0, 3, 2]
+            }
+        ]
+    }, {
+        "triangle1": "10Q",
+        "triangle2": "40Q",
+        "id": 41,
+        "intersections": [
+            {
+                "nodes": [
+                    ["0x1.64fa9773d4c19p-1", "0x1.b05688c2b3e6cp-4"],
+                    ["0x1.360ad118567cep-2", "0x1.b05688c2b3e6cp-4"],
+                    ["1/4", 0],
+                    ["3/4", 0]
+                ],
+                "start_params": [
+                    "0x1.360ad118567cep-2",
+                    "0x1.93ea5dcf53065p-1",
+                    0,
+                    0
+                ],
+                "start_param_polys": [
+                    [-1, 3, 1],
+                    [12, -16, 1],
+                    [0, 1],
+                    [0, 1]
+                ],
+                "end_params": [
+                    "0x1.64fa9773d4c19p-1",
+                    1,
+                    1,
+                    "0x1.b05688c2b3e6cp-3"
+                ],
+                "end_param_polys": [
+                    [3, -5, 1],
+                    [-1, 1],
+                    [-1, 1],
+                    [-3, 14, 1]
+                ],
+                "edge_list": [0, 5, 3, 4]
+            }
+        ]
+    }, {
+        "triangle1": "41Q",
+        "triangle2": "21Q",
+        "id": 42,
+        "note": "This is almost identical to intersection ID 10 (20Q-21Q) in that the triangles are tangent at a corner. This differs because the tangency is only a corner of 21Q, whereas in intersection ID 10, the tangency is a corner of both triangles.",
+        "intersections": [
+            {
+                "nodes": [
+                    [1, 0],
+                    ["7/16", "15/16"],
+                    ["-1/2", "15/46"],
+                    ["-1/2", "1/4"]
+                ],
+                "start_params": [
+                    "1/4",
+                    0,
+                    "108/115",
+                    0
+                ],
+                "start_param_polys": [
+                    [-1, 4],
+                    [0, 1],
+                    [-108, 115],
+                    [0, 1]
+                ],
+                "end_params": [
+                    1,
+                    "15/23",
+                    1,
+                    1
+                ],
+                "end_param_polys": [
+                    [-1, 1],
+                    [-15, 23],
+                    [-1, 1],
+                    [-1, 1]
+                ],
+                "edge_list": [0, 1, 4, 5]
+            }
+        ]
+    }, {
+        "triangle1": "29Q",
+        "triangle2": "42Q",
+        "id": 43,
+        "note": "This is intended to be like intersection ID 5 (10Q-19Q) in that the triangles share an entire edge, but this edge is curved.",
+        "intersections": []
+    }, {
+        "triangle1": "29Q",
+        "triangle2": "43Q",
+        "id": 44,
+        "note": "This is intended to be like intersection ID 43 (29Q-43Q) in that the triangles share (part of) an edge, but the intersection is ``degenerate'' in the sense that it has area equal to zero.",
+        "intersections": []
+    }, {
+        "triangle1": "10Q",
+        "triangle2": "44Q",
+        "id": 45,
+        "note": "This is intended to be like intersection ID 5 (10Q-19Q) in that the triangles share (part of) an edge, but the intersection is ``degenerate'' in the sense that it has area equal to zero.",
+        "intersections": []
+    }, {
+        "triangle1": "1Q",
+        "triangle2": "45Q",
+        "id": 46,
+        "note": "These triangles are identical, but the edges are relabeled.",
+        "intersections": [
+            true
+        ]
+    }, {
+        "triangle1": "1Q",
+        "triangle2": "2C",
+        "id": 47,
+        "note": "This is literally the same triangle, but 2C is degree-elevated.",
+        "intersections": [
+            true
+        ]
+    }, {
+        "triangle1": "46Q",
+        "triangle2": "47Q",
+        "id": 48,
+        "intersections": [
+            {
+                "nodes": [
+                    [0, 0],
+                    [1, 0],
+                    ["0x1.629a292a367cdp-1", "1/2"],
+                    ["1/10", "1/2"]
+                ],
+                "start_params": [
+                    0,
+                    0,
+                    "0x1.e072822fee906p-2",
+                    "1/2"
+                ],
+                "start_param_polys": [
+                    [0, 1],
+                    [0, 1],
+                    [529, -2500, 2500],
+                    [-1, 2]
+                ],
+                "end_params": [
+                    1,
+                    "0x1.9d65d6d5c9833p-2",
+                    "141/250",
+                    1
+                ],
+                "end_param_polys": [
+                    [-1, 1],
+                    [5, -14, 4],
+                    [-141, 250],
+                    [-1, 1]
+                ],
+                "edge_list": [0, 1, 4, 2]
+            }
+        ]
+    }, {
+        "triangle1": "48Q",
+        "triangle2": "14L",
+        "id": 49,
+        "note": "This intersection is from a real-world case, so the intersection values do not have a rational or algebraic representation. However, the intersection was computed in high-precision.",
+        "intersections": [
+            {
+                "nodes": [
+                    ["0x1.6900a8d9a4a7ep-1", "-0x1.3d611a06f255fp-1"],
+                    ["0x1.692495ec3aa21p-1", "-0x1.3d3e77409cc6fp-1"],
+                    ["0x1.6924a2e5e142fp-1", "-0x1.3d3d1ffab5baep-1"]
+                ],
+                "start_params": [
+                    "0x1.42968093ddf88p-2",
+                    "0x1.ffdd98e3679d3p-1",
+                    0
+                ],
+                "end_params": [
+                    "0x1.4b731d4eceac9p-2",
+                    1,
+                    "0x1.529acd85b333ep-7"
+                ],
+                "edge_list": [0, 3, 4]
+            }
+        ]
+    }, {
+        "triangle1": "49Q",
+        "triangle2": "15L",
+        "id": 50,
+        "note": "This intersection is from a real-world case, so the intersection values do not have a rational or algebraic representation. However, the intersection was computed in high-precision.",
+        "intersections": [
+            {
+                "nodes": [
+                    ["0x1.bf8ad4846373bp-1", "0x1.637d99fa68cacp-3"],
+                    ["0x1.bf919d2182d8dp-1", "0x1.676bd3f15f718p-3"],
+                    ["0x1.bf8ad4846373bp-1", "0x1.67983f1ad5bc2p-3"]
+                ],
+                "start_params": [
+                    "0x1.7ce08ef2b6425p-4",
+                    "0x1.fe97ec14d4c55p-1",
+                    0
+                ],
+                "end_params": [
+                    "0x1.9ab4181d043e5p-3",
+                    1,
+                    "0x1.350363e3ce847p-4"
+                ],
+                "edge_list": [0, 4, 5]
+            }
+        ]
+    }, {
+        "triangle1": "3C",
+        "triangle2": "4C",
+        "id": 51,
+        "note": "This intersection is from a real-world case, so the intersection values do not have a rational or algebraic representation. However, the intersection was computed in high-precision.",
+        "intersections": [
+            {
+                "nodes": [
+                    ["0x1.537baa83c36dap-3", "-0x1.f5949a0ad50f6p-1"],
+                    ["0x1.3f0e22cb6861cp-3", "-0x1.f59a201a9b2fbp-1"],
+                    ["0x1.3f0307d1786cbp-3", "-0x1.f59d6d6ec1001p-1"]
+                ],
+                "start_params": [
+                    "0x1.52cfc17cd81b6p-2",
+                    "0x1.ff82bfd5a0bd7p-1",
+                    0
+                ],
+                "end_params": [
+                    "0x1.9bb89726d798ap-1",
+                    1,
+                    "0x1.c1f44f818b884p-2"
+                ],
+                "edge_list": [2, 4, 5]
+            }
+        ]
+    }, {
+        "triangle1": "50Q",
+        "triangle2": "51Q",
+        "id": 52,
+        "note": "This intersection is from a real-world case, so the intersection values do not have a rational or algebraic representation. However, the intersection was computed in high-precision. This intersection is especially challenging because there is an actual intersection between the 2nd edge of 50Q and the first edge of 51Q: ``e1(2.452e-15) = e3(0.6471)``. This intersection occurs just 1 ULP away from the 2nd corner of triangle 50Q.",
+        "intersections": [
+            {
+                "nodes": [
+                    ["-0x1.f9198b9cbf9cbp-1", "-0x1.ab5236d50bc06p-1"],
+                    [-1, "-0x1.a492492492494p-1"],
+                    [-1, "-0x1.a492492492495p-1"],
+                    ["-0x1.f924924924925p-1", "-0x1.ab6db6db6db6fp-1"]
+                ],
+                "start_params": [
+                    "0x1.46989a2370390p-1",
+                    0,
+                    "0x1.4b4b4b4b4b4d7p-1",
+                    0
+                ],
+                "end_params": [
+                    1,
+                    "0x1.61707f8e9dad4p-49",
+                    1,
+                    "0x1.0c20bd5b8b6d7p-8"
+                ],
+                "edge_list": [0, 1, 3, 4]
+            }
+        ]
+    }, {
+        "triangle1": "52Q",
+        "triangle2": "53Q",
+        "id": 53,
+        "note": "These triangles do not intersect.",
+        "intersections": []
+    }, {
+        "triangle1": "54Q",
+        "triangle2": "55Q",
+        "id": 54,
+        "note": "This intersection is from a real-world case, so the intersection values do not have a rational or algebraic representation. However, the intersection was computed in high-precision.",
+        "intersections": [
+            {
+                "nodes": [
+                    ["-0x1.a492492492494p-1", "-0x1.0000000000000p+0"],
+                    ["-0x1.a4924924924c8p-1", "-0x1.fffffffffffcbp-1"],
+                    ["-0x1.ab6db6db6db6ep-1", "-0x1.f924924924926p-1"],
+                    ["-0x1.ab6db6db6db6ep-1", "-0x1.0000000000000p+0"]
+                ],
+                "start_params": [
+                    0,
+                    "0x1.2d2d2d2d2e907p-2",
+                    0,
+                    "0x1.000000000009fp-2"
+                ],
+                "end_params": [
+                    "0x1.7b999a54fe9fbp-42",
+                    1,
+                    "0x1.6969696969655p-1",
+                    1
+                ],
+                "edge_list": [0, 3, 4, 2]
+            }
+        ]
+    }, {
+        "triangle1": "56Q",
+        "triangle2": "57Q",
+        "id": 55,
+        "note": "This intersection is from a real-world case, so the intersection values do not have a rational or algebraic representation. However, the intersection was computed in high-precision.",
+        "intersections": [
+            {
+                "nodes": [
+                    ["-0x1.d24924924924ap-1", "-0x1.ffffffffffffep-1"],
+                    ["-0x1.d249249249249p-1", "-0x1.0000000000000p+0"],
+                    ["-0x1.d221ce2d0e8f2p-1", "-0x1.f94be8ae5f27ep-1"],
+                    ["-0x1.d24924924924ap-1", "-0x1.f924924924926p-1"]
+                ],
+                "start_params": [
+                    "0x1.fffffffffffaap-1",
+                    0,
+                    "0x1.f7e6aeec68c16p-1",
+                    0
+                ],
+                "end_params": [
+                    1,
+                    "0x1.7b5a3e4c4f903p-1",
+                    1,
+                    "0x1.6969696969605p-1"
+                ],
+                "edge_list": [0, 1, 3, 4]
+            }
+        ]
+    }, {
+        "triangle1": "58Q",
+        "triangle2": "59Q",
+        "id": 56,
+        "note": "This intersection is from a real-world case, so the intersection values do not have a rational or algebraic representation. However, the intersection was computed in high-precision.",
+        "intersections": [
+            {
+                "nodes": [
+                    ["-0x1.0000000000000p+0", "0x1.ab6db6db6db6dp-1"],
+                    ["-0x1.0000000000000p+0", "0x1.a492492492493p-1"],
+                    ["-0x1.f924924924926p-1", "0x1.ab6db6db6db6dp-1"]
+                ],
+                "start_params": [
+                    "0x1.fffffffffffe9p-3",
+                    "0x1.2d2d2d2d2d32ap-2",
+                    0
+                ],
+                "end_params": [
+                    "0x1.fffffffffffacp-1",
+                    1,
+                    "0x1.6969696969655p-1"
+                ],
+                "edge_list": [2, 3, 4]
+            }
+        ]
+    }, {
+        "triangle1": "60Q",
+        "triangle2": "61Q",
+        "id": 57,
+        "note": "This intersection is from a real-world case, so the intersection values do not have a rational or algebraic representation. However, the intersection was computed in high-precision.",
+        "intersections": [
+            {
+                "nodes": [
+                    ["-0x1.a492492492499p-1", "-0x1.ffffffffffffbp-1"],
+                    ["-0x1.ab4c9975c0bccp-1", "-0x1.f91d0616f9146p-1"],
+                    ["-0x1.ab6db6db6db6ep-1", "-0x1.f924924924926p-1"]
+                ],
+                "start_params": [
+                    "0x1.1cb333bfbe1fcp-46",
+                    "0x1.fdca022618befp-1",
+                    0
+                ],
+                "end_params": [
+                    "0x1.8939bda61f9edp-2",
+                    1,
+                    "0x1.6969696969565p-2"
+                ],
+                "edge_list": [0, 5, 3]
+            }
+        ]
+    }, {
+        "triangle1": "62Q",
+        "triangle2": "63Q",
+        "id": 58,
+        "note": "This intersection is from a real-world case, so the intersection values do not have a rational or algebraic representation. However, the intersection was computed in high-precision.",
+        "intersections": [
+            {
+                "nodes": [
+                    ["0x1.fffffffffffcdp-1", "-0x1.a4924924924c7p-1"],
+                    [1, "-0x1.a492492492494p-1"],
+                    [1, "-0x1.a492492492494p-1"]
+                ],
+                "start_params": [
+                    "0x1.ffffffffffa52p-1",
+                    0,
+                    "0x1.4b4b4b4b4b4d9p-1"
+                ],
+                "end_params": [
+                    1,
+                    "0x1.c04a485508697p-50",
+                    "0x1.4b4b4b4b4ba14p-1"
+                ],
+                "edge_list": [0, 1, 3]
+            }
+        ]
+    }, {
+        "triangle1": "64Q",
+        "triangle2": "65Q",
+        "id": 59,
+        "note": "This intersection is from a real-world case, so the intersection values do not have a rational or algebraic representation. However, the intersection was computed in high-precision.",
+        "intersections": [
+            {
+                "nodes": [
+                    ["0x1.fffffffffff9ep-1", "-0x1.a4924924924f5p-1"],
+                    ["0x1.f922cc59f970ep-1", "-0x1.ab5f82f014d07p-1"],
+                    ["0x1.f924924924924p-1", "-0x1.ab6db6db6db6ep-1"]
+                ],
+                "start_params": [
+                    "0x1.5a24002cd7884p-42",
+                    "0x1.fed89f2e48752p-1",
+                    0
+                ],
+                "end_params": [
+                    "0x1.84d340375ba1ep-2",
+                    1,
+                    "0x1.696969696827bp-2"
+                ],
+                "edge_list": [0, 5, 3]
+            }
+        ]
+    }, {
+        "triangle1": "66Q",
+        "triangle2": "67Q",
+        "id": 60,
+        "note": "These triangles do not intersect.",
+        "intersections": []
+    }, {
+        "triangle1": "68Q",
+        "triangle2": "55Q",
+        "id": 61,
+        "note": "This intersection is from a real-world case, so the intersection values do not have a rational or algebraic representation. However, the intersection was computed in high-precision.",
+        "intersections": [
+            {
+                "nodes": [
+                    ["-0x1.a4924924924c8p-1", "-0x1.fffffffffffcbp-1"],
+                    ["-0x1.a492492492494p-1", "-0x1.0000000000000p+0"],
+                    ["-0x1.a492492492494p-1", "-0x1.fffffffffffffp-1"]
+                ],
+                "start_params": [
+                    "0x1.ffffffffff423p-1",
+                    0,
+                    "0x1.2d2d2d2d2d3afp-2"
+                ],
+                "end_params": [
+                    1,
+                    "0x1.2283d470074a6p-47",
+                    "0x1.2d2d2d2d2e907p-2"
+                ],
+                "edge_list": [0, 1, 3]
+            }
+        ]
+    }, {
+        "triangle1": "69Q",
+        "triangle2": "70Q",
+        "id": 62,
+        "note": "These triangles do not intersect.",
+        "intersections": []
+    }, {
+        "triangle1": "56Q",
+        "triangle2": "71Q",
+        "id": 63,
+        "note": "This intersection is from a real-world case, so the intersection values do not have a rational or algebraic representation. However, the intersection was computed in high-precision.",
+        "intersections": [
+            {
+                "nodes": [
+                    ["-0x1.d912283bf5943p-1", "-0x1.f924924924927p-1"],
+                    ["-0x1.d24924924924bp-1", "-0x1.ffffffffffffep-1"],
+                    ["-0x1.d24924924924ap-1", "-0x1.f924924924926p-1"]
+                ],
+                "start_params": [
+                    "0x1.f247835e9ec9bp-3",
+                    "0x1.2d2d2d2d2d44dp-2",
+                    0
+                ],
+                "end_params": [
+                    "0x1.fffffffffff92p-1",
+                    1,
+                    "0x1.659edf2b07e8dp-1"
+                ],
+                "edge_list": [0, 4, 5]
+            }
+        ]
+    }, {
+        "triangle1": "72Q",
+        "triangle2": "73Q",
+        "id": 64,
+        "note": "These triangles do not intersect.",
+        "intersections": []
+    }, {
+        "triangle1": "74Q",
+        "triangle2": "75Q",
+        "id": 65,
+        "note": "This intersection is from a real-world case, so the intersection values do not have a rational or algebraic representation. However, the intersection was computed in high-precision.",
+        "intersections": [
+            {
+                "nodes": [
+                    ["0x1.fffffffffff3dp-1", "-0x1.a492492492555p-1"],
+                    [1, "-0x1.a492492492494p-1"],
+                    ["0x1.ffffffffffffep-1", "-0x1.a492492492494p-1"]
+                ],
+                "start_params": [
+                    "0x1.fffffffffd4e3p-1",
+                    0,
+                    "0x1.2d2d2d2d2d3b1p-2"
+                ],
+                "end_params": [
+                    1,
+                    "0x1.a942f5b65d02cp-47",
+                    "0x1.2d2d2d2d32312p-2"
+                ],
+                "edge_list": [0, 1, 3]
+            }
+        ]
+    }, {
+        "triangle1": "76Q",
+        "triangle2": "77Q",
+        "id": 66,
+        "note": "This intersection is from a real-world case, so the intersection values do not have a rational or algebraic representation. However, the intersection was computed in high-precision.",
+        "intersections": [
+            {
+                "nodes": [
+                    ["0x1.ffffffffffffep-1", "-0x1.d24924924924ap-1"],
+                    [1, "-0x1.d249249249249p-1"],
+                    ["0x1.f937dac85df42p-1", "-0x1.d235dc130fc2cp-1"],
+                    ["0x1.f924924924924p-1", "-0x1.d24924924924ap-1"]
+                ],
+                "start_params": [
+                    "0x1.fffffffffffabp-1",
+                    0,
+                    "0x1.fc07a9924dbccp-1",
+                    0
+                ],
+                "end_params": [
+                    1,
+                    "0x1.7e243b0035fc2p-1",
+                    1,
+                    "0x1.696969696963bp-1"
+                ],
+                "edge_list": [0, 1, 3, 4]
+            }
+        ]
+    }, {
+        "triangle1": "76Q",
+        "triangle2": "78Q",
+        "id": 67,
+        "note": "This intersection is from a real-world case, so the intersection values do not have a rational or algebraic representation. However, the intersection was computed in high-precision.",
+        "intersections": [
+            {
+                "nodes": [
+                    ["0x1.f924924924924p-1", "-0x1.d91d4888ead9cp-1"],
+                    ["0x1.ffffffffffffep-1", "-0x1.d24924924924bp-1"],
+                    ["0x1.f924924924924p-1", "-0x1.d24924924924ap-1"]
+                ],
+                "start_params": [
+                    "0x1.f7e72883bdb92p-3",
+                    "0x1.2d2d2d2d2d3b6p-2",
+                    0
+                ],
+                "end_params": [
+                    "0x1.fffffffffff94p-1",
+                    1,
+                    "0x1.67e9495d872c0p-1"
+                ],
+                "edge_list": [0, 4, 5]
+            }
+        ]
+    }, {
+        "triangle1": "79Q",
+        "triangle2": "80Q",
+        "id": 68,
+        "note": "This intersection is from a real-world case, so the intersection values do not have a rational or algebraic representation. However, the intersection was computed in high-precision.",
+        "intersections": [
+            {
+                "nodes": [
+                    ["0x1.d249249249249p-1", "-0x1.0000000000000p+0"],
+                    ["0x1.d249249249249p-1", "-0x1.0000000000000p+0"],
+                    ["0x1.d249249249249p-1", "-0x1.fffffffffffcap-1"]
+                ],
+                "start_params": [
+                    0,
+                    "0x1.2d2d2d2d2d378p-2",
+                    "0x1.ffffffffff45bp-1"
+                ],
+                "end_params": [
+                    "0x1.24b9acd911ec3p-49",
+                    "0x1.2d2d2d2d2e97fp-2",
+                    1
+                ],
+                "edge_list": [0, 5, 2]
+            }
+        ]
+    }, {
+        "triangle1": "81Q",
+        "triangle2": "82Q",
+        "id": 69,
+        "note": "These triangles do not intersect.",
+        "intersections": []
+    }, {
+        "triangle1": "58Q",
+        "triangle2": "83Q",
+        "id": 70,
+        "note": "This intersection is from a real-world case, so the intersection values do not have a rational or algebraic representation. However, the intersection was computed in high-precision.",
+        "intersections": [
+            {
+                "nodes": [
+                    ["-0x1.0000000000000p+0", "0x1.a492492492491p-1"],
+                    ["-0x1.f924876ae30f5p-1", "0x1.ab6c62db84a5cp-1"],
+                    ["-0x1.f924924924926p-1", "0x1.ab6db6db6db6dp-1"],
+                    ["-0x1.0000000000000p+0", "0x1.a492492492493p-1"]
+                ],
+                "start_params": [
+                    0,
+                    "0x1.ffc2bc99bb795p-1",
+                    0,
+                    "0x1.fffffffffff7dp-1"
+                ],
+                "end_params": [
+                    "0x1.86ad853c33248p-1",
+                    1,
+                    "0x1.6969696969655p-1",
+                    1
+                ],
+                "edge_list": [0, 3, 4, 2]
+            }
+        ]
+    }, {
+        "triangle1": "84Q",
+        "triangle2": "85Q",
+        "id": 71,
+        "note": "This intersection is from a real-world case, so the intersection values do not have a rational or algebraic representation. However, the intersection was computed in high-precision.",
+        "intersections": [
+            {
+                "nodes": [
+                    ["-0x1.fffffffffff11p-1", "0x1.d249249249247p-1"],
+                    ["-0x1.0000000000000p+0", "0x1.d249249249249p-1"],
+                    ["-0x1.0000000000000p+0", "0x1.d249249249247p-1"]
+                ],
+                "start_params": [
+                    "0x1.fffffffffcb3dp-1",
+                    0,
+                    "0x1.2d2d2d2d2d381p-2"
+                ],
+                "end_params": [
+                    1,
+                    "0x1.04d10d4985bfcp-46",
+                    "0x1.2d2d2d2d335e7p-2"
+                ],
+                "edge_list": [1, 2, 4]
+            }
+        ]
+    }, {
+        "triangle1": "86Q",
+        "triangle2": "87Q",
+        "id": 72,
+        "note": "This intersection is from a real-world case, so the intersection values do not have a rational or algebraic representation. However, the intersection was computed in high-precision.",
+        "intersections": [
+            {
+                "nodes": [
+                    ["-0x1.d249249249249p-1", 1],
+                    ["-0x1.d24924924924ap-1", "0x1.fffffffffffffp-1"],
+                    ["-0x1.d24924924924ap-1", "0x1.fffffffffff5cp-1"]
+                ],
+                "start_params": [
+                    0,
+                    "0x1.2d2d2d2d2d38ap-2",
+                    "0x1.fffffffffdc87p-1"
+                ],
+                "end_params": [
+                    "0x1.4c8a38ac90919p-47",
+                    "0x1.2d2d2d2d31656p-2",
+                    1
+                ],
+                "edge_list": [0, 5, 2]
+            }
+        ]
+    }
+]

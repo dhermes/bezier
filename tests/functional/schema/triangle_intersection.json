@@ -1,0 +1,41 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "description": "An intersection of two B\\u00e9zier triangles.",
+    "type": "object",
+    "properties": {
+        "triangle1": {
+            "description": "ID of the first triangle in the intersection.",
+            "type": "string"
+        },
+        "triangle2": {
+            "description": "ID of the second triangle in the intersection.",
+            "type": "string"
+        },
+        "id": {
+            "description": "ID of intersection ``test case''.",
+            "type": "integer"
+        },
+        "note": {
+            "description": "Description of the intersection(s).",
+            "type": "string"
+        },
+        "intersections": {
+            "description": "List of info describing curved polygon(s) in the intersection.",
+            "type": "array",
+            "items": {
+                "description": "Either a curved polygon that occurs within the triangle-triangle intersection or a boolean. If a boolean, `true` indicates that the intersection is the first triangle (i.e. it's fully contained in the second) and `false` indicates that the intersection is the second triangle.",
+                "oneOf": [
+                    {"type": "boolean"},
+                    {"$ref": "./curved_polygon.json"}
+                ]
+            }
+        }
+    },
+    "additionalProperties": false,
+    "required": [
+        "triangle1",
+        "triangle2",
+        "id",
+        "intersections"
+    ]
+}

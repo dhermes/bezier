@@ -24,7 +24,7 @@ try:
     import bezier
 except ImportError:
     bezier = None
-SPECIAL_MEMBERS = ("__author__", "__version__")
+SPECIAL_MEMBERS = ("__author__", "__version__", "Surface")
 UNDOCUMENTED_SPECIAL_MEMBERS = ("__author__",)
 EXPECTED = """\
 bezier package
@@ -43,7 +43,7 @@ Submodules
 
    bezier.curve
    bezier.curved_polygon
-   bezier.surface
+   bezier.triangle
 """
 DESIRED_TEMPLATE = """\
 bezier package
@@ -58,7 +58,7 @@ Submodules
 
    bezier.curve
    bezier.curved_polygon
-   bezier.surface
+   bezier.triangle
 """
 _SCRIPTS_DIR = os.path.dirname(__file__)
 _DOCS_DIR = os.path.abspath(os.path.join(_SCRIPTS_DIR, "..", "docs"))

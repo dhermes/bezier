@@ -720,7 +720,7 @@
             [2, 1, 1],
             [-1, 2, 0]
         ],
-        "note": "The algebraic curve that contains this curve contains curves #58 and #60. This is the first edge from surface 20Q."
+        "note": "The algebraic curve that contains this curve contains curves #58 and #60. This is the first edge from triangle 20Q."
     },
     "59": {
         "control_points": [
@@ -735,7 +735,7 @@
             [2, 1, 1],
             [-1, 2, 0]
         ],
-        "note": "This is the first edge from surface 21Q."
+        "note": "This is the first edge from triangle 21Q."
     },
     "60": {
         "control_points": [
@@ -750,7 +750,7 @@
             [2, 1, 1],
             [-1, 2, 0]
         ],
-        "note": "The algebraic curve that contains this curve contains curves #58 and #60. This is the first edge from surface 41Q. It is a specialized version of #58: curve60 = curve58([-1/4, 3/4])."
+        "note": "The algebraic curve that contains this curve contains curves #58 and #60. This is the first edge from triangle 41Q. It is a specialized version of #58: curve60 = curve58([-1/4, 3/4])."
     },
     "61": {
         "control_points": [
@@ -888,41 +888,41 @@
             ["0x1.63e1b4c544d3ap-1", "0x1.6c074b46d2b9ep-1", "0x1.740dd73c29145p-1"],
             ["-0x1.424da10fb674dp-1", "-0x1.3a7d6b25aa9edp-1", "-0x1.32aa53fca29dep-1"]
         ],
-        "note": "This curve and #74 are from a real-world failure, so the values do not have a rational or algebraic representation. This is the first edge of surface 48Q."
+        "note": "This curve and #74 are from a real-world failure, so the values do not have a rational or algebraic representation. This is the first edge of triangle 48Q."
     },
     "74": {
         "control_points": [
             ["0x1.6924a2e5e142fp-1", "0x1.5b8b094c47a96p-1"],
             ["-0x1.3d3d1ffab5baep-1", "-0x1.4ad6b9944f548p-1"]
         ],
-        "note": "This curve and #73 are from a real-world failure, so the values do not have a rational or algebraic representation. This is the second edge of surface 14L."
+        "note": "This curve and #73 are from a real-world failure, so the values do not have a rational or algebraic representation. This is the second edge of triangle 14L."
     },
     "75": {
         "control_points": [
             ["0x1.bf84f70f66400p-1", "0x1.bfa4807c92afap-1", "0x1.bfc409e9bf1f5p-1"],
             ["0x1.6017a1182b9b6p-3", "0x1.725d85f3802ebp-3", "0x1.84a36aced4c22p-3"]
         ],
-        "note": "This curve and #76 are from a real-world failure, so the values do not have a rational or algebraic representation. This is the first edge of surface 49Q."
+        "note": "This curve and #76 are from a real-world failure, so the values do not have a rational or algebraic representation. This is the first edge of triangle 49Q."
     },
     "76": {
         "control_points": [
             ["0x1.bf8ad4846373bp-1", "0x1.bf8ad4846373bp-1"],
             ["0x1.67983f1ad5bc2p-3", "0x1.3131d8b46f55bp-3"]
         ],
-        "note": "This curve and #75 are from a real-world failure, so the values do not have a rational or algebraic representation. This is the third edge of surface 15L."
+        "note": "This curve and #75 are from a real-world failure, so the values do not have a rational or algebraic representation. This is the third edge of triangle 15L."
     },
     "77": {
         "control_points": [
             ["0x1.61c71f073cc01p-3", "0x1.535f028b90c2ap-3", "0x1.44fb2fb54d6abp-3", "0x1.369ba68472b75p-3"],
             ["-0x1.f58f3b1c0f41dp-1", "-0x1.f595446c5b8acp-1", "-0x1.f59969b819c1cp-1", "-0x1.f59baaff49e70p-1"]
         ],
-        "note": "This curve and #78 are from a real-world failure, so the values do not have a rational or algebraic representation. This is the third edge of surface 3C."
+        "note": "This curve and #78 are from a real-world failure, so the values do not have a rational or algebraic representation. This is the third edge of triangle 3C."
     },
     "78": {
         "control_points": [
             ["0x1.3f0307d1786cbp-3", "0x1.4e89fba3680cfp-3", "0x1.5e123b961ee05p-3", "0x1.6d9bc7a99ce60p-3"],
             ["-0x1.f59d6d6ec1001p-1", "-0x1.f59660a5e7ca4p-1", "-0x1.f590228da381dp-1", "-0x1.f58ab325f427fp-1"]
         ],
-        "note": "This curve and #77 are from a real-world failure, so the values do not have a rational or algebraic representation. This is the third edge of surface 4C."
+        "note": "This curve and #77 are from a real-world failure, so the values do not have a rational or algebraic representation. This is the third edge of triangle 4C."
     }
 }

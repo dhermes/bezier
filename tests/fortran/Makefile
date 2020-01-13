@@ -42,16 +42,16 @@ F90_SOURCES := \
 	$(SRC_DIR)/status$(F90) \
 	$(SRC_DIR)/helpers$(F90) \
 	$(SRC_DIR)/curve$(F90) \
-	$(SRC_DIR)/surface$(F90) \
+	$(SRC_DIR)/triangle$(F90) \
 	$(SRC_DIR)/curve_intersection$(F90) \
-	$(SRC_DIR)/surface_intersection$(F90)
+	$(SRC_DIR)/triangle_intersection$(F90)
 TEST_SOURCES := \
 	$(CURR_DIR)/unit_test_helpers$(F90) \
 	$(CURR_DIR)/test_helpers$(F90) \
 	$(CURR_DIR)/test_curve$(F90) \
-	$(CURR_DIR)/test_surface$(F90) \
+	$(CURR_DIR)/test_triangle$(F90) \
 	$(CURR_DIR)/test_curve_intersection$(F90) \
-	$(CURR_DIR)/test_surface_intersection$(F90)
+	$(CURR_DIR)/test_triangle_intersection$(F90)
 FNL_TEST_SOURCES := \
 	$(CURR_DIR)/functional_test_helpers$(F90) \
 	$(CURR_DIR)/functional_curve$(F90)

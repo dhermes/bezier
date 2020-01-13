@@ -19,8 +19,8 @@ In particular, this module is split into sections for
 - ``curve.f90``
 - ``curve_intersection.f90``
 - ``helpers.f90``
-- ``surface.f90``
-- ``surface_intersection.f90``
+- ``triangle.f90``
+- ``triangle_intersection.f90``
 
 These are grouped in a **single** ``.pyx`` file to avoid unintended
 programming errors caused by sharing the **same** object file across
@@ -42,10 +42,10 @@ cimport bezier._curve_intersection
 from bezier._curve_intersection cimport BoxIntersectionType
 cimport bezier._helpers
 cimport bezier._status
-cimport bezier._surface
-cimport bezier._surface_intersection
-from bezier._surface_intersection cimport CurvedPolygonSegment
-from bezier._surface_intersection cimport SurfaceContained
+cimport bezier._triangle
+cimport bezier._triangle_intersection
+from bezier._triangle_intersection cimport CurvedPolygonSegment
+from bezier._triangle_intersection cimport TriangleContained
 
 
 cdef double EPS = 0.5**40
@@ -633,9 +633,9 @@ def polygon_collide(double[::1, :] polygon1, double[::1, :] polygon2):
 
     return collision
 
-############################
-# Section: ``surface.f90`` #
-############################
+#############################
+# Section: ``triangle.f90`` #
+#############################
 
 def de_casteljau_one_round(
         double[::1, :] nodes, int degree,
@@ -646,7 +646,7 @@ def de_casteljau_one_round(
     dimension, num_nodes = np.shape(nodes)
     new_nodes = np.empty((dimension, num_nodes - degree - 1), order="F")
 
-    bezier._surface.de_casteljau_one_round(
+    bezier._triangle.de_casteljau_one_round(
         &num_nodes,
         &dimension,
         &nodes[0, 0],
@@ -669,7 +669,7 @@ def evaluate_barycentric(
     dimension, num_nodes = np.shape(nodes)
     point = np.empty((dimension, 1), order="F")
 
-    bezier._surface.evaluate_barycentric(
+    bezier._triangle.evaluate_barycentric(
         &num_nodes,
         &dimension,
         &nodes[0, 0],
@@ -695,7 +695,7 @@ def evaluate_barycentric_multi(
     num_vals, _ = np.shape(param_vals)
     evaluated = np.empty((dimension, num_vals), order="F")
 
-    bezier._surface.evaluate_barycentric_multi(
+    bezier._triangle.evaluate_barycentric_multi(
         &num_nodes,
         &dimension,
         &nodes[0, 0],
@@ -720,7 +720,7 @@ def evaluate_cartesian_multi(
     num_vals, _ = np.shape(param_vals)
     evaluated = np.empty((dimension, num_vals), order="F")
 
-    bezier._surface.evaluate_cartesian_multi(
+    bezier._triangle.evaluate_cartesian_multi(
         &num_nodes,
         &dimension,
         &nodes[0, 0],
@@ -741,7 +741,7 @@ def jacobian_both(double[::1, :] nodes, int degree, int dimension):
     _, num_nodes = np.shape(nodes)
     new_nodes = np.empty((2 * dimension, num_nodes - degree - 1), order="F")
 
-    bezier._surface.jacobian_both(
+    bezier._triangle.jacobian_both(
         &num_nodes,
         &dimension,
         &nodes[0, 0],
@@ -763,7 +763,7 @@ def jacobian_det(double[::1, :] nodes, int degree, double[::1, :] st_vals):
 
     evaluated = np.empty((num_vals,), order="F")
 
-    bezier._surface.jacobian_det(
+    bezier._triangle.jacobian_det(
         &num_nodes,
         &nodes[0, 0],
         &degree,
@@ -775,7 +775,7 @@ def jacobian_det(double[::1, :] nodes, int degree, double[::1, :] st_vals):
     return evaluated
 
 
-def specialize_surface(
+def specialize_triangle(
         double[::1, :] nodes, int degree,
         double[::1] weights_a, double[::1] weights_b, double[::1] weights_c):
     cdef int num_nodes, dimension
@@ -784,7 +784,7 @@ def specialize_surface(
     dimension, num_nodes = np.shape(nodes)
     specialized = np.empty((dimension, num_nodes), order="F")
 
-    bezier._surface.specialize_surface(
+    bezier._triangle.specialize_triangle(
         &num_nodes,
         &dimension,
         &nodes[0, 0],
@@ -798,7 +798,7 @@ def specialize_surface(
     return specialized
 
 
-def subdivide_nodes_surface(double[::1, :] nodes, int degree):
+def subdivide_nodes_triangle(double[::1, :] nodes, int degree):
     cdef int num_nodes, dimension
     cdef ndarray_t[double, ndim=2, mode="fortran"] nodes_a
     cdef ndarray_t[double, ndim=2, mode="fortran"] nodes_b
@@ -811,7 +811,7 @@ def subdivide_nodes_surface(double[::1, :] nodes, int degree):
     nodes_c = np.empty((dimension, num_nodes), order="F")
     nodes_d = np.empty((dimension, num_nodes), order="F")
 
-    bezier._surface.subdivide_nodes_surface(
+    bezier._triangle.subdivide_nodes_triangle(
         &num_nodes,
         &dimension,
         &nodes[0, 0],
@@ -836,7 +836,7 @@ def compute_edge_nodes(double[::1, :] nodes, int degree):
     nodes2 = np.empty((dimension, degree + 1), order="F")
     nodes3 = np.empty((dimension, degree + 1), order="F")
 
-    bezier._surface.compute_edge_nodes(
+    bezier._triangle.compute_edge_nodes(
         &num_nodes,
         &dimension,
         &nodes[0, 0],
@@ -883,7 +883,7 @@ def compute_area(tuple edges):
     # Pass along the pointers to the ABI (i.e. the Fortran layer).
     # This assumes that ``unused_not_implemented`` will be ``False``
     # since we already check the supported degrees above.
-    bezier._surface.compute_area(
+    bezier._triangle.compute_area(
         &num_edges,
         &sizes[0],
         nodes_pointers,
@@ -895,11 +895,11 @@ def compute_area(tuple edges):
 
     return area
 
-#########################################
-# Section: ``surface_intersection.f90`` #
-#########################################
+##########################################
+# Section: ``triangle_intersection.f90`` #
+##########################################
 
-def newton_refine_surface(
+def newton_refine_triangle(
         double[::1, :] nodes, int degree,
         double x_val, double y_val, double s, double t):
     cdef int num_nodes
@@ -908,7 +908,7 @@ def newton_refine_surface(
     # NOTE: We don't check that there are 2 rows.
     _, num_nodes = np.shape(nodes)
 
-    bezier._surface_intersection.newton_refine_surface(
+    bezier._triangle_intersection.newton_refine_triangle(
         &num_nodes,
         &nodes[0, 0],
         &degree,
@@ -923,7 +923,7 @@ def newton_refine_surface(
     return updated_s, updated_t
 
 
-def locate_point_surface(
+def locate_point_triangle(
         double[::1, :] nodes, int degree, double x_val, double y_val):
     cdef int num_nodes
     cdef double s_val, t_val
@@ -931,7 +931,7 @@ def locate_point_surface(
     # NOTE: We don't check that there are 2 rows.
     _, num_nodes = np.shape(nodes)
 
-    bezier._surface_intersection.locate_point_surface(
+    bezier._triangle_intersection.locate_point_triangle(
         &num_nodes,
         &nodes[0, 0],
         &degree,
@@ -947,7 +947,7 @@ def locate_point_surface(
         return s_val, t_val
 
 
-def reset_surface_workspaces(int segment_ends_size=-1, int segments_size=-1):
+def reset_triangle_workspaces(int segment_ends_size=-1, int segments_size=-1):
     global SEGMENT_ENDS_WORKSPACE
     global SEGMENTS_WORKSPACE
     if segment_ends_size != -1:
@@ -956,7 +956,7 @@ def reset_surface_workspaces(int segment_ends_size=-1, int segments_size=-1):
         SEGMENTS_WORKSPACE = np.empty(segments_size, dtype=SEGMENT_DTYPE)
 
 
-def surface_workspace_sizes():
+def triangle_workspace_sizes():
     global SEGMENT_ENDS_WORKSPACE
     global SEGMENTS_WORKSPACE
     cdef int segment_ends_size
@@ -967,7 +967,7 @@ def surface_workspace_sizes():
     return segment_ends_size, segments_size
 
 
-def _surface_intersections_success(
+def _triangle_intersections_success(
         double[::1, :] nodes1, int degree1,
         double[::1, :] nodes2, int degree2,
         int num_intersected):
@@ -1011,7 +1011,7 @@ def _surface_intersections_success(
     edge_nodes1 = np.empty((dimension, degree1 + 1), order="F")
     edge_nodes2 = np.empty((dimension, degree1 + 1), order="F")
     edge_nodes3 = np.empty((dimension, degree1 + 1), order="F")
-    bezier._surface.compute_edge_nodes(
+    bezier._triangle.compute_edge_nodes(
         &num_nodes,
         &dimension,
         &nodes1[0, 0],
@@ -1025,7 +1025,7 @@ def _surface_intersections_success(
     edge_nodes4 = np.empty((dimension, degree2 + 1), order="F")
     edge_nodes5 = np.empty((dimension, degree2 + 1), order="F")
     edge_nodes6 = np.empty((dimension, degree2 + 1), order="F")
-    bezier._surface.compute_edge_nodes(
+    bezier._triangle.compute_edge_nodes(
         &num_nodes,
         &dimension,
         &nodes2[0, 0],
@@ -1046,7 +1046,7 @@ def _surface_intersections_success(
     return curved_polygons, None, all_edge_nodes
 
 
-def _surface_intersections_resize(
+def _triangle_intersections_resize(
         double[::1, :] nodes1, int degree1,
         double[::1, :] nodes2, int degree2,
         int segment_ends_size, int segments_size,
@@ -1056,12 +1056,12 @@ def _surface_intersections_resize(
 
     if resizes_allowed > 0:
         if num_intersected > segment_ends_size:
-            reset_surface_workspaces(segment_ends_size=num_intersected)
+            reset_triangle_workspaces(segment_ends_size=num_intersected)
         else:
             num_segments = SEGMENT_ENDS_WORKSPACE[num_intersected - 1]
-            reset_surface_workspaces(segments_size=num_segments)
+            reset_triangle_workspaces(segments_size=num_segments)
 
-        return surface_intersections(
+        return triangle_intersections(
             nodes1, degree1, nodes2, degree2,
             resizes_allowed=resizes_allowed - 1)
     else:
@@ -1076,7 +1076,7 @@ def _surface_intersections_resize(
             raise ValueError(msg)
 
 
-def surface_intersections(
+def triangle_intersections(
         double[::1, :] nodes1, int degree1,
         double[::1, :] nodes2, int degree2,
         bint verify=True, int resizes_allowed=2):
@@ -1088,16 +1088,16 @@ def surface_intersections(
     cdef int segment_ends_size
     cdef int segments_size
     cdef int num_intersected
-    cdef SurfaceContained contained
+    cdef TriangleContained contained
     cdef bezier._status.Status status
 
     # NOTE: We don't check that there are 2 rows.
     _, num_nodes1 = np.shape(nodes1)
     _, num_nodes2 = np.shape(nodes2)
 
-    segment_ends_size, segments_size = surface_workspace_sizes()
+    segment_ends_size, segments_size = triangle_workspace_sizes()
 
-    bezier._surface_intersection.surface_intersections(
+    bezier._triangle_intersection.triangle_intersections(
         &num_nodes1,
         &nodes1[0, 0],
         &degree1,
@@ -1114,17 +1114,17 @@ def surface_intersections(
     )
 
     if status == bezier._status.Status.SUCCESS:
-        if contained == bezier._surface_intersection.SurfaceContained.FIRST:
+        if contained == bezier._triangle_intersection.TriangleContained.FIRST:
             return None, True, ()
-        elif contained == bezier._surface_intersection.SurfaceContained.SECOND:
+        elif contained == bezier._triangle_intersection.TriangleContained.SECOND:
             return None, False, ()
         else:
             # Assumes, but does not check, that ``contained`` is equal to
-            # ``bezier._surface_intersection.NEITHER``.
-            return _surface_intersections_success(
+            # ``bezier._triangle_intersection.NEITHER``.
+            return _triangle_intersections_success(
                 nodes1, degree1, nodes2, degree2, num_intersected)
     elif status == bezier._status.Status.INSUFFICIENT_SPACE:
-        return _surface_intersections_resize(
+        return _triangle_intersections_resize(
             nodes1, degree1, nodes2, degree2,
             segment_ends_size, segments_size,
             num_intersected, resizes_allowed)
@@ -1153,8 +1153,8 @@ def surface_intersections(
         raise NotImplementedError(TOO_MANY_TEMPLATE.format(status))
 
 
-def free_surface_intersections_workspace():
-    bezier._surface_intersection.free_surface_intersections_workspace()
+def free_triangle_intersections_workspace():
+    bezier._triangle_intersection.free_triangle_intersections_workspace()
 
 
 def _type_info():

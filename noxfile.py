@@ -261,13 +261,15 @@ def docs_images(session):
     fnl_tests_glob = get_path("tests", "functional", "test_*.py")
     modules_to_run = glob.glob(fnl_tests_glob)
     # Generate images for ``curve_intersections.json`` and
-    # ``surface_intersections.json``.
+    # ``triangle_intersections.json``.
     modules_to_run.extend(
         (
             get_path("tests", "functional", "make_segment_box_images.py"),
-            get_path("tests", "functional", "make_surface_locate_images.py"),
+            get_path("tests", "functional", "make_triangle_locate_images.py"),
             get_path("tests", "functional", "make_curve_curve_images.py"),
-            get_path("tests", "functional", "make_surface_surface_images.py"),
+            get_path(
+                "tests", "functional", "make_triangle_triangle_images.py"
+            ),
         )
     )
     # Make sure that the root directory is on the Python path so that

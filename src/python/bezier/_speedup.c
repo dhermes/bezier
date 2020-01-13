@@ -602,8 +602,8 @@ static CYTHON_INLINE float __PYX_NAN() {
 #include "bezier/status.h"
 #include "bezier/curve_intersection.h"
 #include "bezier/helpers.h"
-#include "bezier/surface.h"
-#include "bezier/surface_intersection.h"
+#include "bezier/triangle.h"
+#include "bezier/triangle_intersection.h"
 #include "pythread.h"
 #include "pystate.h"
 #ifdef _OPENMP
@@ -1164,7 +1164,7 @@ static CYTHON_INLINE __pyx_t_double_complex __pyx_t_double_complex_from_parts(do
 
 
 /*--- Type declarations ---*/
-struct __pyx_obj_6bezier_8_speedup___pyx_scope_struct___surface_intersections_success;
+struct __pyx_obj_6bezier_8_speedup___pyx_scope_struct___triangle_intersections_success;
 struct __pyx_obj_6bezier_8_speedup___pyx_scope_struct_1_genexpr;
 struct __pyx_array_obj;
 struct __pyx_MemviewEnum_obj;
@@ -1210,11 +1210,11 @@ typedef npy_cdouble __pyx_t_5numpy_complex_t;
 /* "bezier/_speedup.pyx":970
  *
  *
- * def _surface_intersections_success(             # <<<<<<<<<<<<<<
+ * def _triangle_intersections_success(             # <<<<<<<<<<<<<<
  *         double[::1, :] nodes1, int degree1,
  *         double[::1, :] nodes2, int degree2,
  */
-struct __pyx_obj_6bezier_8_speedup___pyx_scope_struct___surface_intersections_success {
+struct __pyx_obj_6bezier_8_speedup___pyx_scope_struct___triangle_intersections_success {
   PyObject_HEAD
   int __pyx_v_begin_index;
   int __pyx_v_end_index;
@@ -1230,7 +1230,7 @@ struct __pyx_obj_6bezier_8_speedup___pyx_scope_struct___surface_intersections_su
  */
 struct __pyx_obj_6bezier_8_speedup___pyx_scope_struct_1_genexpr {
   PyObject_HEAD
-  struct __pyx_obj_6bezier_8_speedup___pyx_scope_struct___surface_intersections_success *__pyx_outer_scope;
+  struct __pyx_obj_6bezier_8_speedup___pyx_scope_struct___triangle_intersections_success *__pyx_outer_scope;
   int __pyx_v_j;
   int __pyx_t_0;
   int __pyx_t_1;
@@ -2288,14 +2288,14 @@ static CYTHON_INLINE char *__pyx_f_5numpy__util_dtypestring(PyArray_Descr *, cha
 
 /* Module declarations from 'bezier._helpers' */
 
-/* Module declarations from 'bezier._surface' */
+/* Module declarations from 'bezier._triangle' */
 
-/* Module declarations from 'bezier._surface_intersection' */
+/* Module declarations from 'bezier._triangle_intersection' */
 
 /* Module declarations from 'bezier' */
 
 /* Module declarations from 'bezier._speedup' */
-static PyTypeObject *__pyx_ptype_6bezier_8_speedup___pyx_scope_struct___surface_intersections_success = 0;
+static PyTypeObject *__pyx_ptype_6bezier_8_speedup___pyx_scope_struct___triangle_intersections_success = 0;
 static PyTypeObject *__pyx_ptype_6bezier_8_speedup___pyx_scope_struct_1_genexpr = 0;
 static PyTypeObject *__pyx_array_type = 0;
 static PyTypeObject *__pyx_MemviewEnum_type = 0;
@@ -2609,51 +2609,50 @@ static const char __pyx_k_evaluate_hodograph[] = "evaluate_hodograph";
 static const char __pyx_k_intersections_size[] = "intersections_size";
 static const char __pyx_k_locate_point_curve[] = "locate_point_curve";
 static const char __pyx_k_simple_convex_hull[] = "simple_convex_hull";
-static const char __pyx_k_specialize_surface[] = "specialize_surface";
 static const char __pyx_k_strided_and_direct[] = "<strided and direct>";
 static const char __pyx_k_NotImplementedError[] = "NotImplementedError";
 static const char __pyx_k_curve_intersections[] = "curve_intersections";
 static const char __pyx_k_newton_refine_curve[] = "newton_refine_curve";
+static const char __pyx_k_specialize_triangle[] = "specialize_triangle";
 static const char __pyx_k_Jacobian_is_singular[] = "Jacobian is singular.";
 static const char __pyx_k_evaluate_barycentric[] = "evaluate_barycentric";
-static const char __pyx_k_locate_point_surface[] = "locate_point_surface";
 static const char __pyx_k_strided_and_indirect[] = "<strided and indirect>";
 static const char __pyx_k_contiguous_and_direct[] = "<contiguous and direct>";
 static const char __pyx_k_curves_workspace_size[] = "curves_workspace_size";
-static const char __pyx_k_newton_refine_surface[] = "newton_refine_surface";
+static const char __pyx_k_locate_point_triangle[] = "locate_point_triangle";
 static const char __pyx_k_reduce_pseudo_inverse[] = "reduce_pseudo_inverse";
 static const char __pyx_k_subdivide_nodes_curve[] = "subdivide_nodes_curve";
-static const char __pyx_k_surface_intersections[] = "surface_intersections";
 static const char __pyx_k_MemoryView_of_r_object[] = "<MemoryView of %r object>";
 static const char __pyx_k_SEGMENT_ENDS_TOO_SMALL[] = "SEGMENT_ENDS_TOO_SMALL";
 static const char __pyx_k_de_casteljau_one_round[] = "de_casteljau_one_round";
+static const char __pyx_k_newton_refine_triangle[] = "newton_refine_triangle";
 static const char __pyx_k_reset_curves_workspace[] = "reset_curves_workspace";
+static const char __pyx_k_triangle_intersections[] = "triangle_intersections";
 static const char __pyx_k_unused_not_implemented[] = "unused_not_implemented";
 static const char __pyx_k_MemoryView_of_r_at_0x_x[] = "<MemoryView of %r at 0x%x>";
 static const char __pyx_k_SUBDIVISION_NO_CONVERGE[] = "SUBDIVISION_NO_CONVERGE";
 static const char __pyx_k_contiguous_and_indirect[] = "<contiguous and indirect>";
-static const char __pyx_k_subdivide_nodes_surface[] = "subdivide_nodes_surface";
-static const char __pyx_k_surface_workspace_sizes[] = "surface_workspace_sizes";
 static const char __pyx_k_Cannot_index_with_type_s[] = "Cannot index with type '%s'";
 static const char __pyx_k_evaluate_cartesian_multi[] = "evaluate_cartesian_multi";
-static const char __pyx_k_reset_surface_workspaces[] = "reset_surface_workspaces";
+static const char __pyx_k_subdivide_nodes_triangle[] = "subdivide_nodes_triangle";
+static const char __pyx_k_triangle_workspace_sizes[] = "triangle_workspace_sizes";
 static const char __pyx_k_Invalid_shape_in_axis_d_d[] = "Invalid shape in axis %d: %d.";
 static const char __pyx_k_Unknown_error_has_occured[] = "Unknown error has occured.";
+static const char __pyx_k_reset_triangle_workspaces[] = "reset_triangle_workspaces";
 static const char __pyx_k_Unexpected_number_of_edges[] = "Unexpected number of edges";
 static const char __pyx_k_evaluate_barycentric_multi[] = "evaluate_barycentric_multi";
 static const char __pyx_k_evaluate_multi_barycentric[] = "evaluate_multi_barycentric";
 static const char __pyx_k_itemsize_0_for_cython_array[] = "itemsize <= 0 for cython.array";
 static const char __pyx_k_ndarray_is_not_C_contiguous[] = "ndarray is not C contiguous";
-static const char __pyx_k_surface_intersections_resize[] = "_surface_intersections_resize";
 static const char __pyx_k_newton_refine_curve_intersect[] = "newton_refine_curve_intersect";
-static const char __pyx_k_surface_intersections_success[] = "_surface_intersections_success";
+static const char __pyx_k_triangle_intersections_resize[] = "_triangle_intersections_resize";
 static const char __pyx_k_unable_to_allocate_array_data[] = "unable to allocate array data.";
 static const char __pyx_k_src_python_bezier__speedup_pyx[] = "src/python/bezier/_speedup.pyx";
 static const char __pyx_k_strided_and_direct_or_indirect[] = "<strided and direct or indirect>";
+static const char __pyx_k_triangle_intersections_success[] = "_triangle_intersections_success.<locals>.genexpr";
 static const char __pyx_k_Assumed_the_requested_tolerance[] = "Assumed: the requested tolerance cannot be achieved";
 static const char __pyx_k_Unsupported_multiplicity_Newton[] = "Unsupported multiplicity.\n\nNewton's method failed to converge to a solution under the\nfollowing assumptions:\n\n- The starting ``s-t`` values were already near a solution\n- The root / solution has multiplicity 1 or 2\n  - 1: The root is \"simple\", i.e. the curves are not tangent\n       and have no self-intersections at the point of intersection.\n  - 2: The root is a double root, i.e. the curves are tangent\n       but have different curvatures at the point of intersection.\n\nThe failure to converge may have been caused by one of:\n\n- The root was of multiplicity greater than 2\n- The curves don't actually intersect, though they come very close\n- Numerical issues caused the iteration to leave the region\n  of convergence\n";
 static const char __pyx_k_numpy_core_multiarray_failed_to[] = "numpy.core.multiarray failed to import";
-static const char __pyx_k_surface_intersections_success_l[] = "_surface_intersections_success.<locals>.genexpr";
 static const char __pyx_k_unknown_dtype_code_in_numpy_pxd[] = "unknown dtype code in numpy.pxd (%d)";
 static const char __pyx_k_Buffer_view_does_not_expose_stri[] = "Buffer view does not expose strides";
 static const char __pyx_k_Can_only_create_a_buffer_that_is[] = "Can only create a buffer that is contiguous in memory.";
@@ -2661,7 +2660,7 @@ static const char __pyx_k_Cannot_assign_to_read_only_memor[] = "Cannot assign to
 static const char __pyx_k_Cannot_create_writable_memory_vi[] = "Cannot create writable memory view from read-only memoryview";
 static const char __pyx_k_Curve_intersection_failed_to_con[] = "Curve intersection failed to converge to approximately linear subdivisions after 20 iterations.";
 static const char __pyx_k_Curve_should_have_at_least_one_n[] = "Curve should have at least one node.";
-static const char __pyx_k_Cython_wrapped_interface_for_For[] = "Cython \"wrapped\" interface for Fortran ABI.\n\nIn particular, this module is split into sections for\n\n- ``curve.f90``\n- ``curve_intersection.f90``\n- ``helpers.f90``\n- ``surface.f90``\n- ``surface_intersection.f90``\n\nThese are grouped in a **single** ``.pyx`` file to avoid unintended\nprogramming errors caused by sharing the **same** object file across\nmultiple Cython-generated modules. (This is problematic if the object\nfiles **expect** to share some global state.)\n";
+static const char __pyx_k_Cython_wrapped_interface_for_For[] = "Cython \"wrapped\" interface for Fortran ABI.\n\nIn particular, this module is split into sections for\n\n- ``curve.f90``\n- ``curve_intersection.f90``\n- ``helpers.f90``\n- ``triangle.f90``\n- ``triangle_intersection.f90``\n\nThese are grouped in a **single** ``.pyx`` file to avoid unintended\nprogramming errors caused by sharing the **same** object file across\nmultiple Cython-generated modules. (This is problematic if the object\nfiles **expect** to share some global state.)\n";
 static const char __pyx_k_Did_not_have_enough_space_for_in[] = "Did not have enough space for intersections. Needed space for {:d} intersections but only had space for {:d}.";
 static const char __pyx_k_Did_not_have_enough_space_for_se[] = "Did not have enough space for segment ends. Needed space for {:d} integers but only had space for {:d}.";
 static const char __pyx_k_Empty_shape_tuple_for_cython_arr[] = "Empty shape tuple for cython.array";
@@ -2683,11 +2682,12 @@ static const char __pyx_k_Tangent_curves_have_same_curvatu[] = "Tangent curves h
 static const char __pyx_k_The_number_of_candidate_intersec[] = "The number of candidate intersections is too high.\n{:d} candidate pairs.";
 static const char __pyx_k_Unable_to_convert_item_to_object[] = "Unable to convert item to object";
 static const char __pyx_k_free_curve_intersections_workspa[] = "free_curve_intersections_workspace";
-static const char __pyx_k_free_surface_intersections_works[] = "free_surface_intersections_workspace";
+static const char __pyx_k_free_triangle_intersections_work[] = "free_triangle_intersections_workspace";
 static const char __pyx_k_got_differing_extents_in_dimensi[] = "got differing extents in dimension %d (got %d and %d)";
 static const char __pyx_k_ndarray_is_not_Fortran_contiguou[] = "ndarray is not Fortran contiguous";
 static const char __pyx_k_no_default___reduce___due_to_non[] = "no default __reduce__ due to non-trivial __cinit__";
 static const char __pyx_k_numpy_core_umath_failed_to_impor[] = "numpy.core.umath failed to import";
+static const char __pyx_k_triangle_intersections_success_2[] = "_triangle_intersections_success";
 static const char __pyx_k_unable_to_allocate_shape_and_str[] = "unable to allocate shape and strides.";
 static const char __pyx_k_Did_not_have_enough_space_for_se_2[] = "Did not have enough space for segments. Needed space for {:d} `CurvedPolygonSegment`-s but only had space for {:d}.";
 static const char __pyx_k_Format_string_allocated_too_shor_2[] = "Format string allocated too short.";
@@ -2835,7 +2835,7 @@ static PyObject *__pyx_n_s_format;
 static PyObject *__pyx_n_s_fortran;
 static PyObject *__pyx_n_u_fortran;
 static PyObject *__pyx_n_s_free_curve_intersections_workspa;
-static PyObject *__pyx_n_s_free_surface_intersections_works;
+static PyObject *__pyx_n_s_free_triangle_intersections_work;
 static PyObject *__pyx_n_s_full_reduce;
 static PyObject *__pyx_n_s_genexpr;
 static PyObject *__pyx_n_s_get_curvature;
@@ -2862,7 +2862,7 @@ static PyObject *__pyx_n_s_left;
 static PyObject *__pyx_n_s_left_nodes;
 static PyObject *__pyx_n_s_length;
 static PyObject *__pyx_n_s_locate_point_curve;
-static PyObject *__pyx_n_s_locate_point_surface;
+static PyObject *__pyx_n_s_locate_point_triangle;
 static PyObject *__pyx_n_s_main;
 static PyObject *__pyx_n_s_memview;
 static PyObject *__pyx_n_s_mode;
@@ -2879,7 +2879,7 @@ static PyObject *__pyx_n_s_new_s;
 static PyObject *__pyx_n_s_new_t;
 static PyObject *__pyx_n_s_newton_refine_curve;
 static PyObject *__pyx_n_s_newton_refine_curve_intersect;
-static PyObject *__pyx_n_s_newton_refine_surface;
+static PyObject *__pyx_n_s_newton_refine_triangle;
 static PyObject *__pyx_kp_s_no_default___reduce___due_to_non;
 static PyObject *__pyx_n_s_nodes;
 static PyObject *__pyx_n_s_nodes1;
@@ -2941,7 +2941,7 @@ static PyObject *__pyx_n_s_reduce_ex;
 static PyObject *__pyx_n_s_reduce_pseudo_inverse;
 static PyObject *__pyx_n_s_reduced;
 static PyObject *__pyx_n_s_reset_curves_workspace;
-static PyObject *__pyx_n_s_reset_surface_workspaces;
+static PyObject *__pyx_n_s_reset_triangle_workspaces;
 static PyObject *__pyx_n_s_resizes_allowed;
 static PyObject *__pyx_n_s_result;
 static PyObject *__pyx_n_s_right;
@@ -2960,7 +2960,7 @@ static PyObject *__pyx_n_s_simple_convex_hull;
 static PyObject *__pyx_n_s_size;
 static PyObject *__pyx_n_s_sizes;
 static PyObject *__pyx_n_s_specialize_curve;
-static PyObject *__pyx_n_s_specialize_surface;
+static PyObject *__pyx_n_s_specialize_triangle;
 static PyObject *__pyx_n_s_specialized;
 static PyObject *__pyx_kp_s_src_python_bezier__speedup_pyx;
 static PyObject *__pyx_n_s_st_vals;
@@ -2975,20 +2975,20 @@ static PyObject *__pyx_kp_s_strided_and_indirect;
 static PyObject *__pyx_kp_s_stringsource;
 static PyObject *__pyx_n_s_struct;
 static PyObject *__pyx_n_s_subdivide_nodes_curve;
-static PyObject *__pyx_n_s_subdivide_nodes_surface;
+static PyObject *__pyx_n_s_subdivide_nodes_triangle;
 static PyObject *__pyx_n_s_success;
 static PyObject *__pyx_n_s_supported;
-static PyObject *__pyx_n_s_surface_intersections;
-static PyObject *__pyx_n_s_surface_intersections_resize;
-static PyObject *__pyx_n_s_surface_intersections_success;
-static PyObject *__pyx_n_s_surface_intersections_success_l;
-static PyObject *__pyx_n_s_surface_workspace_sizes;
 static PyObject *__pyx_n_s_t;
 static PyObject *__pyx_n_s_t_val;
 static PyObject *__pyx_n_s_tangent_vec;
 static PyObject *__pyx_n_s_test;
 static PyObject *__pyx_n_s_throw;
 static PyObject *__pyx_n_s_top;
+static PyObject *__pyx_n_s_triangle_intersections;
+static PyObject *__pyx_n_s_triangle_intersections_resize;
+static PyObject *__pyx_n_s_triangle_intersections_success;
+static PyObject *__pyx_n_s_triangle_intersections_success_2;
+static PyObject *__pyx_n_s_triangle_workspace_sizes;
 static PyObject *__pyx_n_s_triples;
 static PyObject *__pyx_n_s_type_info;
 static PyObject *__pyx_kp_s_unable_to_allocate_array_data;
@@ -3046,19 +3046,19 @@ static PyObject *__pyx_pf_6bezier_8_speedup_56evaluate_barycentric_multi(CYTHON_
 static PyObject *__pyx_pf_6bezier_8_speedup_58evaluate_cartesian_multi(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_nodes, int __pyx_v_degree, __Pyx_memviewslice __pyx_v_param_vals, int __pyx_v_dimension); /* proto */
 static PyObject *__pyx_pf_6bezier_8_speedup_60jacobian_both(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_nodes, int __pyx_v_degree, int __pyx_v_dimension); /* proto */
 static PyObject *__pyx_pf_6bezier_8_speedup_62jacobian_det(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_nodes, int __pyx_v_degree, __Pyx_memviewslice __pyx_v_st_vals); /* proto */
-static PyObject *__pyx_pf_6bezier_8_speedup_64specialize_surface(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_nodes, int __pyx_v_degree, __Pyx_memviewslice __pyx_v_weights_a, __Pyx_memviewslice __pyx_v_weights_b, __Pyx_memviewslice __pyx_v_weights_c); /* proto */
-static PyObject *__pyx_pf_6bezier_8_speedup_66subdivide_nodes_surface(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_nodes, int __pyx_v_degree); /* proto */
+static PyObject *__pyx_pf_6bezier_8_speedup_64specialize_triangle(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_nodes, int __pyx_v_degree, __Pyx_memviewslice __pyx_v_weights_a, __Pyx_memviewslice __pyx_v_weights_b, __Pyx_memviewslice __pyx_v_weights_c); /* proto */
+static PyObject *__pyx_pf_6bezier_8_speedup_66subdivide_nodes_triangle(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_nodes, int __pyx_v_degree); /* proto */
 static PyObject *__pyx_pf_6bezier_8_speedup_68compute_edge_nodes(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_nodes, int __pyx_v_degree); /* proto */
 static PyObject *__pyx_pf_6bezier_8_speedup_70compute_area(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_edges); /* proto */
-static PyObject *__pyx_pf_6bezier_8_speedup_72newton_refine_surface(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_nodes, int __pyx_v_degree, double __pyx_v_x_val, double __pyx_v_y_val, double __pyx_v_s, double __pyx_v_t); /* proto */
-static PyObject *__pyx_pf_6bezier_8_speedup_74locate_point_surface(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_nodes, int __pyx_v_degree, double __pyx_v_x_val, double __pyx_v_y_val); /* proto */
-static PyObject *__pyx_pf_6bezier_8_speedup_76reset_surface_workspaces(CYTHON_UNUSED PyObject *__pyx_self, int __pyx_v_segment_ends_size, int __pyx_v_segments_size); /* proto */
-static PyObject *__pyx_pf_6bezier_8_speedup_78surface_workspace_sizes(CYTHON_UNUSED PyObject *__pyx_self); /* proto */
-static PyObject *__pyx_pf_6bezier_8_speedup_30_surface_intersections_success_genexpr(PyObject *__pyx_self); /* proto */
-static PyObject *__pyx_pf_6bezier_8_speedup_80_surface_intersections_success(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_nodes1, int __pyx_v_degree1, __Pyx_memviewslice __pyx_v_nodes2, int __pyx_v_degree2, int __pyx_v_num_intersected); /* proto */
-static PyObject *__pyx_pf_6bezier_8_speedup_82_surface_intersections_resize(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_nodes1, int __pyx_v_degree1, __Pyx_memviewslice __pyx_v_nodes2, int __pyx_v_degree2, int __pyx_v_segment_ends_size, int __pyx_v_segments_size, int __pyx_v_num_intersected, int __pyx_v_resizes_allowed); /* proto */
-static PyObject *__pyx_pf_6bezier_8_speedup_84surface_intersections(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_nodes1, int __pyx_v_degree1, __Pyx_memviewslice __pyx_v_nodes2, int __pyx_v_degree2, CYTHON_UNUSED int __pyx_v_verify, int __pyx_v_resizes_allowed); /* proto */
-static PyObject *__pyx_pf_6bezier_8_speedup_86free_surface_intersections_workspace(CYTHON_UNUSED PyObject *__pyx_self); /* proto */
+static PyObject *__pyx_pf_6bezier_8_speedup_72newton_refine_triangle(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_nodes, int __pyx_v_degree, double __pyx_v_x_val, double __pyx_v_y_val, double __pyx_v_s, double __pyx_v_t); /* proto */
+static PyObject *__pyx_pf_6bezier_8_speedup_74locate_point_triangle(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_nodes, int __pyx_v_degree, double __pyx_v_x_val, double __pyx_v_y_val); /* proto */
+static PyObject *__pyx_pf_6bezier_8_speedup_76reset_triangle_workspaces(CYTHON_UNUSED PyObject *__pyx_self, int __pyx_v_segment_ends_size, int __pyx_v_segments_size); /* proto */
+static PyObject *__pyx_pf_6bezier_8_speedup_78triangle_workspace_sizes(CYTHON_UNUSED PyObject *__pyx_self); /* proto */
+static PyObject *__pyx_pf_6bezier_8_speedup_31_triangle_intersections_success_genexpr(PyObject *__pyx_self); /* proto */
+static PyObject *__pyx_pf_6bezier_8_speedup_80_triangle_intersections_success(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_nodes1, int __pyx_v_degree1, __Pyx_memviewslice __pyx_v_nodes2, int __pyx_v_degree2, int __pyx_v_num_intersected); /* proto */
+static PyObject *__pyx_pf_6bezier_8_speedup_82_triangle_intersections_resize(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_nodes1, int __pyx_v_degree1, __Pyx_memviewslice __pyx_v_nodes2, int __pyx_v_degree2, int __pyx_v_segment_ends_size, int __pyx_v_segments_size, int __pyx_v_num_intersected, int __pyx_v_resizes_allowed); /* proto */
+static PyObject *__pyx_pf_6bezier_8_speedup_84triangle_intersections(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_nodes1, int __pyx_v_degree1, __Pyx_memviewslice __pyx_v_nodes2, int __pyx_v_degree2, CYTHON_UNUSED int __pyx_v_verify, int __pyx_v_resizes_allowed); /* proto */
+static PyObject *__pyx_pf_6bezier_8_speedup_86free_triangle_intersections_workspace(CYTHON_UNUSED PyObject *__pyx_self); /* proto */
 static PyObject *__pyx_pf_6bezier_8_speedup_88_type_info(CYTHON_UNUSED PyObject *__pyx_self); /* proto */
 static int __pyx_pf_5numpy_7ndarray___getbuffer__(PyArrayObject *__pyx_v_self, Py_buffer *__pyx_v_info, int __pyx_v_flags); /* proto */
 static void __pyx_pf_5numpy_7ndarray_2__releasebuffer__(PyArrayObject *__pyx_v_self, Py_buffer *__pyx_v_info); /* proto */
@@ -3104,7 +3104,7 @@ static PyObject *__pyx_pf_15View_dot_MemoryView_16_memoryviewslice_4base___get__
 static PyObject *__pyx_pf___pyx_memoryviewslice___reduce_cython__(CYTHON_UNUSED struct __pyx_memoryviewslice_obj *__pyx_v_self); /* proto */
 static PyObject *__pyx_pf___pyx_memoryviewslice_2__setstate_cython__(CYTHON_UNUSED struct __pyx_memoryviewslice_obj *__pyx_v_self, CYTHON_UNUSED PyObject *__pyx_v___pyx_state); /* proto */
 static PyObject *__pyx_pf_15View_dot_MemoryView___pyx_unpickle_Enum(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v___pyx_type, long __pyx_v___pyx_checksum, PyObject *__pyx_v___pyx_state); /* proto */
-static PyObject *__pyx_tp_new_6bezier_8_speedup___pyx_scope_struct___surface_intersections_success(PyTypeObject *t, PyObject *a, PyObject *k); /*proto*/
+static PyObject *__pyx_tp_new_6bezier_8_speedup___pyx_scope_struct___triangle_intersections_success(PyTypeObject *t, PyObject *a, PyObject *k); /*proto*/
 static PyObject *__pyx_tp_new_6bezier_8_speedup___pyx_scope_struct_1_genexpr(PyTypeObject *t, PyObject *a, PyObject *k); /*proto*/
 static PyObject *__pyx_tp_new_array(PyTypeObject *t, PyObject *a, PyObject *k); /*proto*/
 static PyObject *__pyx_tp_new_Enum(PyTypeObject *t, PyObject *a, PyObject *k); /*proto*/
@@ -11165,7 +11165,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_50polygon_collide(CYTHON_UNUSED PyOb
  *
  *     return collision             # <<<<<<<<<<<<<<
  *
- * ############################
+ * #############################
  */
   __Pyx_XDECREF(__pyx_r);
   __pyx_t_1 = __Pyx_PyBool_FromLong(__pyx_v_collision); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 634, __pyx_L1_error)
@@ -11200,7 +11200,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_50polygon_collide(CYTHON_UNUSED PyOb
 }
 
 /* "bezier/_speedup.pyx":640
- * ############################
+ * #############################
  *
  * def de_casteljau_one_round(             # <<<<<<<<<<<<<<
  *         double[::1, :] nodes, int degree,
@@ -11419,7 +11419,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_52de_casteljau_one_round(CYTHON_UNUS
  *     dimension, num_nodes = np.shape(nodes)
  *     new_nodes = np.empty((dimension, num_nodes - degree - 1), order="F")             # <<<<<<<<<<<<<<
  *
- *     bezier._surface.de_casteljau_one_round(
+ *     bezier._triangle.de_casteljau_one_round(
  */
   __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_np); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 647, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
@@ -11497,7 +11497,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_52de_casteljau_one_round(CYTHON_UNUS
   /* "bezier/_speedup.pyx":649
  *     new_nodes = np.empty((dimension, num_nodes - degree - 1), order="F")
  *
- *     bezier._surface.de_casteljau_one_round(             # <<<<<<<<<<<<<<
+ *     bezier._triangle.de_casteljau_one_round(             # <<<<<<<<<<<<<<
  *         &num_nodes,
  *         &dimension,
  */
@@ -11516,7 +11516,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_52de_casteljau_one_round(CYTHON_UNUS
   goto __pyx_L0;
 
   /* "bezier/_speedup.pyx":640
- * ############################
+ * #############################
  *
  * def de_casteljau_one_round(             # <<<<<<<<<<<<<<
  *         double[::1, :] nodes, int degree,
@@ -11768,7 +11768,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_54evaluate_barycentric(CYTHON_UNUSED
  *     dimension, num_nodes = np.shape(nodes)
  *     point = np.empty((dimension, 1), order="F")             # <<<<<<<<<<<<<<
  *
- *     bezier._surface.evaluate_barycentric(
+ *     bezier._triangle.evaluate_barycentric(
  */
   __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_np); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 670, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
@@ -11844,7 +11844,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_54evaluate_barycentric(CYTHON_UNUSED
   /* "bezier/_speedup.pyx":672
  *     point = np.empty((dimension, 1), order="F")
  *
- *     bezier._surface.evaluate_barycentric(             # <<<<<<<<<<<<<<
+ *     bezier._triangle.evaluate_barycentric(             # <<<<<<<<<<<<<<
  *         &num_nodes,
  *         &dimension,
  */
@@ -12187,7 +12187,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_56evaluate_barycentric_multi(CYTHON_
  *     num_vals, _ = np.shape(param_vals)
  *     evaluated = np.empty((dimension, num_vals), order="F")             # <<<<<<<<<<<<<<
  *
- *     bezier._surface.evaluate_barycentric_multi(
+ *     bezier._triangle.evaluate_barycentric_multi(
  */
   __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_np); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 696, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
@@ -12275,7 +12275,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_56evaluate_barycentric_multi(CYTHON_
   /* "bezier/_speedup.pyx":698
  *     evaluated = np.empty((dimension, num_vals), order="F")
  *
- *     bezier._surface.evaluate_barycentric_multi(             # <<<<<<<<<<<<<<
+ *     bezier._triangle.evaluate_barycentric_multi(             # <<<<<<<<<<<<<<
  *         &num_nodes,
  *         &dimension,
  */
@@ -12620,7 +12620,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_58evaluate_cartesian_multi(CYTHON_UN
  *     num_vals, _ = np.shape(param_vals)
  *     evaluated = np.empty((dimension, num_vals), order="F")             # <<<<<<<<<<<<<<
  *
- *     bezier._surface.evaluate_cartesian_multi(
+ *     bezier._triangle.evaluate_cartesian_multi(
  */
   __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_np); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 721, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
@@ -12708,7 +12708,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_58evaluate_cartesian_multi(CYTHON_UN
   /* "bezier/_speedup.pyx":723
  *     evaluated = np.empty((dimension, num_vals), order="F")
  *
- *     bezier._surface.evaluate_cartesian_multi(             # <<<<<<<<<<<<<<
+ *     bezier._triangle.evaluate_cartesian_multi(             # <<<<<<<<<<<<<<
  *         &num_nodes,
  *         &dimension,
  */
@@ -12957,7 +12957,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_60jacobian_both(CYTHON_UNUSED PyObje
  *     _, num_nodes = np.shape(nodes)
  *     new_nodes = np.empty((2 * dimension, num_nodes - degree - 1), order="F")             # <<<<<<<<<<<<<<
  *
- *     bezier._surface.jacobian_both(
+ *     bezier._triangle.jacobian_both(
  */
   __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_np); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 742, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
@@ -13035,7 +13035,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_60jacobian_both(CYTHON_UNUSED PyObje
   /* "bezier/_speedup.pyx":744
  *     new_nodes = np.empty((2 * dimension, num_nodes - degree - 1), order="F")
  *
- *     bezier._surface.jacobian_both(             # <<<<<<<<<<<<<<
+ *     bezier._triangle.jacobian_both(             # <<<<<<<<<<<<<<
  *         &num_nodes,
  *         &dimension,
  */
@@ -13367,7 +13367,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_62jacobian_det(CYTHON_UNUSED PyObjec
  *
  *     evaluated = np.empty((num_vals,), order="F")             # <<<<<<<<<<<<<<
  *
- *     bezier._surface.jacobian_det(
+ *     bezier._triangle.jacobian_det(
  */
   __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_np); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 764, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
@@ -13418,7 +13418,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_62jacobian_det(CYTHON_UNUSED PyObjec
   __pyx_t_4 = 0;
 
   /* "bezier/_speedup.pyx":768
- *     bezier._surface.jacobian_det(
+ *     bezier._triangle.jacobian_det(
  *         &num_nodes,
  *         &nodes[0, 0],             # <<<<<<<<<<<<<<
  *         &degree,
@@ -13449,7 +13449,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_62jacobian_det(CYTHON_UNUSED PyObjec
   /* "bezier/_speedup.pyx":766
  *     evaluated = np.empty((num_vals,), order="F")
  *
- *     bezier._surface.jacobian_det(             # <<<<<<<<<<<<<<
+ *     bezier._triangle.jacobian_det(             # <<<<<<<<<<<<<<
  *         &num_nodes,
  *         &nodes[0, 0],
  */
@@ -13505,15 +13505,15 @@ static PyObject *__pyx_pf_6bezier_8_speedup_62jacobian_det(CYTHON_UNUSED PyObjec
 /* "bezier/_speedup.pyx":778
  *
  *
- * def specialize_surface(             # <<<<<<<<<<<<<<
+ * def specialize_triangle(             # <<<<<<<<<<<<<<
  *         double[::1, :] nodes, int degree,
  *         double[::1] weights_a, double[::1] weights_b, double[::1] weights_c):
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_6bezier_8_speedup_65specialize_surface(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static PyMethodDef __pyx_mdef_6bezier_8_speedup_65specialize_surface = {"specialize_surface", (PyCFunction)(void*)(PyCFunctionWithKeywords)__pyx_pw_6bezier_8_speedup_65specialize_surface, METH_VARARGS|METH_KEYWORDS, 0};
-static PyObject *__pyx_pw_6bezier_8_speedup_65specialize_surface(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+static PyObject *__pyx_pw_6bezier_8_speedup_65specialize_triangle(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static PyMethodDef __pyx_mdef_6bezier_8_speedup_65specialize_triangle = {"specialize_triangle", (PyCFunction)(void*)(PyCFunctionWithKeywords)__pyx_pw_6bezier_8_speedup_65specialize_triangle, METH_VARARGS|METH_KEYWORDS, 0};
+static PyObject *__pyx_pw_6bezier_8_speedup_65specialize_triangle(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   __Pyx_memviewslice __pyx_v_nodes = { 0, 0, { 0 }, { 0 }, { 0 } };
   int __pyx_v_degree;
   __Pyx_memviewslice __pyx_v_weights_a = { 0, 0, { 0 }, { 0 }, { 0 } };
@@ -13521,7 +13521,7 @@ static PyObject *__pyx_pw_6bezier_8_speedup_65specialize_surface(PyObject *__pyx
   __Pyx_memviewslice __pyx_v_weights_c = { 0, 0, { 0 }, { 0 }, { 0 } };
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
-  __Pyx_RefNannySetupContext("specialize_surface (wrapper)", 0);
+  __Pyx_RefNannySetupContext("specialize_triangle (wrapper)", 0);
   {
     static PyObject **__pyx_pyargnames[] = {&__pyx_n_s_nodes,&__pyx_n_s_degree,&__pyx_n_s_weights_a,&__pyx_n_s_weights_b,&__pyx_n_s_weights_c,0};
     PyObject* values[5] = {0,0,0,0,0};
@@ -13551,29 +13551,29 @@ static PyObject *__pyx_pw_6bezier_8_speedup_65specialize_surface(PyObject *__pyx
         case  1:
         if (likely((values[1] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_degree)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("specialize_surface", 1, 5, 5, 1); __PYX_ERR(0, 778, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("specialize_triangle", 1, 5, 5, 1); __PYX_ERR(0, 778, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  2:
         if (likely((values[2] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_weights_a)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("specialize_surface", 1, 5, 5, 2); __PYX_ERR(0, 778, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("specialize_triangle", 1, 5, 5, 2); __PYX_ERR(0, 778, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  3:
         if (likely((values[3] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_weights_b)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("specialize_surface", 1, 5, 5, 3); __PYX_ERR(0, 778, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("specialize_triangle", 1, 5, 5, 3); __PYX_ERR(0, 778, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  4:
         if (likely((values[4] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_weights_c)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("specialize_surface", 1, 5, 5, 4); __PYX_ERR(0, 778, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("specialize_triangle", 1, 5, 5, 4); __PYX_ERR(0, 778, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "specialize_surface") < 0)) __PYX_ERR(0, 778, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "specialize_triangle") < 0)) __PYX_ERR(0, 778, __pyx_L3_error)
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 5) {
       goto __pyx_L5_argtuple_error;
@@ -13592,20 +13592,20 @@ static PyObject *__pyx_pw_6bezier_8_speedup_65specialize_surface(PyObject *__pyx
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("specialize_surface", 1, 5, 5, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 778, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("specialize_triangle", 1, 5, 5, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 778, __pyx_L3_error)
   __pyx_L3_error:;
-  __Pyx_AddTraceback("bezier._speedup.specialize_surface", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("bezier._speedup.specialize_triangle", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_6bezier_8_speedup_64specialize_surface(__pyx_self, __pyx_v_nodes, __pyx_v_degree, __pyx_v_weights_a, __pyx_v_weights_b, __pyx_v_weights_c);
+  __pyx_r = __pyx_pf_6bezier_8_speedup_64specialize_triangle(__pyx_self, __pyx_v_nodes, __pyx_v_degree, __pyx_v_weights_a, __pyx_v_weights_b, __pyx_v_weights_c);
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_6bezier_8_speedup_64specialize_surface(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_nodes, int __pyx_v_degree, __Pyx_memviewslice __pyx_v_weights_a, __Pyx_memviewslice __pyx_v_weights_b, __Pyx_memviewslice __pyx_v_weights_c) {
+static PyObject *__pyx_pf_6bezier_8_speedup_64specialize_triangle(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_nodes, int __pyx_v_degree, __Pyx_memviewslice __pyx_v_weights_a, __Pyx_memviewslice __pyx_v_weights_b, __Pyx_memviewslice __pyx_v_weights_c) {
   int __pyx_v_num_nodes;
   int __pyx_v_dimension;
   PyArrayObject *__pyx_v_specialized = 0;
@@ -13631,7 +13631,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_64specialize_surface(CYTHON_UNUSED P
   Py_ssize_t __pyx_t_16;
   Py_ssize_t __pyx_t_17;
   Py_ssize_t __pyx_t_18;
-  __Pyx_RefNannySetupContext("specialize_surface", 0);
+  __Pyx_RefNannySetupContext("specialize_triangle", 0);
   __pyx_pybuffer_specialized.pybuffer.buf = NULL;
   __pyx_pybuffer_specialized.refcount = 0;
   __pyx_pybuffernd_specialized.data = NULL;
@@ -13725,7 +13725,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_64specialize_surface(CYTHON_UNUSED P
  *     dimension, num_nodes = np.shape(nodes)
  *     specialized = np.empty((dimension, num_nodes), order="F")             # <<<<<<<<<<<<<<
  *
- *     bezier._surface.specialize_surface(
+ *     bezier._triangle.specialize_triangle(
  */
   __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_np); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 785, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
@@ -13830,11 +13830,11 @@ static PyObject *__pyx_pf_6bezier_8_speedup_64specialize_surface(CYTHON_UNUSED P
   /* "bezier/_speedup.pyx":787
  *     specialized = np.empty((dimension, num_nodes), order="F")
  *
- *     bezier._surface.specialize_surface(             # <<<<<<<<<<<<<<
+ *     bezier._triangle.specialize_triangle(             # <<<<<<<<<<<<<<
  *         &num_nodes,
  *         &dimension,
  */
-  BEZ_specialize_surface((&__pyx_v_num_nodes), (&__pyx_v_dimension), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_nodes.data) + __pyx_t_12)) ) + __pyx_t_13 * __pyx_v_nodes.strides[1]) )))), (&__pyx_v_degree), (&(*((double *) ( /* dim=0 */ ((char *) (((double *) __pyx_v_weights_a.data) + __pyx_t_14)) )))), (&(*((double *) ( /* dim=0 */ ((char *) (((double *) __pyx_v_weights_b.data) + __pyx_t_15)) )))), (&(*((double *) ( /* dim=0 */ ((char *) (((double *) __pyx_v_weights_c.data) + __pyx_t_16)) )))), (&(*__Pyx_BufPtrFortranContig2d(double *, __pyx_pybuffernd_specialized.rcbuffer->pybuffer.buf, __pyx_t_17, __pyx_pybuffernd_specialized.diminfo[0].strides, __pyx_t_18, __pyx_pybuffernd_specialized.diminfo[1].strides))));
+  BEZ_specialize_triangle((&__pyx_v_num_nodes), (&__pyx_v_dimension), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_nodes.data) + __pyx_t_12)) ) + __pyx_t_13 * __pyx_v_nodes.strides[1]) )))), (&__pyx_v_degree), (&(*((double *) ( /* dim=0 */ ((char *) (((double *) __pyx_v_weights_a.data) + __pyx_t_14)) )))), (&(*((double *) ( /* dim=0 */ ((char *) (((double *) __pyx_v_weights_b.data) + __pyx_t_15)) )))), (&(*((double *) ( /* dim=0 */ ((char *) (((double *) __pyx_v_weights_c.data) + __pyx_t_16)) )))), (&(*__Pyx_BufPtrFortranContig2d(double *, __pyx_pybuffernd_specialized.rcbuffer->pybuffer.buf, __pyx_t_17, __pyx_pybuffernd_specialized.diminfo[0].strides, __pyx_t_18, __pyx_pybuffernd_specialized.diminfo[1].strides))));
 
   /* "bezier/_speedup.pyx":798
  *     )
@@ -13851,7 +13851,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_64specialize_surface(CYTHON_UNUSED P
   /* "bezier/_speedup.pyx":778
  *
  *
- * def specialize_surface(             # <<<<<<<<<<<<<<
+ * def specialize_triangle(             # <<<<<<<<<<<<<<
  *         double[::1, :] nodes, int degree,
  *         double[::1] weights_a, double[::1] weights_b, double[::1] weights_c):
  */
@@ -13868,7 +13868,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_64specialize_surface(CYTHON_UNUSED P
     __Pyx_ErrFetch(&__pyx_type, &__pyx_value, &__pyx_tb);
     __Pyx_SafeReleaseBuffer(&__pyx_pybuffernd_specialized.rcbuffer->pybuffer);
   __Pyx_ErrRestore(__pyx_type, __pyx_value, __pyx_tb);}
-  __Pyx_AddTraceback("bezier._speedup.specialize_surface", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("bezier._speedup.specialize_triangle", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   goto __pyx_L2;
   __pyx_L0:;
@@ -13887,20 +13887,20 @@ static PyObject *__pyx_pf_6bezier_8_speedup_64specialize_surface(CYTHON_UNUSED P
 /* "bezier/_speedup.pyx":801
  *
  *
- * def subdivide_nodes_surface(double[::1, :] nodes, int degree):             # <<<<<<<<<<<<<<
+ * def subdivide_nodes_triangle(double[::1, :] nodes, int degree):             # <<<<<<<<<<<<<<
  *     cdef int num_nodes, dimension
  *     cdef ndarray_t[double, ndim=2, mode="fortran"] nodes_a
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_6bezier_8_speedup_67subdivide_nodes_surface(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static PyMethodDef __pyx_mdef_6bezier_8_speedup_67subdivide_nodes_surface = {"subdivide_nodes_surface", (PyCFunction)(void*)(PyCFunctionWithKeywords)__pyx_pw_6bezier_8_speedup_67subdivide_nodes_surface, METH_VARARGS|METH_KEYWORDS, 0};
-static PyObject *__pyx_pw_6bezier_8_speedup_67subdivide_nodes_surface(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+static PyObject *__pyx_pw_6bezier_8_speedup_67subdivide_nodes_triangle(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static PyMethodDef __pyx_mdef_6bezier_8_speedup_67subdivide_nodes_triangle = {"subdivide_nodes_triangle", (PyCFunction)(void*)(PyCFunctionWithKeywords)__pyx_pw_6bezier_8_speedup_67subdivide_nodes_triangle, METH_VARARGS|METH_KEYWORDS, 0};
+static PyObject *__pyx_pw_6bezier_8_speedup_67subdivide_nodes_triangle(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   __Pyx_memviewslice __pyx_v_nodes = { 0, 0, { 0 }, { 0 }, { 0 } };
   int __pyx_v_degree;
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
-  __Pyx_RefNannySetupContext("subdivide_nodes_surface (wrapper)", 0);
+  __Pyx_RefNannySetupContext("subdivide_nodes_triangle (wrapper)", 0);
   {
     static PyObject **__pyx_pyargnames[] = {&__pyx_n_s_nodes,&__pyx_n_s_degree,0};
     PyObject* values[2] = {0,0};
@@ -13924,11 +13924,11 @@ static PyObject *__pyx_pw_6bezier_8_speedup_67subdivide_nodes_surface(PyObject *
         case  1:
         if (likely((values[1] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_degree)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("subdivide_nodes_surface", 1, 2, 2, 1); __PYX_ERR(0, 801, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("subdivide_nodes_triangle", 1, 2, 2, 1); __PYX_ERR(0, 801, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "subdivide_nodes_surface") < 0)) __PYX_ERR(0, 801, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "subdivide_nodes_triangle") < 0)) __PYX_ERR(0, 801, __pyx_L3_error)
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 2) {
       goto __pyx_L5_argtuple_error;
@@ -13941,20 +13941,20 @@ static PyObject *__pyx_pw_6bezier_8_speedup_67subdivide_nodes_surface(PyObject *
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("subdivide_nodes_surface", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 801, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("subdivide_nodes_triangle", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 801, __pyx_L3_error)
   __pyx_L3_error:;
-  __Pyx_AddTraceback("bezier._speedup.subdivide_nodes_surface", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("bezier._speedup.subdivide_nodes_triangle", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_6bezier_8_speedup_66subdivide_nodes_surface(__pyx_self, __pyx_v_nodes, __pyx_v_degree);
+  __pyx_r = __pyx_pf_6bezier_8_speedup_66subdivide_nodes_triangle(__pyx_self, __pyx_v_nodes, __pyx_v_degree);
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_6bezier_8_speedup_66subdivide_nodes_surface(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_nodes, int __pyx_v_degree) {
+static PyObject *__pyx_pf_6bezier_8_speedup_66subdivide_nodes_triangle(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_nodes, int __pyx_v_degree) {
   int __pyx_v_num_nodes;
   int __pyx_v_dimension;
   PyArrayObject *__pyx_v_nodes_a = 0;
@@ -13995,7 +13995,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_66subdivide_nodes_surface(CYTHON_UNU
   Py_ssize_t __pyx_t_22;
   Py_ssize_t __pyx_t_23;
   Py_ssize_t __pyx_t_24;
-  __Pyx_RefNannySetupContext("subdivide_nodes_surface", 0);
+  __Pyx_RefNannySetupContext("subdivide_nodes_triangle", 0);
   __pyx_pybuffer_nodes_a.pybuffer.buf = NULL;
   __pyx_pybuffer_nodes_a.refcount = 0;
   __pyx_pybuffernd_nodes_a.data = NULL;
@@ -14281,7 +14281,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_66subdivide_nodes_surface(CYTHON_UNU
  *     nodes_c = np.empty((dimension, num_nodes), order="F")
  *     nodes_d = np.empty((dimension, num_nodes), order="F")             # <<<<<<<<<<<<<<
  *
- *     bezier._surface.subdivide_nodes_surface(
+ *     bezier._triangle.subdivide_nodes_triangle(
  */
   __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_np); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 812, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
@@ -14389,11 +14389,11 @@ static PyObject *__pyx_pf_6bezier_8_speedup_66subdivide_nodes_surface(CYTHON_UNU
   /* "bezier/_speedup.pyx":814
  *     nodes_d = np.empty((dimension, num_nodes), order="F")
  *
- *     bezier._surface.subdivide_nodes_surface(             # <<<<<<<<<<<<<<
+ *     bezier._triangle.subdivide_nodes_triangle(             # <<<<<<<<<<<<<<
  *         &num_nodes,
  *         &dimension,
  */
-  BEZ_subdivide_nodes_surface((&__pyx_v_num_nodes), (&__pyx_v_dimension), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_nodes.data) + __pyx_t_15)) ) + __pyx_t_16 * __pyx_v_nodes.strides[1]) )))), (&__pyx_v_degree), (&(*__Pyx_BufPtrFortranContig2d(double *, __pyx_pybuffernd_nodes_a.rcbuffer->pybuffer.buf, __pyx_t_17, __pyx_pybuffernd_nodes_a.diminfo[0].strides, __pyx_t_18, __pyx_pybuffernd_nodes_a.diminfo[1].strides))), (&(*__Pyx_BufPtrFortranContig2d(double *, __pyx_pybuffernd_nodes_b.rcbuffer->pybuffer.buf, __pyx_t_19, __pyx_pybuffernd_nodes_b.diminfo[0].strides, __pyx_t_20, __pyx_pybuffernd_nodes_b.diminfo[1].strides))), (&(*__Pyx_BufPtrFortranContig2d(double *, __pyx_pybuffernd_nodes_c.rcbuffer->pybuffer.buf, __pyx_t_21, __pyx_pybuffernd_nodes_c.diminfo[0].strides, __pyx_t_22, __pyx_pybuffernd_nodes_c.diminfo[1].strides))), (&(*__Pyx_BufPtrFortranContig2d(double *, __pyx_pybuffernd_nodes_d.rcbuffer->pybuffer.buf, __pyx_t_23, __pyx_pybuffernd_nodes_d.diminfo[0].strides, __pyx_t_24, __pyx_pybuffernd_nodes_d.diminfo[1].strides))));
+  BEZ_subdivide_nodes_triangle((&__pyx_v_num_nodes), (&__pyx_v_dimension), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_nodes.data) + __pyx_t_15)) ) + __pyx_t_16 * __pyx_v_nodes.strides[1]) )))), (&__pyx_v_degree), (&(*__Pyx_BufPtrFortranContig2d(double *, __pyx_pybuffernd_nodes_a.rcbuffer->pybuffer.buf, __pyx_t_17, __pyx_pybuffernd_nodes_a.diminfo[0].strides, __pyx_t_18, __pyx_pybuffernd_nodes_a.diminfo[1].strides))), (&(*__Pyx_BufPtrFortranContig2d(double *, __pyx_pybuffernd_nodes_b.rcbuffer->pybuffer.buf, __pyx_t_19, __pyx_pybuffernd_nodes_b.diminfo[0].strides, __pyx_t_20, __pyx_pybuffernd_nodes_b.diminfo[1].strides))), (&(*__Pyx_BufPtrFortranContig2d(double *, __pyx_pybuffernd_nodes_c.rcbuffer->pybuffer.buf, __pyx_t_21, __pyx_pybuffernd_nodes_c.diminfo[0].strides, __pyx_t_22, __pyx_pybuffernd_nodes_c.diminfo[1].strides))), (&(*__Pyx_BufPtrFortranContig2d(double *, __pyx_pybuffernd_nodes_d.rcbuffer->pybuffer.buf, __pyx_t_23, __pyx_pybuffernd_nodes_d.diminfo[0].strides, __pyx_t_24, __pyx_pybuffernd_nodes_d.diminfo[1].strides))));
 
   /* "bezier/_speedup.pyx":825
  *     )
@@ -14424,7 +14424,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_66subdivide_nodes_surface(CYTHON_UNU
   /* "bezier/_speedup.pyx":801
  *
  *
- * def subdivide_nodes_surface(double[::1, :] nodes, int degree):             # <<<<<<<<<<<<<<
+ * def subdivide_nodes_triangle(double[::1, :] nodes, int degree):             # <<<<<<<<<<<<<<
  *     cdef int num_nodes, dimension
  *     cdef ndarray_t[double, ndim=2, mode="fortran"] nodes_a
  */
@@ -14444,7 +14444,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_66subdivide_nodes_surface(CYTHON_UNU
     __Pyx_SafeReleaseBuffer(&__pyx_pybuffernd_nodes_c.rcbuffer->pybuffer);
     __Pyx_SafeReleaseBuffer(&__pyx_pybuffernd_nodes_d.rcbuffer->pybuffer);
   __Pyx_ErrRestore(__pyx_type, __pyx_value, __pyx_tb);}
-  __Pyx_AddTraceback("bezier._speedup.subdivide_nodes_surface", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("bezier._speedup.subdivide_nodes_triangle", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   goto __pyx_L2;
   __pyx_L0:;
@@ -14790,7 +14790,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_68compute_edge_nodes(CYTHON_UNUSED P
  *     nodes2 = np.empty((dimension, degree + 1), order="F")
  *     nodes3 = np.empty((dimension, degree + 1), order="F")             # <<<<<<<<<<<<<<
  *
- *     bezier._surface.compute_edge_nodes(
+ *     bezier._triangle.compute_edge_nodes(
  */
   __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_np); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 837, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
@@ -14888,7 +14888,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_68compute_edge_nodes(CYTHON_UNUSED P
   /* "bezier/_speedup.pyx":839
  *     nodes3 = np.empty((dimension, degree + 1), order="F")
  *
- *     bezier._surface.compute_edge_nodes(             # <<<<<<<<<<<<<<
+ *     bezier._triangle.compute_edge_nodes(             # <<<<<<<<<<<<<<
  *         &num_nodes,
  *         &dimension,
  */
@@ -15291,7 +15291,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_70compute_area(CYTHON_UNUSED PyObjec
   __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
 
   /* "bezier/_speedup.pyx":888
- *     bezier._surface.compute_area(
+ *     bezier._triangle.compute_area(
  *         &num_edges,
  *         &sizes[0],             # <<<<<<<<<<<<<<
  *         nodes_pointers,
@@ -15302,7 +15302,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_70compute_area(CYTHON_UNUSED PyObjec
   /* "bezier/_speedup.pyx":886
  *     # This assumes that ``unused_not_implemented`` will be ``False``
  *     # since we already check the supported degrees above.
- *     bezier._surface.compute_area(             # <<<<<<<<<<<<<<
+ *     bezier._triangle.compute_area(             # <<<<<<<<<<<<<<
  *         &num_edges,
  *         &sizes[0],
  */
@@ -15322,7 +15322,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_70compute_area(CYTHON_UNUSED PyObjec
  *
  *     return area             # <<<<<<<<<<<<<<
  *
- * #########################################
+ * ##########################################
  */
   __Pyx_XDECREF(__pyx_r);
   __pyx_t_6 = PyFloat_FromDouble(__pyx_v_area); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 896, __pyx_L1_error)
@@ -15361,17 +15361,17 @@ static PyObject *__pyx_pf_6bezier_8_speedup_70compute_area(CYTHON_UNUSED PyObjec
 }
 
 /* "bezier/_speedup.pyx":902
- * #########################################
+ * ##########################################
  *
- * def newton_refine_surface(             # <<<<<<<<<<<<<<
+ * def newton_refine_triangle(             # <<<<<<<<<<<<<<
  *         double[::1, :] nodes, int degree,
  *         double x_val, double y_val, double s, double t):
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_6bezier_8_speedup_73newton_refine_surface(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static PyMethodDef __pyx_mdef_6bezier_8_speedup_73newton_refine_surface = {"newton_refine_surface", (PyCFunction)(void*)(PyCFunctionWithKeywords)__pyx_pw_6bezier_8_speedup_73newton_refine_surface, METH_VARARGS|METH_KEYWORDS, 0};
-static PyObject *__pyx_pw_6bezier_8_speedup_73newton_refine_surface(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+static PyObject *__pyx_pw_6bezier_8_speedup_73newton_refine_triangle(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static PyMethodDef __pyx_mdef_6bezier_8_speedup_73newton_refine_triangle = {"newton_refine_triangle", (PyCFunction)(void*)(PyCFunctionWithKeywords)__pyx_pw_6bezier_8_speedup_73newton_refine_triangle, METH_VARARGS|METH_KEYWORDS, 0};
+static PyObject *__pyx_pw_6bezier_8_speedup_73newton_refine_triangle(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   __Pyx_memviewslice __pyx_v_nodes = { 0, 0, { 0 }, { 0 }, { 0 } };
   int __pyx_v_degree;
   double __pyx_v_x_val;
@@ -15380,7 +15380,7 @@ static PyObject *__pyx_pw_6bezier_8_speedup_73newton_refine_surface(PyObject *__
   double __pyx_v_t;
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
-  __Pyx_RefNannySetupContext("newton_refine_surface (wrapper)", 0);
+  __Pyx_RefNannySetupContext("newton_refine_triangle (wrapper)", 0);
   {
     static PyObject **__pyx_pyargnames[] = {&__pyx_n_s_nodes,&__pyx_n_s_degree,&__pyx_n_s_x_val,&__pyx_n_s_y_val,&__pyx_n_s_s,&__pyx_n_s_t,0};
     PyObject* values[6] = {0,0,0,0,0,0};
@@ -15412,35 +15412,35 @@ static PyObject *__pyx_pw_6bezier_8_speedup_73newton_refine_surface(PyObject *__
         case  1:
         if (likely((values[1] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_degree)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("newton_refine_surface", 1, 6, 6, 1); __PYX_ERR(0, 902, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("newton_refine_triangle", 1, 6, 6, 1); __PYX_ERR(0, 902, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  2:
         if (likely((values[2] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_x_val)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("newton_refine_surface", 1, 6, 6, 2); __PYX_ERR(0, 902, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("newton_refine_triangle", 1, 6, 6, 2); __PYX_ERR(0, 902, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  3:
         if (likely((values[3] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_y_val)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("newton_refine_surface", 1, 6, 6, 3); __PYX_ERR(0, 902, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("newton_refine_triangle", 1, 6, 6, 3); __PYX_ERR(0, 902, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  4:
         if (likely((values[4] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_s)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("newton_refine_surface", 1, 6, 6, 4); __PYX_ERR(0, 902, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("newton_refine_triangle", 1, 6, 6, 4); __PYX_ERR(0, 902, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  5:
         if (likely((values[5] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_t)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("newton_refine_surface", 1, 6, 6, 5); __PYX_ERR(0, 902, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("newton_refine_triangle", 1, 6, 6, 5); __PYX_ERR(0, 902, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "newton_refine_surface") < 0)) __PYX_ERR(0, 902, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "newton_refine_triangle") < 0)) __PYX_ERR(0, 902, __pyx_L3_error)
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 6) {
       goto __pyx_L5_argtuple_error;
@@ -15461,20 +15461,20 @@ static PyObject *__pyx_pw_6bezier_8_speedup_73newton_refine_surface(PyObject *__
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("newton_refine_surface", 1, 6, 6, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 902, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("newton_refine_triangle", 1, 6, 6, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 902, __pyx_L3_error)
   __pyx_L3_error:;
-  __Pyx_AddTraceback("bezier._speedup.newton_refine_surface", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("bezier._speedup.newton_refine_triangle", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_6bezier_8_speedup_72newton_refine_surface(__pyx_self, __pyx_v_nodes, __pyx_v_degree, __pyx_v_x_val, __pyx_v_y_val, __pyx_v_s, __pyx_v_t);
+  __pyx_r = __pyx_pf_6bezier_8_speedup_72newton_refine_triangle(__pyx_self, __pyx_v_nodes, __pyx_v_degree, __pyx_v_x_val, __pyx_v_y_val, __pyx_v_s, __pyx_v_t);
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_6bezier_8_speedup_72newton_refine_surface(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_nodes, int __pyx_v_degree, double __pyx_v_x_val, double __pyx_v_y_val, double __pyx_v_s, double __pyx_v_t) {
+static PyObject *__pyx_pf_6bezier_8_speedup_72newton_refine_triangle(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_nodes, int __pyx_v_degree, double __pyx_v_x_val, double __pyx_v_y_val, double __pyx_v_s, double __pyx_v_t) {
   int __pyx_v_num_nodes;
   double __pyx_v_updated_s;
   double __pyx_v_updated_t;
@@ -15489,14 +15489,14 @@ static PyObject *__pyx_pf_6bezier_8_speedup_72newton_refine_surface(CYTHON_UNUSE
   int __pyx_t_6;
   Py_ssize_t __pyx_t_7;
   Py_ssize_t __pyx_t_8;
-  __Pyx_RefNannySetupContext("newton_refine_surface", 0);
+  __Pyx_RefNannySetupContext("newton_refine_triangle", 0);
 
   /* "bezier/_speedup.pyx":909
  *
  *     # NOTE: We don't check that there are 2 rows.
  *     _, num_nodes = np.shape(nodes)             # <<<<<<<<<<<<<<
  *
- *     bezier._surface_intersection.newton_refine_surface(
+ *     bezier._triangle_intersection.newton_refine_triangle(
  */
   __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_np); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 909, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
@@ -15574,7 +15574,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_72newton_refine_surface(CYTHON_UNUSE
   __pyx_v_num_nodes = __pyx_t_6;
 
   /* "bezier/_speedup.pyx":913
- *     bezier._surface_intersection.newton_refine_surface(
+ *     bezier._triangle_intersection.newton_refine_triangle(
  *         &num_nodes,
  *         &nodes[0, 0],             # <<<<<<<<<<<<<<
  *         &degree,
@@ -15586,11 +15586,11 @@ static PyObject *__pyx_pf_6bezier_8_speedup_72newton_refine_surface(CYTHON_UNUSE
   /* "bezier/_speedup.pyx":911
  *     _, num_nodes = np.shape(nodes)
  *
- *     bezier._surface_intersection.newton_refine_surface(             # <<<<<<<<<<<<<<
+ *     bezier._triangle_intersection.newton_refine_triangle(             # <<<<<<<<<<<<<<
  *         &num_nodes,
  *         &nodes[0, 0],
  */
-  BEZ_newton_refine_surface((&__pyx_v_num_nodes), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_nodes.data) + __pyx_t_7)) ) + __pyx_t_8 * __pyx_v_nodes.strides[1]) )))), (&__pyx_v_degree), (&__pyx_v_x_val), (&__pyx_v_y_val), (&__pyx_v_s), (&__pyx_v_t), (&__pyx_v_updated_s), (&__pyx_v_updated_t));
+  BEZ_newton_refine_triangle((&__pyx_v_num_nodes), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_nodes.data) + __pyx_t_7)) ) + __pyx_t_8 * __pyx_v_nodes.strides[1]) )))), (&__pyx_v_degree), (&__pyx_v_x_val), (&__pyx_v_y_val), (&__pyx_v_s), (&__pyx_v_t), (&__pyx_v_updated_s), (&__pyx_v_updated_t));
 
   /* "bezier/_speedup.pyx":923
  *     )
@@ -15617,9 +15617,9 @@ static PyObject *__pyx_pf_6bezier_8_speedup_72newton_refine_surface(CYTHON_UNUSE
   goto __pyx_L0;
 
   /* "bezier/_speedup.pyx":902
- * #########################################
+ * ##########################################
  *
- * def newton_refine_surface(             # <<<<<<<<<<<<<<
+ * def newton_refine_triangle(             # <<<<<<<<<<<<<<
  *         double[::1, :] nodes, int degree,
  *         double x_val, double y_val, double s, double t):
  */
@@ -15630,7 +15630,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_72newton_refine_surface(CYTHON_UNUSE
   __Pyx_XDECREF(__pyx_t_2);
   __Pyx_XDECREF(__pyx_t_3);
   __Pyx_XDECREF(__pyx_t_4);
-  __Pyx_AddTraceback("bezier._speedup.newton_refine_surface", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("bezier._speedup.newton_refine_triangle", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XDECREF(__pyx_v__);
@@ -15643,22 +15643,22 @@ static PyObject *__pyx_pf_6bezier_8_speedup_72newton_refine_surface(CYTHON_UNUSE
 /* "bezier/_speedup.pyx":926
  *
  *
- * def locate_point_surface(             # <<<<<<<<<<<<<<
+ * def locate_point_triangle(             # <<<<<<<<<<<<<<
  *         double[::1, :] nodes, int degree, double x_val, double y_val):
  *     cdef int num_nodes
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_6bezier_8_speedup_75locate_point_surface(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static PyMethodDef __pyx_mdef_6bezier_8_speedup_75locate_point_surface = {"locate_point_surface", (PyCFunction)(void*)(PyCFunctionWithKeywords)__pyx_pw_6bezier_8_speedup_75locate_point_surface, METH_VARARGS|METH_KEYWORDS, 0};
-static PyObject *__pyx_pw_6bezier_8_speedup_75locate_point_surface(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+static PyObject *__pyx_pw_6bezier_8_speedup_75locate_point_triangle(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static PyMethodDef __pyx_mdef_6bezier_8_speedup_75locate_point_triangle = {"locate_point_triangle", (PyCFunction)(void*)(PyCFunctionWithKeywords)__pyx_pw_6bezier_8_speedup_75locate_point_triangle, METH_VARARGS|METH_KEYWORDS, 0};
+static PyObject *__pyx_pw_6bezier_8_speedup_75locate_point_triangle(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   __Pyx_memviewslice __pyx_v_nodes = { 0, 0, { 0 }, { 0 }, { 0 } };
   int __pyx_v_degree;
   double __pyx_v_x_val;
   double __pyx_v_y_val;
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
-  __Pyx_RefNannySetupContext("locate_point_surface (wrapper)", 0);
+  __Pyx_RefNannySetupContext("locate_point_triangle (wrapper)", 0);
   {
     static PyObject **__pyx_pyargnames[] = {&__pyx_n_s_nodes,&__pyx_n_s_degree,&__pyx_n_s_x_val,&__pyx_n_s_y_val,0};
     PyObject* values[4] = {0,0,0,0};
@@ -15686,23 +15686,23 @@ static PyObject *__pyx_pw_6bezier_8_speedup_75locate_point_surface(PyObject *__p
         case  1:
         if (likely((values[1] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_degree)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("locate_point_surface", 1, 4, 4, 1); __PYX_ERR(0, 926, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("locate_point_triangle", 1, 4, 4, 1); __PYX_ERR(0, 926, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  2:
         if (likely((values[2] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_x_val)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("locate_point_surface", 1, 4, 4, 2); __PYX_ERR(0, 926, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("locate_point_triangle", 1, 4, 4, 2); __PYX_ERR(0, 926, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  3:
         if (likely((values[3] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_y_val)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("locate_point_surface", 1, 4, 4, 3); __PYX_ERR(0, 926, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("locate_point_triangle", 1, 4, 4, 3); __PYX_ERR(0, 926, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "locate_point_surface") < 0)) __PYX_ERR(0, 926, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "locate_point_triangle") < 0)) __PYX_ERR(0, 926, __pyx_L3_error)
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 4) {
       goto __pyx_L5_argtuple_error;
@@ -15719,20 +15719,20 @@ static PyObject *__pyx_pw_6bezier_8_speedup_75locate_point_surface(PyObject *__p
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("locate_point_surface", 1, 4, 4, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 926, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("locate_point_triangle", 1, 4, 4, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 926, __pyx_L3_error)
   __pyx_L3_error:;
-  __Pyx_AddTraceback("bezier._speedup.locate_point_surface", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("bezier._speedup.locate_point_triangle", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_6bezier_8_speedup_74locate_point_surface(__pyx_self, __pyx_v_nodes, __pyx_v_degree, __pyx_v_x_val, __pyx_v_y_val);
+  __pyx_r = __pyx_pf_6bezier_8_speedup_74locate_point_triangle(__pyx_self, __pyx_v_nodes, __pyx_v_degree, __pyx_v_x_val, __pyx_v_y_val);
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_6bezier_8_speedup_74locate_point_surface(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_nodes, int __pyx_v_degree, double __pyx_v_x_val, double __pyx_v_y_val) {
+static PyObject *__pyx_pf_6bezier_8_speedup_74locate_point_triangle(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_nodes, int __pyx_v_degree, double __pyx_v_x_val, double __pyx_v_y_val) {
   int __pyx_v_num_nodes;
   double __pyx_v_s_val;
   double __pyx_v_t_val;
@@ -15748,14 +15748,14 @@ static PyObject *__pyx_pf_6bezier_8_speedup_74locate_point_surface(CYTHON_UNUSED
   Py_ssize_t __pyx_t_7;
   Py_ssize_t __pyx_t_8;
   int __pyx_t_9;
-  __Pyx_RefNannySetupContext("locate_point_surface", 0);
+  __Pyx_RefNannySetupContext("locate_point_triangle", 0);
 
   /* "bezier/_speedup.pyx":932
  *
  *     # NOTE: We don't check that there are 2 rows.
  *     _, num_nodes = np.shape(nodes)             # <<<<<<<<<<<<<<
  *
- *     bezier._surface_intersection.locate_point_surface(
+ *     bezier._triangle_intersection.locate_point_triangle(
  */
   __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_np); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 932, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
@@ -15833,7 +15833,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_74locate_point_surface(CYTHON_UNUSED
   __pyx_v_num_nodes = __pyx_t_6;
 
   /* "bezier/_speedup.pyx":936
- *     bezier._surface_intersection.locate_point_surface(
+ *     bezier._triangle_intersection.locate_point_triangle(
  *         &num_nodes,
  *         &nodes[0, 0],             # <<<<<<<<<<<<<<
  *         &degree,
@@ -15845,11 +15845,11 @@ static PyObject *__pyx_pf_6bezier_8_speedup_74locate_point_surface(CYTHON_UNUSED
   /* "bezier/_speedup.pyx":934
  *     _, num_nodes = np.shape(nodes)
  *
- *     bezier._surface_intersection.locate_point_surface(             # <<<<<<<<<<<<<<
+ *     bezier._triangle_intersection.locate_point_triangle(             # <<<<<<<<<<<<<<
  *         &num_nodes,
  *         &nodes[0, 0],
  */
-  BEZ_locate_point_surface((&__pyx_v_num_nodes), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_nodes.data) + __pyx_t_7)) ) + __pyx_t_8 * __pyx_v_nodes.strides[1]) )))), (&__pyx_v_degree), (&__pyx_v_x_val), (&__pyx_v_y_val), (&__pyx_v_s_val), (&__pyx_v_t_val));
+  BEZ_locate_point_triangle((&__pyx_v_num_nodes), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_nodes.data) + __pyx_t_7)) ) + __pyx_t_8 * __pyx_v_nodes.strides[1]) )))), (&__pyx_v_degree), (&__pyx_v_x_val), (&__pyx_v_y_val), (&__pyx_v_s_val), (&__pyx_v_t_val));
 
   /* "bezier/_speedup.pyx":944
  *     )
@@ -15910,7 +15910,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_74locate_point_surface(CYTHON_UNUSED
   /* "bezier/_speedup.pyx":926
  *
  *
- * def locate_point_surface(             # <<<<<<<<<<<<<<
+ * def locate_point_triangle(             # <<<<<<<<<<<<<<
  *         double[::1, :] nodes, int degree, double x_val, double y_val):
  *     cdef int num_nodes
  */
@@ -15921,7 +15921,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_74locate_point_surface(CYTHON_UNUSED
   __Pyx_XDECREF(__pyx_t_2);
   __Pyx_XDECREF(__pyx_t_3);
   __Pyx_XDECREF(__pyx_t_4);
-  __Pyx_AddTraceback("bezier._speedup.locate_point_surface", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("bezier._speedup.locate_point_triangle", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XDECREF(__pyx_v__);
@@ -15934,20 +15934,20 @@ static PyObject *__pyx_pf_6bezier_8_speedup_74locate_point_surface(CYTHON_UNUSED
 /* "bezier/_speedup.pyx":950
  *
  *
- * def reset_surface_workspaces(int segment_ends_size=-1, int segments_size=-1):             # <<<<<<<<<<<<<<
+ * def reset_triangle_workspaces(int segment_ends_size=-1, int segments_size=-1):             # <<<<<<<<<<<<<<
  *     global SEGMENT_ENDS_WORKSPACE
  *     global SEGMENTS_WORKSPACE
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_6bezier_8_speedup_77reset_surface_workspaces(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static PyMethodDef __pyx_mdef_6bezier_8_speedup_77reset_surface_workspaces = {"reset_surface_workspaces", (PyCFunction)(void*)(PyCFunctionWithKeywords)__pyx_pw_6bezier_8_speedup_77reset_surface_workspaces, METH_VARARGS|METH_KEYWORDS, 0};
-static PyObject *__pyx_pw_6bezier_8_speedup_77reset_surface_workspaces(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+static PyObject *__pyx_pw_6bezier_8_speedup_77reset_triangle_workspaces(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static PyMethodDef __pyx_mdef_6bezier_8_speedup_77reset_triangle_workspaces = {"reset_triangle_workspaces", (PyCFunction)(void*)(PyCFunctionWithKeywords)__pyx_pw_6bezier_8_speedup_77reset_triangle_workspaces, METH_VARARGS|METH_KEYWORDS, 0};
+static PyObject *__pyx_pw_6bezier_8_speedup_77reset_triangle_workspaces(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   int __pyx_v_segment_ends_size;
   int __pyx_v_segments_size;
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
-  __Pyx_RefNannySetupContext("reset_surface_workspaces (wrapper)", 0);
+  __Pyx_RefNannySetupContext("reset_triangle_workspaces (wrapper)", 0);
   {
     static PyObject **__pyx_pyargnames[] = {&__pyx_n_s_segment_ends_size,&__pyx_n_s_segments_size,0};
     PyObject* values[2] = {0,0};
@@ -15977,7 +15977,7 @@ static PyObject *__pyx_pw_6bezier_8_speedup_77reset_surface_workspaces(PyObject 
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "reset_surface_workspaces") < 0)) __PYX_ERR(0, 950, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "reset_triangle_workspaces") < 0)) __PYX_ERR(0, 950, __pyx_L3_error)
       }
     } else {
       switch (PyTuple_GET_SIZE(__pyx_args)) {
@@ -16002,20 +16002,20 @@ static PyObject *__pyx_pw_6bezier_8_speedup_77reset_surface_workspaces(PyObject 
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("reset_surface_workspaces", 0, 0, 2, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 950, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("reset_triangle_workspaces", 0, 0, 2, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 950, __pyx_L3_error)
   __pyx_L3_error:;
-  __Pyx_AddTraceback("bezier._speedup.reset_surface_workspaces", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("bezier._speedup.reset_triangle_workspaces", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_6bezier_8_speedup_76reset_surface_workspaces(__pyx_self, __pyx_v_segment_ends_size, __pyx_v_segments_size);
+  __pyx_r = __pyx_pf_6bezier_8_speedup_76reset_triangle_workspaces(__pyx_self, __pyx_v_segment_ends_size, __pyx_v_segments_size);
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_6bezier_8_speedup_76reset_surface_workspaces(CYTHON_UNUSED PyObject *__pyx_self, int __pyx_v_segment_ends_size, int __pyx_v_segments_size) {
+static PyObject *__pyx_pf_6bezier_8_speedup_76reset_triangle_workspaces(CYTHON_UNUSED PyObject *__pyx_self, int __pyx_v_segment_ends_size, int __pyx_v_segments_size) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   int __pyx_t_1;
@@ -16026,7 +16026,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_76reset_surface_workspaces(CYTHON_UN
   PyObject *__pyx_t_6 = NULL;
   __Pyx_memviewslice __pyx_t_7 = { 0, 0, { 0 }, { 0 }, { 0 } };
   __Pyx_memviewslice __pyx_t_8 = { 0, 0, { 0 }, { 0 }, { 0 } };
-  __Pyx_RefNannySetupContext("reset_surface_workspaces", 0);
+  __Pyx_RefNannySetupContext("reset_triangle_workspaces", 0);
 
   /* "bezier/_speedup.pyx":953
  *     global SEGMENT_ENDS_WORKSPACE
@@ -16143,7 +16143,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_76reset_surface_workspaces(CYTHON_UN
   /* "bezier/_speedup.pyx":950
  *
  *
- * def reset_surface_workspaces(int segment_ends_size=-1, int segments_size=-1):             # <<<<<<<<<<<<<<
+ * def reset_triangle_workspaces(int segment_ends_size=-1, int segments_size=-1):             # <<<<<<<<<<<<<<
  *     global SEGMENT_ENDS_WORKSPACE
  *     global SEGMENTS_WORKSPACE
  */
@@ -16159,7 +16159,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_76reset_surface_workspaces(CYTHON_UN
   __Pyx_XDECREF(__pyx_t_6);
   __PYX_XDEC_MEMVIEW(&__pyx_t_7, 1);
   __PYX_XDEC_MEMVIEW(&__pyx_t_8, 1);
-  __Pyx_AddTraceback("bezier._speedup.reset_surface_workspaces", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("bezier._speedup.reset_triangle_workspaces", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
@@ -16170,26 +16170,26 @@ static PyObject *__pyx_pf_6bezier_8_speedup_76reset_surface_workspaces(CYTHON_UN
 /* "bezier/_speedup.pyx":959
  *
  *
- * def surface_workspace_sizes():             # <<<<<<<<<<<<<<
+ * def triangle_workspace_sizes():             # <<<<<<<<<<<<<<
  *     global SEGMENT_ENDS_WORKSPACE
  *     global SEGMENTS_WORKSPACE
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_6bezier_8_speedup_79surface_workspace_sizes(PyObject *__pyx_self, CYTHON_UNUSED PyObject *unused); /*proto*/
-static PyMethodDef __pyx_mdef_6bezier_8_speedup_79surface_workspace_sizes = {"surface_workspace_sizes", (PyCFunction)__pyx_pw_6bezier_8_speedup_79surface_workspace_sizes, METH_NOARGS, 0};
-static PyObject *__pyx_pw_6bezier_8_speedup_79surface_workspace_sizes(PyObject *__pyx_self, CYTHON_UNUSED PyObject *unused) {
+static PyObject *__pyx_pw_6bezier_8_speedup_79triangle_workspace_sizes(PyObject *__pyx_self, CYTHON_UNUSED PyObject *unused); /*proto*/
+static PyMethodDef __pyx_mdef_6bezier_8_speedup_79triangle_workspace_sizes = {"triangle_workspace_sizes", (PyCFunction)__pyx_pw_6bezier_8_speedup_79triangle_workspace_sizes, METH_NOARGS, 0};
+static PyObject *__pyx_pw_6bezier_8_speedup_79triangle_workspace_sizes(PyObject *__pyx_self, CYTHON_UNUSED PyObject *unused) {
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
-  __Pyx_RefNannySetupContext("surface_workspace_sizes (wrapper)", 0);
-  __pyx_r = __pyx_pf_6bezier_8_speedup_78surface_workspace_sizes(__pyx_self);
+  __Pyx_RefNannySetupContext("triangle_workspace_sizes (wrapper)", 0);
+  __pyx_r = __pyx_pf_6bezier_8_speedup_78triangle_workspace_sizes(__pyx_self);
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_6bezier_8_speedup_78surface_workspace_sizes(CYTHON_UNUSED PyObject *__pyx_self) {
+static PyObject *__pyx_pf_6bezier_8_speedup_78triangle_workspace_sizes(CYTHON_UNUSED PyObject *__pyx_self) {
   int __pyx_v_segment_ends_size;
   int __pyx_v_segments_size;
   PyObject *__pyx_r = NULL;
@@ -16200,7 +16200,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_78surface_workspace_sizes(CYTHON_UNU
   PyObject *__pyx_t_4 = NULL;
   PyObject *(*__pyx_t_5)(PyObject *);
   int __pyx_t_6;
-  __Pyx_RefNannySetupContext("surface_workspace_sizes", 0);
+  __Pyx_RefNannySetupContext("triangle_workspace_sizes", 0);
 
   /* "bezier/_speedup.pyx":965
  *     cdef int segments_size
@@ -16377,7 +16377,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_78surface_workspace_sizes(CYTHON_UNU
   /* "bezier/_speedup.pyx":959
  *
  *
- * def surface_workspace_sizes():             # <<<<<<<<<<<<<<
+ * def triangle_workspace_sizes():             # <<<<<<<<<<<<<<
  *     global SEGMENT_ENDS_WORKSPACE
  *     global SEGMENTS_WORKSPACE
  */
@@ -16388,7 +16388,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_78surface_workspace_sizes(CYTHON_UNU
   __Pyx_XDECREF(__pyx_t_2);
   __Pyx_XDECREF(__pyx_t_3);
   __Pyx_XDECREF(__pyx_t_4);
-  __Pyx_AddTraceback("bezier._speedup.surface_workspace_sizes", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("bezier._speedup.triangle_workspace_sizes", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
@@ -16399,15 +16399,15 @@ static PyObject *__pyx_pf_6bezier_8_speedup_78surface_workspace_sizes(CYTHON_UNU
 /* "bezier/_speedup.pyx":970
  *
  *
- * def _surface_intersections_success(             # <<<<<<<<<<<<<<
+ * def _triangle_intersections_success(             # <<<<<<<<<<<<<<
  *         double[::1, :] nodes1, int degree1,
  *         double[::1, :] nodes2, int degree2,
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_6bezier_8_speedup_81_surface_intersections_success(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static PyMethodDef __pyx_mdef_6bezier_8_speedup_81_surface_intersections_success = {"_surface_intersections_success", (PyCFunction)(void*)(PyCFunctionWithKeywords)__pyx_pw_6bezier_8_speedup_81_surface_intersections_success, METH_VARARGS|METH_KEYWORDS, 0};
-static PyObject *__pyx_pw_6bezier_8_speedup_81_surface_intersections_success(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+static PyObject *__pyx_pw_6bezier_8_speedup_81_triangle_intersections_success(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static PyMethodDef __pyx_mdef_6bezier_8_speedup_81_triangle_intersections_success = {"_triangle_intersections_success", (PyCFunction)(void*)(PyCFunctionWithKeywords)__pyx_pw_6bezier_8_speedup_81_triangle_intersections_success, METH_VARARGS|METH_KEYWORDS, 0};
+static PyObject *__pyx_pw_6bezier_8_speedup_81_triangle_intersections_success(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   __Pyx_memviewslice __pyx_v_nodes1 = { 0, 0, { 0 }, { 0 }, { 0 } };
   int __pyx_v_degree1;
   __Pyx_memviewslice __pyx_v_nodes2 = { 0, 0, { 0 }, { 0 }, { 0 } };
@@ -16415,7 +16415,7 @@ static PyObject *__pyx_pw_6bezier_8_speedup_81_surface_intersections_success(PyO
   int __pyx_v_num_intersected;
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
-  __Pyx_RefNannySetupContext("_surface_intersections_success (wrapper)", 0);
+  __Pyx_RefNannySetupContext("_triangle_intersections_success (wrapper)", 0);
   {
     static PyObject **__pyx_pyargnames[] = {&__pyx_n_s_nodes1,&__pyx_n_s_degree1,&__pyx_n_s_nodes2,&__pyx_n_s_degree2,&__pyx_n_s_num_intersected,0};
     PyObject* values[5] = {0,0,0,0,0};
@@ -16445,29 +16445,29 @@ static PyObject *__pyx_pw_6bezier_8_speedup_81_surface_intersections_success(PyO
         case  1:
         if (likely((values[1] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_degree1)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("_surface_intersections_success", 1, 5, 5, 1); __PYX_ERR(0, 970, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("_triangle_intersections_success", 1, 5, 5, 1); __PYX_ERR(0, 970, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  2:
         if (likely((values[2] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_nodes2)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("_surface_intersections_success", 1, 5, 5, 2); __PYX_ERR(0, 970, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("_triangle_intersections_success", 1, 5, 5, 2); __PYX_ERR(0, 970, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  3:
         if (likely((values[3] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_degree2)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("_surface_intersections_success", 1, 5, 5, 3); __PYX_ERR(0, 970, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("_triangle_intersections_success", 1, 5, 5, 3); __PYX_ERR(0, 970, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  4:
         if (likely((values[4] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_num_intersected)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("_surface_intersections_success", 1, 5, 5, 4); __PYX_ERR(0, 970, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("_triangle_intersections_success", 1, 5, 5, 4); __PYX_ERR(0, 970, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "_surface_intersections_success") < 0)) __PYX_ERR(0, 970, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "_triangle_intersections_success") < 0)) __PYX_ERR(0, 970, __pyx_L3_error)
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 5) {
       goto __pyx_L5_argtuple_error;
@@ -16486,19 +16486,19 @@ static PyObject *__pyx_pw_6bezier_8_speedup_81_surface_intersections_success(PyO
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("_surface_intersections_success", 1, 5, 5, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 970, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("_triangle_intersections_success", 1, 5, 5, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 970, __pyx_L3_error)
   __pyx_L3_error:;
-  __Pyx_AddTraceback("bezier._speedup._surface_intersections_success", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("bezier._speedup._triangle_intersections_success", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_6bezier_8_speedup_80_surface_intersections_success(__pyx_self, __pyx_v_nodes1, __pyx_v_degree1, __pyx_v_nodes2, __pyx_v_degree2, __pyx_v_num_intersected);
+  __pyx_r = __pyx_pf_6bezier_8_speedup_80_triangle_intersections_success(__pyx_self, __pyx_v_nodes1, __pyx_v_degree1, __pyx_v_nodes2, __pyx_v_degree2, __pyx_v_num_intersected);
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
-static PyObject *__pyx_gb_6bezier_8_speedup_30_surface_intersections_success_2generator(__pyx_CoroutineObject *__pyx_generator, CYTHON_UNUSED PyThreadState *__pyx_tstate, PyObject *__pyx_sent_value); /* proto */
+static PyObject *__pyx_gb_6bezier_8_speedup_31_triangle_intersections_success_2generator(__pyx_CoroutineObject *__pyx_generator, CYTHON_UNUSED PyThreadState *__pyx_tstate, PyObject *__pyx_sent_value); /* proto */
 
 /* "bezier/_speedup.pyx":997
  *         triples = tuple(
@@ -16508,7 +16508,7 @@ static PyObject *__pyx_gb_6bezier_8_speedup_30_surface_intersections_success_2ge
  *                 SEGMENTS_WORKSPACE[j].end,
  */
 
-static PyObject *__pyx_pf_6bezier_8_speedup_30_surface_intersections_success_genexpr(PyObject *__pyx_self) {
+static PyObject *__pyx_pf_6bezier_8_speedup_31_triangle_intersections_success_genexpr(PyObject *__pyx_self) {
   struct __pyx_obj_6bezier_8_speedup___pyx_scope_struct_1_genexpr *__pyx_cur_scope;
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
@@ -16521,11 +16521,11 @@ static PyObject *__pyx_pf_6bezier_8_speedup_30_surface_intersections_success_gen
   } else {
     __Pyx_GOTREF(__pyx_cur_scope);
   }
-  __pyx_cur_scope->__pyx_outer_scope = (struct __pyx_obj_6bezier_8_speedup___pyx_scope_struct___surface_intersections_success *) __pyx_self;
+  __pyx_cur_scope->__pyx_outer_scope = (struct __pyx_obj_6bezier_8_speedup___pyx_scope_struct___triangle_intersections_success *) __pyx_self;
   __Pyx_INCREF(((PyObject *)__pyx_cur_scope->__pyx_outer_scope));
   __Pyx_GIVEREF(__pyx_cur_scope->__pyx_outer_scope);
   {
-    __pyx_CoroutineObject *gen = __Pyx_Generator_New((__pyx_coroutine_body_t) __pyx_gb_6bezier_8_speedup_30_surface_intersections_success_2generator, NULL, (PyObject *) __pyx_cur_scope, __pyx_n_s_genexpr, __pyx_n_s_surface_intersections_success_l, __pyx_n_s_bezier__speedup); if (unlikely(!gen)) __PYX_ERR(0, 997, __pyx_L1_error)
+    __pyx_CoroutineObject *gen = __Pyx_Generator_New((__pyx_coroutine_body_t) __pyx_gb_6bezier_8_speedup_31_triangle_intersections_success_2generator, NULL, (PyObject *) __pyx_cur_scope, __pyx_n_s_genexpr, __pyx_n_s_triangle_intersections_success, __pyx_n_s_bezier__speedup); if (unlikely(!gen)) __PYX_ERR(0, 997, __pyx_L1_error)
     __Pyx_DECREF(__pyx_cur_scope);
     __Pyx_RefNannyFinishContext();
     return (PyObject *) gen;
@@ -16533,7 +16533,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_30_surface_intersections_success_gen
 
   /* function exit code */
   __pyx_L1_error:;
-  __Pyx_AddTraceback("bezier._speedup._surface_intersections_success.genexpr", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("bezier._speedup._triangle_intersections_success.genexpr", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __Pyx_DECREF(((PyObject *)__pyx_cur_scope));
   __Pyx_XGIVEREF(__pyx_r);
@@ -16541,7 +16541,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_30_surface_intersections_success_gen
   return __pyx_r;
 }
 
-static PyObject *__pyx_gb_6bezier_8_speedup_30_surface_intersections_success_2generator(__pyx_CoroutineObject *__pyx_generator, CYTHON_UNUSED PyThreadState *__pyx_tstate, PyObject *__pyx_sent_value) /* generator body */
+static PyObject *__pyx_gb_6bezier_8_speedup_31_triangle_intersections_success_2generator(__pyx_CoroutineObject *__pyx_generator, CYTHON_UNUSED PyThreadState *__pyx_tstate, PyObject *__pyx_sent_value) /* generator body */
 {
   struct __pyx_obj_6bezier_8_speedup___pyx_scope_struct_1_genexpr *__pyx_cur_scope = ((struct __pyx_obj_6bezier_8_speedup___pyx_scope_struct_1_genexpr *)__pyx_generator->closure);
   PyObject *__pyx_r = NULL;
@@ -16681,13 +16681,13 @@ static PyObject *__pyx_gb_6bezier_8_speedup_30_surface_intersections_success_2ge
 /* "bezier/_speedup.pyx":970
  *
  *
- * def _surface_intersections_success(             # <<<<<<<<<<<<<<
+ * def _triangle_intersections_success(             # <<<<<<<<<<<<<<
  *         double[::1, :] nodes1, int degree1,
  *         double[::1, :] nodes2, int degree2,
  */
 
-static PyObject *__pyx_pf_6bezier_8_speedup_80_surface_intersections_success(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_nodes1, int __pyx_v_degree1, __Pyx_memviewslice __pyx_v_nodes2, int __pyx_v_degree2, int __pyx_v_num_intersected) {
-  struct __pyx_obj_6bezier_8_speedup___pyx_scope_struct___surface_intersections_success *__pyx_cur_scope;
+static PyObject *__pyx_pf_6bezier_8_speedup_80_triangle_intersections_success(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_nodes1, int __pyx_v_degree1, __Pyx_memviewslice __pyx_v_nodes2, int __pyx_v_degree2, int __pyx_v_num_intersected) {
+  struct __pyx_obj_6bezier_8_speedup___pyx_scope_struct___triangle_intersections_success *__pyx_cur_scope;
   size_t __pyx_v_i;
   int __pyx_v_num_nodes;
   int __pyx_v_dimension;
@@ -16752,10 +16752,10 @@ static PyObject *__pyx_pf_6bezier_8_speedup_80_surface_intersections_success(CYT
   Py_ssize_t __pyx_t_36;
   Py_ssize_t __pyx_t_37;
   Py_ssize_t __pyx_t_38;
-  __Pyx_RefNannySetupContext("_surface_intersections_success", 0);
-  __pyx_cur_scope = (struct __pyx_obj_6bezier_8_speedup___pyx_scope_struct___surface_intersections_success *)__pyx_tp_new_6bezier_8_speedup___pyx_scope_struct___surface_intersections_success(__pyx_ptype_6bezier_8_speedup___pyx_scope_struct___surface_intersections_success, __pyx_empty_tuple, NULL);
+  __Pyx_RefNannySetupContext("_triangle_intersections_success", 0);
+  __pyx_cur_scope = (struct __pyx_obj_6bezier_8_speedup___pyx_scope_struct___triangle_intersections_success *)__pyx_tp_new_6bezier_8_speedup___pyx_scope_struct___triangle_intersections_success(__pyx_ptype_6bezier_8_speedup___pyx_scope_struct___triangle_intersections_success, __pyx_empty_tuple, NULL);
   if (unlikely(!__pyx_cur_scope)) {
-    __pyx_cur_scope = ((struct __pyx_obj_6bezier_8_speedup___pyx_scope_struct___surface_intersections_success *)Py_None);
+    __pyx_cur_scope = ((struct __pyx_obj_6bezier_8_speedup___pyx_scope_struct___triangle_intersections_success *)Py_None);
     __Pyx_INCREF(Py_None);
     __PYX_ERR(0, 970, __pyx_L1_error)
   } else {
@@ -16871,7 +16871,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_80_surface_intersections_success(CYT
  *                 SEGMENTS_WORKSPACE[j].start,
  *                 SEGMENTS_WORKSPACE[j].end,
  */
-    __pyx_t_1 = __pyx_pf_6bezier_8_speedup_30_surface_intersections_success_genexpr(((PyObject*)__pyx_cur_scope)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 997, __pyx_L1_error)
+    __pyx_t_1 = __pyx_pf_6bezier_8_speedup_31_triangle_intersections_success_genexpr(((PyObject*)__pyx_cur_scope)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 997, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
 
     /* "bezier/_speedup.pyx":995
@@ -17090,7 +17090,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_80_surface_intersections_success(CYT
  *     edge_nodes1 = np.empty((dimension, degree1 + 1), order="F")
  *     edge_nodes2 = np.empty((dimension, degree1 + 1), order="F")             # <<<<<<<<<<<<<<
  *     edge_nodes3 = np.empty((dimension, degree1 + 1), order="F")
- *     bezier._surface.compute_edge_nodes(
+ *     bezier._triangle.compute_edge_nodes(
  */
   __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_np); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1012, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
@@ -17149,7 +17149,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_80_surface_intersections_success(CYT
  *     edge_nodes1 = np.empty((dimension, degree1 + 1), order="F")
  *     edge_nodes2 = np.empty((dimension, degree1 + 1), order="F")
  *     edge_nodes3 = np.empty((dimension, degree1 + 1), order="F")             # <<<<<<<<<<<<<<
- *     bezier._surface.compute_edge_nodes(
+ *     bezier._triangle.compute_edge_nodes(
  *         &num_nodes,
  */
   __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_np); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1013, __pyx_L1_error)
@@ -17248,7 +17248,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_80_surface_intersections_success(CYT
   /* "bezier/_speedup.pyx":1014
  *     edge_nodes2 = np.empty((dimension, degree1 + 1), order="F")
  *     edge_nodes3 = np.empty((dimension, degree1 + 1), order="F")
- *     bezier._surface.compute_edge_nodes(             # <<<<<<<<<<<<<<
+ *     bezier._triangle.compute_edge_nodes(             # <<<<<<<<<<<<<<
  *         &num_nodes,
  *         &dimension,
  */
@@ -17402,7 +17402,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_80_surface_intersections_success(CYT
  *     edge_nodes4 = np.empty((dimension, degree2 + 1), order="F")
  *     edge_nodes5 = np.empty((dimension, degree2 + 1), order="F")             # <<<<<<<<<<<<<<
  *     edge_nodes6 = np.empty((dimension, degree2 + 1), order="F")
- *     bezier._surface.compute_edge_nodes(
+ *     bezier._triangle.compute_edge_nodes(
  */
   __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_np); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1026, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
@@ -17461,7 +17461,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_80_surface_intersections_success(CYT
  *     edge_nodes4 = np.empty((dimension, degree2 + 1), order="F")
  *     edge_nodes5 = np.empty((dimension, degree2 + 1), order="F")
  *     edge_nodes6 = np.empty((dimension, degree2 + 1), order="F")             # <<<<<<<<<<<<<<
- *     bezier._surface.compute_edge_nodes(
+ *     bezier._triangle.compute_edge_nodes(
  *         &num_nodes,
  */
   __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_np); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1027, __pyx_L1_error)
@@ -17560,7 +17560,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_80_surface_intersections_success(CYT
   /* "bezier/_speedup.pyx":1028
  *     edge_nodes5 = np.empty((dimension, degree2 + 1), order="F")
  *     edge_nodes6 = np.empty((dimension, degree2 + 1), order="F")
- *     bezier._surface.compute_edge_nodes(             # <<<<<<<<<<<<<<
+ *     bezier._triangle.compute_edge_nodes(             # <<<<<<<<<<<<<<
  *         &num_nodes,
  *         &dimension,
  */
@@ -17622,7 +17622,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_80_surface_intersections_success(CYT
   /* "bezier/_speedup.pyx":970
  *
  *
- * def _surface_intersections_success(             # <<<<<<<<<<<<<<
+ * def _triangle_intersections_success(             # <<<<<<<<<<<<<<
  *         double[::1, :] nodes1, int degree1,
  *         double[::1, :] nodes2, int degree2,
  */
@@ -17644,7 +17644,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_80_surface_intersections_success(CYT
     __Pyx_SafeReleaseBuffer(&__pyx_pybuffernd_edge_nodes5.rcbuffer->pybuffer);
     __Pyx_SafeReleaseBuffer(&__pyx_pybuffernd_edge_nodes6.rcbuffer->pybuffer);
   __Pyx_ErrRestore(__pyx_type, __pyx_value, __pyx_tb);}
-  __Pyx_AddTraceback("bezier._speedup._surface_intersections_success", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("bezier._speedup._triangle_intersections_success", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   goto __pyx_L2;
   __pyx_L0:;
@@ -17675,15 +17675,15 @@ static PyObject *__pyx_pf_6bezier_8_speedup_80_surface_intersections_success(CYT
 /* "bezier/_speedup.pyx":1049
  *
  *
- * def _surface_intersections_resize(             # <<<<<<<<<<<<<<
+ * def _triangle_intersections_resize(             # <<<<<<<<<<<<<<
  *         double[::1, :] nodes1, int degree1,
  *         double[::1, :] nodes2, int degree2,
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_6bezier_8_speedup_83_surface_intersections_resize(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static PyMethodDef __pyx_mdef_6bezier_8_speedup_83_surface_intersections_resize = {"_surface_intersections_resize", (PyCFunction)(void*)(PyCFunctionWithKeywords)__pyx_pw_6bezier_8_speedup_83_surface_intersections_resize, METH_VARARGS|METH_KEYWORDS, 0};
-static PyObject *__pyx_pw_6bezier_8_speedup_83_surface_intersections_resize(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+static PyObject *__pyx_pw_6bezier_8_speedup_83_triangle_intersections_resize(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static PyMethodDef __pyx_mdef_6bezier_8_speedup_83_triangle_intersections_resize = {"_triangle_intersections_resize", (PyCFunction)(void*)(PyCFunctionWithKeywords)__pyx_pw_6bezier_8_speedup_83_triangle_intersections_resize, METH_VARARGS|METH_KEYWORDS, 0};
+static PyObject *__pyx_pw_6bezier_8_speedup_83_triangle_intersections_resize(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   __Pyx_memviewslice __pyx_v_nodes1 = { 0, 0, { 0 }, { 0 }, { 0 } };
   int __pyx_v_degree1;
   __Pyx_memviewslice __pyx_v_nodes2 = { 0, 0, { 0 }, { 0 }, { 0 } };
@@ -17694,7 +17694,7 @@ static PyObject *__pyx_pw_6bezier_8_speedup_83_surface_intersections_resize(PyOb
   int __pyx_v_resizes_allowed;
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
-  __Pyx_RefNannySetupContext("_surface_intersections_resize (wrapper)", 0);
+  __Pyx_RefNannySetupContext("_triangle_intersections_resize (wrapper)", 0);
   {
     static PyObject **__pyx_pyargnames[] = {&__pyx_n_s_nodes1,&__pyx_n_s_degree1,&__pyx_n_s_nodes2,&__pyx_n_s_degree2,&__pyx_n_s_segment_ends_size,&__pyx_n_s_segments_size,&__pyx_n_s_num_intersected,&__pyx_n_s_resizes_allowed,0};
     PyObject* values[8] = {0,0,0,0,0,0,0,0};
@@ -17730,47 +17730,47 @@ static PyObject *__pyx_pw_6bezier_8_speedup_83_surface_intersections_resize(PyOb
         case  1:
         if (likely((values[1] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_degree1)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("_surface_intersections_resize", 1, 8, 8, 1); __PYX_ERR(0, 1049, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("_triangle_intersections_resize", 1, 8, 8, 1); __PYX_ERR(0, 1049, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  2:
         if (likely((values[2] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_nodes2)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("_surface_intersections_resize", 1, 8, 8, 2); __PYX_ERR(0, 1049, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("_triangle_intersections_resize", 1, 8, 8, 2); __PYX_ERR(0, 1049, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  3:
         if (likely((values[3] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_degree2)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("_surface_intersections_resize", 1, 8, 8, 3); __PYX_ERR(0, 1049, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("_triangle_intersections_resize", 1, 8, 8, 3); __PYX_ERR(0, 1049, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  4:
         if (likely((values[4] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_segment_ends_size)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("_surface_intersections_resize", 1, 8, 8, 4); __PYX_ERR(0, 1049, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("_triangle_intersections_resize", 1, 8, 8, 4); __PYX_ERR(0, 1049, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  5:
         if (likely((values[5] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_segments_size)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("_surface_intersections_resize", 1, 8, 8, 5); __PYX_ERR(0, 1049, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("_triangle_intersections_resize", 1, 8, 8, 5); __PYX_ERR(0, 1049, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  6:
         if (likely((values[6] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_num_intersected)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("_surface_intersections_resize", 1, 8, 8, 6); __PYX_ERR(0, 1049, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("_triangle_intersections_resize", 1, 8, 8, 6); __PYX_ERR(0, 1049, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  7:
         if (likely((values[7] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_resizes_allowed)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("_surface_intersections_resize", 1, 8, 8, 7); __PYX_ERR(0, 1049, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("_triangle_intersections_resize", 1, 8, 8, 7); __PYX_ERR(0, 1049, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "_surface_intersections_resize") < 0)) __PYX_ERR(0, 1049, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "_triangle_intersections_resize") < 0)) __PYX_ERR(0, 1049, __pyx_L3_error)
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 8) {
       goto __pyx_L5_argtuple_error;
@@ -17795,20 +17795,20 @@ static PyObject *__pyx_pw_6bezier_8_speedup_83_surface_intersections_resize(PyOb
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("_surface_intersections_resize", 1, 8, 8, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 1049, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("_triangle_intersections_resize", 1, 8, 8, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 1049, __pyx_L3_error)
   __pyx_L3_error:;
-  __Pyx_AddTraceback("bezier._speedup._surface_intersections_resize", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("bezier._speedup._triangle_intersections_resize", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_6bezier_8_speedup_82_surface_intersections_resize(__pyx_self, __pyx_v_nodes1, __pyx_v_degree1, __pyx_v_nodes2, __pyx_v_degree2, __pyx_v_segment_ends_size, __pyx_v_segments_size, __pyx_v_num_intersected, __pyx_v_resizes_allowed);
+  __pyx_r = __pyx_pf_6bezier_8_speedup_82_triangle_intersections_resize(__pyx_self, __pyx_v_nodes1, __pyx_v_degree1, __pyx_v_nodes2, __pyx_v_degree2, __pyx_v_segment_ends_size, __pyx_v_segments_size, __pyx_v_num_intersected, __pyx_v_resizes_allowed);
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_6bezier_8_speedup_82_surface_intersections_resize(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_nodes1, int __pyx_v_degree1, __Pyx_memviewslice __pyx_v_nodes2, int __pyx_v_degree2, int __pyx_v_segment_ends_size, int __pyx_v_segments_size, int __pyx_v_num_intersected, int __pyx_v_resizes_allowed) {
+static PyObject *__pyx_pf_6bezier_8_speedup_82_triangle_intersections_resize(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_nodes1, int __pyx_v_degree1, __Pyx_memviewslice __pyx_v_nodes2, int __pyx_v_degree2, int __pyx_v_segment_ends_size, int __pyx_v_segments_size, int __pyx_v_num_intersected, int __pyx_v_resizes_allowed) {
   int __pyx_v_num_segments;
   PyObject *__pyx_v_msg = NULL;
   PyObject *__pyx_r = NULL;
@@ -17823,14 +17823,14 @@ static PyObject *__pyx_pf_6bezier_8_speedup_82_surface_intersections_resize(CYTH
   PyObject *__pyx_t_8 = NULL;
   int __pyx_t_9;
   Py_ssize_t __pyx_t_10;
-  __Pyx_RefNannySetupContext("_surface_intersections_resize", 0);
+  __Pyx_RefNannySetupContext("_triangle_intersections_resize", 0);
 
   /* "bezier/_speedup.pyx":1057
  *     cdef int num_segments
  *
  *     if resizes_allowed > 0:             # <<<<<<<<<<<<<<
  *         if num_intersected > segment_ends_size:
- *             reset_surface_workspaces(segment_ends_size=num_intersected)
+ *             reset_triangle_workspaces(segment_ends_size=num_intersected)
  */
   __pyx_t_1 = ((__pyx_v_resizes_allowed > 0) != 0);
   if (__pyx_t_1) {
@@ -17839,7 +17839,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_82_surface_intersections_resize(CYTH
  *
  *     if resizes_allowed > 0:
  *         if num_intersected > segment_ends_size:             # <<<<<<<<<<<<<<
- *             reset_surface_workspaces(segment_ends_size=num_intersected)
+ *             reset_triangle_workspaces(segment_ends_size=num_intersected)
  *         else:
  */
     __pyx_t_1 = ((__pyx_v_num_intersected > __pyx_v_segment_ends_size) != 0);
@@ -17848,11 +17848,11 @@ static PyObject *__pyx_pf_6bezier_8_speedup_82_surface_intersections_resize(CYTH
       /* "bezier/_speedup.pyx":1059
  *     if resizes_allowed > 0:
  *         if num_intersected > segment_ends_size:
- *             reset_surface_workspaces(segment_ends_size=num_intersected)             # <<<<<<<<<<<<<<
+ *             reset_triangle_workspaces(segment_ends_size=num_intersected)             # <<<<<<<<<<<<<<
  *         else:
  *             num_segments = SEGMENT_ENDS_WORKSPACE[num_intersected - 1]
  */
-      __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_reset_surface_workspaces); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 1059, __pyx_L1_error)
+      __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_reset_triangle_workspaces); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 1059, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_2);
       __pyx_t_3 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 1059, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_3);
@@ -17870,17 +17870,17 @@ static PyObject *__pyx_pf_6bezier_8_speedup_82_surface_intersections_resize(CYTH
  *
  *     if resizes_allowed > 0:
  *         if num_intersected > segment_ends_size:             # <<<<<<<<<<<<<<
- *             reset_surface_workspaces(segment_ends_size=num_intersected)
+ *             reset_triangle_workspaces(segment_ends_size=num_intersected)
  *         else:
  */
       goto __pyx_L4;
     }
 
     /* "bezier/_speedup.pyx":1061
- *             reset_surface_workspaces(segment_ends_size=num_intersected)
+ *             reset_triangle_workspaces(segment_ends_size=num_intersected)
  *         else:
  *             num_segments = SEGMENT_ENDS_WORKSPACE[num_intersected - 1]             # <<<<<<<<<<<<<<
- *             reset_surface_workspaces(segments_size=num_segments)
+ *             reset_triangle_workspaces(segments_size=num_segments)
  *
  */
     /*else*/ {
@@ -17891,11 +17891,11 @@ static PyObject *__pyx_pf_6bezier_8_speedup_82_surface_intersections_resize(CYTH
       /* "bezier/_speedup.pyx":1062
  *         else:
  *             num_segments = SEGMENT_ENDS_WORKSPACE[num_intersected - 1]
- *             reset_surface_workspaces(segments_size=num_segments)             # <<<<<<<<<<<<<<
+ *             reset_triangle_workspaces(segments_size=num_segments)             # <<<<<<<<<<<<<<
  *
- *         return surface_intersections(
+ *         return triangle_intersections(
  */
-      __Pyx_GetModuleGlobalName(__pyx_t_4, __pyx_n_s_reset_surface_workspaces); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 1062, __pyx_L1_error)
+      __Pyx_GetModuleGlobalName(__pyx_t_4, __pyx_n_s_reset_triangle_workspaces); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 1062, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_4);
       __pyx_t_3 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 1062, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_3);
@@ -17912,19 +17912,19 @@ static PyObject *__pyx_pf_6bezier_8_speedup_82_surface_intersections_resize(CYTH
     __pyx_L4:;
 
     /* "bezier/_speedup.pyx":1064
- *             reset_surface_workspaces(segments_size=num_segments)
+ *             reset_triangle_workspaces(segments_size=num_segments)
  *
- *         return surface_intersections(             # <<<<<<<<<<<<<<
+ *         return triangle_intersections(             # <<<<<<<<<<<<<<
  *             nodes1, degree1, nodes2, degree2,
  *             resizes_allowed=resizes_allowed - 1)
  */
     __Pyx_XDECREF(__pyx_r);
-    __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_surface_intersections); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 1064, __pyx_L1_error)
+    __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_triangle_intersections); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 1064, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
 
     /* "bezier/_speedup.pyx":1065
  *
- *         return surface_intersections(
+ *         return triangle_intersections(
  *             nodes1, degree1, nodes2, degree2,             # <<<<<<<<<<<<<<
  *             resizes_allowed=resizes_allowed - 1)
  *     else:
@@ -17939,9 +17939,9 @@ static PyObject *__pyx_pf_6bezier_8_speedup_82_surface_intersections_resize(CYTH
     __Pyx_GOTREF(__pyx_t_7);
 
     /* "bezier/_speedup.pyx":1064
- *             reset_surface_workspaces(segments_size=num_segments)
+ *             reset_triangle_workspaces(segments_size=num_segments)
  *
- *         return surface_intersections(             # <<<<<<<<<<<<<<
+ *         return triangle_intersections(             # <<<<<<<<<<<<<<
  *             nodes1, degree1, nodes2, degree2,
  *             resizes_allowed=resizes_allowed - 1)
  */
@@ -17961,7 +17961,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_82_surface_intersections_resize(CYTH
     __pyx_t_7 = 0;
 
     /* "bezier/_speedup.pyx":1066
- *         return surface_intersections(
+ *         return triangle_intersections(
  *             nodes1, degree1, nodes2, degree2,
  *             resizes_allowed=resizes_allowed - 1)             # <<<<<<<<<<<<<<
  *     else:
@@ -17975,9 +17975,9 @@ static PyObject *__pyx_pf_6bezier_8_speedup_82_surface_intersections_resize(CYTH
     __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
 
     /* "bezier/_speedup.pyx":1064
- *             reset_surface_workspaces(segments_size=num_segments)
+ *             reset_triangle_workspaces(segments_size=num_segments)
  *
- *         return surface_intersections(             # <<<<<<<<<<<<<<
+ *         return triangle_intersections(             # <<<<<<<<<<<<<<
  *             nodes1, degree1, nodes2, degree2,
  *             resizes_allowed=resizes_allowed - 1)
  */
@@ -17995,7 +17995,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_82_surface_intersections_resize(CYTH
  *
  *     if resizes_allowed > 0:             # <<<<<<<<<<<<<<
  *         if num_intersected > segment_ends_size:
- *             reset_surface_workspaces(segment_ends_size=num_intersected)
+ *             reset_triangle_workspaces(segment_ends_size=num_intersected)
  */
   }
 
@@ -18214,7 +18214,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_82_surface_intersections_resize(CYTH
   /* "bezier/_speedup.pyx":1049
  *
  *
- * def _surface_intersections_resize(             # <<<<<<<<<<<<<<
+ * def _triangle_intersections_resize(             # <<<<<<<<<<<<<<
  *         double[::1, :] nodes1, int degree1,
  *         double[::1, :] nodes2, int degree2,
  */
@@ -18227,7 +18227,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_82_surface_intersections_resize(CYTH
   __Pyx_XDECREF(__pyx_t_6);
   __Pyx_XDECREF(__pyx_t_7);
   __Pyx_XDECREF(__pyx_t_8);
-  __Pyx_AddTraceback("bezier._speedup._surface_intersections_resize", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("bezier._speedup._triangle_intersections_resize", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XDECREF(__pyx_v_msg);
@@ -18241,15 +18241,15 @@ static PyObject *__pyx_pf_6bezier_8_speedup_82_surface_intersections_resize(CYTH
 /* "bezier/_speedup.pyx":1079
  *
  *
- * def surface_intersections(             # <<<<<<<<<<<<<<
+ * def triangle_intersections(             # <<<<<<<<<<<<<<
  *         double[::1, :] nodes1, int degree1,
  *         double[::1, :] nodes2, int degree2,
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_6bezier_8_speedup_85surface_intersections(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static PyMethodDef __pyx_mdef_6bezier_8_speedup_85surface_intersections = {"surface_intersections", (PyCFunction)(void*)(PyCFunctionWithKeywords)__pyx_pw_6bezier_8_speedup_85surface_intersections, METH_VARARGS|METH_KEYWORDS, 0};
-static PyObject *__pyx_pw_6bezier_8_speedup_85surface_intersections(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+static PyObject *__pyx_pw_6bezier_8_speedup_85triangle_intersections(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static PyMethodDef __pyx_mdef_6bezier_8_speedup_85triangle_intersections = {"triangle_intersections", (PyCFunction)(void*)(PyCFunctionWithKeywords)__pyx_pw_6bezier_8_speedup_85triangle_intersections, METH_VARARGS|METH_KEYWORDS, 0};
+static PyObject *__pyx_pw_6bezier_8_speedup_85triangle_intersections(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   __Pyx_memviewslice __pyx_v_nodes1 = { 0, 0, { 0 }, { 0 }, { 0 } };
   int __pyx_v_degree1;
   __Pyx_memviewslice __pyx_v_nodes2 = { 0, 0, { 0 }, { 0 }, { 0 } };
@@ -18258,7 +18258,7 @@ static PyObject *__pyx_pw_6bezier_8_speedup_85surface_intersections(PyObject *__
   int __pyx_v_resizes_allowed;
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
-  __Pyx_RefNannySetupContext("surface_intersections (wrapper)", 0);
+  __Pyx_RefNannySetupContext("triangle_intersections (wrapper)", 0);
   {
     static PyObject **__pyx_pyargnames[] = {&__pyx_n_s_nodes1,&__pyx_n_s_degree1,&__pyx_n_s_nodes2,&__pyx_n_s_degree2,&__pyx_n_s_verify,&__pyx_n_s_resizes_allowed,0};
     PyObject* values[6] = {0,0,0,0,0,0};
@@ -18290,19 +18290,19 @@ static PyObject *__pyx_pw_6bezier_8_speedup_85surface_intersections(PyObject *__
         case  1:
         if (likely((values[1] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_degree1)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("surface_intersections", 0, 4, 6, 1); __PYX_ERR(0, 1079, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("triangle_intersections", 0, 4, 6, 1); __PYX_ERR(0, 1079, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  2:
         if (likely((values[2] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_nodes2)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("surface_intersections", 0, 4, 6, 2); __PYX_ERR(0, 1079, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("triangle_intersections", 0, 4, 6, 2); __PYX_ERR(0, 1079, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  3:
         if (likely((values[3] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_degree2)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("surface_intersections", 0, 4, 6, 3); __PYX_ERR(0, 1079, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("triangle_intersections", 0, 4, 6, 3); __PYX_ERR(0, 1079, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  4:
@@ -18318,7 +18318,7 @@ static PyObject *__pyx_pw_6bezier_8_speedup_85surface_intersections(PyObject *__
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "surface_intersections") < 0)) __PYX_ERR(0, 1079, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "triangle_intersections") < 0)) __PYX_ERR(0, 1079, __pyx_L3_error)
       }
     } else {
       switch (PyTuple_GET_SIZE(__pyx_args)) {
@@ -18359,18 +18359,18 @@ static PyObject *__pyx_pw_6bezier_8_speedup_85surface_intersections(PyObject *__
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("surface_intersections", 0, 4, 6, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 1079, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("triangle_intersections", 0, 4, 6, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 1079, __pyx_L3_error)
   __pyx_L3_error:;
-  __Pyx_AddTraceback("bezier._speedup.surface_intersections", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("bezier._speedup.triangle_intersections", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_6bezier_8_speedup_84surface_intersections(__pyx_self, __pyx_v_nodes1, __pyx_v_degree1, __pyx_v_nodes2, __pyx_v_degree2, __pyx_v_verify, __pyx_v_resizes_allowed);
+  __pyx_r = __pyx_pf_6bezier_8_speedup_84triangle_intersections(__pyx_self, __pyx_v_nodes1, __pyx_v_degree1, __pyx_v_nodes2, __pyx_v_degree2, __pyx_v_verify, __pyx_v_resizes_allowed);
 
   /* "bezier/_speedup.pyx":1079
  *
  *
- * def surface_intersections(             # <<<<<<<<<<<<<<
+ * def triangle_intersections(             # <<<<<<<<<<<<<<
  *         double[::1, :] nodes1, int degree1,
  *         double[::1, :] nodes2, int degree2,
  */
@@ -18380,13 +18380,13 @@ static PyObject *__pyx_pw_6bezier_8_speedup_85surface_intersections(PyObject *__
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_6bezier_8_speedup_84surface_intersections(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_nodes1, int __pyx_v_degree1, __Pyx_memviewslice __pyx_v_nodes2, int __pyx_v_degree2, CYTHON_UNUSED int __pyx_v_verify, int __pyx_v_resizes_allowed) {
+static PyObject *__pyx_pf_6bezier_8_speedup_84triangle_intersections(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_nodes1, int __pyx_v_degree1, __Pyx_memviewslice __pyx_v_nodes2, int __pyx_v_degree2, CYTHON_UNUSED int __pyx_v_verify, int __pyx_v_resizes_allowed) {
   int __pyx_v_num_nodes1;
   int __pyx_v_num_nodes2;
   int __pyx_v_segment_ends_size;
   int __pyx_v_segments_size;
   int __pyx_v_num_intersected;
-  enum SurfaceContained __pyx_v_contained;
+  enum TriangleContained __pyx_v_contained;
   enum Status __pyx_v_status;
   CYTHON_UNUSED PyObject *__pyx_v__ = NULL;
   PyObject *__pyx_r = NULL;
@@ -18412,7 +18412,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_84surface_intersections(CYTHON_UNUSE
   PyObject *__pyx_t_19 = NULL;
   PyObject *__pyx_t_20 = NULL;
   PyObject *__pyx_t_21 = NULL;
-  __Pyx_RefNannySetupContext("surface_intersections", 0);
+  __Pyx_RefNannySetupContext("triangle_intersections", 0);
 
   /* "bezier/_speedup.pyx":1095
  *
@@ -18501,7 +18501,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_84surface_intersections(CYTHON_UNUSE
  *     _, num_nodes1 = np.shape(nodes1)
  *     _, num_nodes2 = np.shape(nodes2)             # <<<<<<<<<<<<<<
  *
- *     segment_ends_size, segments_size = surface_workspace_sizes()
+ *     segment_ends_size, segments_size = triangle_workspace_sizes()
  */
   __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_np); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 1096, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
@@ -18581,11 +18581,11 @@ static PyObject *__pyx_pf_6bezier_8_speedup_84surface_intersections(CYTHON_UNUSE
   /* "bezier/_speedup.pyx":1098
  *     _, num_nodes2 = np.shape(nodes2)
  *
- *     segment_ends_size, segments_size = surface_workspace_sizes()             # <<<<<<<<<<<<<<
+ *     segment_ends_size, segments_size = triangle_workspace_sizes()             # <<<<<<<<<<<<<<
  *
- *     bezier._surface_intersection.surface_intersections(
+ *     bezier._triangle_intersection.triangle_intersections(
  */
-  __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_surface_workspace_sizes); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 1098, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_triangle_workspace_sizes); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 1098, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_t_3 = NULL;
   if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_2))) {
@@ -18656,7 +18656,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_84surface_intersections(CYTHON_UNUSE
   __pyx_v_segments_size = __pyx_t_7;
 
   /* "bezier/_speedup.pyx":1102
- *     bezier._surface_intersection.surface_intersections(
+ *     bezier._triangle_intersection.triangle_intersections(
  *         &num_nodes1,
  *         &nodes1[0, 0],             # <<<<<<<<<<<<<<
  *         &degree1,
@@ -18696,19 +18696,19 @@ static PyObject *__pyx_pf_6bezier_8_speedup_84surface_intersections(CYTHON_UNUSE
   __pyx_t_13 = 0;
 
   /* "bezier/_speedup.pyx":1100
- *     segment_ends_size, segments_size = surface_workspace_sizes()
+ *     segment_ends_size, segments_size = triangle_workspace_sizes()
  *
- *     bezier._surface_intersection.surface_intersections(             # <<<<<<<<<<<<<<
+ *     bezier._triangle_intersection.triangle_intersections(             # <<<<<<<<<<<<<<
  *         &num_nodes1,
  *         &nodes1[0, 0],
  */
-  BEZ_surface_intersections((&__pyx_v_num_nodes1), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_nodes1.data) + __pyx_t_8)) ) + __pyx_t_9 * __pyx_v_nodes1.strides[1]) )))), (&__pyx_v_degree1), (&__pyx_v_num_nodes2), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_nodes2.data) + __pyx_t_10)) ) + __pyx_t_11 * __pyx_v_nodes2.strides[1]) )))), (&__pyx_v_degree2), (&__pyx_v_segment_ends_size), (&(*((int *) ( /* dim=0 */ ((char *) (((int *) __pyx_v_6bezier_8_speedup_SEGMENT_ENDS_WORKSPACE.data) + __pyx_t_12)) )))), (&__pyx_v_segments_size), (&(*((CurvedPolygonSegment *) ( /* dim=0 */ ((char *) (((CurvedPolygonSegment *) __pyx_v_6bezier_8_speedup_SEGMENTS_WORKSPACE.data) + __pyx_t_13)) )))), (&__pyx_v_num_intersected), (&__pyx_v_contained), (&__pyx_v_status));
+  BEZ_triangle_intersections((&__pyx_v_num_nodes1), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_nodes1.data) + __pyx_t_8)) ) + __pyx_t_9 * __pyx_v_nodes1.strides[1]) )))), (&__pyx_v_degree1), (&__pyx_v_num_nodes2), (&(*((double *) ( /* dim=1 */ (( /* dim=0 */ ((char *) (((double *) __pyx_v_nodes2.data) + __pyx_t_10)) ) + __pyx_t_11 * __pyx_v_nodes2.strides[1]) )))), (&__pyx_v_degree2), (&__pyx_v_segment_ends_size), (&(*((int *) ( /* dim=0 */ ((char *) (((int *) __pyx_v_6bezier_8_speedup_SEGMENT_ENDS_WORKSPACE.data) + __pyx_t_12)) )))), (&__pyx_v_segments_size), (&(*((CurvedPolygonSegment *) ( /* dim=0 */ ((char *) (((CurvedPolygonSegment *) __pyx_v_6bezier_8_speedup_SEGMENTS_WORKSPACE.data) + __pyx_t_13)) )))), (&__pyx_v_num_intersected), (&__pyx_v_contained), (&__pyx_v_status));
 
   /* "bezier/_speedup.pyx":1116
  *     )
  *
  *     if status == bezier._status.Status.SUCCESS:             # <<<<<<<<<<<<<<
- *         if contained == bezier._surface_intersection.SurfaceContained.FIRST:
+ *         if contained == bezier._triangle_intersection.TriangleContained.FIRST:
  *             return None, True, ()
  */
   switch (__pyx_v_status) {
@@ -18717,18 +18717,18 @@ static PyObject *__pyx_pf_6bezier_8_speedup_84surface_intersections(CYTHON_UNUSE
     /* "bezier/_speedup.pyx":1117
  *
  *     if status == bezier._status.Status.SUCCESS:
- *         if contained == bezier._surface_intersection.SurfaceContained.FIRST:             # <<<<<<<<<<<<<<
+ *         if contained == bezier._triangle_intersection.TriangleContained.FIRST:             # <<<<<<<<<<<<<<
  *             return None, True, ()
- *         elif contained == bezier._surface_intersection.SurfaceContained.SECOND:
+ *         elif contained == bezier._triangle_intersection.TriangleContained.SECOND:
  */
     switch (__pyx_v_contained) {
       case FIRST:
 
       /* "bezier/_speedup.pyx":1118
  *     if status == bezier._status.Status.SUCCESS:
- *         if contained == bezier._surface_intersection.SurfaceContained.FIRST:
+ *         if contained == bezier._triangle_intersection.TriangleContained.FIRST:
  *             return None, True, ()             # <<<<<<<<<<<<<<
- *         elif contained == bezier._surface_intersection.SurfaceContained.SECOND:
+ *         elif contained == bezier._triangle_intersection.TriangleContained.SECOND:
  *             return None, False, ()
  */
       __Pyx_XDECREF(__pyx_r);
@@ -18739,16 +18739,16 @@ static PyObject *__pyx_pf_6bezier_8_speedup_84surface_intersections(CYTHON_UNUSE
       /* "bezier/_speedup.pyx":1117
  *
  *     if status == bezier._status.Status.SUCCESS:
- *         if contained == bezier._surface_intersection.SurfaceContained.FIRST:             # <<<<<<<<<<<<<<
+ *         if contained == bezier._triangle_intersection.TriangleContained.FIRST:             # <<<<<<<<<<<<<<
  *             return None, True, ()
- *         elif contained == bezier._surface_intersection.SurfaceContained.SECOND:
+ *         elif contained == bezier._triangle_intersection.TriangleContained.SECOND:
  */
       break;
       case SECOND:
 
       /* "bezier/_speedup.pyx":1120
  *             return None, True, ()
- *         elif contained == bezier._surface_intersection.SurfaceContained.SECOND:
+ *         elif contained == bezier._triangle_intersection.TriangleContained.SECOND:
  *             return None, False, ()             # <<<<<<<<<<<<<<
  *         else:
  *             # Assumes, but does not check, that ``contained`` is equal to
@@ -18759,9 +18759,9 @@ static PyObject *__pyx_pf_6bezier_8_speedup_84surface_intersections(CYTHON_UNUSE
       goto __pyx_L0;
 
       /* "bezier/_speedup.pyx":1119
- *         if contained == bezier._surface_intersection.SurfaceContained.FIRST:
+ *         if contained == bezier._triangle_intersection.TriangleContained.FIRST:
  *             return None, True, ()
- *         elif contained == bezier._surface_intersection.SurfaceContained.SECOND:             # <<<<<<<<<<<<<<
+ *         elif contained == bezier._triangle_intersection.TriangleContained.SECOND:             # <<<<<<<<<<<<<<
  *             return None, False, ()
  *         else:
  */
@@ -18770,21 +18770,21 @@ static PyObject *__pyx_pf_6bezier_8_speedup_84surface_intersections(CYTHON_UNUSE
 
       /* "bezier/_speedup.pyx":1124
  *             # Assumes, but does not check, that ``contained`` is equal to
- *             # ``bezier._surface_intersection.NEITHER``.
- *             return _surface_intersections_success(             # <<<<<<<<<<<<<<
+ *             # ``bezier._triangle_intersection.NEITHER``.
+ *             return _triangle_intersections_success(             # <<<<<<<<<<<<<<
  *                 nodes1, degree1, nodes2, degree2, num_intersected)
  *     elif status == bezier._status.Status.INSUFFICIENT_SPACE:
  */
       __Pyx_XDECREF(__pyx_r);
-      __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_n_s_surface_intersections_success); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 1124, __pyx_L1_error)
+      __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_n_s_triangle_intersections_success_2); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 1124, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_3);
 
       /* "bezier/_speedup.pyx":1125
- *             # ``bezier._surface_intersection.NEITHER``.
- *             return _surface_intersections_success(
+ *             # ``bezier._triangle_intersection.NEITHER``.
+ *             return _triangle_intersections_success(
  *                 nodes1, degree1, nodes2, degree2, num_intersected)             # <<<<<<<<<<<<<<
  *     elif status == bezier._status.Status.INSUFFICIENT_SPACE:
- *         return _surface_intersections_resize(
+ *         return _triangle_intersections_resize(
  */
       __pyx_t_2 = __pyx_memoryview_fromslice(__pyx_v_nodes1, 2, (PyObject *(*)(char *)) __pyx_memview_get_double, (int (*)(char *, PyObject *)) __pyx_memview_set_double, 0);; if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 1125, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_2);
@@ -18870,7 +18870,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_84surface_intersections(CYTHON_UNUSE
  *     )
  *
  *     if status == bezier._status.Status.SUCCESS:             # <<<<<<<<<<<<<<
- *         if contained == bezier._surface_intersection.SurfaceContained.FIRST:
+ *         if contained == bezier._triangle_intersection.TriangleContained.FIRST:
  *             return None, True, ()
  */
     break;
@@ -18879,17 +18879,17 @@ static PyObject *__pyx_pf_6bezier_8_speedup_84surface_intersections(CYTHON_UNUSE
     /* "bezier/_speedup.pyx":1127
  *                 nodes1, degree1, nodes2, degree2, num_intersected)
  *     elif status == bezier._status.Status.INSUFFICIENT_SPACE:
- *         return _surface_intersections_resize(             # <<<<<<<<<<<<<<
+ *         return _triangle_intersections_resize(             # <<<<<<<<<<<<<<
  *             nodes1, degree1, nodes2, degree2,
  *             segment_ends_size, segments_size,
  */
     __Pyx_XDECREF(__pyx_r);
-    __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_n_s_surface_intersections_resize); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 1127, __pyx_L1_error)
+    __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_n_s_triangle_intersections_resize); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 1127, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
 
     /* "bezier/_speedup.pyx":1128
  *     elif status == bezier._status.Status.INSUFFICIENT_SPACE:
- *         return _surface_intersections_resize(
+ *         return _triangle_intersections_resize(
  *             nodes1, degree1, nodes2, degree2,             # <<<<<<<<<<<<<<
  *             segment_ends_size, segments_size,
  *             num_intersected, resizes_allowed)
@@ -18904,7 +18904,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_84surface_intersections(CYTHON_UNUSE
     __Pyx_GOTREF(__pyx_t_14);
 
     /* "bezier/_speedup.pyx":1129
- *         return _surface_intersections_resize(
+ *         return _triangle_intersections_resize(
  *             nodes1, degree1, nodes2, degree2,
  *             segment_ends_size, segments_size,             # <<<<<<<<<<<<<<
  *             num_intersected, resizes_allowed)
@@ -19010,10 +19010,10 @@ static PyObject *__pyx_pf_6bezier_8_speedup_84surface_intersections(CYTHON_UNUSE
     goto __pyx_L0;
 
     /* "bezier/_speedup.pyx":1126
- *             return _surface_intersections_success(
+ *             return _triangle_intersections_success(
  *                 nodes1, degree1, nodes2, degree2, num_intersected)
  *     elif status == bezier._status.Status.INSUFFICIENT_SPACE:             # <<<<<<<<<<<<<<
- *         return _surface_intersections_resize(
+ *         return _triangle_intersections_resize(
  *             nodes1, degree1, nodes2, degree2,
  */
     break;
@@ -19205,7 +19205,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_84surface_intersections(CYTHON_UNUSE
   /* "bezier/_speedup.pyx":1079
  *
  *
- * def surface_intersections(             # <<<<<<<<<<<<<<
+ * def triangle_intersections(             # <<<<<<<<<<<<<<
  *         double[::1, :] nodes1, int degree1,
  *         double[::1, :] nodes2, int degree2,
  */
@@ -19224,7 +19224,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_84surface_intersections(CYTHON_UNUSE
   __Pyx_XDECREF(__pyx_t_19);
   __Pyx_XDECREF(__pyx_t_20);
   __Pyx_XDECREF(__pyx_t_21);
-  __Pyx_AddTraceback("bezier._speedup.surface_intersections", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("bezier._speedup.triangle_intersections", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XDECREF(__pyx_v__);
@@ -19238,44 +19238,44 @@ static PyObject *__pyx_pf_6bezier_8_speedup_84surface_intersections(CYTHON_UNUSE
 /* "bezier/_speedup.pyx":1156
  *
  *
- * def free_surface_intersections_workspace():             # <<<<<<<<<<<<<<
- *     bezier._surface_intersection.free_surface_intersections_workspace()
+ * def free_triangle_intersections_workspace():             # <<<<<<<<<<<<<<
+ *     bezier._triangle_intersection.free_triangle_intersections_workspace()
  *
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_6bezier_8_speedup_87free_surface_intersections_workspace(PyObject *__pyx_self, CYTHON_UNUSED PyObject *unused); /*proto*/
-static PyMethodDef __pyx_mdef_6bezier_8_speedup_87free_surface_intersections_workspace = {"free_surface_intersections_workspace", (PyCFunction)__pyx_pw_6bezier_8_speedup_87free_surface_intersections_workspace, METH_NOARGS, 0};
-static PyObject *__pyx_pw_6bezier_8_speedup_87free_surface_intersections_workspace(PyObject *__pyx_self, CYTHON_UNUSED PyObject *unused) {
+static PyObject *__pyx_pw_6bezier_8_speedup_87free_triangle_intersections_workspace(PyObject *__pyx_self, CYTHON_UNUSED PyObject *unused); /*proto*/
+static PyMethodDef __pyx_mdef_6bezier_8_speedup_87free_triangle_intersections_workspace = {"free_triangle_intersections_workspace", (PyCFunction)__pyx_pw_6bezier_8_speedup_87free_triangle_intersections_workspace, METH_NOARGS, 0};
+static PyObject *__pyx_pw_6bezier_8_speedup_87free_triangle_intersections_workspace(PyObject *__pyx_self, CYTHON_UNUSED PyObject *unused) {
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
-  __Pyx_RefNannySetupContext("free_surface_intersections_workspace (wrapper)", 0);
-  __pyx_r = __pyx_pf_6bezier_8_speedup_86free_surface_intersections_workspace(__pyx_self);
+  __Pyx_RefNannySetupContext("free_triangle_intersections_workspace (wrapper)", 0);
+  __pyx_r = __pyx_pf_6bezier_8_speedup_86free_triangle_intersections_workspace(__pyx_self);
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_6bezier_8_speedup_86free_surface_intersections_workspace(CYTHON_UNUSED PyObject *__pyx_self) {
+static PyObject *__pyx_pf_6bezier_8_speedup_86free_triangle_intersections_workspace(CYTHON_UNUSED PyObject *__pyx_self) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
-  __Pyx_RefNannySetupContext("free_surface_intersections_workspace", 0);
+  __Pyx_RefNannySetupContext("free_triangle_intersections_workspace", 0);
 
   /* "bezier/_speedup.pyx":1157
  *
- * def free_surface_intersections_workspace():
- *     bezier._surface_intersection.free_surface_intersections_workspace()             # <<<<<<<<<<<<<<
+ * def free_triangle_intersections_workspace():
+ *     bezier._triangle_intersection.free_triangle_intersections_workspace()             # <<<<<<<<<<<<<<
  *
  *
  */
-  BEZ_free_surface_intersections_workspace();
+  BEZ_free_triangle_intersections_workspace();
 
   /* "bezier/_speedup.pyx":1156
  *
  *
- * def free_surface_intersections_workspace():             # <<<<<<<<<<<<<<
- *     bezier._surface_intersection.free_surface_intersections_workspace()
+ * def free_triangle_intersections_workspace():             # <<<<<<<<<<<<<<
+ *     bezier._triangle_intersection.free_triangle_intersections_workspace()
  *
  */
 
@@ -35045,14 +35045,14 @@ static PyObject *__pyx_unpickle_Enum__set_state(struct __pyx_MemviewEnum_obj *__
   return __pyx_r;
 }
 
-static struct __pyx_obj_6bezier_8_speedup___pyx_scope_struct___surface_intersections_success *__pyx_freelist_6bezier_8_speedup___pyx_scope_struct___surface_intersections_success[8];
-static int __pyx_freecount_6bezier_8_speedup___pyx_scope_struct___surface_intersections_success = 0;
+static struct __pyx_obj_6bezier_8_speedup___pyx_scope_struct___triangle_intersections_success *__pyx_freelist_6bezier_8_speedup___pyx_scope_struct___triangle_intersections_success[8];
+static int __pyx_freecount_6bezier_8_speedup___pyx_scope_struct___triangle_intersections_success = 0;
 
-static PyObject *__pyx_tp_new_6bezier_8_speedup___pyx_scope_struct___surface_intersections_success(PyTypeObject *t, CYTHON_UNUSED PyObject *a, CYTHON_UNUSED PyObject *k) {
+static PyObject *__pyx_tp_new_6bezier_8_speedup___pyx_scope_struct___triangle_intersections_success(PyTypeObject *t, CYTHON_UNUSED PyObject *a, CYTHON_UNUSED PyObject *k) {
   PyObject *o;
-  if (CYTHON_COMPILING_IN_CPYTHON && likely((__pyx_freecount_6bezier_8_speedup___pyx_scope_struct___surface_intersections_success > 0) & (t->tp_basicsize == sizeof(struct __pyx_obj_6bezier_8_speedup___pyx_scope_struct___surface_intersections_success)))) {
-    o = (PyObject*)__pyx_freelist_6bezier_8_speedup___pyx_scope_struct___surface_intersections_success[--__pyx_freecount_6bezier_8_speedup___pyx_scope_struct___surface_intersections_success];
-    memset(o, 0, sizeof(struct __pyx_obj_6bezier_8_speedup___pyx_scope_struct___surface_intersections_success));
+  if (CYTHON_COMPILING_IN_CPYTHON && likely((__pyx_freecount_6bezier_8_speedup___pyx_scope_struct___triangle_intersections_success > 0) & (t->tp_basicsize == sizeof(struct __pyx_obj_6bezier_8_speedup___pyx_scope_struct___triangle_intersections_success)))) {
+    o = (PyObject*)__pyx_freelist_6bezier_8_speedup___pyx_scope_struct___triangle_intersections_success[--__pyx_freecount_6bezier_8_speedup___pyx_scope_struct___triangle_intersections_success];
+    memset(o, 0, sizeof(struct __pyx_obj_6bezier_8_speedup___pyx_scope_struct___triangle_intersections_success));
     (void) PyObject_INIT(o, t);
   } else {
     o = (*t->tp_alloc)(t, 0);
@@ -35061,20 +35061,20 @@ static PyObject *__pyx_tp_new_6bezier_8_speedup___pyx_scope_struct___surface_int
   return o;
 }
 
-static void __pyx_tp_dealloc_6bezier_8_speedup___pyx_scope_struct___surface_intersections_success(PyObject *o) {
-  if (CYTHON_COMPILING_IN_CPYTHON && ((__pyx_freecount_6bezier_8_speedup___pyx_scope_struct___surface_intersections_success < 8) & (Py_TYPE(o)->tp_basicsize == sizeof(struct __pyx_obj_6bezier_8_speedup___pyx_scope_struct___surface_intersections_success)))) {
-    __pyx_freelist_6bezier_8_speedup___pyx_scope_struct___surface_intersections_success[__pyx_freecount_6bezier_8_speedup___pyx_scope_struct___surface_intersections_success++] = ((struct __pyx_obj_6bezier_8_speedup___pyx_scope_struct___surface_intersections_success *)o);
+static void __pyx_tp_dealloc_6bezier_8_speedup___pyx_scope_struct___triangle_intersections_success(PyObject *o) {
+  if (CYTHON_COMPILING_IN_CPYTHON && ((__pyx_freecount_6bezier_8_speedup___pyx_scope_struct___triangle_intersections_success < 8) & (Py_TYPE(o)->tp_basicsize == sizeof(struct __pyx_obj_6bezier_8_speedup___pyx_scope_struct___triangle_intersections_success)))) {
+    __pyx_freelist_6bezier_8_speedup___pyx_scope_struct___triangle_intersections_success[__pyx_freecount_6bezier_8_speedup___pyx_scope_struct___triangle_intersections_success++] = ((struct __pyx_obj_6bezier_8_speedup___pyx_scope_struct___triangle_intersections_success *)o);
   } else {
     (*Py_TYPE(o)->tp_free)(o);
   }
 }
 
-static PyTypeObject __pyx_type_6bezier_8_speedup___pyx_scope_struct___surface_intersections_success = {
+static PyTypeObject __pyx_type_6bezier_8_speedup___pyx_scope_struct___triangle_intersections_success = {
   PyVarObject_HEAD_INIT(0, 0)
-  "bezier._speedup.__pyx_scope_struct___surface_intersections_success", /*tp_name*/
-  sizeof(struct __pyx_obj_6bezier_8_speedup___pyx_scope_struct___surface_intersections_success), /*tp_basicsize*/
+  "bezier._speedup.__pyx_scope_struct___triangle_intersections_success", /*tp_name*/
+  sizeof(struct __pyx_obj_6bezier_8_speedup___pyx_scope_struct___triangle_intersections_success), /*tp_basicsize*/
   0, /*tp_itemsize*/
-  __pyx_tp_dealloc_6bezier_8_speedup___pyx_scope_struct___surface_intersections_success, /*tp_dealloc*/
+  __pyx_tp_dealloc_6bezier_8_speedup___pyx_scope_struct___triangle_intersections_success, /*tp_dealloc*/
   #if PY_VERSION_HEX < 0x030800b4
   0, /*tp_print*/
   #endif
@@ -35117,7 +35117,7 @@ static PyTypeObject __pyx_type_6bezier_8_speedup___pyx_scope_struct___surface_in
   0, /*tp_dictoffset*/
   0, /*tp_init*/
   0, /*tp_alloc*/
-  __pyx_tp_new_6bezier_8_speedup___pyx_scope_struct___surface_intersections_success, /*tp_new*/
+  __pyx_tp_new_6bezier_8_speedup___pyx_scope_struct___triangle_intersections_success, /*tp_new*/
   0, /*tp_free*/
   0, /*tp_is_gc*/
   0, /*tp_bases*/
@@ -36147,7 +36147,7 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_fortran, __pyx_k_fortran, sizeof(__pyx_k_fortran), 0, 0, 1, 1},
   {&__pyx_n_u_fortran, __pyx_k_fortran, sizeof(__pyx_k_fortran), 0, 1, 0, 1},
   {&__pyx_n_s_free_curve_intersections_workspa, __pyx_k_free_curve_intersections_workspa, sizeof(__pyx_k_free_curve_intersections_workspa), 0, 0, 1, 1},
-  {&__pyx_n_s_free_surface_intersections_works, __pyx_k_free_surface_intersections_works, sizeof(__pyx_k_free_surface_intersections_works), 0, 0, 1, 1},
+  {&__pyx_n_s_free_triangle_intersections_work, __pyx_k_free_triangle_intersections_work, sizeof(__pyx_k_free_triangle_intersections_work), 0, 0, 1, 1},
   {&__pyx_n_s_full_reduce, __pyx_k_full_reduce, sizeof(__pyx_k_full_reduce), 0, 0, 1, 1},
   {&__pyx_n_s_genexpr, __pyx_k_genexpr, sizeof(__pyx_k_genexpr), 0, 0, 1, 1},
   {&__pyx_n_s_get_curvature, __pyx_k_get_curvature, sizeof(__pyx_k_get_curvature), 0, 0, 1, 1},
@@ -36174,7 +36174,7 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_left_nodes, __pyx_k_left_nodes, sizeof(__pyx_k_left_nodes), 0, 0, 1, 1},
   {&__pyx_n_s_length, __pyx_k_length, sizeof(__pyx_k_length), 0, 0, 1, 1},
   {&__pyx_n_s_locate_point_curve, __pyx_k_locate_point_curve, sizeof(__pyx_k_locate_point_curve), 0, 0, 1, 1},
-  {&__pyx_n_s_locate_point_surface, __pyx_k_locate_point_surface, sizeof(__pyx_k_locate_point_surface), 0, 0, 1, 1},
+  {&__pyx_n_s_locate_point_triangle, __pyx_k_locate_point_triangle, sizeof(__pyx_k_locate_point_triangle), 0, 0, 1, 1},
   {&__pyx_n_s_main, __pyx_k_main, sizeof(__pyx_k_main), 0, 0, 1, 1},
   {&__pyx_n_s_memview, __pyx_k_memview, sizeof(__pyx_k_memview), 0, 0, 1, 1},
   {&__pyx_n_s_mode, __pyx_k_mode, sizeof(__pyx_k_mode), 0, 0, 1, 1},
@@ -36191,7 +36191,7 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_new_t, __pyx_k_new_t, sizeof(__pyx_k_new_t), 0, 0, 1, 1},
   {&__pyx_n_s_newton_refine_curve, __pyx_k_newton_refine_curve, sizeof(__pyx_k_newton_refine_curve), 0, 0, 1, 1},
   {&__pyx_n_s_newton_refine_curve_intersect, __pyx_k_newton_refine_curve_intersect, sizeof(__pyx_k_newton_refine_curve_intersect), 0, 0, 1, 1},
-  {&__pyx_n_s_newton_refine_surface, __pyx_k_newton_refine_surface, sizeof(__pyx_k_newton_refine_surface), 0, 0, 1, 1},
+  {&__pyx_n_s_newton_refine_triangle, __pyx_k_newton_refine_triangle, sizeof(__pyx_k_newton_refine_triangle), 0, 0, 1, 1},
   {&__pyx_kp_s_no_default___reduce___due_to_non, __pyx_k_no_default___reduce___due_to_non, sizeof(__pyx_k_no_default___reduce___due_to_non), 0, 0, 1, 0},
   {&__pyx_n_s_nodes, __pyx_k_nodes, sizeof(__pyx_k_nodes), 0, 0, 1, 1},
   {&__pyx_n_s_nodes1, __pyx_k_nodes1, sizeof(__pyx_k_nodes1), 0, 0, 1, 1},
@@ -36253,7 +36253,7 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_reduce_pseudo_inverse, __pyx_k_reduce_pseudo_inverse, sizeof(__pyx_k_reduce_pseudo_inverse), 0, 0, 1, 1},
   {&__pyx_n_s_reduced, __pyx_k_reduced, sizeof(__pyx_k_reduced), 0, 0, 1, 1},
   {&__pyx_n_s_reset_curves_workspace, __pyx_k_reset_curves_workspace, sizeof(__pyx_k_reset_curves_workspace), 0, 0, 1, 1},
-  {&__pyx_n_s_reset_surface_workspaces, __pyx_k_reset_surface_workspaces, sizeof(__pyx_k_reset_surface_workspaces), 0, 0, 1, 1},
+  {&__pyx_n_s_reset_triangle_workspaces, __pyx_k_reset_triangle_workspaces, sizeof(__pyx_k_reset_triangle_workspaces), 0, 0, 1, 1},
   {&__pyx_n_s_resizes_allowed, __pyx_k_resizes_allowed, sizeof(__pyx_k_resizes_allowed), 0, 0, 1, 1},
   {&__pyx_n_s_result, __pyx_k_result, sizeof(__pyx_k_result), 0, 0, 1, 1},
   {&__pyx_n_s_right, __pyx_k_right, sizeof(__pyx_k_right), 0, 0, 1, 1},
@@ -36272,7 +36272,7 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_size, __pyx_k_size, sizeof(__pyx_k_size), 0, 0, 1, 1},
   {&__pyx_n_s_sizes, __pyx_k_sizes, sizeof(__pyx_k_sizes), 0, 0, 1, 1},
   {&__pyx_n_s_specialize_curve, __pyx_k_specialize_curve, sizeof(__pyx_k_specialize_curve), 0, 0, 1, 1},
-  {&__pyx_n_s_specialize_surface, __pyx_k_specialize_surface, sizeof(__pyx_k_specialize_surface), 0, 0, 1, 1},
+  {&__pyx_n_s_specialize_triangle, __pyx_k_specialize_triangle, sizeof(__pyx_k_specialize_triangle), 0, 0, 1, 1},
   {&__pyx_n_s_specialized, __pyx_k_specialized, sizeof(__pyx_k_specialized), 0, 0, 1, 1},
   {&__pyx_kp_s_src_python_bezier__speedup_pyx, __pyx_k_src_python_bezier__speedup_pyx, sizeof(__pyx_k_src_python_bezier__speedup_pyx), 0, 0, 1, 0},
   {&__pyx_n_s_st_vals, __pyx_k_st_vals, sizeof(__pyx_k_st_vals), 0, 0, 1, 1},
@@ -36287,20 +36287,20 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_kp_s_stringsource, __pyx_k_stringsource, sizeof(__pyx_k_stringsource), 0, 0, 1, 0},
   {&__pyx_n_s_struct, __pyx_k_struct, sizeof(__pyx_k_struct), 0, 0, 1, 1},
   {&__pyx_n_s_subdivide_nodes_curve, __pyx_k_subdivide_nodes_curve, sizeof(__pyx_k_subdivide_nodes_curve), 0, 0, 1, 1},
-  {&__pyx_n_s_subdivide_nodes_surface, __pyx_k_subdivide_nodes_surface, sizeof(__pyx_k_subdivide_nodes_surface), 0, 0, 1, 1},
+  {&__pyx_n_s_subdivide_nodes_triangle, __pyx_k_subdivide_nodes_triangle, sizeof(__pyx_k_subdivide_nodes_triangle), 0, 0, 1, 1},
   {&__pyx_n_s_success, __pyx_k_success, sizeof(__pyx_k_success), 0, 0, 1, 1},
   {&__pyx_n_s_supported, __pyx_k_supported, sizeof(__pyx_k_supported), 0, 0, 1, 1},
-  {&__pyx_n_s_surface_intersections, __pyx_k_surface_intersections, sizeof(__pyx_k_surface_intersections), 0, 0, 1, 1},
-  {&__pyx_n_s_surface_intersections_resize, __pyx_k_surface_intersections_resize, sizeof(__pyx_k_surface_intersections_resize), 0, 0, 1, 1},
-  {&__pyx_n_s_surface_intersections_success, __pyx_k_surface_intersections_success, sizeof(__pyx_k_surface_intersections_success), 0, 0, 1, 1},
-  {&__pyx_n_s_surface_intersections_success_l, __pyx_k_surface_intersections_success_l, sizeof(__pyx_k_surface_intersections_success_l), 0, 0, 1, 1},
-  {&__pyx_n_s_surface_workspace_sizes, __pyx_k_surface_workspace_sizes, sizeof(__pyx_k_surface_workspace_sizes), 0, 0, 1, 1},
   {&__pyx_n_s_t, __pyx_k_t, sizeof(__pyx_k_t), 0, 0, 1, 1},
   {&__pyx_n_s_t_val, __pyx_k_t_val, sizeof(__pyx_k_t_val), 0, 0, 1, 1},
   {&__pyx_n_s_tangent_vec, __pyx_k_tangent_vec, sizeof(__pyx_k_tangent_vec), 0, 0, 1, 1},
   {&__pyx_n_s_test, __pyx_k_test, sizeof(__pyx_k_test), 0, 0, 1, 1},
   {&__pyx_n_s_throw, __pyx_k_throw, sizeof(__pyx_k_throw), 0, 0, 1, 1},
   {&__pyx_n_s_top, __pyx_k_top, sizeof(__pyx_k_top), 0, 0, 1, 1},
+  {&__pyx_n_s_triangle_intersections, __pyx_k_triangle_intersections, sizeof(__pyx_k_triangle_intersections), 0, 0, 1, 1},
+  {&__pyx_n_s_triangle_intersections_resize, __pyx_k_triangle_intersections_resize, sizeof(__pyx_k_triangle_intersections_resize), 0, 0, 1, 1},
+  {&__pyx_n_s_triangle_intersections_success, __pyx_k_triangle_intersections_success, sizeof(__pyx_k_triangle_intersections_success), 0, 0, 1, 1},
+  {&__pyx_n_s_triangle_intersections_success_2, __pyx_k_triangle_intersections_success_2, sizeof(__pyx_k_triangle_intersections_success_2), 0, 0, 1, 1},
+  {&__pyx_n_s_triangle_workspace_sizes, __pyx_k_triangle_workspace_sizes, sizeof(__pyx_k_triangle_workspace_sizes), 0, 0, 1, 1},
   {&__pyx_n_s_triples, __pyx_k_triples, sizeof(__pyx_k_triples), 0, 0, 1, 1},
   {&__pyx_n_s_type_info, __pyx_k_type_info, sizeof(__pyx_k_type_info), 0, 0, 1, 1},
   {&__pyx_kp_s_unable_to_allocate_array_data, __pyx_k_unable_to_allocate_array_data, sizeof(__pyx_k_unable_to_allocate_array_data), 0, 0, 1, 0},
@@ -36430,9 +36430,9 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
 
   /* "bezier/_speedup.pyx":1118
  *     if status == bezier._status.Status.SUCCESS:
- *         if contained == bezier._surface_intersection.SurfaceContained.FIRST:
+ *         if contained == bezier._triangle_intersection.TriangleContained.FIRST:
  *             return None, True, ()             # <<<<<<<<<<<<<<
- *         elif contained == bezier._surface_intersection.SurfaceContained.SECOND:
+ *         elif contained == bezier._triangle_intersection.TriangleContained.SECOND:
  *             return None, False, ()
  */
   __pyx_tuple__9 = PyTuple_Pack(3, Py_None, Py_True, __pyx_empty_tuple); if (unlikely(!__pyx_tuple__9)) __PYX_ERR(0, 1118, __pyx_L1_error)
@@ -36441,7 +36441,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
 
   /* "bezier/_speedup.pyx":1120
  *             return None, True, ()
- *         elif contained == bezier._surface_intersection.SurfaceContained.SECOND:
+ *         elif contained == bezier._triangle_intersection.TriangleContained.SECOND:
  *             return None, False, ()             # <<<<<<<<<<<<<<
  *         else:
  *             # Assumes, but does not check, that ``contained`` is equal to
@@ -37142,7 +37142,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   __pyx_codeobj__98 = (PyObject*)__Pyx_PyCode_New(2, 0, 6, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__97, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_python_bezier__speedup_pyx, __pyx_n_s_polygon_collide, 618, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__98)) __PYX_ERR(0, 618, __pyx_L1_error)
 
   /* "bezier/_speedup.pyx":640
- * ############################
+ * #############################
  *
  * def de_casteljau_one_round(             # <<<<<<<<<<<<<<
  *         double[::1, :] nodes, int degree,
@@ -37216,26 +37216,26 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   /* "bezier/_speedup.pyx":778
  *
  *
- * def specialize_surface(             # <<<<<<<<<<<<<<
+ * def specialize_triangle(             # <<<<<<<<<<<<<<
  *         double[::1, :] nodes, int degree,
  *         double[::1] weights_a, double[::1] weights_b, double[::1] weights_c):
  */
   __pyx_tuple__111 = PyTuple_Pack(8, __pyx_n_s_nodes, __pyx_n_s_degree, __pyx_n_s_weights_a, __pyx_n_s_weights_b, __pyx_n_s_weights_c, __pyx_n_s_num_nodes, __pyx_n_s_dimension, __pyx_n_s_specialized); if (unlikely(!__pyx_tuple__111)) __PYX_ERR(0, 778, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__111);
   __Pyx_GIVEREF(__pyx_tuple__111);
-  __pyx_codeobj__112 = (PyObject*)__Pyx_PyCode_New(5, 0, 8, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__111, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_python_bezier__speedup_pyx, __pyx_n_s_specialize_surface, 778, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__112)) __PYX_ERR(0, 778, __pyx_L1_error)
+  __pyx_codeobj__112 = (PyObject*)__Pyx_PyCode_New(5, 0, 8, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__111, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_python_bezier__speedup_pyx, __pyx_n_s_specialize_triangle, 778, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__112)) __PYX_ERR(0, 778, __pyx_L1_error)
 
   /* "bezier/_speedup.pyx":801
  *
  *
- * def subdivide_nodes_surface(double[::1, :] nodes, int degree):             # <<<<<<<<<<<<<<
+ * def subdivide_nodes_triangle(double[::1, :] nodes, int degree):             # <<<<<<<<<<<<<<
  *     cdef int num_nodes, dimension
  *     cdef ndarray_t[double, ndim=2, mode="fortran"] nodes_a
  */
   __pyx_tuple__113 = PyTuple_Pack(8, __pyx_n_s_nodes, __pyx_n_s_degree, __pyx_n_s_num_nodes, __pyx_n_s_dimension, __pyx_n_s_nodes_a, __pyx_n_s_nodes_b, __pyx_n_s_nodes_c, __pyx_n_s_nodes_d); if (unlikely(!__pyx_tuple__113)) __PYX_ERR(0, 801, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__113);
   __Pyx_GIVEREF(__pyx_tuple__113);
-  __pyx_codeobj__114 = (PyObject*)__Pyx_PyCode_New(2, 0, 8, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__113, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_python_bezier__speedup_pyx, __pyx_n_s_subdivide_nodes_surface, 801, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__114)) __PYX_ERR(0, 801, __pyx_L1_error)
+  __pyx_codeobj__114 = (PyObject*)__Pyx_PyCode_New(2, 0, 8, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__113, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_python_bezier__speedup_pyx, __pyx_n_s_subdivide_nodes_triangle, 801, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__114)) __PYX_ERR(0, 801, __pyx_L1_error)
 
   /* "bezier/_speedup.pyx":828
  *
@@ -37262,97 +37262,97 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   __pyx_codeobj__118 = (PyObject*)__Pyx_PyCode_New(1, 0, 11, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__117, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_python_bezier__speedup_pyx, __pyx_n_s_compute_area, 852, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__118)) __PYX_ERR(0, 852, __pyx_L1_error)
 
   /* "bezier/_speedup.pyx":902
- * #########################################
+ * ##########################################
  *
- * def newton_refine_surface(             # <<<<<<<<<<<<<<
+ * def newton_refine_triangle(             # <<<<<<<<<<<<<<
  *         double[::1, :] nodes, int degree,
  *         double x_val, double y_val, double s, double t):
  */
   __pyx_tuple__119 = PyTuple_Pack(10, __pyx_n_s_nodes, __pyx_n_s_degree, __pyx_n_s_x_val, __pyx_n_s_y_val, __pyx_n_s_s, __pyx_n_s_t, __pyx_n_s_num_nodes, __pyx_n_s_updated_s, __pyx_n_s_updated_t, __pyx_n_s__63); if (unlikely(!__pyx_tuple__119)) __PYX_ERR(0, 902, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__119);
   __Pyx_GIVEREF(__pyx_tuple__119);
-  __pyx_codeobj__120 = (PyObject*)__Pyx_PyCode_New(6, 0, 10, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__119, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_python_bezier__speedup_pyx, __pyx_n_s_newton_refine_surface, 902, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__120)) __PYX_ERR(0, 902, __pyx_L1_error)
+  __pyx_codeobj__120 = (PyObject*)__Pyx_PyCode_New(6, 0, 10, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__119, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_python_bezier__speedup_pyx, __pyx_n_s_newton_refine_triangle, 902, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__120)) __PYX_ERR(0, 902, __pyx_L1_error)
 
   /* "bezier/_speedup.pyx":926
  *
  *
- * def locate_point_surface(             # <<<<<<<<<<<<<<
+ * def locate_point_triangle(             # <<<<<<<<<<<<<<
  *         double[::1, :] nodes, int degree, double x_val, double y_val):
  *     cdef int num_nodes
  */
   __pyx_tuple__121 = PyTuple_Pack(8, __pyx_n_s_nodes, __pyx_n_s_degree, __pyx_n_s_x_val, __pyx_n_s_y_val, __pyx_n_s_num_nodes, __pyx_n_s_s_val, __pyx_n_s_t_val, __pyx_n_s__63); if (unlikely(!__pyx_tuple__121)) __PYX_ERR(0, 926, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__121);
   __Pyx_GIVEREF(__pyx_tuple__121);
-  __pyx_codeobj__122 = (PyObject*)__Pyx_PyCode_New(4, 0, 8, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__121, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_python_bezier__speedup_pyx, __pyx_n_s_locate_point_surface, 926, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__122)) __PYX_ERR(0, 926, __pyx_L1_error)
+  __pyx_codeobj__122 = (PyObject*)__Pyx_PyCode_New(4, 0, 8, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__121, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_python_bezier__speedup_pyx, __pyx_n_s_locate_point_triangle, 926, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__122)) __PYX_ERR(0, 926, __pyx_L1_error)
 
   /* "bezier/_speedup.pyx":950
  *
  *
- * def reset_surface_workspaces(int segment_ends_size=-1, int segments_size=-1):             # <<<<<<<<<<<<<<
+ * def reset_triangle_workspaces(int segment_ends_size=-1, int segments_size=-1):             # <<<<<<<<<<<<<<
  *     global SEGMENT_ENDS_WORKSPACE
  *     global SEGMENTS_WORKSPACE
  */
   __pyx_tuple__123 = PyTuple_Pack(2, __pyx_n_s_segment_ends_size, __pyx_n_s_segments_size); if (unlikely(!__pyx_tuple__123)) __PYX_ERR(0, 950, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__123);
   __Pyx_GIVEREF(__pyx_tuple__123);
-  __pyx_codeobj__124 = (PyObject*)__Pyx_PyCode_New(2, 0, 2, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__123, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_python_bezier__speedup_pyx, __pyx_n_s_reset_surface_workspaces, 950, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__124)) __PYX_ERR(0, 950, __pyx_L1_error)
+  __pyx_codeobj__124 = (PyObject*)__Pyx_PyCode_New(2, 0, 2, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__123, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_python_bezier__speedup_pyx, __pyx_n_s_reset_triangle_workspaces, 950, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__124)) __PYX_ERR(0, 950, __pyx_L1_error)
 
   /* "bezier/_speedup.pyx":959
  *
  *
- * def surface_workspace_sizes():             # <<<<<<<<<<<<<<
+ * def triangle_workspace_sizes():             # <<<<<<<<<<<<<<
  *     global SEGMENT_ENDS_WORKSPACE
  *     global SEGMENTS_WORKSPACE
  */
   __pyx_tuple__125 = PyTuple_Pack(2, __pyx_n_s_segment_ends_size, __pyx_n_s_segments_size); if (unlikely(!__pyx_tuple__125)) __PYX_ERR(0, 959, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__125);
   __Pyx_GIVEREF(__pyx_tuple__125);
-  __pyx_codeobj__126 = (PyObject*)__Pyx_PyCode_New(0, 0, 2, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__125, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_python_bezier__speedup_pyx, __pyx_n_s_surface_workspace_sizes, 959, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__126)) __PYX_ERR(0, 959, __pyx_L1_error)
+  __pyx_codeobj__126 = (PyObject*)__Pyx_PyCode_New(0, 0, 2, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__125, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_python_bezier__speedup_pyx, __pyx_n_s_triangle_workspace_sizes, 959, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__126)) __PYX_ERR(0, 959, __pyx_L1_error)
 
   /* "bezier/_speedup.pyx":970
  *
  *
- * def _surface_intersections_success(             # <<<<<<<<<<<<<<
+ * def _triangle_intersections_success(             # <<<<<<<<<<<<<<
  *         double[::1, :] nodes1, int degree1,
  *         double[::1, :] nodes2, int degree2,
  */
   __pyx_tuple__127 = PyTuple_Pack(22, __pyx_n_s_nodes1, __pyx_n_s_degree1, __pyx_n_s_nodes2, __pyx_n_s_degree2, __pyx_n_s_num_intersected, __pyx_n_s_begin_index, __pyx_n_s_end_index, __pyx_n_s_i, __pyx_n_s_j, __pyx_n_s_num_nodes, __pyx_n_s_dimension, __pyx_n_s_edge_nodes1, __pyx_n_s_edge_nodes2, __pyx_n_s_edge_nodes3, __pyx_n_s_edge_nodes4, __pyx_n_s_edge_nodes5, __pyx_n_s_edge_nodes6, __pyx_n_s_curved_polygons, __pyx_n_s_triples, __pyx_n_s_all_edge_nodes, __pyx_n_s_genexpr, __pyx_n_s_genexpr); if (unlikely(!__pyx_tuple__127)) __PYX_ERR(0, 970, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__127);
   __Pyx_GIVEREF(__pyx_tuple__127);
-  __pyx_codeobj__128 = (PyObject*)__Pyx_PyCode_New(5, 0, 22, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__127, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_python_bezier__speedup_pyx, __pyx_n_s_surface_intersections_success, 970, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__128)) __PYX_ERR(0, 970, __pyx_L1_error)
+  __pyx_codeobj__128 = (PyObject*)__Pyx_PyCode_New(5, 0, 22, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__127, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_python_bezier__speedup_pyx, __pyx_n_s_triangle_intersections_success_2, 970, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__128)) __PYX_ERR(0, 970, __pyx_L1_error)
 
   /* "bezier/_speedup.pyx":1049
  *
  *
- * def _surface_intersections_resize(             # <<<<<<<<<<<<<<
+ * def _triangle_intersections_resize(             # <<<<<<<<<<<<<<
  *         double[::1, :] nodes1, int degree1,
  *         double[::1, :] nodes2, int degree2,
  */
   __pyx_tuple__129 = PyTuple_Pack(10, __pyx_n_s_nodes1, __pyx_n_s_degree1, __pyx_n_s_nodes2, __pyx_n_s_degree2, __pyx_n_s_segment_ends_size, __pyx_n_s_segments_size, __pyx_n_s_num_intersected, __pyx_n_s_resizes_allowed, __pyx_n_s_num_segments, __pyx_n_s_msg); if (unlikely(!__pyx_tuple__129)) __PYX_ERR(0, 1049, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__129);
   __Pyx_GIVEREF(__pyx_tuple__129);
-  __pyx_codeobj__130 = (PyObject*)__Pyx_PyCode_New(8, 0, 10, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__129, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_python_bezier__speedup_pyx, __pyx_n_s_surface_intersections_resize, 1049, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__130)) __PYX_ERR(0, 1049, __pyx_L1_error)
+  __pyx_codeobj__130 = (PyObject*)__Pyx_PyCode_New(8, 0, 10, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__129, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_python_bezier__speedup_pyx, __pyx_n_s_triangle_intersections_resize, 1049, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__130)) __PYX_ERR(0, 1049, __pyx_L1_error)
 
   /* "bezier/_speedup.pyx":1079
  *
  *
- * def surface_intersections(             # <<<<<<<<<<<<<<
+ * def triangle_intersections(             # <<<<<<<<<<<<<<
  *         double[::1, :] nodes1, int degree1,
  *         double[::1, :] nodes2, int degree2,
  */
   __pyx_tuple__131 = PyTuple_Pack(14, __pyx_n_s_nodes1, __pyx_n_s_degree1, __pyx_n_s_nodes2, __pyx_n_s_degree2, __pyx_n_s_verify, __pyx_n_s_resizes_allowed, __pyx_n_s_num_nodes1, __pyx_n_s_num_nodes2, __pyx_n_s_segment_ends_size, __pyx_n_s_segments_size, __pyx_n_s_num_intersected, __pyx_n_s_contained, __pyx_n_s_status, __pyx_n_s__63); if (unlikely(!__pyx_tuple__131)) __PYX_ERR(0, 1079, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__131);
   __Pyx_GIVEREF(__pyx_tuple__131);
-  __pyx_codeobj__132 = (PyObject*)__Pyx_PyCode_New(6, 0, 14, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__131, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_python_bezier__speedup_pyx, __pyx_n_s_surface_intersections, 1079, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__132)) __PYX_ERR(0, 1079, __pyx_L1_error)
+  __pyx_codeobj__132 = (PyObject*)__Pyx_PyCode_New(6, 0, 14, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__131, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_python_bezier__speedup_pyx, __pyx_n_s_triangle_intersections, 1079, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__132)) __PYX_ERR(0, 1079, __pyx_L1_error)
 
   /* "bezier/_speedup.pyx":1156
  *
  *
- * def free_surface_intersections_workspace():             # <<<<<<<<<<<<<<
- *     bezier._surface_intersection.free_surface_intersections_workspace()
+ * def free_triangle_intersections_workspace():             # <<<<<<<<<<<<<<
+ *     bezier._triangle_intersection.free_triangle_intersections_workspace()
  *
  */
-  __pyx_codeobj__133 = (PyObject*)__Pyx_PyCode_New(0, 0, 0, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_python_bezier__speedup_pyx, __pyx_n_s_free_surface_intersections_works, 1156, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__133)) __PYX_ERR(0, 1156, __pyx_L1_error)
+  __pyx_codeobj__133 = (PyObject*)__Pyx_PyCode_New(0, 0, 0, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_python_bezier__speedup_pyx, __pyx_n_s_free_triangle_intersections_work, 1156, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__133)) __PYX_ERR(0, 1156, __pyx_L1_error)
 
   /* "bezier/_speedup.pyx":1160
  *
@@ -37491,14 +37491,14 @@ static int __Pyx_modinit_type_init_code(void) {
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__Pyx_modinit_type_init_code", 0);
   /*--- Type init code ---*/
-  if (PyType_Ready(&__pyx_type_6bezier_8_speedup___pyx_scope_struct___surface_intersections_success) < 0) __PYX_ERR(0, 970, __pyx_L1_error)
+  if (PyType_Ready(&__pyx_type_6bezier_8_speedup___pyx_scope_struct___triangle_intersections_success) < 0) __PYX_ERR(0, 970, __pyx_L1_error)
   #if PY_VERSION_HEX < 0x030800B1
-  __pyx_type_6bezier_8_speedup___pyx_scope_struct___surface_intersections_success.tp_print = 0;
+  __pyx_type_6bezier_8_speedup___pyx_scope_struct___triangle_intersections_success.tp_print = 0;
   #endif
-  if ((CYTHON_USE_TYPE_SLOTS && CYTHON_USE_PYTYPE_LOOKUP) && likely(!__pyx_type_6bezier_8_speedup___pyx_scope_struct___surface_intersections_success.tp_dictoffset && __pyx_type_6bezier_8_speedup___pyx_scope_struct___surface_intersections_success.tp_getattro == PyObject_GenericGetAttr)) {
-    __pyx_type_6bezier_8_speedup___pyx_scope_struct___surface_intersections_success.tp_getattro = __Pyx_PyObject_GenericGetAttrNoDict;
+  if ((CYTHON_USE_TYPE_SLOTS && CYTHON_USE_PYTYPE_LOOKUP) && likely(!__pyx_type_6bezier_8_speedup___pyx_scope_struct___triangle_intersections_success.tp_dictoffset && __pyx_type_6bezier_8_speedup___pyx_scope_struct___triangle_intersections_success.tp_getattro == PyObject_GenericGetAttr)) {
+    __pyx_type_6bezier_8_speedup___pyx_scope_struct___triangle_intersections_success.tp_getattro = __Pyx_PyObject_GenericGetAttrNoDict;
   }
-  __pyx_ptype_6bezier_8_speedup___pyx_scope_struct___surface_intersections_success = &__pyx_type_6bezier_8_speedup___pyx_scope_struct___surface_intersections_success;
+  __pyx_ptype_6bezier_8_speedup___pyx_scope_struct___triangle_intersections_success = &__pyx_type_6bezier_8_speedup___pyx_scope_struct___triangle_intersections_success;
   if (PyType_Ready(&__pyx_type_6bezier_8_speedup___pyx_scope_struct_1_genexpr) < 0) __PYX_ERR(0, 997, __pyx_L1_error)
   #if PY_VERSION_HEX < 0x030800B1
   __pyx_type_6bezier_8_speedup___pyx_scope_struct_1_genexpr.tp_print = 0;
@@ -38488,7 +38488,7 @@ if (!__Pyx_RefNanny) {
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
   /* "bezier/_speedup.pyx":640
- * ############################
+ * #############################
  *
  * def de_casteljau_one_round(             # <<<<<<<<<<<<<<
  *         double[::1, :] nodes, int degree,
@@ -38562,25 +38562,25 @@ if (!__Pyx_RefNanny) {
   /* "bezier/_speedup.pyx":778
  *
  *
- * def specialize_surface(             # <<<<<<<<<<<<<<
+ * def specialize_triangle(             # <<<<<<<<<<<<<<
  *         double[::1, :] nodes, int degree,
  *         double[::1] weights_a, double[::1] weights_b, double[::1] weights_c):
  */
-  __pyx_t_2 = PyCFunction_NewEx(&__pyx_mdef_6bezier_8_speedup_65specialize_surface, NULL, __pyx_n_s_bezier__speedup); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 778, __pyx_L1_error)
+  __pyx_t_2 = PyCFunction_NewEx(&__pyx_mdef_6bezier_8_speedup_65specialize_triangle, NULL, __pyx_n_s_bezier__speedup); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 778, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_specialize_surface, __pyx_t_2) < 0) __PYX_ERR(0, 778, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_specialize_triangle, __pyx_t_2) < 0) __PYX_ERR(0, 778, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
   /* "bezier/_speedup.pyx":801
  *
  *
- * def subdivide_nodes_surface(double[::1, :] nodes, int degree):             # <<<<<<<<<<<<<<
+ * def subdivide_nodes_triangle(double[::1, :] nodes, int degree):             # <<<<<<<<<<<<<<
  *     cdef int num_nodes, dimension
  *     cdef ndarray_t[double, ndim=2, mode="fortran"] nodes_a
  */
-  __pyx_t_2 = PyCFunction_NewEx(&__pyx_mdef_6bezier_8_speedup_67subdivide_nodes_surface, NULL, __pyx_n_s_bezier__speedup); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 801, __pyx_L1_error)
+  __pyx_t_2 = PyCFunction_NewEx(&__pyx_mdef_6bezier_8_speedup_67subdivide_nodes_triangle, NULL, __pyx_n_s_bezier__speedup); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 801, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_subdivide_nodes_surface, __pyx_t_2) < 0) __PYX_ERR(0, 801, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_subdivide_nodes_triangle, __pyx_t_2) < 0) __PYX_ERR(0, 801, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
   /* "bezier/_speedup.pyx":828
@@ -38608,99 +38608,99 @@ if (!__Pyx_RefNanny) {
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
   /* "bezier/_speedup.pyx":902
- * #########################################
+ * ##########################################
  *
- * def newton_refine_surface(             # <<<<<<<<<<<<<<
+ * def newton_refine_triangle(             # <<<<<<<<<<<<<<
  *         double[::1, :] nodes, int degree,
  *         double x_val, double y_val, double s, double t):
  */
-  __pyx_t_2 = PyCFunction_NewEx(&__pyx_mdef_6bezier_8_speedup_73newton_refine_surface, NULL, __pyx_n_s_bezier__speedup); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 902, __pyx_L1_error)
+  __pyx_t_2 = PyCFunction_NewEx(&__pyx_mdef_6bezier_8_speedup_73newton_refine_triangle, NULL, __pyx_n_s_bezier__speedup); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 902, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_newton_refine_surface, __pyx_t_2) < 0) __PYX_ERR(0, 902, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_newton_refine_triangle, __pyx_t_2) < 0) __PYX_ERR(0, 902, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
   /* "bezier/_speedup.pyx":926
  *
  *
- * def locate_point_surface(             # <<<<<<<<<<<<<<
+ * def locate_point_triangle(             # <<<<<<<<<<<<<<
  *         double[::1, :] nodes, int degree, double x_val, double y_val):
  *     cdef int num_nodes
  */
-  __pyx_t_2 = PyCFunction_NewEx(&__pyx_mdef_6bezier_8_speedup_75locate_point_surface, NULL, __pyx_n_s_bezier__speedup); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 926, __pyx_L1_error)
+  __pyx_t_2 = PyCFunction_NewEx(&__pyx_mdef_6bezier_8_speedup_75locate_point_triangle, NULL, __pyx_n_s_bezier__speedup); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 926, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_locate_point_surface, __pyx_t_2) < 0) __PYX_ERR(0, 926, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_locate_point_triangle, __pyx_t_2) < 0) __PYX_ERR(0, 926, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
   /* "bezier/_speedup.pyx":950
  *
  *
- * def reset_surface_workspaces(int segment_ends_size=-1, int segments_size=-1):             # <<<<<<<<<<<<<<
+ * def reset_triangle_workspaces(int segment_ends_size=-1, int segments_size=-1):             # <<<<<<<<<<<<<<
  *     global SEGMENT_ENDS_WORKSPACE
  *     global SEGMENTS_WORKSPACE
  */
-  __pyx_t_2 = PyCFunction_NewEx(&__pyx_mdef_6bezier_8_speedup_77reset_surface_workspaces, NULL, __pyx_n_s_bezier__speedup); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 950, __pyx_L1_error)
+  __pyx_t_2 = PyCFunction_NewEx(&__pyx_mdef_6bezier_8_speedup_77reset_triangle_workspaces, NULL, __pyx_n_s_bezier__speedup); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 950, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_reset_surface_workspaces, __pyx_t_2) < 0) __PYX_ERR(0, 950, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_reset_triangle_workspaces, __pyx_t_2) < 0) __PYX_ERR(0, 950, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
   /* "bezier/_speedup.pyx":959
  *
  *
- * def surface_workspace_sizes():             # <<<<<<<<<<<<<<
+ * def triangle_workspace_sizes():             # <<<<<<<<<<<<<<
  *     global SEGMENT_ENDS_WORKSPACE
  *     global SEGMENTS_WORKSPACE
  */
-  __pyx_t_2 = PyCFunction_NewEx(&__pyx_mdef_6bezier_8_speedup_79surface_workspace_sizes, NULL, __pyx_n_s_bezier__speedup); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 959, __pyx_L1_error)
+  __pyx_t_2 = PyCFunction_NewEx(&__pyx_mdef_6bezier_8_speedup_79triangle_workspace_sizes, NULL, __pyx_n_s_bezier__speedup); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 959, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_surface_workspace_sizes, __pyx_t_2) < 0) __PYX_ERR(0, 959, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_triangle_workspace_sizes, __pyx_t_2) < 0) __PYX_ERR(0, 959, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
   /* "bezier/_speedup.pyx":970
  *
  *
- * def _surface_intersections_success(             # <<<<<<<<<<<<<<
+ * def _triangle_intersections_success(             # <<<<<<<<<<<<<<
  *         double[::1, :] nodes1, int degree1,
  *         double[::1, :] nodes2, int degree2,
  */
-  __pyx_t_2 = PyCFunction_NewEx(&__pyx_mdef_6bezier_8_speedup_81_surface_intersections_success, NULL, __pyx_n_s_bezier__speedup); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 970, __pyx_L1_error)
+  __pyx_t_2 = PyCFunction_NewEx(&__pyx_mdef_6bezier_8_speedup_81_triangle_intersections_success, NULL, __pyx_n_s_bezier__speedup); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 970, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_surface_intersections_success, __pyx_t_2) < 0) __PYX_ERR(0, 970, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_triangle_intersections_success_2, __pyx_t_2) < 0) __PYX_ERR(0, 970, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
   /* "bezier/_speedup.pyx":1049
  *
  *
- * def _surface_intersections_resize(             # <<<<<<<<<<<<<<
+ * def _triangle_intersections_resize(             # <<<<<<<<<<<<<<
  *         double[::1, :] nodes1, int degree1,
  *         double[::1, :] nodes2, int degree2,
  */
-  __pyx_t_2 = PyCFunction_NewEx(&__pyx_mdef_6bezier_8_speedup_83_surface_intersections_resize, NULL, __pyx_n_s_bezier__speedup); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 1049, __pyx_L1_error)
+  __pyx_t_2 = PyCFunction_NewEx(&__pyx_mdef_6bezier_8_speedup_83_triangle_intersections_resize, NULL, __pyx_n_s_bezier__speedup); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 1049, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_surface_intersections_resize, __pyx_t_2) < 0) __PYX_ERR(0, 1049, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_triangle_intersections_resize, __pyx_t_2) < 0) __PYX_ERR(0, 1049, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
   /* "bezier/_speedup.pyx":1079
  *
  *
- * def surface_intersections(             # <<<<<<<<<<<<<<
+ * def triangle_intersections(             # <<<<<<<<<<<<<<
  *         double[::1, :] nodes1, int degree1,
  *         double[::1, :] nodes2, int degree2,
  */
-  __pyx_t_2 = PyCFunction_NewEx(&__pyx_mdef_6bezier_8_speedup_85surface_intersections, NULL, __pyx_n_s_bezier__speedup); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 1079, __pyx_L1_error)
+  __pyx_t_2 = PyCFunction_NewEx(&__pyx_mdef_6bezier_8_speedup_85triangle_intersections, NULL, __pyx_n_s_bezier__speedup); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 1079, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_surface_intersections, __pyx_t_2) < 0) __PYX_ERR(0, 1079, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_triangle_intersections, __pyx_t_2) < 0) __PYX_ERR(0, 1079, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
   /* "bezier/_speedup.pyx":1156
  *
  *
- * def free_surface_intersections_workspace():             # <<<<<<<<<<<<<<
- *     bezier._surface_intersection.free_surface_intersections_workspace()
+ * def free_triangle_intersections_workspace():             # <<<<<<<<<<<<<<
+ *     bezier._triangle_intersection.free_triangle_intersections_workspace()
  *
  */
-  __pyx_t_2 = PyCFunction_NewEx(&__pyx_mdef_6bezier_8_speedup_87free_surface_intersections_workspace, NULL, __pyx_n_s_bezier__speedup); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 1156, __pyx_L1_error)
+  __pyx_t_2 = PyCFunction_NewEx(&__pyx_mdef_6bezier_8_speedup_87free_triangle_intersections_workspace, NULL, __pyx_n_s_bezier__speedup); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 1156, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_free_surface_intersections_works, __pyx_t_2) < 0) __PYX_ERR(0, 1156, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_free_triangle_intersections_work, __pyx_t_2) < 0) __PYX_ERR(0, 1156, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
   /* "bezier/_speedup.pyx":1160

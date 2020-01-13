@@ -13,7 +13,7 @@
 r"""Helper for B |eacute| zier Curves, Triangles, and Higher Order Objects.
 
 Intended to perform basic operations on B |eacute| zier objects such
-as intersections, length/area/etc. computations, subdivision,
+as intersections, length / area / etc. computations, subdivision,
 implicitization and other relevant information.
 
 Plotting utilities are also provided.
@@ -23,6 +23,8 @@ Plotting utilities are also provided.
 
 .. autoclass:: UnsupportedDegree
    :members:
+
+.. autoclass:: Surface
 """
 
 import os
@@ -32,10 +34,11 @@ import pkg_resources
 # NOTE: ``__config__`` **must** be the first import because it (may)
 #       modify the search path used to locate shared libraries.
 from bezier import __config__
+from bezier._legacy import Surface
 from bezier._py_helpers import UnsupportedDegree
 from bezier.curve import Curve
 from bezier.curved_polygon import CurvedPolygon
-from bezier.surface import Surface
+from bezier.triangle import Triangle
 
 try:
     import bezier._speedup  # noqa: F401
@@ -49,7 +52,7 @@ except ImportError as exc:  # pragma: NO COVER
 #       and related. This is **entirely** to accomodate builds where
 #       ``bezier`` is imported from source (and not installed).
 __author__ = "Danny Hermes"
-__version__ = "0.11.1.dev1"
+__version__ = "0.12.0.dev1"
 """str: The current version of :mod:`bezier`."""
 __all__ = [
     "__author__",
@@ -60,6 +63,7 @@ __all__ = [
     "get_include",
     "get_lib",
     "Surface",
+    "Triangle",
     "UnsupportedDegree",
 ]
 

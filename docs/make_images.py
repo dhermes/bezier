@@ -300,14 +300,14 @@ def curve_intersect(curve1, curve2, s_vals):
     save_image(ax.figure, "curve_intersect.png")
 
 
-def surface_constructor(surface):
-    """Image for :class`.Surface` docstring."""
+def triangle_constructor(triangle):
+    """Image for :class`.Triangle` docstring."""
     if NO_IMAGES:
         return
 
-    ax = surface.plot(256, with_nodes=True)
+    ax = triangle.plot(256, with_nodes=True)
     line = ax.lines[0]
-    nodes = surface._nodes
+    nodes = triangle._nodes
     add_patch(ax, nodes[:, (0, 1, 2, 5)], line.get_color())
     delta = 1.0 / 32.0
     ax.text(
@@ -361,30 +361,30 @@ def surface_constructor(surface):
     ax.axis("scaled")
     ax.set_xlim(-0.125, 1.125)
     ax.set_ylim(-0.125, 1.125)
-    save_image(ax.figure, "surface_constructor.png")
+    save_image(ax.figure, "triangle_constructor.png")
 
 
-def surface_evaluate_barycentric(surface, point):
-    """Image for :meth`.Surface.evaluate_barycentric` docstring."""
+def triangle_evaluate_barycentric(triangle, point):
+    """Image for :meth`.Triangle.evaluate_barycentric` docstring."""
     if NO_IMAGES:
         return
 
-    ax = surface.plot(256)
+    ax = triangle.plot(256)
     ax.plot(
         point[0, :], point[1, :], color="black", linestyle="None", marker="o"
     )
     ax.axis("scaled")
     ax.set_xlim(-0.125, 1.125)
     ax.set_ylim(-0.125, 1.125)
-    save_image(ax.figure, "surface_evaluate_barycentric.png")
+    save_image(ax.figure, "triangle_evaluate_barycentric.png")
 
 
-def surface_evaluate_cartesian_multi(surface, points):
-    """Image for :meth`.Surface.evaluate_cartesian_multi` docstring."""
+def triangle_evaluate_cartesian_multi(triangle, points):
+    """Image for :meth`.Triangle.evaluate_cartesian_multi` docstring."""
     if NO_IMAGES:
         return
 
-    ax = surface.plot(256)
+    ax = triangle.plot(256)
     ax.plot(
         points[0, :], points[1, :], color="black", linestyle="None", marker="o"
     )
@@ -417,15 +417,15 @@ def surface_evaluate_cartesian_multi(surface, points):
     ax.axis("scaled")
     ax.set_xlim(-3.125, 2.375)
     ax.set_ylim(-0.25, 2.125)
-    save_image(ax.figure, "surface_evaluate_cartesian_multi.png")
+    save_image(ax.figure, "triangle_evaluate_cartesian_multi.png")
 
 
-def surface_evaluate_barycentric_multi(surface, points):
-    """Image for :meth`.Surface.evaluate_barycentric_multi` docstring."""
+def triangle_evaluate_barycentric_multi(triangle, points):
+    """Image for :meth`.Triangle.evaluate_barycentric_multi` docstring."""
     if NO_IMAGES:
         return
 
-    ax = surface.plot(256)
+    ax = triangle.plot(256)
     ax.plot(
         points[0, :], points[1, :], color="black", linestyle="None", marker="o"
     )
@@ -466,39 +466,39 @@ def surface_evaluate_barycentric_multi(surface, points):
     ax.axis("scaled")
     ax.set_xlim(-3.125, 2.125)
     ax.set_ylim(-0.3125, 2.125)
-    save_image(ax.figure, "surface_evaluate_barycentric_multi.png")
+    save_image(ax.figure, "triangle_evaluate_barycentric_multi.png")
 
 
-def surface_is_valid1(surface):
-    """Image for :meth`.Surface.is_valid` docstring."""
+def triangle_is_valid1(triangle):
+    """Image for :meth`.Triangle.is_valid` docstring."""
     if NO_IMAGES:
         return
 
-    ax = surface.plot(256)
+    ax = triangle.plot(256)
     ax.axis("scaled")
     ax.set_xlim(-0.125, 2.125)
     ax.set_ylim(-0.125, 2.125)
-    save_image(ax.figure, "surface_is_valid1.png")
+    save_image(ax.figure, "triangle_is_valid1.png")
 
 
-def surface_is_valid2(surface):
-    """Image for :meth`.Surface.is_valid` docstring."""
+def triangle_is_valid2(triangle):
+    """Image for :meth`.Triangle.is_valid` docstring."""
     if NO_IMAGES:
         return
 
-    ax = surface.plot(256)
+    ax = triangle.plot(256)
     ax.axis("scaled")
     ax.set_xlim(-0.125, 1.0625)
     ax.set_ylim(-0.0625, 1.0625)
-    save_image(ax.figure, "surface_is_valid2.png")
+    save_image(ax.figure, "triangle_is_valid2.png")
 
 
-def surface_is_valid3(surface):
-    """Image for :meth`.Surface.is_valid` docstring."""
+def triangle_is_valid3(triangle):
+    """Image for :meth`.Triangle.is_valid` docstring."""
     if NO_IMAGES:
         return
 
-    edge1, edge2, edge3 = surface.edges
+    edge1, edge2, edge3 = triangle.edges
     N = 128
     # Compute points on each edge.
     std_s = np.linspace(0.0, 1.0, N + 1)
@@ -515,8 +515,8 @@ def surface_is_valid3(surface):
     jacobian_zero_params[:N, 1] = t_top
     jacobian_zero_params[N:, 0] = s_vals[-2::-1]
     jacobian_zero_params[N:, 1] = t_bottom[-2::-1]
-    jac_edge = surface.evaluate_cartesian_multi(jacobian_zero_params)
-    # Add the surface to the plot and add a dashed line
+    jac_edge = triangle.evaluate_cartesian_multi(jacobian_zero_params)
+    # Add the triangle to the plot and add a dashed line
     # for each "true" edge.
     figure = plt.figure()
     ax = figure.gca()
@@ -530,22 +530,22 @@ def surface_is_valid3(surface):
     ax.axis("scaled")
     ax.set_xlim(-0.0625, 1.0625)
     ax.set_ylim(-0.0625, 1.0625)
-    save_image(ax.figure, "surface_is_valid3.png")
+    save_image(ax.figure, "triangle_is_valid3.png")
 
 
-def surface_subdivide1():
-    """Image for :meth`.Surface.subdivide` docstring."""
+def triangle_subdivide1():
+    """Image for :meth`.Triangle.subdivide` docstring."""
     if NO_IMAGES:
         return
 
-    surface = bezier.Surface.from_nodes(
+    triangle = bezier.Triangle.from_nodes(
         np.asfortranarray([[0.0, 1.0, 0.0], [0.0, 0.0, 1.0]])
     )
-    surf_a, surf_b, surf_c, surf_d = surface.subdivide()
+    triangle_a, triangle_b, triangle_c, triangle_d = triangle.subdivide()
     figure, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2)
     for ax in (ax1, ax2, ax3, ax4):
-        surface.plot(2, ax=ax)
-    surf_a.plot(2, ax=ax1)
+        triangle.plot(2, ax=ax)
+    triangle_a.plot(2, ax=ax1)
     ax1.text(
         1.0 / 6.0,
         1.0 / 6.0,
@@ -554,7 +554,7 @@ def surface_subdivide1():
         verticalalignment="center",
         horizontalalignment="center",
     )
-    surf_b.plot(2, ax=ax2)
+    triangle_b.plot(2, ax=ax2)
     ax2.text(
         1.0 / 3.0,
         1.0 / 3.0,
@@ -563,7 +563,7 @@ def surface_subdivide1():
         verticalalignment="center",
         horizontalalignment="center",
     )
-    surf_c.plot(2, ax=ax3)
+    triangle_c.plot(2, ax=ax3)
     ax3.text(
         2.0 / 3.0,
         1.0 / 6.0,
@@ -572,7 +572,7 @@ def surface_subdivide1():
         verticalalignment="center",
         horizontalalignment="center",
     )
-    surf_d.plot(2, ax=ax4)
+    triangle_d.plot(2, ax=ax4)
     ax4.text(
         1.0 / 6.0,
         2.0 / 3.0,
@@ -583,11 +583,11 @@ def surface_subdivide1():
     )
     for ax in (ax1, ax2, ax3, ax4):
         ax.axis("scaled")
-    save_image(figure, "surface_subdivide1")
+    save_image(figure, "triangle_subdivide1")
 
 
-def add_edges(ax, surface, s_vals, color):
-    edge1, edge2, edge3 = surface.edges
+def add_edges(ax, triangle, s_vals, color):
+    edge1, edge2, edge3 = triangle.edges
     # Compute points on each edge.
     points1 = edge1.evaluate_multi(s_vals)
     points2 = edge2.evaluate_multi(s_vals)
@@ -598,8 +598,8 @@ def add_edges(ax, surface, s_vals, color):
     ax.plot(points3[0, :], points3[1, :], color=color)
 
 
-def surface_subdivide2(surface, sub_surface_b):
-    """Image for :meth`.Surface.subdivide` docstring."""
+def triangle_subdivide2(triangle, sub_triangle_b):
+    """Image for :meth`.Triangle.subdivide` docstring."""
     if NO_IMAGES:
         return
 
@@ -609,18 +609,18 @@ def surface_subdivide2(surface, sub_surface_b):
     colors = seaborn.husl_palette(6)
     N = 128
     s_vals = np.linspace(0.0, 1.0, N + 1)
-    # Add edges from surface.
-    add_edges(ax, surface, s_vals, colors[4])
-    # Now do the same for surface B.
-    add_edges(ax, sub_surface_b, s_vals, colors[0])
-    # Add the control points polygon for the original surface.
-    nodes = surface._nodes[:, (0, 2, 4, 5, 0)]
+    # Add edges from triangle.
+    add_edges(ax, triangle, s_vals, colors[4])
+    # Now do the same for triangle B.
+    add_edges(ax, sub_triangle_b, s_vals, colors[0])
+    # Add the control points polygon for the original triangle.
+    nodes = triangle._nodes[:, (0, 2, 4, 5, 0)]
     add_patch(ax, nodes, colors[2], with_nodes=False)
-    # Add the control points polygon for the sub-surface.
-    nodes = sub_surface_b._nodes[:, (0, 1, 2, 5, 3, 0)]
+    # Add the control points polygon for the sub-triangle.
+    nodes = sub_triangle_b._nodes[:, (0, 1, 2, 5, 3, 0)]
     add_patch(ax, nodes, colors[1], with_nodes=False)
     # Plot **all** the nodes.
-    sub_nodes = sub_surface_b._nodes
+    sub_nodes = sub_triangle_b._nodes
     ax.plot(
         sub_nodes[0, :],
         sub_nodes[1, :],
@@ -633,7 +633,7 @@ def surface_subdivide2(surface, sub_surface_b):
     ax.axis("scaled")
     ax.set_xlim(-1.125, 2.125)
     ax.set_ylim(-0.125, 4.125)
-    save_image(ax.figure, "surface_subdivide2")
+    save_image(ax.figure, "triangle_subdivide2")
 
 
 def curved_polygon_constructor1(curved_poly):
@@ -660,19 +660,19 @@ def curved_polygon_constructor2(curved_poly):
     save_image(ax.figure, "curved_polygon_constructor2.png")
 
 
-def surface_locate(surface, point):
-    """Image for :meth`.Surface.locate` docstring."""
+def triangle_locate(triangle, point):
+    """Image for :meth`.Triangle.locate` docstring."""
     if NO_IMAGES:
         return
 
-    ax = surface.plot(256)
+    ax = triangle.plot(256)
     ax.plot(
         point[0, :], point[1, :], color="black", linestyle="None", marker="o"
     )
     ax.axis("scaled")
     ax.set_xlim(-0.0625, 1.0625)
     ax.set_ylim(-0.1875, 1.0625)
-    save_image(ax.figure, "surface_locate.png")
+    save_image(ax.figure, "triangle_locate.png")
 
 
 def curve_specialize(curve, new_curve):
@@ -710,17 +710,17 @@ def curve_specialize(curve, new_curve):
     save_image(ax.figure, "curve_specialize.png")
 
 
-def newton_refine_surface(surface, x_val, y_val, s, t, new_s, new_t):
-    """Image for :func:`._py_surface_helpers.newton_refine` docstring."""
+def newton_refine_triangle(triangle, x_val, y_val, s, t, new_s, new_t):
+    """Image for :func:`._py_triangle_helpers.newton_refine` docstring."""
     if NO_IMAGES:
         return
 
     figure, (ax1, ax2) = plt.subplots(1, 2)
     # Plot features of the parameter space in ax1.
-    tri_surf = bezier.Surface.from_nodes(
+    linear_triangle = bezier.Triangle.from_nodes(
         np.asfortranarray([[0.0, 1.0, 0.0], [0.0, 0.0, 1.0]])
     )
-    tri_surf.plot(2, ax=ax1)
+    linear_triangle.plot(2, ax=ax1)
     ax1.plot([0.25], [0.5], marker="H")
     ax1.plot([s], [t], color="black", linestyle="None", marker="o")
     ax1.plot(
@@ -733,8 +733,8 @@ def newton_refine_surface(surface, x_val, y_val, s, t, new_s, new_t):
         markerfacecolor="None",
     )
     # Plot the equivalent output in ax2.
-    surface.plot(256, ax=ax2)
-    points = surface.evaluate_cartesian_multi(
+    triangle.plot(256, ax=ax2)
+    points = triangle.evaluate_cartesian_multi(
         np.asfortranarray([[s, t], [new_s, new_t]])
     )
     ax2.plot([x_val], [y_val], marker="H")
@@ -761,21 +761,21 @@ def newton_refine_surface(surface, x_val, y_val, s, t, new_s, new_t):
     ax2.axis("scaled")
     ax2.set_xlim(-0.125, 2.125)
     ax2.set_ylim(-0.125, 2.125)
-    save_image(figure, "newton_refine_surface.png")
+    save_image(figure, "newton_refine_triangle.png")
 
 
-def classify_help(s, curve1, surface1, curve2, surface2, interior, ax=None):
-    assert surface1.is_valid
-    edge1, _, _ = surface1.edges
+def classify_help(s, curve1, triangle1, curve2, triangle2, interior, ax=None):
+    assert triangle1.is_valid
+    edge1, _, _ = triangle1.edges
     assert np.all(edge1._nodes == curve1._nodes)
-    assert surface2.is_valid
-    edge2, _, _ = surface2.edges
+    assert triangle2.is_valid
+    edge2, _, _ = triangle2.edges
     assert np.all(edge2._nodes == curve2._nodes)
-    ax = surface1.plot(256, ax=ax)
-    # Manually reduce the alpha on the surface patch(es).
+    ax = triangle1.plot(256, ax=ax)
+    # Manually reduce the alpha on the triangle patch(es).
     ax.patches[-1].set_alpha(0.1875)
     color1 = ax.lines[-1].get_color()
-    surface2.plot(256, ax=ax)
+    triangle2.plot(256, ax=ax)
     ax.patches[-1].set_alpha(0.1875)
     color2 = ax.lines[-1].get_color()
     # Remove the existing boundary (lines) and just add our edges.
@@ -796,16 +796,16 @@ def classify_help(s, curve1, surface1, curve2, surface2, interior, ax=None):
 
 
 def classify_intersection1(s, curve1, tangent1, curve2, tangent2):
-    """Image for :func:`._py_surface_helpers.classify_intersection` docs."""
+    """Image for :func:`._py_triangle_helpers.classify_intersection` docs."""
     if NO_IMAGES:
         return
 
-    surface1 = bezier.Surface.from_nodes(
+    triangle1 = bezier.Triangle.from_nodes(
         np.asfortranarray(
             [[1.0, 1.75, 2.0, 1.0, 1.5, 1.0], [0.0, 0.25, 1.0, 1.0, 1.5, 2.0]]
         )
     )
-    surface2 = bezier.Surface.from_nodes(
+    triangle2 = bezier.Triangle.from_nodes(
         np.asfortranarray(
             [
                 [0.0, 1.6875, 2.0, 0.25, 1.25, 0.5],
@@ -813,7 +813,7 @@ def classify_intersection1(s, curve1, tangent1, curve2, tangent2):
             ]
         )
     )
-    ax = classify_help(s, curve1, surface1, curve2, surface2, 0)
+    ax = classify_help(s, curve1, triangle1, curve2, triangle2, 0)
     (int_x,), (int_y,) = curve1.evaluate(s)
     # Remove the alpha from the color
     color1 = ax.patches[0].get_facecolor()[:3]
@@ -838,32 +838,32 @@ def classify_intersection1(s, curve1, tangent1, curve2, tangent2):
 
 
 def classify_intersection2(s, curve1, curve2):
-    """Image for :func:`._py_surface_helpers.classify_intersection` docs."""
+    """Image for :func:`._py_triangle_helpers.classify_intersection` docs."""
     if NO_IMAGES:
         return
 
-    surface1 = bezier.Surface.from_nodes(
+    triangle1 = bezier.Triangle.from_nodes(
         np.asfortranarray(
             [[1.0, 1.5, 2.0, 1.25, 1.75, 1.5], [0.0, 1.0, 0.0, 1.0, 1.0, 2.0]]
         )
     )
-    surface2 = bezier.Surface.from_nodes(
+    triangle2 = bezier.Triangle.from_nodes(
         np.asfortranarray(
             [[0.0, 1.5, 3.0, 0.75, 2.25, 1.5], [0.0, 1.0, 0.0, 2.0, 2.0, 4.0]]
         )
     )
-    ax = classify_help(s, curve1, surface1, curve2, surface2, 1)
+    ax = classify_help(s, curve1, triangle1, curve2, triangle2, 1)
     ax.set_xlim(-0.0625, 3.0625)
     ax.set_ylim(-0.0625, 0.5625)
     save_image(ax.figure, "classify_intersection2.png")
 
 
 def classify_intersection3(s, curve1, curve2):
-    """Image for :func:`._py_surface_helpers.classify_intersection` docs."""
+    """Image for :func:`._py_triangle_helpers.classify_intersection` docs."""
     if NO_IMAGES:
         return
 
-    surface1 = bezier.Surface.from_nodes(
+    triangle1 = bezier.Triangle.from_nodes(
         np.asfortranarray(
             [
                 [2.0, 1.5, 1.0, 1.75, 1.25, 1.5],
@@ -871,7 +871,7 @@ def classify_intersection3(s, curve1, curve2):
             ]
         )
     )
-    surface2 = bezier.Surface.from_nodes(
+    triangle2 = bezier.Triangle.from_nodes(
         np.asfortranarray(
             [
                 [3.0, 1.5, 0.0, 2.25, 0.75, 1.5],
@@ -879,18 +879,18 @@ def classify_intersection3(s, curve1, curve2):
             ]
         )
     )
-    ax = classify_help(s, curve1, surface1, curve2, surface2, 0)
+    ax = classify_help(s, curve1, triangle1, curve2, triangle2, 0)
     ax.set_xlim(-0.0625, 3.0625)
     ax.set_ylim(-0.0625, 0.5625)
     save_image(ax.figure, "classify_intersection3.png")
 
 
 def classify_intersection4(s, curve1, curve2):
-    """Image for :func:`._py_surface_helpers.classify_intersection` docs."""
+    """Image for :func:`._py_triangle_helpers.classify_intersection` docs."""
     if NO_IMAGES:
         return
 
-    surface1 = bezier.Surface.from_nodes(
+    triangle1 = bezier.Triangle.from_nodes(
         np.asfortranarray(
             [
                 [2.0, 1.5, 1.0, 1.75, 1.25, 1.5],
@@ -898,23 +898,23 @@ def classify_intersection4(s, curve1, curve2):
             ]
         )
     )
-    surface2 = bezier.Surface.from_nodes(
+    triangle2 = bezier.Triangle.from_nodes(
         np.asfortranarray(
             [[0.0, 1.5, 3.0, 0.75, 2.25, 1.5], [0.0, 1.0, 0.0, 2.0, 2.0, 4.0]]
         )
     )
-    ax = classify_help(s, curve1, surface1, curve2, surface2, None)
+    ax = classify_help(s, curve1, triangle1, curve2, triangle2, None)
     ax.set_xlim(-0.0625, 3.0625)
     ax.set_ylim(-0.0625, 0.5625)
     save_image(ax.figure, "classify_intersection4.png")
 
 
 def classify_intersection5(s, curve1, curve2):
-    """Image for :func:`._py_surface_helpers.classify_intersection` docs."""
+    """Image for :func:`._py_triangle_helpers.classify_intersection` docs."""
     if NO_IMAGES:
         return
 
-    surface1 = bezier.Surface.from_nodes(
+    triangle1 = bezier.Triangle.from_nodes(
         np.asfortranarray(
             [
                 [1.0, 1.5, 2.0, 1.25, 1.75, 1.5],
@@ -922,7 +922,7 @@ def classify_intersection5(s, curve1, curve2):
             ]
         )
     )
-    surface2 = bezier.Surface.from_nodes(
+    triangle2 = bezier.Triangle.from_nodes(
         np.asfortranarray(
             [
                 [3.0, 1.5, 0.0, 2.25, 0.75, 1.5],
@@ -931,15 +931,15 @@ def classify_intersection5(s, curve1, curve2):
         )
     )
     figure, (ax1, ax2) = plt.subplots(2, 1)
-    classify_help(s, curve1, surface1, curve2, surface2, 0, ax=ax1)
-    classify_help(s, curve1, surface1, curve2, surface2, 1, ax=ax2)
+    classify_help(s, curve1, triangle1, curve2, triangle2, 0, ax=ax1)
+    classify_help(s, curve1, triangle1, curve2, triangle2, 1, ax=ax2)
     # Remove the alpha from the color
     color1 = ax1.patches[0].get_facecolor()[:3]
     color2 = ax1.patches[1].get_facecolor()[:3]
     # Now add the "degenerate" intersection polygons. The first
     # comes from specializing to
     # left1(0.5, 1.0)-left2(0.0, 0.25)-right1(0.375, 0.5)
-    surface3 = bezier.Surface.from_nodes(
+    triangle3 = bezier.Triangle.from_nodes(
         np.asfortranarray(
             [
                 [1.5, 1.75, 2.0, 1.6875, 1.9375, 1.875],
@@ -948,10 +948,10 @@ def classify_intersection5(s, curve1, curve2):
         )
     )
     # NOTE: We don't require the intersection polygon be valid.
-    surface3.plot(256, ax=ax1)
+    triangle3.plot(256, ax=ax1)
     # The second comes from specializing to
     # left1(0.0, 0.5)-right1(0.5, 0.625)-left3(0.75, 1.0)
-    surface4 = bezier.Surface.from_nodes(
+    triangle4 = bezier.Triangle.from_nodes(
         np.asfortranarray(
             [
                 [1.0, 1.25, 1.5, 1.0625, 1.3125, 1.125],
@@ -960,7 +960,7 @@ def classify_intersection5(s, curve1, curve2):
         )
     )
     # NOTE: We don't require the intersection polygon be valid.
-    surface4.plot(256, ax=ax2)
+    triangle4.plot(256, ax=ax2)
     (int_x,), (int_y,) = curve1.evaluate(s)
     ax1.plot([int_x], [int_y], color=color1, linestyle="None", marker="o")
     ax2.plot([int_x], [int_y], color=color2, linestyle="None", marker="o")
@@ -974,11 +974,11 @@ def classify_intersection5(s, curve1, curve2):
 
 
 def classify_intersection6(s, curve1, curve2):
-    """Image for :func:`._py_surface_helpers.classify_intersection` docs."""
+    """Image for :func:`._py_triangle_helpers.classify_intersection` docs."""
     if NO_IMAGES:
         return
 
-    surface1 = bezier.Surface.from_nodes(
+    triangle1 = bezier.Triangle.from_nodes(
         np.asfortranarray(
             [
                 [-0.125, -0.125, 0.375, -0.0625, 0.1875, 0.0],
@@ -986,7 +986,7 @@ def classify_intersection6(s, curve1, curve2):
             ]
         )
     )
-    surface2 = bezier.Surface.from_nodes(
+    triangle2 = bezier.Triangle.from_nodes(
         np.asfortranarray(
             [
                 [-0.25, -0.25, 0.75, 0.125, 0.625, 0.5],
@@ -994,18 +994,18 @@ def classify_intersection6(s, curve1, curve2):
             ]
         )
     )
-    ax = classify_help(s, curve1, surface1, curve2, surface2, None)
+    ax = classify_help(s, curve1, triangle1, curve2, triangle2, None)
     ax.set_xlim(-0.3125, 1.0625)
     ax.set_ylim(-0.0625, 0.3125)
     save_image(ax.figure, "classify_intersection6.png")
 
 
 def classify_intersection7(s, curve1a, curve1b, curve2):
-    """Image for :func:`._py_surface_helpers.classify_intersection` docs."""
+    """Image for :func:`._py_triangle_helpers.classify_intersection` docs."""
     if NO_IMAGES:
         return
 
-    surface1 = bezier.Surface.from_nodes(
+    triangle1 = bezier.Triangle.from_nodes(
         np.asfortranarray(
             [
                 [0.0, 4.5, 9.0, 0.0, 4.5, 0.0],
@@ -1013,7 +1013,7 @@ def classify_intersection7(s, curve1a, curve1b, curve2):
             ]
         )
     )
-    surface2 = bezier.Surface.from_nodes(
+    triangle2 = bezier.Triangle.from_nodes(
         np.asfortranarray(
             [
                 [11.25, 9.0, 2.75, 8.125, 3.875, 5.0],
@@ -1022,10 +1022,12 @@ def classify_intersection7(s, curve1a, curve1b, curve2):
         )
     )
     figure, (ax1, ax2) = plt.subplots(2, 1)
-    classify_help(s, curve1a, surface1, curve2, surface2, None, ax=ax1)
-    surface1._nodes = np.asfortranarray(surface1._nodes[:, (2, 4, 5, 1, 3, 0)])
-    surface1._edges = None
-    classify_help(0.0, curve1b, surface1, curve2, surface2, 0, ax=ax2)
+    classify_help(s, curve1a, triangle1, curve2, triangle2, None, ax=ax1)
+    triangle1._nodes = np.asfortranarray(
+        triangle1._nodes[:, (2, 4, 5, 1, 3, 0)]
+    )
+    triangle1._edges = None
+    classify_help(0.0, curve1b, triangle1, curve2, triangle2, 0, ax=ax2)
     for ax in (ax1, ax2):
         ax.set_xlim(-0.125, 11.5)
         ax.set_ylim(-0.125, 2.625)
@@ -1128,12 +1130,12 @@ def newton_refine_curve_cusp(curve, s_vals):
     save_image(ax.figure, "newton_refine_curve_cusp.png")
 
 
-def classify_intersection8(s, curve1, surface1, curve2, surface2):
-    """Image for :func:`._py_surface_helpers.classify_intersection` docs."""
+def classify_intersection8(s, curve1, triangle1, curve2, triangle2):
+    """Image for :func:`._py_triangle_helpers.classify_intersection` docs."""
     if NO_IMAGES:
         return
 
-    ax = classify_help(s, curve1, surface1, curve2, surface2, None)
+    ax = classify_help(s, curve1, triangle1, curve2, triangle2, None)
     ax.set_xlim(-1.125, 1.125)
     ax.set_ylim(-0.125, 1.125)
     save_image(ax.figure, "classify_intersection8.png")
@@ -1176,11 +1178,11 @@ def _edges_classify_intersection9():
 
 
 def classify_intersection9(s, curve1, curve2):
-    """Image for :func:`._py_surface_helpers.classify_intersection` docs."""
+    """Image for :func:`._py_triangle_helpers.classify_intersection` docs."""
     if NO_IMAGES:
         return
 
-    surface1 = bezier.Surface.from_nodes(
+    triangle1 = bezier.Triangle.from_nodes(
         np.asfortranarray(
             [
                 [0.0, 20.0, 40.0, 10.0, 30.0, 20.0],
@@ -1188,7 +1190,7 @@ def classify_intersection9(s, curve1, curve2):
             ]
         )
     )
-    surface2 = bezier.Surface.from_nodes(
+    triangle2 = bezier.Triangle.from_nodes(
         np.asfortranarray(
             [
                 [40.0, 20.0, 0.0, 30.0, 10.0, 20.0],
@@ -1197,8 +1199,8 @@ def classify_intersection9(s, curve1, curve2):
         )
     )
     figure, (ax1, ax2) = plt.subplots(1, 2)
-    classify_help(s, curve1, surface1, curve2, surface2, 0, ax=ax1)
-    classify_help(s, curve1, surface1, curve2, surface2, 1, ax=ax2)
+    classify_help(s, curve1, triangle1, curve2, triangle2, 0, ax=ax1)
+    classify_help(s, curve1, triangle1, curve2, triangle2, 1, ax=ax2)
     # Remove the alpha from the color
     color1 = ax1.patches[0].get_facecolor()[:3]
     color2 = ax1.patches[1].get_facecolor()[:3]
@@ -1240,15 +1242,15 @@ def curve_elevate(curve, elevated):
     save_image(figure, "curve_elevate.png")
 
 
-def surface_elevate(surface, elevated):
-    """Image for :meth:`.surface.Surface.elevate` docstring."""
+def triangle_elevate(triangle, elevated):
+    """Image for :meth:`.triangle.Triangle.elevate` docstring."""
     if NO_IMAGES:
         return
 
     figure, (ax1, ax2) = plt.subplots(1, 2)
-    surface.plot(256, ax=ax1)
+    triangle.plot(256, ax=ax1)
     color = ax1.lines[-1].get_color()
-    nodes = surface._nodes[:, (0, 1, 2, 4, 5)]
+    nodes = triangle._nodes[:, (0, 1, 2, 4, 5)]
     add_patch(ax1, nodes, color)
     elevated.plot(256, ax=ax2)
     color = ax2.lines[-1].get_color()
@@ -1259,17 +1261,17 @@ def surface_elevate(surface, elevated):
     _plot_helpers.add_plot_boundary(ax1)
     ax2.set_xlim(*ax1.get_xlim())
     ax2.set_ylim(*ax1.get_ylim())
-    save_image(figure, "surface_elevate.png")
+    save_image(figure, "triangle_elevate.png")
 
 
 def unit_triangle():
-    """Image for :class:`.surface.Surface` docstring."""
+    """Image for :class:`.triangle.Triangle` docstring."""
     if NO_IMAGES:
         return
 
     nodes = np.asfortranarray([[0.0, 1.0, 0.0], [0.0, 0.0, 1.0]])
-    surface = bezier.Surface(nodes, degree=1)
-    ax = surface.plot(256)
+    triangle = bezier.Triangle(nodes, degree=1)
+    ax = triangle.plot(256)
     ax.axis("scaled")
     _plot_helpers.add_plot_boundary(ax)
     save_image(ax.figure, "unit_triangle.png")

@@ -11,4 +11,4 @@ Submodules
 
    bezier.curve
    bezier.curved_polygon
-   bezier.surface
+   bezier.triangle

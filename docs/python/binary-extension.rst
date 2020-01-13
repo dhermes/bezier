@@ -116,8 +116,8 @@ The C headers for ``libbezier`` will be included in the installed package
        curve_intersection.h
        helpers.h
        status.h
-       surface.h
-       surface_intersection.h
+       triangle.h
+       triangle_intersection.h
      bezier.h
 
 .. testcleanup:: show-headers, show-lib, show-dll, macos-dylibs

@@ -14,12 +14,12 @@ program unit_test
 
   use, intrinsic :: iso_c_binding, only: c_bool
   use curve_intersection, only: free_curve_intersections_workspace
-  use surface_intersection, only: free_surface_intersections_workspace
+  use triangle_intersection, only: free_triangle_intersections_workspace
   use test_helpers, only: helpers_all_tests
   use test_curve, only: curve_all_tests
-  use test_surface, only: surface_all_tests
+  use test_triangle, only: triangle_all_tests
   use test_curve_intersection, only: curve_intersection_all_tests
-  use test_surface_intersection, only: surface_intersection_all_tests
+  use test_triangle_intersection, only: triangle_intersection_all_tests
   implicit none
 
   logical(c_bool) :: success
@@ -27,12 +27,12 @@ program unit_test
   success = .TRUE.
   call helpers_all_tests(success)
   call curve_all_tests(success)
-  call surface_all_tests(success)
+  call triangle_all_tests(success)
   call curve_intersection_all_tests(success)
-  call surface_intersection_all_tests(success)
+  call triangle_intersection_all_tests(success)
   ! Wrap up allocated globals.
   call free_curve_intersections_workspace()
-  call free_surface_intersections_workspace()
+  call free_triangle_intersections_workspace()
   if (.NOT. success) then
      stop 1  ! LCOV_EXCL_LINE
   end if

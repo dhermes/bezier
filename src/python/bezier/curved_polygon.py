@@ -27,7 +27,7 @@ boundary.
 
 from bezier import _helpers
 from bezier import _plot_helpers
-from bezier import _surface_helpers
+from bezier import _triangle_helpers
 
 
 class CurvedPolygon:
@@ -125,7 +125,7 @@ class CurvedPolygon:
             * ``metadata`` (:class:`~typing.Sequence`): A sequence of triples
               associated with this curved polygon. This is intended to be used
               by callers that have created a curved polygon as an intersection
-              between two B |eacute| zier surfaces.
+              between two B |eacute| zier triangles.
             * ``_verify`` (:class:`bool`): Indicates if the edges should be
               verified as having shared endpoints. Defaults to :data:`True`.
 
@@ -248,7 +248,7 @@ class CurvedPolygon:
             float: The area of the current curved polygon.
         """
         edges = tuple(edge._nodes for edge in self._edges)
-        return _surface_helpers.compute_area(edges)
+        return _triangle_helpers.compute_area(edges)
 
     def __repr__(self):
         """Representation of current object.

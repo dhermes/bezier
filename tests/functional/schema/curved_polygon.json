@@ -1,6 +1,6 @@
 {
     "$schema": "http://json-schema.org/draft-04/schema#",
-    "description": "A description of a curved polygon that has occurred as an intersection between two B\\u00e9zier surfaces. The curved polygon edges will be described in terms of the two surfaces they intersect. A curved polygon can be completely described from its edges and each edge will be given as a segment from an edge of one of the two intersected surfaces.",
+    "description": "A description of a curved polygon that has occurred as an intersection between two B\\u00e9zier triangles. The curved polygon edges will be described in terms of the two triangles they intersect. A curved polygon can be completely described from its edges and each edge will be given as a segment from an edge of one of the two intersected triangles.",
     "type": "object",
     "properties": {
         "nodes": {
@@ -19,7 +19,7 @@
             "minItems": 2
         },
         "start_params": {
-            "description": "Numerical parameters (along an edge of a surface) that define the starting points of each edge of the curved polygon (as segments within an edge of one of the two surfaces).",
+            "description": "Numerical parameters (along an edge of a triangle) that define the starting points of each edge of the curved polygon (as segments within an edge of one of the two triangles).",
             "type": "array",
             "items": {
                 "description": "A parameter as a numerical value.",
@@ -27,7 +27,7 @@
             }
         },
         "end_params": {
-            "description": "Numerical parameters (along an edge of a surface) that define the end / terminal points of each edge of the curved polygon (as segments within an edge of one of the two surfaces).",
+            "description": "Numerical parameters (along an edge of a triangle) that define the end / terminal points of each edge of the curved polygon (as segments within an edge of one of the two triangles).",
             "type": "array",
             "items": {
                 "description": "A parameter as a numerical value.",
@@ -35,10 +35,10 @@
             }
         },
         "edge_list": {
-            "description": "List of integers in {0, 1, 2, 3, 4, 5} identifying each edge (from the original surfaces) that define the curved polygon.",
+            "description": "List of integers in {0, 1, 2, 3, 4, 5} identifying each edge (from the original triangles) that define the curved polygon.",
             "type": "array",
             "items": {
-                "description": "A ``hybrid'' index. The values {0, 1, 2} indicate an edge on the first surface and the values {3, 4, 5} indicate an edge on the second surface.",
+                "description": "A ``hybrid'' index. The values {0, 1, 2} indicate an edge on the first triangle and the values {3, 4, 5} indicate an edge on the second triangle.",
                 "type": "integer"
             }
         },

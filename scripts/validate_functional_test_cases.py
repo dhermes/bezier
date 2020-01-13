@@ -78,8 +78,8 @@ def verify_curves(exit_status):
     return exit_status
 
 
-def verify_surfaces(exit_status):
-    """Verify that all surfaces adhere to the surface schema.
+def verify_triangles(exit_status):
+    """Verify that all triangles adhere to the triangle schema.
 
     Args:
         exit_status (int): The already set exit status.
@@ -88,9 +88,9 @@ def verify_surfaces(exit_status):
         int: The newly updated exit status (will add a flag in the bit
             corresponding to 2**1 == 2).
     """
-    surfaces_file = DATA_DIR / "surfaces.json"
-    surface_schema_file = SCHEMA_DIR / "surface.json"
-    failed = _verify_map(surfaces_file, surface_schema_file, "Surface")
+    triangles_file = DATA_DIR / "triangles.json"
+    triangle_schema_file = SCHEMA_DIR / "triangle.json"
+    failed = _verify_map(triangles_file, triangle_schema_file, "Triangle")
     if failed:
         return exit_status | 2
 
@@ -155,8 +155,8 @@ def verify_curve_intersections(exit_status):
     return exit_status
 
 
-def verify_surface_intersections(exit_status):
-    """Verify that all surfaces intersections adhere to the schema.
+def verify_triangle_intersections(exit_status):
+    """Verify that all triangles intersections adhere to the schema.
 
     Args:
         exit_status (int): The already set exit status.
@@ -165,10 +165,10 @@ def verify_surface_intersections(exit_status):
         int: The newly updated exit status (will add a flag in the bit
             corresponding to 2**3 == 8).
     """
-    intersections_file = DATA_DIR / "surface_intersections.json"
-    intersections_schema_file = SCHEMA_DIR / "surface_intersection.json"
+    intersections_file = DATA_DIR / "triangle_intersections.json"
+    intersections_schema_file = SCHEMA_DIR / "triangle_intersection.json"
     failed = _verify_list(
-        intersections_file, intersections_schema_file, "Surface Intersection"
+        intersections_file, intersections_schema_file, "Triangle Intersection"
     )
     if failed:
         return exit_status | 8
@@ -180,8 +180,8 @@ def main():
     """Main entrypoint for this script."""
     exit_status = verify_curves(0)
     exit_status = verify_curve_intersections(exit_status)
-    exit_status = verify_surfaces(exit_status)
-    exit_status = verify_surface_intersections(exit_status)
+    exit_status = verify_triangles(exit_status)
+    exit_status = verify_triangle_intersections(exit_status)
     sys.exit(exit_status)
 
 

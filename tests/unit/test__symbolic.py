@@ -15,9 +15,6 @@
 #       they were written before ``pytest`` was used in this project (the
 #       original test runner was ``nose``).
 
-import unittest
-import unittest.mock
-
 import numpy as np
 import pytest
 
@@ -47,8 +44,10 @@ class Test_to_symbolic:
 
         return _symbolic.to_symbolic(nodes)
 
-    @unittest.mock.patch("bezier._symbolic.sympy", new=None)
-    def test_sympy_missing(self):
+    def test_sympy_missing(self, monkeypatch):
+        from bezier import _symbolic
+
+        monkeypatch.setattr(_symbolic, "sympy", None)
         with pytest.raises(OSError) as exc_info:
             self._call_function_under_test(None)
 
@@ -63,7 +62,7 @@ class Test_to_symbolic:
         exc_args = exc_info.value.args
         assert exc_args == ("Nodes must be 2-dimensional, not", 3)
 
-    @unittest.skipIf(sympy is None, "SymPy not installed")
+    @pytest.mark.skipif(sympy is None, reason="SymPy not installed")
     def test_success(self):
         nodes = np.asfortranarray([[1.0, 5.5], [2.0, 2.0]])
         nodes_sym = self._call_function_under_test(nodes)
@@ -79,7 +78,7 @@ class Test_curve_weights:
 
         return _symbolic.curve_weights(degree, s)
 
-    @unittest.skipIf(sympy is None, "SymPy not installed")
+    @pytest.mark.skipif(sympy is None, reason="SymPy not installed")
     def test_it(self):
         t = sympy.Symbol("t")
         weights = self._call_function_under_test(3, t)
@@ -106,7 +105,7 @@ class Test_curve_as_polynomial:
 
         return _symbolic.curve_as_polynomial(nodes, degree)
 
-    @unittest.skipIf(sympy is None, "SymPy not installed")
+    @pytest.mark.skipif(sympy is None, reason="SymPy not installed")
     def test_it(self):
         nodes = np.asfortranarray([[0.0, 0.5, 1.0], [0.0, 1.0, 0.0]])
         s, b_polynomial = self._call_function_under_test(nodes, 2)
@@ -124,7 +123,7 @@ class Test_implicitize_2d:
 
         return _symbolic.implicitize_2d(x_fn, y_fn, s)
 
-    @unittest.skipIf(sympy is None, "SymPy not installed")
+    @pytest.mark.skipif(sympy is None, reason="SymPy not installed")
     def test_it(self):
         s, x_sym, y_sym = sympy.symbols("s, x, y")
         x_fn = 1 - s ** 2
@@ -145,14 +144,14 @@ class Test_implicitize_2d:
 # pylint: enable=too-few-public-methods
 
 # pylint: disable=too-few-public-methods
-class Test_surface_weights:
+class Test_triangle_weights:
     @staticmethod
     def _call_function_under_test(degree, s, t):
         from bezier import _symbolic
 
-        return _symbolic.surface_weights(degree, s, t)
+        return _symbolic.triangle_weights(degree, s, t)
 
-    @unittest.skipIf(sympy is None, "SymPy not installed")
+    @pytest.mark.skipif(sympy is None, reason="SymPy not installed")
     def test_it(self):
         s, t = sympy.symbols("s, t")
         weights = self._call_function_under_test(2, s, t)
@@ -174,14 +173,14 @@ class Test_surface_weights:
 # pylint: enable=too-few-public-methods
 
 # pylint: disable=too-few-public-methods
-class Test_surface_as_polynomial:
+class Test_triangle_as_polynomial:
     @staticmethod
     def _call_function_under_test(nodes, degree):
         from bezier import _symbolic
 
-        return _symbolic.surface_as_polynomial(nodes, degree)
+        return _symbolic.triangle_as_polynomial(nodes, degree)
 
-    @unittest.skipIf(sympy is None, "SymPy not installed")
+    @pytest.mark.skipif(sympy is None, reason="SymPy not installed")
     def test_it(self):
         nodes = np.asfortranarray(
             [[0.0, 1.0, 1.0], [0.0, 0.0, 1.0], [1.0, 1.0, 1.0]]
@@ -201,7 +200,7 @@ class Test_implicitize_3d:
 
         return _symbolic.implicitize_3d(x_fn, y_fn, z_fn, s, t)
 
-    @unittest.skipIf(sympy is None, "SymPy not installed")
+    @pytest.mark.skipif(sympy is None, reason="SymPy not installed")
     def test_it(self):
         s, t, x_sym, y_sym, z_sym = sympy.symbols("s, t, x, y, z")
         x_fn = s * t

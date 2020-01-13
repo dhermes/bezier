@@ -241,7 +241,7 @@ test **numerical software**. As a result, there is a fairly
 large collection of `functional tests`_ for ``bezier``.
 
 These give a broad sampling of curve-curve intersection,
-surface-surface intersection and segment-box intersection problems to
+triangle-triangle intersection and segment-box intersection problems to
 check both the accuracy (i.e. detecting all intersections) and the
 precision of the detected intersections.
 
@@ -273,9 +273,9 @@ the cases in the functional tests.
 
 .. _Curve-Curve Intersection: https://bezier.readthedocs.io/en/{rtd_version}/algorithms/curve-curve-intersection.html
 
-A surface-surface intersection functional test case:
+A triangle-triangle intersection functional test case:
 
-.. image:: https://raw.githubusercontent.com/dhermes/bezier/{revision}/docs/images/surfaces1Q_and_2Q.png
+.. image:: https://raw.githubusercontent.com/dhermes/bezier/{revision}/docs/images/triangles1Q_and_2Q.png
    :align: center
 
 a segment-box functional test case:
@@ -283,21 +283,21 @@ a segment-box functional test case:
 .. image:: https://raw.githubusercontent.com/dhermes/bezier/{revision}/docs/images/test_goes_through_box08.png
    :align: center
 
-and a "locate point on surface" functional test case:
+and a "locate point on triangle" functional test case:
 
-.. image:: https://raw.githubusercontent.com/dhermes/bezier/{revision}/docs/images/test_surface3_and_point1.png
+.. image:: https://raw.githubusercontent.com/dhermes/bezier/{revision}/docs/images/test_triangle3_and_point1.png
    :align: center
 
 Functional Test Data
 ====================
 
-The curve-curve and surface-surface intersection test cases are stored in
+The curve-curve and triangle-triangle intersection test cases are stored in
 JSON files:
 
 * `curves.json`_
 * `curve_intersections.json`_
-* `surfaces.json`_
-* `surface_intersections.json`_
+* `triangles.json`_
+* `triangle_intersections.json`_
 
 This way, the test cases are programming language agnostic and can be
 repurposed. The `JSON schema`_ for these files are stored in the
@@ -305,8 +305,8 @@ repurposed. The `JSON schema`_ for these files are stored in the
 
 .. _curves.json: https://github.com/dhermes/bezier/blob/{revision}/tests/functional/curves.json
 .. _curve_intersections.json: https://github.com/dhermes/bezier/blob/{revision}/tests/functional/curve_intersections.json
-.. _surfaces.json: https://github.com/dhermes/bezier/blob/{revision}/tests/functional/surfaces.json
-.. _surface_intersections.json: https://github.com/dhermes/bezier/blob/{revision}/tests/functional/surface_intersections.json
+.. _triangles.json: https://github.com/dhermes/bezier/blob/{revision}/tests/functional/triangles.json
+.. _triangle_intersections.json: https://github.com/dhermes/bezier/blob/{revision}/tests/functional/triangle_intersections.json
 .. _JSON schema: http://json-schema.org/
 
 ************
@@ -401,7 +401,7 @@ To run the documentation tests:
 Documentation Images
 ====================
 
-Many images are included to illustrate the curves / surfaces / etc.
+Many images are included to illustrate the curves / triangles / etc.
 under consideration and to display the result of the operation
 being described. To keep these images up-to-date with the doctest
 snippets, the images are created as doctest cleanup.
@@ -422,9 +422,9 @@ To regenerate all the images:
    >   docs \
    >   docs/build/doctest
    $ python tests/functional/make_segment_box_images.py
-   $ python tests/functional/make_surface_locate_images.py
+   $ python tests/functional/make_triangle_locate_images.py
    $ python tests/functional/make_curve_curve_images.py
-   $ python tests/functional/make_surface_surface_images.py
+   $ python tests/functional/make_triangle_triangle_images.py
    $ unset MATPLOTLIBRC GENERATE_IMAGES PYTHONPATH
 
 **********************

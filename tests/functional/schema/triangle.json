@@ -1,0 +1,30 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "description": "A description of a B\\u00e9zier triangle.",
+    "type": "object",
+    "properties": {
+        "control_points": {
+            "description": "A list of x-y coordinates of the control points on the triangle.",
+            "type": "array",
+            "items": {
+                "description": "An x-y coordinate pair for a single control point.",
+                "type": "array",
+                "items": {
+                    "description": "A coordinate as a numerical value.",
+                    "$ref": "./numerical.json"
+                },
+                "minItems": 3
+            },
+            "minItems": 2,
+            "maxItems": 2
+        },
+        "note": {
+            "description": "Description of the triangle / patch within triangle.",
+            "type": "string"
+        }
+    },
+    "additionalProperties": false,
+    "required": [
+        "control_points"
+    ]
+}
