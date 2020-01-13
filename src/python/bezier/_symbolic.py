@@ -226,7 +226,7 @@ def implicitize_3d(x_fn, y_fn, z_fn, s, t):
     Args:
         x_fn (sympy.Expr): Function :math:`x(s)` in the triangle.
         y_fn (sympy.Expr): Function :math:`y(s)` in the triangle.
-        z_fn (sympy.Expr): Function :math:`y(s)` in the triangle.
+        z_fn (sympy.Expr): Function :math:`z(s)` in the triangle.
         s (sympy.Symbol): The first symbol used to define ``x_fn``, ``y_fn``
             and ``z_fn``.
         t (sympy.Symbol): The second symbol used to define ``x_fn``, ``y_fn``

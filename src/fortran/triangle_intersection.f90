@@ -111,19 +111,19 @@ module triangle_intersection
 contains
 
   subroutine newton_refine_solve( &
-       jac_both, x_val, surf_x, y_val, surf_y, delta_s, delta_t)
+       jac_both, x_val, triangle_x, y_val, triangle_y, delta_s, delta_t)
 
     ! NOTE: This is a helper for ``newton_refine``.
 
     real(c_double), intent(in) :: jac_both(4, 1)
-    real(c_double), intent(in) :: x_val, surf_x
-    real(c_double), intent(in) :: y_val, surf_y
+    real(c_double), intent(in) :: x_val, triangle_x
+    real(c_double), intent(in) :: y_val, triangle_y
     real(c_double), intent(out) :: delta_s, delta_t
     ! Variables outside of signature.
     real(c_double) :: e_val, f_val, denominator
 
-    e_val = x_val - surf_x
-    f_val = y_val - surf_y
+    e_val = x_val - triangle_x
+    f_val = y_val - triangle_y
     denominator = ( &
          jac_both(1, 1) * jac_both(4, 1) - jac_both(2, 1) * jac_both(3, 1))
     delta_s = (jac_both(4, 1) * e_val - jac_both(3, 1) * f_val) / denominator

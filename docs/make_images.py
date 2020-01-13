@@ -541,11 +541,11 @@ def triangle_subdivide1():
     triangle = bezier.Triangle.from_nodes(
         np.asfortranarray([[0.0, 1.0, 0.0], [0.0, 0.0, 1.0]])
     )
-    surf_a, surf_b, surf_c, surf_d = triangle.subdivide()
+    triangle_a, triangle_b, triangle_c, triangle_d = triangle.subdivide()
     figure, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2)
     for ax in (ax1, ax2, ax3, ax4):
         triangle.plot(2, ax=ax)
-    surf_a.plot(2, ax=ax1)
+    triangle_a.plot(2, ax=ax1)
     ax1.text(
         1.0 / 6.0,
         1.0 / 6.0,
@@ -554,7 +554,7 @@ def triangle_subdivide1():
         verticalalignment="center",
         horizontalalignment="center",
     )
-    surf_b.plot(2, ax=ax2)
+    triangle_b.plot(2, ax=ax2)
     ax2.text(
         1.0 / 3.0,
         1.0 / 3.0,
@@ -563,7 +563,7 @@ def triangle_subdivide1():
         verticalalignment="center",
         horizontalalignment="center",
     )
-    surf_c.plot(2, ax=ax3)
+    triangle_c.plot(2, ax=ax3)
     ax3.text(
         2.0 / 3.0,
         1.0 / 6.0,
@@ -572,7 +572,7 @@ def triangle_subdivide1():
         verticalalignment="center",
         horizontalalignment="center",
     )
-    surf_d.plot(2, ax=ax4)
+    triangle_d.plot(2, ax=ax4)
     ax4.text(
         1.0 / 6.0,
         2.0 / 3.0,
@@ -717,10 +717,10 @@ def newton_refine_triangle(triangle, x_val, y_val, s, t, new_s, new_t):
 
     figure, (ax1, ax2) = plt.subplots(1, 2)
     # Plot features of the parameter space in ax1.
-    tri_surf = bezier.Triangle.from_nodes(
+    linear_triangle = bezier.Triangle.from_nodes(
         np.asfortranarray([[0.0, 1.0, 0.0], [0.0, 0.0, 1.0]])
     )
-    tri_surf.plot(2, ax=ax1)
+    linear_triangle.plot(2, ax=ax1)
     ax1.plot([0.25], [0.5], marker="H")
     ax1.plot([s], [t], color="black", linestyle="None", marker="o")
     ax1.plot(

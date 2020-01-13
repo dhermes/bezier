@@ -63,7 +63,7 @@ def add_plot_boundary(ax, padding=0.125):
 
 
 def add_patch(ax, color, pts_per_edge, *edges):
-    """Add a polygonal triangle patch to a plot.
+    """Add a polygonal surface patch to a plot.
 
     Args:
         ax (matplotlib.artist.Artist): A matplotlib axis.

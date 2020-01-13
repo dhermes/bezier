@@ -45,7 +45,7 @@ BAD_SEGMENT_PARAMS = (
 SEGMENTS_SAME_EDGE = "Consecutive segments lie on the same edge."
 
 
-def newton_refine_solve(jac_both, x_val, surf_x, y_val, surf_y):
+def newton_refine_solve(jac_both, x_val, triangle_x, y_val, triangle_y):
     r"""Helper for :func:`newton_refine`.
 
     We have a system:
@@ -66,9 +66,9 @@ def newton_refine_solve(jac_both, x_val, surf_x, y_val, surf_y):
     Args:
         jac_both (numpy.ndarray): A ``4 x 1`` matrix of entries in a Jacobian.
         x_val (float): An ``x``-value we are trying to reach.
-        surf_x (float): The actual ``x``-value we are currently at.
+        triangle_x (float): The actual ``x``-value we are currently at.
         y_val (float): An ``y``-value we are trying to reach.
-        surf_y (float): The actual ``x``-value we are currently at.
+        triangle_y (float): The actual ``x``-value we are currently at.
 
     Returns:
         Tuple[float, float]: The pair of values the solve the
@@ -76,8 +76,8 @@ def newton_refine_solve(jac_both, x_val, surf_x, y_val, surf_y):
     """
     a_val, b_val, c_val, d_val = jac_both[:, 0]
     #       and
-    e_val = x_val - surf_x
-    f_val = y_val - surf_y
+    e_val = x_val - triangle_x
+    f_val = y_val - triangle_y
     # Now solve:
     denom = a_val * d_val - b_val * c_val
     delta_s = (d_val * e_val - c_val * f_val) / denom
@@ -192,10 +192,10 @@ def newton_refine(nodes, degree, x_val, y_val, s, t):
         Tuple[float, float]: The refined :math:`s` and :math:`t` values.
     """
     lambda1 = 1.0 - s - t
-    (surf_x,), (surf_y,) = _py_triangle_helpers.evaluate_barycentric(
+    (triangle_x,), (triangle_y,) = _py_triangle_helpers.evaluate_barycentric(
         nodes, degree, lambda1, s, t
     )
-    if surf_x == x_val and surf_y == y_val:
+    if triangle_x == x_val and triangle_y == y_val:
         # No refinement is needed.
         return s, t
 
@@ -208,7 +208,7 @@ def newton_refine(nodes, degree, x_val, y_val, s, t):
     # The first row of the jacobian matrix is B_s (i.e. the
     # top-most values in ``jac_both``).
     delta_s, delta_t = newton_refine_solve(
-        jac_both, x_val, surf_x, y_val, surf_y
+        jac_both, x_val, triangle_x, y_val, triangle_y
     )
     return s + delta_s, t + delta_t
 

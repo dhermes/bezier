@@ -1046,7 +1046,7 @@ def reduced_to_matrix(shape, degree, vals_by_weight):
 
 
 def specialize_triangle(nodes, degree, weights_a, weights_b, weights_c):
-    """Specialize a triangle to a reparameterization
+    """Specialize a triangle to a reparameterization.
 
     .. note::
 

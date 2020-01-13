@@ -24,11 +24,13 @@ SPACING = np.spacing  # pylint: disable=no-member
 
 class Test_newton_refine_solve(unittest.TestCase):
     @staticmethod
-    def _call_function_under_test(jac_both, x_val, surf_x, y_val, surf_y):
+    def _call_function_under_test(
+        jac_both, x_val, triangle_x, y_val, triangle_y
+    ):
         from bezier import _py_triangle_intersection
 
         return _py_triangle_intersection.newton_refine_solve(
-            jac_both, x_val, surf_x, y_val, surf_y
+            jac_both, x_val, triangle_x, y_val, triangle_y
         )
 
     def test_it(self):

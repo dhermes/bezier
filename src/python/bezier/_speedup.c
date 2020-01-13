@@ -11165,7 +11165,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_50polygon_collide(CYTHON_UNUSED PyOb
  *
  *     return collision             # <<<<<<<<<<<<<<
  *
- * ############################
+ * #############################
  */
   __Pyx_XDECREF(__pyx_r);
   __pyx_t_1 = __Pyx_PyBool_FromLong(__pyx_v_collision); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 634, __pyx_L1_error)
@@ -11200,7 +11200,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_50polygon_collide(CYTHON_UNUSED PyOb
 }
 
 /* "bezier/_speedup.pyx":640
- * ############################
+ * #############################
  *
  * def de_casteljau_one_round(             # <<<<<<<<<<<<<<
  *         double[::1, :] nodes, int degree,
@@ -11516,7 +11516,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_52de_casteljau_one_round(CYTHON_UNUS
   goto __pyx_L0;
 
   /* "bezier/_speedup.pyx":640
- * ############################
+ * #############################
  *
  * def de_casteljau_one_round(             # <<<<<<<<<<<<<<
  *         double[::1, :] nodes, int degree,
@@ -15322,7 +15322,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_70compute_area(CYTHON_UNUSED PyObjec
  *
  *     return area             # <<<<<<<<<<<<<<
  *
- * #########################################
+ * ##########################################
  */
   __Pyx_XDECREF(__pyx_r);
   __pyx_t_6 = PyFloat_FromDouble(__pyx_v_area); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 896, __pyx_L1_error)
@@ -15361,7 +15361,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_70compute_area(CYTHON_UNUSED PyObjec
 }
 
 /* "bezier/_speedup.pyx":902
- * #########################################
+ * ##########################################
  *
  * def newton_refine_triangle(             # <<<<<<<<<<<<<<
  *         double[::1, :] nodes, int degree,
@@ -15617,7 +15617,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_72newton_refine_triangle(CYTHON_UNUS
   goto __pyx_L0;
 
   /* "bezier/_speedup.pyx":902
- * #########################################
+ * ##########################################
  *
  * def newton_refine_triangle(             # <<<<<<<<<<<<<<
  *         double[::1, :] nodes, int degree,
@@ -37142,7 +37142,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   __pyx_codeobj__98 = (PyObject*)__Pyx_PyCode_New(2, 0, 6, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__97, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_python_bezier__speedup_pyx, __pyx_n_s_polygon_collide, 618, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__98)) __PYX_ERR(0, 618, __pyx_L1_error)
 
   /* "bezier/_speedup.pyx":640
- * ############################
+ * #############################
  *
  * def de_casteljau_one_round(             # <<<<<<<<<<<<<<
  *         double[::1, :] nodes, int degree,
@@ -37262,7 +37262,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   __pyx_codeobj__118 = (PyObject*)__Pyx_PyCode_New(1, 0, 11, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__117, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_src_python_bezier__speedup_pyx, __pyx_n_s_compute_area, 852, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__118)) __PYX_ERR(0, 852, __pyx_L1_error)
 
   /* "bezier/_speedup.pyx":902
- * #########################################
+ * ##########################################
  *
  * def newton_refine_triangle(             # <<<<<<<<<<<<<<
  *         double[::1, :] nodes, int degree,
@@ -38488,7 +38488,7 @@ if (!__Pyx_RefNanny) {
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
   /* "bezier/_speedup.pyx":640
- * ############################
+ * #############################
  *
  * def de_casteljau_one_round(             # <<<<<<<<<<<<<<
  *         double[::1, :] nodes, int degree,
@@ -38608,7 +38608,7 @@ if (!__Pyx_RefNanny) {
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
   /* "bezier/_speedup.pyx":902
- * #########################################
+ * ##########################################
  *
  * def newton_refine_triangle(             # <<<<<<<<<<<<<<
  *         double[::1, :] nodes, int degree,

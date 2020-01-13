@@ -633,9 +633,9 @@ def polygon_collide(double[::1, :] polygon1, double[::1, :] polygon2):
 
     return collision
 
-############################
+#############################
 # Section: ``triangle.f90`` #
-############################
+#############################
 
 def de_casteljau_one_round(
         double[::1, :] nodes, int degree,
@@ -895,9 +895,9 @@ def compute_area(tuple edges):
 
     return area
 
-#########################################
+##########################################
 # Section: ``triangle_intersection.f90`` #
-#########################################
+##########################################
 
 def newton_refine_triangle(
         double[::1, :] nodes, int degree,
