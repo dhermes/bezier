@@ -21,6 +21,7 @@ import warnings
 import numpy as np
 
 
+# pylint: disable=too-few-public-methods
 class TestSurface:
     @staticmethod
     def _get_target_class():
@@ -44,3 +45,6 @@ class TestSurface:
         warn_mock.assert_called_once_with(
             _legacy.DEPRECATION_MSG, DeprecationWarning
         )
+
+
+# pylint: enable=too-few-public-methods
