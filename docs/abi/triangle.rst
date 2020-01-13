@@ -466,13 +466,13 @@ Procedures
                        double *evaluated);
 
 .. c:function:: void BEZ_specialize_triangle(const int *num_nodes, \
-                                            const int *dimension, \
-                                            const double *nodes, \
-                                            const int *degree, \
-                                            const double *weights_a, \
-                                            const double *weights_b, \
-                                            const double *weights_c, \
-                                            double *specialized)
+                                             const int *dimension, \
+                                             const double *nodes, \
+                                             const int *degree, \
+                                             const double *weights_a, \
+                                             const double *weights_b, \
+                                             const double *weights_c, \
+                                             double *specialized)
 
    Changes the control net for a B |eacute| zier triangle by specializing
    from the original triangle :math:`(0, 0), (1, 0), (0, 1)` to a new
@@ -516,22 +516,22 @@ Procedures
 
       void
       BEZ_specialize_triangle(const int *num_nodes,
-                             const int *dimension,
-                             const double *nodes,
-                             const int *degree,
-                             const double *weights_a,
-                             const double *weights_b,
-                             const double *weights_c,
-                             double *specialized);
+                              const int *dimension,
+                              const double *nodes,
+                              const int *degree,
+                              const double *weights_a,
+                              const double *weights_b,
+                              const double *weights_c,
+                              double *specialized);
 
 .. c:function:: void BEZ_subdivide_nodes_triangle(const int *num_nodes, \
-                                                 const int *dimension, \
-                                                 const double *nodes, \
-                                                 const int *degree, \
-                                                 double *nodes_a, \
-                                                 double *nodes_b, \
-                                                 double *nodes_c, \
-                                                 double *nodes_d)
+                                                  const int *dimension, \
+                                                  const double *nodes, \
+                                                  const int *degree, \
+                                                  double *nodes_a, \
+                                                  double *nodes_b, \
+                                                  double *nodes_c, \
+                                                  double *nodes_d)
 
    Subdivides a B |eacute| zier triangle into four sub-triangles that cover
    the original triangle. See :meth:`.Triangle.subdivide` for more
@@ -572,10 +572,10 @@ Procedures
 
       void
       BEZ_subdivide_nodes_triangle(const int *num_nodes,
-                                  const int *dimension,
-                                  const double *nodes,
-                                  const int *degree,
-                                  double *nodes_a,
-                                  double *nodes_b,
-                                  double *nodes_c,
-                                  double *nodes_d);
+                                   const int *dimension,
+                                   const double *nodes,
+                                   const int *degree,
+                                   double *nodes_a,
+                                   double *nodes_b,
+                                   double *nodes_c,
+                                   double *nodes_d);

@@ -24,12 +24,12 @@ Procedures
 **********
 
 .. c:function:: void BEZ_locate_point_triangle(const int *num_nodes, \
-                                              const double *nodes, \
-                                              const int *degree, \
-                                              const double *x_val, \
-                                              const double *y_val, \
-                                              double *s_val, \
-                                              double *t_val)
+                                               const double *nodes, \
+                                               const int *degree, \
+                                               const double *x_val, \
+                                               const double *y_val, \
+                                               double *s_val, \
+                                               double *t_val)
 
    This solves the inverse problem :math:`B(s, t) = (x, y)` (if it can be
    solved). Does so by subdividing the triangle until the sub-triangles are
@@ -72,22 +72,22 @@ Procedures
 
       void
       BEZ_locate_point_triangle(const int *num_nodes,
-                               const double *nodes,
-                               const int *degree,
-                               const double *x_val,
-                               const double *y_val,
-                               double *s_val,
-                               double *t_val);
+                                const double *nodes,
+                                const int *degree,
+                                const double *x_val,
+                                const double *y_val,
+                                double *s_val,
+                                double *t_val);
 
 .. c:function:: void BEZ_newton_refine_triangle(const int *num_nodes, \
-                                               const double *nodes, \
-                                               const int *degree, \
-                                               const double *x_val, \
-                                               const double *y_val, \
-                                               const double *s, \
-                                               const double *t, \
-                                               double *updated_s, \
-                                               double *updated_t)
+                                                const double *nodes, \
+                                                const int *degree, \
+                                                const double *x_val, \
+                                                const double *y_val, \
+                                                const double *s, \
+                                                const double *t, \
+                                                double *updated_s, \
+                                                double *updated_t)
 
    This refines a solution to :math:`B(s, t) = (x, y) = p` using Newton's
    method. Given a current approximation :math:`(s_n, t_n)` for a solution,
@@ -138,28 +138,28 @@ Procedures
 
       void
       BEZ_newton_refine_triangle(const int *num_nodes,
-                                const double *nodes,
-                                const int *degree,
-                                const double *x_val,
-                                const double *y_val,
-                                const double *s,
-                                const double *t,
-                                double *updated_s,
-                                double *updated_t);
+                                 const double *nodes,
+                                 const int *degree,
+                                 const double *x_val,
+                                 const double *y_val,
+                                 const double *s,
+                                 const double *t,
+                                 double *updated_s,
+                                 double *updated_t);
 
 .. c:function:: void BEZ_triangle_intersections(const int *num_nodes1, \
-                                               const double *nodes1, \
-                                               const int *degree1, \
-                                               const int *num_nodes2, \
-                                               const double *nodes2, \
-                                               const int *degree2, \
-                                               const int *segment_ends_size, \
-                                               int *segment_ends, \
-                                               const int *segments_size, \
-                                               CurvedPolygonSegment *segments, \
-                                               int *num_intersected, \
-                                               TriangleContained *contained, \
-                                               Status *status)
+                                                const double *nodes1, \
+                                                const int *degree1, \
+                                                const int *num_nodes2, \
+                                                const double *nodes2, \
+                                                const int *degree2, \
+                                                const int *segment_ends_size, \
+                                                int *segment_ends, \
+                                                const int *segments_size, \
+                                                CurvedPolygonSegment *segments, \
+                                                int *num_intersected, \
+                                                TriangleContained *contained, \
+                                                Status *status)
 
    Compute the intersection of two B |eacute| zier triangles. This will
    first compute all intersection points between edges of the first and
@@ -278,18 +278,18 @@ Procedures
 
       void
       BEZ_triangle_intersections(const int *num_nodes1,
-                                const double *nodes1,
-                                const int *degree1,
-                                const int *num_nodes2,
-                                const double *nodes2,
-                                const int *degree2,
-                                const int *segment_ends_size,
-                                int *segment_ends,
-                                const int *segments_size,
-                                CurvedPolygonSegment *segments,
-                                int *num_intersected,
-                                TriangleContained *contained,
-                                Status *status);
+                                 const double *nodes1,
+                                 const int *degree1,
+                                 const int *num_nodes2,
+                                 const double *nodes2,
+                                 const int *degree2,
+                                 const int *segment_ends_size,
+                                 int *segment_ends,
+                                 const int *segments_size,
+                                 CurvedPolygonSegment *segments,
+                                 int *num_intersected,
+                                 TriangleContained *contained,
+                                 Status *status);
 
 .. c:function:: void BEZ_free_triangle_intersections_workspace(void)
 
