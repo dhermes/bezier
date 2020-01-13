@@ -473,6 +473,7 @@ def clean(session):
         get_path(".coverage"),
         get_path("*.mod"),
         get_path("*.pyc"),
+        get_path("docs", "abi", "example"),
         get_path("src", "python", "bezier", "*.pyc"),
         get_path("src", "python", "bezier", "*.pyd"),
         get_path("src", "python", "bezier", "*.so"),

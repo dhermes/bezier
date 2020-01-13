@@ -66,16 +66,55 @@ Procedures
    Consider the line segment :math:`B(s) = \left[\begin{array}{c} 3s \\ 4s
    \end{array}\right]`, we can verify the length:
 
-   .. code-block:: console
+   .. testsetup:: example-compute-length
 
-      $ gcc \
-      >   -o example \
-      >   example_compute_length.c \
-      >   -I .../src/fortran/include \
-      >   -L .../site-packages/bezier/lib \
-      >   -lbezier \
-      >   -lm -lgfortran
-      $ ./example
+      import os
+      import shlex
+      import subprocess
+
+      import bezier
+
+
+      def invoke_shell(args_str):
+          args = shlex.split(args_str)
+          prev_cwd = os.getcwd()
+          os.chdir(docs_abi_directory)
+          # NOTE: We print to the stdout of the doctest, rather than using
+          #       `subprocess.call()` directly.
+          output_bytes = subprocess.check_output(args).rstrip()
+          print(output_bytes.decode("utf-8"))
+          os.chdir(prev_cwd)
+
+
+      bezier_include = bezier.get_include()
+      bezier_lib = bezier.get_lib()
+      gfortran_lib = "/usr/local/Cellar/gcc/9.2.0_3/lib/gcc/9"  # TODO
+      git_root = (
+          subprocess.check_output(("git", "rev-parse", "--show-toplevel"))
+          .strip()
+          .decode("utf-8")
+      )
+      docs_abi_directory = os.path.join(git_root, "docs", "abi")
+
+   .. doctest:: example-compute-length
+      :options: +NORMALIZE_WHITESPACE
+      :windows-skip:
+
+      >>> bezier_include
+      '.../site-packages/bezier/include'
+      >>> bezier_lib
+      '.../site-packages/bezier/lib'
+      >>> invoke_shell(f"""
+      ... gcc \
+      ...   -o example \
+      ...   example_compute_length.c \
+      ...   -I {bezier_include} \
+      ...   -L {bezier_lib} \
+      ...   -L {gfortran_lib} \
+      ...   -lbezier \
+      ...   -lm -lgfortran
+      ... """)
+      >>> invoke_shell("./example")
       Length: 5.000000
       Error value: 0
 

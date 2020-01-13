@@ -17,6 +17,7 @@ dist
 .DS_Store
 
 # Generated files
+docs/abi/example
 scripts/macos/dist_wheels/
 scripts/macos/fixed_wheels/
 src/fortran/*.o
