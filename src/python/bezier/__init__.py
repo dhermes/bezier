@@ -24,7 +24,7 @@ Plotting utilities are also provided.
 .. autoclass:: UnsupportedDegree
    :members:
 
-.. autodata:: Surface
+.. autoclass:: Surface
 """
 
 import os
@@ -34,6 +34,7 @@ import pkg_resources
 # NOTE: ``__config__`` **must** be the first import because it (may)
 #       modify the search path used to locate shared libraries.
 from bezier import __config__
+from bezier._legacy import Surface
 from bezier._py_helpers import UnsupportedDegree
 from bezier.curve import Curve
 from bezier.curved_polygon import CurvedPolygon
@@ -65,12 +66,6 @@ __all__ = [
     "Triangle",
     "UnsupportedDegree",
 ]
-
-Surface = Triangle
-"""Legacy alias for B |eacute| zier Surface class.
-
-This will be deprecated in a future release.
-"""
 
 
 def get_include():
