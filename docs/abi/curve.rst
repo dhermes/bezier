@@ -67,7 +67,12 @@ Procedures
    \end{array}\right]`, we can verify the length:
 
    .. testsetup:: example-compute-length, example-elevate-nodes-curve,
-                  example-evaluate-curve-barycentric
+                  example-evaluate-curve-barycentric,
+                  example-evaluate-hodograph, example-evaluate-multi,
+                  example-full-reduce, example-get-curvature,
+                  example-locate-point-curve, example-newton-refine-curve,
+                  example-reduce-pseudo-inverse, example-specialize-curve,
+                  example-subdivide-nodes-curve
 
       import os
       import pathlib
@@ -96,6 +101,8 @@ Procedures
 
           library_lines = parts[1].split("\n", 1)
           library_line = library_lines[0]
+          # NOTE: ``ctypes.util.find_library()`` can't be used for this because
+          #       ``LD_LIBRARY_PATH`` is only set at Python start.
           for part in library_line.split(os.pathsep):
               path = pathlib.Path(part).resolve()
               if list(path.glob("libgfortran*")):
@@ -397,16 +404,25 @@ Procedures
    we have :math:`B'\left(\frac{1}{8}\right) = \frac{1}{32} \left[
    \begin{array}{c} 21 \\ 54 \end{array}\right]`:
 
-   .. code-block:: console
+   .. doctest:: example-evaluate-hodograph
+      :options: +NORMALIZE_WHITESPACE
+      :windows-skip:
 
-      $ gcc \
-      >   -o example \
-      >   example_evaluate_hodograph.c \
-      >   -I .../src/fortran/include \
-      >   -L .../site-packages/bezier/lib \
-      >   -lbezier \
-      >   -lm -lgfortran
-      $ ./example
+      >>> bezier_include
+      '.../site-packages/bezier/include'
+      >>> bezier_lib
+      '.../site-packages/bezier/lib'
+      >>> invoke_shell(f"""
+      ... gcc \
+      ...   -o example \
+      ...   example_evaluate_hodograph.c \
+      ...   -I {bezier_include} \
+      ...   -L {bezier_lib} \
+      ...   -L {gfortran_lib} \
+      ...   -lbezier \
+      ...   -lm -lgfortran
+      ... """)
+      >>> invoke_shell("./example")
       Hodograph:
       0.656250
       1.687500
@@ -476,16 +492,25 @@ Procedures
    \frac{1}{2} \left[\begin{array}{c} 3 \\ 1 \end{array}\right]` and
    :math:`B\left(1\right) = \left[\begin{array}{c} 2 \\ 1 \end{array}\right]`:
 
-   .. code-block:: console
+   .. doctest:: example-evaluate-multi
+      :options: +NORMALIZE_WHITESPACE
+      :windows-skip:
 
-      $ gcc \
-      >   -o example \
-      >   example_evaluate_multi.c \
-      >   -I .../src/fortran/include \
-      >   -L .../site-packages/bezier/lib \
-      >   -lbezier \
-      >   -lm -lgfortran
-      $ ./example
+      >>> bezier_include
+      '.../site-packages/bezier/include'
+      >>> bezier_lib
+      '.../site-packages/bezier/lib'
+      >>> invoke_shell(f"""
+      ... gcc \
+      ...   -o example \
+      ...   example_evaluate_multi.c \
+      ...   -I {bezier_include} \
+      ...   -L {bezier_lib} \
+      ...   -L {gfortran_lib} \
+      ...   -lbezier \
+      ...   -lm -lgfortran
+      ... """)
+      >>> invoke_shell("./example")
       Evaluated:
       1.000000, 1.500000, 2.000000
       0.000000, 0.500000, 1.000000
@@ -556,16 +581,25 @@ Procedures
    \end{array}\right] s = \left[\begin{array}{c} 1 + s \\ 3 + 2s
    \end{array}\right]`:
 
-   .. code-block:: console
+   .. doctest:: example-full-reduce
+      :options: +NORMALIZE_WHITESPACE
+      :windows-skip:
 
-      $ gcc \
-      >   -o example \
-      >   example_full_reduce.c \
-      >   -I .../src/fortran/include \
-      >   -L .../site-packages/bezier/lib \
-      >   -lbezier \
-      >   -lm -lgfortran
-      $ ./example
+      >>> bezier_include
+      '.../site-packages/bezier/include'
+      >>> bezier_lib
+      '.../site-packages/bezier/lib'
+      >>> invoke_shell(f"""
+      ... gcc \
+      ...   -o example \
+      ...   example_full_reduce.c \
+      ...   -I {bezier_include} \
+      ...   -L {bezier_lib} \
+      ...   -L {gfortran_lib} \
+      ...   -lbezier \
+      ...   -lm -lgfortran
+      ... """)
+      >>> invoke_shell("./example")
       Number of reduced nodes: 2
       Reduced:
       1.000000, 2.000000
@@ -629,16 +663,25 @@ Procedures
    .. image:: ../images/get_curvature.png
       :align: center
 
-   .. code-block:: console
+   .. doctest:: example-get-curvature
+      :options: +NORMALIZE_WHITESPACE
+      :windows-skip:
 
-      $ gcc \
-      >   -o example \
-      >   example_get_curvature.c \
-      >   -I .../src/fortran/include \
-      >   -L .../site-packages/bezier/lib \
-      >   -lbezier \
-      >   -lm -lgfortran
-      $ ./example
+      >>> bezier_include
+      '.../site-packages/bezier/include'
+      >>> bezier_lib
+      '.../site-packages/bezier/lib'
+      >>> invoke_shell(f"""
+      ... gcc \
+      ...   -o example \
+      ...   example_get_curvature.c \
+      ...   -I {bezier_include} \
+      ...   -L {bezier_lib} \
+      ...   -L {gfortran_lib} \
+      ...   -lbezier \
+      ...   -lm -lgfortran
+      ... """)
+      >>> invoke_shell("./example")
       Curvature: -12.000000
 
 .. c:function:: void BEZ_locate_point_curve(const int *num_nodes, \
@@ -712,16 +755,25 @@ Procedures
 
    is a self-crossing:
 
-   .. code-block:: console
+   .. doctest:: example-locate-point-curve
+      :options: +NORMALIZE_WHITESPACE
+      :windows-skip:
 
-      $ gcc \
-      >   -o example \
-      >   example_locate_point_curve.c \
-      >   -I .../src/fortran/include \
-      >   -L .../site-packages/bezier/lib \
-      >   -lbezier \
-      >   -lm -lgfortran
-      $ ./example
+      >>> bezier_include
+      '.../site-packages/bezier/include'
+      >>> bezier_lib
+      '.../site-packages/bezier/lib'
+      >>> invoke_shell(f"""
+      ... gcc \
+      ...   -o example \
+      ...   example_locate_point_curve.c \
+      ...   -I {bezier_include} \
+      ...   -L {bezier_lib} \
+      ...   -L {gfortran_lib} \
+      ...   -lbezier \
+      ...   -lm -lgfortran
+      ... """)
+      >>> invoke_shell("./example")
       When B(s) = [-0.093750, 0.828125]; s =  0.500000
       When B(s) = [ 0.000000, 1.500000]; s = -1.000000
       When B(s) = [-0.250000, 1.375000]; s = -2.000000
@@ -798,16 +850,25 @@ Procedures
    we expect a Newton update :math:`\Delta s = -\frac{2}{5}`, which produces
    a new parameter value :math:`s = \frac{7}{20}`:
 
-   .. code-block:: console
+   .. doctest:: example-newton-refine-curve
+      :options: +NORMALIZE_WHITESPACE
+      :windows-skip:
 
-      $ gcc \
-      >   -o example \
-      >   example_newton_refine_curve.c \
-      >   -I .../src/fortran/include \
-      >   -L .../site-packages/bezier/lib \
-      >   -lbezier \
-      >   -lm -lgfortran
-      $ ./example
+      >>> bezier_include
+      '.../site-packages/bezier/include'
+      >>> bezier_lib
+      '.../site-packages/bezier/lib'
+      >>> invoke_shell(f"""
+      ... gcc \
+      ...   -o example \
+      ...   example_newton_refine_curve.c \
+      ...   -I {bezier_include} \
+      ...   -L {bezier_lib} \
+      ...   -L {gfortran_lib} \
+      ...   -lbezier \
+      ...   -lm -lgfortran
+      ... """)
+      >>> invoke_shell("./example")
       Updated s: 0.350000
 
    .. image:: ../images/newton_refine_curve.png
@@ -874,16 +935,25 @@ Procedures
    \left[\begin{array}{c} 3(1 - s)(2s - 1) \\ 3(2s^2 - s + 1)
    \end{array}\right]`:
 
-   .. code-block:: console
+   .. doctest:: example-reduce-pseudo-inverse
+      :options: +NORMALIZE_WHITESPACE
+      :windows-skip:
 
-      $ gcc \
-      >   -o example \
-      >   example_reduce_pseudo_inverse.c \
-      >   -I .../src/fortran/include \
-      >   -L .../site-packages/bezier/lib \
-      >   -lbezier \
-      >   -lm -lgfortran
-      $ ./example
+      >>> bezier_include
+      '.../site-packages/bezier/include'
+      >>> bezier_lib
+      '.../site-packages/bezier/lib'
+      >>> invoke_shell(f"""
+      ... gcc \
+      ...   -o example \
+      ...   example_reduce_pseudo_inverse.c \
+      ...   -I {bezier_include} \
+      ...   -L {bezier_lib} \
+      ...   -L {gfortran_lib} \
+      ...   -lbezier \
+      ...   -lm -lgfortran
+      ... """)
+      >>> invoke_shell("./example")
       Reduced:
       -3.000000, 1.500000, 0.000000
        3.000000, 1.500000, 6.000000
@@ -959,16 +1029,25 @@ Procedures
    \left[\begin{array}{c} 2(4t - 1) \\ (4t - 1)(5 - 4t) \end{array}\right]`,
    which still lies on :math:`y = 2x(1 - x)`:
 
-   .. code-block:: console
+   .. doctest:: example-specialize-curve
+      :options: +NORMALIZE_WHITESPACE
+      :windows-skip:
 
-      $ gcc \
-      >   -o example \
-      >   example_specialize_curve.c \
-      >   -I .../src/fortran/include \
-      >   -L .../site-packages/bezier/lib \
-      >   -lbezier \
-      >   -lm -lgfortran
-      $ ./example
+      >>> bezier_include
+      '.../site-packages/bezier/include'
+      >>> bezier_lib
+      '.../site-packages/bezier/lib'
+      >>> invoke_shell(f"""
+      ... gcc \
+      ...   -o example \
+      ...   example_specialize_curve.c \
+      ...   -I {bezier_include} \
+      ...   -L {bezier_lib} \
+      ...   -L {gfortran_lib} \
+      ...   -lbezier \
+      ...   -lm -lgfortran
+      ... """)
+      >>> invoke_shell("./example")
       New Nodes:
       -0.250000, 0.250000, 0.750000
       -0.625000, 0.875000, 0.375000
@@ -1033,16 +1112,25 @@ Procedures
 
    yields:
 
-   .. code-block:: console
+   .. doctest:: example-subdivide-nodes-curve
+      :options: +NORMALIZE_WHITESPACE
+      :windows-skip:
 
-      $ gcc \
-      >   -o example \
-      >   example_subdivide_nodes_curve.c \
-      >   -I .../src/fortran/include \
-      >   -L .../site-packages/bezier/lib \
-      >   -lbezier \
-      >   -lm -lgfortran
-      $ ./example
+      >>> bezier_include
+      '.../site-packages/bezier/include'
+      >>> bezier_lib
+      '.../site-packages/bezier/lib'
+      >>> invoke_shell(f"""
+      ... gcc \
+      ...   -o example \
+      ...   example_subdivide_nodes_curve.c \
+      ...   -I {bezier_include} \
+      ...   -L {bezier_lib} \
+      ...   -L {gfortran_lib} \
+      ...   -lbezier \
+      ...   -lm -lgfortran
+      ... """)
+      >>> invoke_shell("./example")
       Left Nodes:
       0.000000, 0.625000, 1.125000
       0.000000, 1.500000, 1.750000
