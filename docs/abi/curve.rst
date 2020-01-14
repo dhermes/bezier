@@ -75,14 +75,14 @@ Procedures
                   example-subdivide-nodes-curve
 
       import bezier
-      import bezier._doctest
+      import tests.utils
 
 
       bezier_include = bezier.get_include()
       bezier_lib = bezier.get_lib()
-      gfortran_lib = bezier._doctest.get_gfortran_lib()
-      docs_abi_directory = bezier._doctest.repo_relative("docs", "abi")
-      invoke_shell = bezier._doctest.make_invoke_shell(docs_abi_directory)
+      gfortran_lib = tests.utils.get_gfortran_lib()
+      docs_abi_directory = tests.utils.repo_relative("docs", "abi")
+      invoke_shell = tests.utils.make_invoke_shell(docs_abi_directory)
 
    .. doctest:: example-compute-length
       :options: +NORMALIZE_WHITESPACE

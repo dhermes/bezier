@@ -241,7 +241,10 @@ def doctest(session):
         install_bezier(session)
     # Run the script for building docs and running doctests.
     run_args = get_doctest_args(session)
-    session.run(*run_args)
+    # Make sure that the root directory is on the Python path so that
+    # ``tests`` is import-able.
+    env = {"PYTHONPATH": get_path()}
+    session.run(*run_args, env=env)
 
 
 @nox.session(py=DEFAULT_INTERPRETER)
