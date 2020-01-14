@@ -66,7 +66,8 @@ Procedures
    Consider the line segment :math:`B(s) = \left[\begin{array}{c} 3s \\ 4s
    \end{array}\right]`, we can verify the length:
 
-   .. testsetup:: example-compute-length, example-elevate-nodes-curve
+   .. testsetup:: example-compute-length, example-elevate-nodes-curve,
+                  example-evaluate-curve-barycentric
 
       import os
       import pathlib
@@ -317,16 +318,25 @@ Procedures
           \begin{array}{c} 19 \\ 27 \end{array}\right]
       \end{align*}
 
-   .. code-block:: console
+   .. doctest:: example-evaluate-curve-barycentric
+      :options: +NORMALIZE_WHITESPACE
+      :windows-skip:
 
-      $ gcc \
-      >   -o example \
-      >   example_evaluate_curve_barycentric.c \
-      >   -I .../src/fortran/include \
-      >   -L .../site-packages/bezier/lib \
-      >   -lbezier \
-      >   -lm -lgfortran
-      $ ./example
+      >>> bezier_include
+      '.../site-packages/bezier/include'
+      >>> bezier_lib
+      '.../site-packages/bezier/lib'
+      >>> invoke_shell(f"""
+      ... gcc \
+      ...   -o example \
+      ...   example_evaluate_curve_barycentric.c \
+      ...   -I {bezier_include} \
+      ...   -L {bezier_lib} \
+      ...   -L {gfortran_lib} \
+      ...   -lbezier \
+      ...   -lm -lgfortran
+      ... """)
+      >>> invoke_shell("./example")
       Evaluated:
       2.437500, 0.687500, 0.750000, 1.187500
       2.125000, 0.687500, 0.750000, 1.687500
