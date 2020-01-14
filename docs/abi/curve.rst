@@ -74,63 +74,15 @@ Procedures
                   example-reduce-pseudo-inverse, example-specialize-curve,
                   example-subdivide-nodes-curve
 
-      import os
-      import pathlib
-      import shlex
-      import subprocess
-
       import bezier
-
-
-      INVALID_PATH = "/invalid/path"
-
-
-      def get_gfortran_lib():
-          cmd = ("gfortran", "-print-search-dirs")
-          process = subprocess.Popen(
-              cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE
-          )
-          return_code = process.wait()
-          if return_code != 0:
-              return INVALID_PATH
-
-          cmd_output = process.stdout.read().decode("utf-8")
-          parts = cmd_output.split("\nlibraries: =")
-          if len(parts) != 2:
-              return INVALID_PATH
-
-          library_lines = parts[1].split("\n", 1)
-          library_line = library_lines[0]
-          # NOTE: ``ctypes.util.find_library()`` can't be used for this because
-          #       ``LD_LIBRARY_PATH`` is only set at Python start.
-          for part in library_line.split(os.pathsep):
-              path = pathlib.Path(part).resolve()
-              if list(path.glob("libgfortran*")):
-                  return str(path)
-
-          return INVALID_PATH
-
-
-      def invoke_shell(args_str):
-          args = shlex.split(args_str)
-          prev_cwd = os.getcwd()
-          os.chdir(docs_abi_directory)
-          # NOTE: We print to the stdout of the doctest, rather than using
-          #       `subprocess.call()` directly.
-          output_bytes = subprocess.check_output(args).rstrip()
-          print(output_bytes.decode("utf-8"))
-          os.chdir(prev_cwd)
+      import bezier._doctest
 
 
       bezier_include = bezier.get_include()
       bezier_lib = bezier.get_lib()
-      gfortran_lib = get_gfortran_lib()
-      git_root = (
-          subprocess.check_output(("git", "rev-parse", "--show-toplevel"))
-          .strip()
-          .decode("utf-8")
-      )
-      docs_abi_directory = os.path.join(git_root, "docs", "abi")
+      gfortran_lib = bezier._doctest.get_gfortran_lib()
+      docs_abi_directory = bezier._doctest.repo_relative("docs", "abi")
+      invoke_shell = bezier._doctest.make_invoke_shell(docs_abi_directory)
 
    .. doctest:: example-compute-length
       :options: +NORMALIZE_WHITESPACE

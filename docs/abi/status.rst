@@ -108,14 +108,35 @@ status module
 
    is singular to numerical precision:
 
-   .. code-block:: console
+   .. testsetup:: example-status
 
-      $ gcc \
-      >   -o example \
-      >   example_status.c \
-      >   -I .../src/fortran/include \
-      >   -L .../site-packages/bezier/lib \
-      >   -lbezier \
-      >   -lm -lgfortran
-      $ ./example
+      import bezier
+      import bezier._doctest
+
+
+      bezier_include = bezier.get_include()
+      bezier_lib = bezier.get_lib()
+      gfortran_lib = bezier._doctest.get_gfortran_lib()
+      docs_abi_directory = bezier._doctest.repo_relative("docs", "abi")
+      invoke_shell = bezier._doctest.make_invoke_shell(docs_abi_directory)
+
+   .. doctest:: example-status
+      :options: +NORMALIZE_WHITESPACE
+      :windows-skip:
+
+      >>> bezier_include
+      '.../site-packages/bezier/include'
+      >>> bezier_lib
+      '.../site-packages/bezier/lib'
+      >>> invoke_shell(f"""
+      ... gcc \
+      ...   -o example \
+      ...   example_status.c \
+      ...   -I {bezier_include} \
+      ...   -L {bezier_lib} \
+      ...   -L {gfortran_lib} \
+      ...   -lbezier \
+      ...   -lm -lgfortran
+      ... """)
+      >>> invoke_shell("./example")
       Jacobian is singular.

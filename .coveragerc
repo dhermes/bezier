@@ -1,5 +1,7 @@
 [run]
 branch = True
+omit =
+    */bezier/_doctest.py
 
 [report]
 fail_under = 100

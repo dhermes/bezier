@@ -17,10 +17,10 @@ int main(void)
 {
     // Inputs.
     int num_nodes1 = 3;
-    double nodes1[6] = { 0.0, 0.0, 2.0, 4.0, 4.0, 0.0 };
+    double nodes1[6] = { 0.0, 0.0, 6.0, 4.0, 12.0, 0.0 };
     double s = 7.0 / 8.0;
     int num_nodes2 = 2;
-    double nodes2[4] = { 2.0, 0.0, 0.0, 3.0 };
+    double nodes2[4] = { 6.0, 0.0, 0.0, 3.0 };
     double t = -2.0;
 
     // Outputs.
