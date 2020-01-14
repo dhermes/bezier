@@ -1,5 +1,5 @@
-Latest Release (``0.12.0.dev1``)
-================================
+Latest Release (``2020.1.14``)
+==============================
 
 |pypi| |docs|
 
@@ -10,9 +10,24 @@ Breaking Changes
    (`#172 <https://github.com/dhermes/bezier/pull/172>`__).
    Fixed `#132 <https://github.com/dhermes/bezier/issues/132>`__.
 
-.. |pypi| image:: https://img.shields.io/pypi/v/bezier/0.12.0.svg
-   :target: https://pypi.org/project/bezier/0.12.0/
-   :alt: PyPI link to release 0.12.0
-.. |docs| image:: https://readthedocs.org/projects/bezier/badge/?version=0.12.0
-   :target: https://bezier.readthedocs.io/en/0.12.0/
-   :alt: Documentation for release 0.12.0
+Documentation
+-------------
+
+-  Make sure all ABI ``example_*.c`` blocks get run with ``doctest``
+   (`#174 <https://github.com/dhermes/bezier/pull/174>`__).
+   Fixed `#173 <https://github.com/dhermes/bezier/issues/173>`__.
+
+Packaging
+---------
+
+-  Switched from `semantic versioning`_ to `calendar versioning`_.
+
+.. _semantic versioning: http://semver.org/
+.. _calendar versioning: https://calver.org/
+
+.. |pypi| image:: https://img.shields.io/pypi/v/bezier/2020.1.14.svg
+   :target: https://pypi.org/project/bezier/2020.1.14/
+   :alt: PyPI link to release 2020.1.14
+.. |docs| image:: https://readthedocs.org/projects/bezier/badge/?version=2020.1.14
+   :target: https://bezier.readthedocs.io/en/2020.1.14/
+   :alt: Documentation for release 2020.1.14
