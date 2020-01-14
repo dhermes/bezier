@@ -66,7 +66,7 @@ Procedures
    Consider the line segment :math:`B(s) = \left[\begin{array}{c} 3s \\ 4s
    \end{array}\right]`, we can verify the length:
 
-   .. testsetup:: example-compute-length
+   .. testsetup:: example-compute-length, example-elevate-nodes-curve
 
       import os
       import pathlib
@@ -201,16 +201,25 @@ Procedures
    \end{array}\right] 3 (1 - s) s^2 + \left[\begin{array}{c} 3 \\ 0
    \end{array}\right] s^3`:
 
-   .. code-block:: console
+   .. doctest:: example-elevate-nodes-curve
+      :options: +NORMALIZE_WHITESPACE
+      :windows-skip:
 
-      $ gcc \
-      >   -o example \
-      >   example_elevate_nodes_curve.c \
-      >   -I .../src/fortran/include \
-      >   -L .../site-packages/bezier/lib \
-      >   -lbezier \
-      >   -lm -lgfortran
-      $ ./example
+      >>> bezier_include
+      '.../site-packages/bezier/include'
+      >>> bezier_lib
+      '.../site-packages/bezier/lib'
+      >>> invoke_shell(f"""
+      ... gcc \
+      ...   -o example \
+      ...   example_elevate_nodes_curve.c \
+      ...   -I {bezier_include} \
+      ...   -L {bezier_lib} \
+      ...   -L {gfortran_lib} \
+      ...   -lbezier \
+      ...   -lm -lgfortran
+      ... """)
+      >>> invoke_shell("./example")
       Elevated:
       0.000000, 1.000000, 2.000000, 3.000000
       0.000000, 1.000000, 1.000000, 0.000000
