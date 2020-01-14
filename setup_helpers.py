@@ -30,7 +30,7 @@ WHEEL_ENV = "BEZIER_WHEEL"
 If this is present (e.g. ``BEZIER_WHEEL="True"``) then the ``-march=native``
 flag will **not** be used.
 """
-FORTRAN_LIBRARY_PREFIX = "libraries: ="
+FORTRAN_LIBRARY_PREFIX = "\nlibraries: ="
 GFORTRAN_MISSING_LIBS = """\
 ``gfortran`` default library path not found via:
 
@@ -112,20 +112,15 @@ def gfortran_search_path(library_dirs):
         return library_dirs
 
     cmd_output = process.stdout.read().decode("utf-8")
-    # Find single line starting with ``libraries: ``.
-    search_lines = cmd_output.strip().split("\n")
-    library_lines = [
-        line[len(FORTRAN_LIBRARY_PREFIX) :]
-        for line in search_lines
-        if line.startswith(FORTRAN_LIBRARY_PREFIX)
-    ]
-    if len(library_lines) != 1:
+    parts = cmd_output.split(FORTRAN_LIBRARY_PREFIX)
+    if len(parts) != 2:
         msg = GFORTRAN_MISSING_LIBS.format(cmd_output)
         print(msg, file=sys.stderr)
         return library_dirs
 
-    # Go through each library in the ``libraries: = ...`` line.
+    library_lines = parts[1].split("\n", 1)
     library_line = library_lines[0]
+    # Go through each library in the ``libraries: = ...`` line.
     accepted = set(library_dirs)
     for part in library_line.split(os.pathsep):
         full_path = os.path.abspath(part.strip())

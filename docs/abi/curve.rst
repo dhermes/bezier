@@ -69,10 +69,38 @@ Procedures
    .. testsetup:: example-compute-length
 
       import os
+      import pathlib
       import shlex
       import subprocess
 
       import bezier
+
+
+      INVALID_PATH = "/invalid/path"
+
+
+      def get_gfortran_lib():
+          cmd = ("gfortran", "-print-search-dirs")
+          process = subprocess.Popen(
+              cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE
+          )
+          return_code = process.wait()
+          if return_code != 0:
+              return INVALID_PATH
+
+          cmd_output = process.stdout.read().decode("utf-8")
+          parts = cmd_output.split("\nlibraries: =")
+          if len(parts) != 2:
+              return INVALID_PATH
+
+          library_lines = parts[1].split("\n", 1)
+          library_line = library_lines[0]
+          for part in library_line.split(os.pathsep):
+              path = pathlib.Path(part).resolve()
+              if list(path.glob("libgfortran*")):
+                  return str(path)
+
+          return INVALID_PATH
 
 
       def invoke_shell(args_str):
@@ -88,7 +116,7 @@ Procedures
 
       bezier_include = bezier.get_include()
       bezier_lib = bezier.get_lib()
-      gfortran_lib = "/usr/local/Cellar/gcc/9.2.0_3/lib/gcc/9"  # TODO
+      gfortran_lib = get_gfortran_lib()
       git_root = (
           subprocess.check_output(("git", "rev-parse", "--show-toplevel"))
           .strip()
