@@ -190,7 +190,7 @@ ZENODO_IMG = """
    :target: https://zenodo.org/badge/latestdoi/73047402
    :alt: Zenodo DOI for ``bezier``"""
 JOSS_IMG = """
-.. |JOSS| image:: http://joss.theoj.org/papers/10.21105/joss.00267/status.svg
+.. |JOSS| image:: https://joss.theoj.org/papers/10.21105/joss.00267/status.svg
    :target: https://dx.doi.org/10.21105/joss.00267
    :alt: "Journal of Open Source Science" DOI for ``bezier``"""
 CITATION = """\
