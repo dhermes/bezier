@@ -392,7 +392,7 @@ To run the documentation tests:
 
    $ nox -s doctest
    $ # OR (from a Python 3.6 or later environment)
-   $ PYTHONPATH=src/python/ sphinx-build -W \
+   $ PYTHONPATH=src/python/:. sphinx-build -W \
    >   -b doctest \
    >   -d docs/build/doctrees \
    >   docs \

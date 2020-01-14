@@ -241,7 +241,10 @@ def doctest(session):
         install_bezier(session)
     # Run the script for building docs and running doctests.
     run_args = get_doctest_args(session)
-    session.run(*run_args)
+    # Make sure that the root directory is on the Python path so that
+    # ``tests`` is import-able.
+    env = {"PYTHONPATH": get_path()}
+    session.run(*run_args, env=env)
 
 
 @nox.session(py=DEFAULT_INTERPRETER)
@@ -473,6 +476,7 @@ def clean(session):
         get_path(".coverage"),
         get_path("*.mod"),
         get_path("*.pyc"),
+        get_path("docs", "abi", "example"),
         get_path("src", "python", "bezier", "*.pyc"),
         get_path("src", "python", "bezier", "*.pyd"),
         get_path("src", "python", "bezier", "*.so"),
