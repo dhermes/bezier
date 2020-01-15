@@ -5,6 +5,8 @@
 
 |circle-build| |travis-build| |appveyor-build| |coverage|
 
+|pypi| |versions|
+
 |zenodo| |JOSS|
 
 .. |eacute| unicode:: U+000E9 .. LATIN SMALL LETTER E WITH ACUTE
@@ -250,19 +252,25 @@ License
 ``bezier`` is made available under the Apache 2.0 License. For more
 details, see `the LICENSE`_.
 
-.. _the LICENSE: https://github.com/dhermes/bezier/blob/2020.1.14/LICENSE
+.. _the LICENSE: https://github.com/dhermes/bezier/blob/master/LICENSE
 
-.. |circle-build| image:: https://raw.githubusercontent.com/dhermes/bezier/2020.1.14/docs/circleci-passing.svg?sanitize=true
-   :target: https://circleci.com/gh/dhermes/bezier/1609
+.. |circle-build| image:: https://img.shields.io/circleci/project/github/dhermes/bezier/master.svg?maxAge=3600&logo=circleci&label=Linux
+   :target: https://circleci.com/gh/dhermes/bezier
    :alt: CircleCI Build
-.. |travis-build| image:: https://raw.githubusercontent.com/dhermes/bezier/2020.1.14/docs/travis-passing.svg?sanitize=true
-   :target: https://travis-ci.org/dhermes/bezier/builds/636950692
+.. |travis-build| image:: https://img.shields.io/travis/dhermes/bezier/master.svg?maxAge=3600&logo=travis&label=macOS
+   :target: https://travis-ci.org/dhermes/bezier
    :alt: Travis Build
-.. |appveyor-build| image:: https://raw.githubusercontent.com/dhermes/bezier/2020.1.14/docs/appveyor-passing.svg?sanitize=true
-   :target: https://ci.appveyor.com/project/dhermes/bezier/build/1.0.1295.master
+.. |appveyor-build| image:: https://img.shields.io/appveyor/ci/dhermes/bezier/master.svg?maxAge=3600&logo=appveyor&label=Windows
+   :target: https://ci.appveyor.com/project/dhermes/bezier
    :alt: AppVeyor CI Build
-.. |coverage| image:: https://s3.amazonaws.com/assets.coveralls.io/badges/coveralls_100.svg
-   :target: https://coveralls.io/builds/28100309
+.. |pypi| image:: https://img.shields.io/pypi/v/bezier.svg
+   :target: https://pypi.org/project/bezier/
+   :alt: PyPI Latest
+.. |versions| image:: https://img.shields.io/pypi/pyversions/bezier.svg
+   :target: https://pypi.org/project/bezier/
+   :alt: Package Versions
+.. |coverage| image:: https://coveralls.io/repos/github/dhermes/bezier/badge.svg
+   :target: https://coveralls.io/github/dhermes/bezier
    :alt: Code Coverage
 .. |zenodo| image:: https://zenodo.org/badge/73047402.svg
    :target: https://zenodo.org/badge/latestdoi/73047402
