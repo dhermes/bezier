@@ -28,6 +28,8 @@ IS_MACOS = sys.platform == "darwin"
 ON_APPVEYOR = os.environ.get("APPVEYOR") == "True"
 DEPS = {
     "black": "black >= 19.10b0",
+    "cmake-format": "cmake-format >= 0.6.5",
+    "cmake": "cmake >= 3.15.3",
     "coverage": "coverage",
     "Cython": "Cython >= 0.29.14",
     "docutils": "docutils",
@@ -79,8 +81,8 @@ def is_wheelhouse(directory):
         return False
 
     wheels = list(as_path.glob("*.whl"))
-    # NOTE: This could also be done by using `next()` instead of `list()` and
-    #       catching a `StopIteration` if empty.
+    # NOTE: This could also be done by using ``next()`` instead of ``list()``
+    #       and catching a ``StopIteration`` if empty.
     return len(wheels) > 0
 
 
@@ -287,6 +289,7 @@ def lint(session):
     # Install all dependencies.
     local_deps = BASE_DEPS + (
         DEPS["black"],
+        DEPS["cmake-format"],
         DEPS["docutils"],
         DEPS["flake8"],
         DEPS["flake8-import-order"],
@@ -311,7 +314,7 @@ def lint(session):
         "--restructuredtext",
         "--strict",
     )
-    # Run `black --check` over all Python files
+    # Run ``black --check`` over all Python files
     check_black = get_path("scripts", "black_check_all_files.py")
     session.run("python", check_black)
     # Run flake8 over the code to check import order.
@@ -343,7 +346,15 @@ def lint(session):
         "--max-module-lines=2473",
         get_path("tests"),
     )
-
+    # Run ``cmake-format`` for uniform formatting of ``CMakeLists.txt`` files
+    session.run(
+        "cmake-format",
+        "--in-place",
+        get_path("src", "fortran", "CMakeLists.txt"),
+        get_path("src", "fortran", "quadpack", "CMakeLists.txt"),
+    )
+    # (Maybe) run ``clang-format`` for uniform formatting of ``.c`` and ``.h``
+    # files
     if py.path.local.sysfind("clang-format") is not None:
         filenames = glob.glob(get_path("docs", "abi", "*.c"))
         filenames.append(get_path("src", "fortran", "include", "bezier.h"))
@@ -441,6 +452,59 @@ def validate_functional_test_cases(session):
     )
 
 
+def get_cmake_paths(build_type):
+    normalized = build_type.lower()
+    # NOTE: ``build_dir`` is a relative path, but ``install_prefix`` is an
+    #       absolute path
+    build_dir = os.path.join("src", "fortran", "build-{}".format(normalized))
+    install_prefix = get_path("src", "fortran", "usr-{}".format(normalized))
+    return build_dir, install_prefix
+
+
+@nox.session(py=DEFAULT_INTERPRETER)
+def cmake(session):
+    """Run ``cmake`` to build and install ``libbezier``
+
+    For now this runs with build type fixed as ``Debug`` but allowing an
+    option to specify ``Release`` will be supported at a later date.
+    """
+    # Install ``cmake`` into virtual environment. This isn't strictly necessary
+    # if the current system already has ``cmake`` installed.
+    session.install(DEPS["cmake"])
+
+    # Prepare build and install directories.
+    build_type = "Debug"
+    build_dir, install_prefix = get_cmake_paths(build_type)
+
+    # Create build directory if it doesn't already exist.
+    session.run(os.makedirs, build_dir, exist_ok=True)
+
+    # Run ``cmake`` to prepare for build.
+    build_args = [
+        "cmake",
+        "-DCMAKE_BUILD_TYPE={}".format(build_type),
+        "-DCMAKE_INSTALL_PREFIX:PATH={}".format(install_prefix),
+    ]
+    # Add any positional arguments, e.g. ``-G "MinGW Makefiles"``
+    build_args.extend(session.posargs)
+    build_args.extend(["-S", os.path.join("src", "fortran"), "-B", build_dir])
+    session.run(*build_args)
+
+    # Build and install.
+    session.run(
+        "cmake",
+        "--build",
+        build_dir,
+        "--config",
+        build_type,
+        "--target",
+        "install",
+    )
+
+    # Get information on how the build was configured.
+    session.run("cmake", "-L", build_dir)
+
+
 @nox.session(py=False)
 def clean(session):
     """Clean up build files.
@@ -463,6 +527,8 @@ def clean(session):
         get_path("scripts", "macos", "__pycache__"),
         get_path("scripts", "macos", "dist_wheels"),
         get_path("scripts", "macos", "fixed_wheels"),
+        get_path("src", "fortran", "build-debug"),
+        get_path("src", "fortran", "usr-debug"),
         get_path("src", "python", "bezier.egg-info"),
         get_path("src", "python", "bezier", "__pycache__"),
         get_path("src", "python", "bezier", "extra-dll"),

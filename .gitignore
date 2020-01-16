@@ -21,7 +21,9 @@ docs/abi/example
 scripts/macos/dist_wheels/
 scripts/macos/fixed_wheels/
 src/fortran/*.o
+src/fortran/build-debug/
 src/fortran/quadpack/*.o
+src/fortran/usr-debug/
 src/python/bezier/_speedup*.so
 tests/fortran/*.gcda
 tests/fortran/*.gcno

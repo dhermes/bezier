@@ -1,29 +1,20 @@
-Latest Release (``2020.1.14``)
-==============================
+Latest Release (``2020.1.15.dev1``)
+===================================
 
 |pypi| |docs|
 
-Breaking Changes
-----------------
-
--  Rename ``Surface`` to ``Triangle``
-   (`#172 <https://github.com/dhermes/bezier/pull/172>`__).
-   Fixed `#132 <https://github.com/dhermes/bezier/issues/132>`__.
-
-Documentation
--------------
-
--  Make sure all ABI ``example_*.c`` blocks get run with ``doctest``
-   (`#174 <https://github.com/dhermes/bezier/pull/174>`__).
-   Fixed `#173 <https://github.com/dhermes/bezier/issues/173>`__.
+ABI Changes
+-----------
 
 Packaging
----------
+~~~~~~~~~
 
--  Switched from `semantic versioning`_ to `calendar versioning`_.
+-  Added ``CMakeLists.txt`` files to enable building ``libbezier`` with
+   `CMake`_ (`#175 <https://github.com/dhermes/bezier/pull/175>`__).
+   This is progress towards
+   `#62 <https://github.com/dhermes/bezier/issues/62>`__.
 
-.. _semantic versioning: http://semver.org/
-.. _calendar versioning: https://calver.org/
+.. _CMake: https://cmake.org/
 
 .. |pypi| image:: https://img.shields.io/pypi/v/bezier/2020.1.14.svg
    :target: https://pypi.org/project/bezier/2020.1.14/

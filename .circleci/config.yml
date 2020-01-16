@@ -10,6 +10,9 @@ jobs:
     steps:
       - checkout
       - run:
+          name: Run and validate `cmake`
+          command: nox -s cmake -- -DCMAKE_VERBOSE_MAKEFILE:BOOL=ON
+      - run:
           name: Check that all Cython generated files have been updated
           command: nox -s "update_generated(check=True)"
       - run:
