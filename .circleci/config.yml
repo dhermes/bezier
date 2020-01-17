@@ -10,9 +10,6 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Install `cmake` (should be done in `bezier.Dockerfile`).
-          command: pip install --upgrade cmake
-      - run:
           name: Check that all Cython generated files have been updated
           command: nox -s "update_generated(check=True)"
       - run:
