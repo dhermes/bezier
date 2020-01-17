@@ -29,11 +29,10 @@ if [[ "${PY_VERSION}" == "3.6" ]]; then
 elif [[ "${PY_VERSION}" == "3.7" ]]; then
     ${PY_BIN_DIR}/nox -s "unit-3.7"
 elif [[ "${PY_VERSION}" == "3.8" ]]; then
-    ${PY_BIN_DIR}/nox -s "check_journal(machine='travis-macos')"
     ${PY_BIN_DIR}/nox -s cover
     ${PY_BIN_DIR}/nox -s "functional-3.8"
     ${PY_BIN_DIR}/nox -s doctest
-    # ${PY_BIN_DIR}/nox -s "check_journal(machine='travis-macos')"
+    ${PY_BIN_DIR}/nox -s "check_journal(machine='travis-macos')"
 else
     echo "Unexpected version: ${PY_VERSION}"
     exit 1
