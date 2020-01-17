@@ -10,6 +10,9 @@ jobs:
     steps:
       - checkout
       - run:
+          name: Check the journaled `build_ext` commands
+          command: nox -s "check_journal(machine='circleci')"
+      - run:
           name: Check that all Cython generated files have been updated
           command: nox -s "update_generated(check=True)"
       - run:
@@ -42,9 +45,9 @@ jobs:
       - run:
           name: Check that test case examples are valid for JSON schema
           command: nox -s validate_functional_test_cases
-      - run:
-          name: Check the journaled `build_ext` commands
-          command: nox -s "check_journal(machine='circleci')"
+      # - run:
+      #     name: Check the journaled `build_ext` commands
+      #     command: nox -s "check_journal(machine='circleci')"
       - deploy:
           name: Upload coverage to coveralls
           command: |

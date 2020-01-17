@@ -12,6 +12,7 @@
 
 """Setup file for ``bezier``."""
 
+import distutils.ccompiler
 import os
 import shutil
 import sys
@@ -51,6 +52,14 @@ DESCRIPTION = (
 _IS_WINDOWS = os.name == "nt"
 _EXTRA_DLL = "extra-dll"
 _DLL_FILENAME = "bezier.dll"
+BAD_JOURNAL = "Saving journal failed with {!r}."
+JOURNAL_ENV = "BEZIER_JOURNAL"
+"""Environment variable to specify a text file for saving compiler commands.
+
+Can be used to determine how the binary extension was compiled. This can be
+useful, for example, to track changes across different systems or simply
+to make sure the build is occurring as expected.
+"""
 
 
 def is_installed(requirement):
@@ -125,9 +134,84 @@ def copy_dll(build_lib):
 
 
 class BuildExtWithDLL(setuptools.command.build_ext.build_ext):
+    def __init__(self, *args, **kwargs):
+        setuptools.command.build_ext.build_ext.__init__(self, *args, **kwargs)
+        self.journal_file = os.environ.get(JOURNAL_ENV)
+        self.commands = []
+
+    def start_journaling(self):
+        """Capture calls to the system by compilers.
+
+        See: https://github.com/numpy/numpy/blob/v1.18.1/\
+        numpy/distutils/ccompiler.py#L178
+
+        Intercepts all calls to ``CCompiler.spawn`` and keeps the
+        arguments around to be stored in the local ``commands``
+        instance attribute.
+        """
+        import numpy.distutils.ccompiler
+
+        if self.journal_file is None:
+            return
+
+        def journaled_spawn(patched_self, cmd, display=None):
+            self.commands.append(cmd)
+            return numpy.distutils.ccompiler.CCompiler_spawn(
+                patched_self, cmd, display=None
+            )
+
+        numpy.distutils.ccompiler.replace_method(
+            distutils.ccompiler.CCompiler, "spawn", journaled_spawn
+        )
+
+    @staticmethod
+    def _command_to_text(command):
+        # NOTE: This assumes, but doesn't check that the command has 3
+        #       or more arguments.
+        first_line = "$ {} \\"
+        middle_line = ">   {} \\"
+        last_line = ">   {}"
+        parts = [first_line.format(command[0])]
+        for argument in command[1:-1]:
+            parts.append(middle_line.format(argument))
+        parts.append(last_line.format(command[-1]))
+        return "\n".join(parts)
+
+    def _commands_to_text(self):
+        separator = "-" * 40
+        parts = [separator]
+        for command in self.commands:
+            command_text = self._command_to_text(command)
+            parts.extend([command_text, separator])
+        parts.append("")  # Trailing newline in file.
+        return "\n".join(parts)
+
+    def save_journal(self):
+        """Save journaled commands to file.
+
+        If there is no active journal, does nothing.
+
+        If saving the commands to a file fails, a message will be printed to
+        STDERR but the failure will be swallowed so that the extension can
+        be built successfully.
+        """
+        if self.journal_file is None:
+            return
+
+        try:
+            as_text = self._commands_to_text()
+            with open(self.journal_file, "w") as file_obj:
+                file_obj.write(as_text)
+        except Exception as exc:
+            msg = BAD_JOURNAL.format(exc)
+            print(msg, file=sys.stderr)
+
     def run(self):
+        self.start_journaling()
         copy_dll(self.build_lib)
-        return setuptools.command.build_ext.build_ext.run(self)
+        result = setuptools.command.build_ext.build_ext.run(self)
+        self.save_journal()
+        return result
 
 
 def setup():

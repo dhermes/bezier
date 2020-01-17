@@ -17,15 +17,19 @@ matrix:
     - os: osx
       language: generic
       env:
+        - PY_VERSION=3.8
+    - os: osx
+      language: generic
+      env:
         - PY_VERSION=3.6
     - os: osx
       language: generic
       env:
         - PY_VERSION=3.7
-    - os: osx
-      language: generic
-      env:
-        - PY_VERSION=3.8
+    # - os: osx
+    #   language: generic
+    #   env:
+    #     - PY_VERSION=3.8
 
 install:
   - source scripts/macos/travis-setup.sh

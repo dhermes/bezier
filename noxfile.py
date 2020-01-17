@@ -390,7 +390,7 @@ def blacken(session):
     session.run("python", check_black)
 
 
-@nox.session(py=DEFAULT_INTERPRETER)
+@nox.session(py="3.7")
 @nox.parametrize("machine", [APPVEYOR, CIRCLE_CI, TRAVIS_MACOS])
 def check_journal(session, machine):
     if machine == APPVEYOR and not ON_APPVEYOR:
