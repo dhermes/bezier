@@ -1,1 +1,45 @@
 ----------------------------------------
+$ C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\BIN\x86_amd64\cl.exe \
+>   /c \
+>   /nologo \
+>   /Ox \
+>   /W3 \
+>   /GL \
+>   /DNDEBUG \
+>   /MD \
+>   -Ic:\projects\bezier\.nox\check_journal-machine-appveyor\lib\site-packages\numpy\core\include \
+>   -IC:\projects\bezier\.nox\libbezier-release\usr\include \
+>   -IC:\Python38-x64\include \
+>   -IC:\Python38-x64\include \
+>   -IC:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\INCLUDE \
+>   -IC:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\ATLMFC\INCLUDE \
+>   -IC:\Program Files (x86)\Windows Kits\10\include\10.0.18362.0\ucrt \
+>   -IC:\Program Files (x86)\Windows Kits\NETFXSDK\4.6.1\include\um \
+>   -IC:\Program Files (x86)\Windows Kits\10\include\10.0.18362.0\shared \
+>   -IC:\Program Files (x86)\Windows Kits\10\include\10.0.18362.0\um \
+>   -IC:\Program Files (x86)\Windows Kits\10\include\10.0.18362.0\winrt \
+>   /Tcsrc\python\bezier\_speedup.c \
+>   /Fobuild\temp.win-amd64-3.8\Release\src\python\bezier\_speedup.obj
+----------------------------------------
+$ C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\BIN\x86_amd64\link.exe \
+>   /nologo \
+>   /INCREMENTAL:NO \
+>   /LTCG \
+>   /DLL \
+>   /MANIFEST:EMBED,ID=2 \
+>   /MANIFESTUAC:NO \
+>   /LIBPATH:C:\projects\bezier\.nox\libbezier-release\usr\lib \
+>   /LIBPATH:C:\Python38-x64\Libs \
+>   /LIBPATH:c:\projects\bezier\.nox\check_journal-machine-appveyor\libs \
+>   /LIBPATH:c:\projects\bezier\.nox\check_journal-machine-appveyor\PCbuild\amd64 \
+>   /LIBPATH:C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\LIB\amd64 \
+>   /LIBPATH:C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\ATLMFC\LIB\amd64 \
+>   /LIBPATH:C:\Program Files (x86)\Windows Kits\10\lib\10.0.18362.0\ucrt\x64 \
+>   /LIBPATH:C:\Program Files (x86)\Windows Kits\NETFXSDK\4.6.1\lib\um\x64 \
+>   /LIBPATH:C:\Program Files (x86)\Windows Kits\10\lib\10.0.18362.0\um\x64 \
+>   bezier.lib \
+>   /EXPORT:PyInit__speedup \
+>   build\temp.win-amd64-3.8\Release\src\python\bezier\_speedup.obj \
+>   /OUT:build\lib.win-amd64-3.8\bezier\_speedup.cp38-win_amd64.pyd \
+>   /IMPLIB:build\temp.win-amd64-3.8\Release\src\python\bezier\_speedup.cp38-win_amd64.lib
+----------------------------------------
