@@ -72,6 +72,7 @@ BUILD_TYPE_DEBUG = "Debug"
 BUILD_TYPE_RELEASE = "Release"
 DEBUG_SESSION_NAME = "libbezier-debug"
 RELEASE_SESSION_NAME = "libbezier-release"
+INSTALL_PREFIX_ENV = "BEZIER_INSTALL_PREFIX"
 
 
 def get_path(*names):
@@ -129,9 +130,10 @@ def install_bezier(session, debug=False, env=None):
         install_prefix = _cmake(session, BUILD_TYPE_DEBUG)
     else:
         install_prefix = _cmake(session, BUILD_TYPE_RELEASE)
-    env["BEZIER_INSTALL_PREFIX"] = install_prefix
+    env[INSTALL_PREFIX_ENV] = install_prefix
 
     session.install(".", env=env)
+    return install_prefix
 
 
 @nox.session(py=DEFAULT_INTERPRETER)
@@ -248,15 +250,17 @@ def doctest(session):
     session.install(DEPS["sympy"], *DOCS_DEPS)
     # Install this package.
     if IS_MACOS:
+        install_prefix = _cmake(session, BUILD_TYPE_RELEASE)
         command = get_path("scripts", "macos", "nox-install-for-doctest.sh")
-        session.run(command, external=True)
+        env = {INSTALL_PREFIX_ENV: install_prefix}
+        session.run(command, external=True, env=env)
     else:
-        install_bezier(session)
+        install_prefix = install_bezier(session)
     # Run the script for building docs and running doctests.
     run_args = get_doctest_args(session)
     # Make sure that the root directory is on the Python path so that
     # ``tests`` is import-able.
-    env = {"PYTHONPATH": get_path()}
+    env = {"PYTHONPATH": get_path(), INSTALL_PREFIX_ENV: install_prefix}
     session.run(*run_args, env=env)
 
 

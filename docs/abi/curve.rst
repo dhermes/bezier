@@ -74,12 +74,10 @@ Procedures
                   example-reduce-pseudo-inverse, example-specialize-curve,
                   example-subdivide-nodes-curve
 
-      import bezier
       import tests.utils
 
 
-      bezier_include = bezier.get_include()
-      bezier_lib = bezier.get_lib()
+      bezier_include, bezier_lib = tests.utils.bezier_locate()
       gfortran_lib = tests.utils.get_gfortran_lib()
       docs_abi_directory = tests.utils.repo_relative("docs", "abi")
       invoke_shell = tests.utils.make_invoke_shell(docs_abi_directory)
@@ -88,10 +86,6 @@ Procedures
       :options: +NORMALIZE_WHITESPACE
       :windows-skip:
 
-      >>> bezier_include
-      '.../site-packages/bezier/include'
-      >>> bezier_lib
-      '.../site-packages/bezier/lib'
       >>> invoke_shell(f"""
       ... gcc \
       ...   -o example \
@@ -99,6 +93,7 @@ Procedures
       ...   -I {bezier_include} \
       ...   -L {bezier_lib} \
       ...   -L {gfortran_lib} \
+      ...   -Wl,-rpath,{bezier_lib} \
       ...   -lbezier \
       ...   -lm -lgfortran
       ... """)
@@ -165,10 +160,6 @@ Procedures
       :options: +NORMALIZE_WHITESPACE
       :windows-skip:
 
-      >>> bezier_include
-      '.../site-packages/bezier/include'
-      >>> bezier_lib
-      '.../site-packages/bezier/lib'
       >>> invoke_shell(f"""
       ... gcc \
       ...   -o example \
@@ -176,6 +167,7 @@ Procedures
       ...   -I {bezier_include} \
       ...   -L {bezier_lib} \
       ...   -L {gfortran_lib} \
+      ...   -Wl,-rpath,{bezier_lib} \
       ...   -lbezier \
       ...   -lm -lgfortran
       ... """)
@@ -281,10 +273,6 @@ Procedures
       :options: +NORMALIZE_WHITESPACE
       :windows-skip:
 
-      >>> bezier_include
-      '.../site-packages/bezier/include'
-      >>> bezier_lib
-      '.../site-packages/bezier/lib'
       >>> invoke_shell(f"""
       ... gcc \
       ...   -o example \
@@ -292,6 +280,7 @@ Procedures
       ...   -I {bezier_include} \
       ...   -L {bezier_lib} \
       ...   -L {gfortran_lib} \
+      ...   -Wl,-rpath,{bezier_lib} \
       ...   -lbezier \
       ...   -lm -lgfortran
       ... """)
@@ -360,10 +349,6 @@ Procedures
       :options: +NORMALIZE_WHITESPACE
       :windows-skip:
 
-      >>> bezier_include
-      '.../site-packages/bezier/include'
-      >>> bezier_lib
-      '.../site-packages/bezier/lib'
       >>> invoke_shell(f"""
       ... gcc \
       ...   -o example \
@@ -371,6 +356,7 @@ Procedures
       ...   -I {bezier_include} \
       ...   -L {bezier_lib} \
       ...   -L {gfortran_lib} \
+      ...   -Wl,-rpath,{bezier_lib} \
       ...   -lbezier \
       ...   -lm -lgfortran
       ... """)
@@ -448,10 +434,6 @@ Procedures
       :options: +NORMALIZE_WHITESPACE
       :windows-skip:
 
-      >>> bezier_include
-      '.../site-packages/bezier/include'
-      >>> bezier_lib
-      '.../site-packages/bezier/lib'
       >>> invoke_shell(f"""
       ... gcc \
       ...   -o example \
@@ -459,6 +441,7 @@ Procedures
       ...   -I {bezier_include} \
       ...   -L {bezier_lib} \
       ...   -L {gfortran_lib} \
+      ...   -Wl,-rpath,{bezier_lib} \
       ...   -lbezier \
       ...   -lm -lgfortran
       ... """)
@@ -537,10 +520,6 @@ Procedures
       :options: +NORMALIZE_WHITESPACE
       :windows-skip:
 
-      >>> bezier_include
-      '.../site-packages/bezier/include'
-      >>> bezier_lib
-      '.../site-packages/bezier/lib'
       >>> invoke_shell(f"""
       ... gcc \
       ...   -o example \
@@ -548,6 +527,7 @@ Procedures
       ...   -I {bezier_include} \
       ...   -L {bezier_lib} \
       ...   -L {gfortran_lib} \
+      ...   -Wl,-rpath,{bezier_lib} \
       ...   -lbezier \
       ...   -lm -lgfortran
       ... """)
@@ -619,10 +599,6 @@ Procedures
       :options: +NORMALIZE_WHITESPACE
       :windows-skip:
 
-      >>> bezier_include
-      '.../site-packages/bezier/include'
-      >>> bezier_lib
-      '.../site-packages/bezier/lib'
       >>> invoke_shell(f"""
       ... gcc \
       ...   -o example \
@@ -630,6 +606,7 @@ Procedures
       ...   -I {bezier_include} \
       ...   -L {bezier_lib} \
       ...   -L {gfortran_lib} \
+      ...   -Wl,-rpath,{bezier_lib} \
       ...   -lbezier \
       ...   -lm -lgfortran
       ... """)
@@ -711,10 +688,6 @@ Procedures
       :options: +NORMALIZE_WHITESPACE
       :windows-skip:
 
-      >>> bezier_include
-      '.../site-packages/bezier/include'
-      >>> bezier_lib
-      '.../site-packages/bezier/lib'
       >>> invoke_shell(f"""
       ... gcc \
       ...   -o example \
@@ -722,6 +695,7 @@ Procedures
       ...   -I {bezier_include} \
       ...   -L {bezier_lib} \
       ...   -L {gfortran_lib} \
+      ...   -Wl,-rpath,{bezier_lib} \
       ...   -lbezier \
       ...   -lm -lgfortran
       ... """)
@@ -806,10 +780,6 @@ Procedures
       :options: +NORMALIZE_WHITESPACE
       :windows-skip:
 
-      >>> bezier_include
-      '.../site-packages/bezier/include'
-      >>> bezier_lib
-      '.../site-packages/bezier/lib'
       >>> invoke_shell(f"""
       ... gcc \
       ...   -o example \
@@ -817,6 +787,7 @@ Procedures
       ...   -I {bezier_include} \
       ...   -L {bezier_lib} \
       ...   -L {gfortran_lib} \
+      ...   -Wl,-rpath,{bezier_lib} \
       ...   -lbezier \
       ...   -lm -lgfortran
       ... """)
@@ -891,10 +862,6 @@ Procedures
       :options: +NORMALIZE_WHITESPACE
       :windows-skip:
 
-      >>> bezier_include
-      '.../site-packages/bezier/include'
-      >>> bezier_lib
-      '.../site-packages/bezier/lib'
       >>> invoke_shell(f"""
       ... gcc \
       ...   -o example \
@@ -902,6 +869,7 @@ Procedures
       ...   -I {bezier_include} \
       ...   -L {bezier_lib} \
       ...   -L {gfortran_lib} \
+      ...   -Wl,-rpath,{bezier_lib} \
       ...   -lbezier \
       ...   -lm -lgfortran
       ... """)
@@ -985,10 +953,6 @@ Procedures
       :options: +NORMALIZE_WHITESPACE
       :windows-skip:
 
-      >>> bezier_include
-      '.../site-packages/bezier/include'
-      >>> bezier_lib
-      '.../site-packages/bezier/lib'
       >>> invoke_shell(f"""
       ... gcc \
       ...   -o example \
@@ -996,6 +960,7 @@ Procedures
       ...   -I {bezier_include} \
       ...   -L {bezier_lib} \
       ...   -L {gfortran_lib} \
+      ...   -Wl,-rpath,{bezier_lib} \
       ...   -lbezier \
       ...   -lm -lgfortran
       ... """)
@@ -1068,10 +1033,6 @@ Procedures
       :options: +NORMALIZE_WHITESPACE
       :windows-skip:
 
-      >>> bezier_include
-      '.../site-packages/bezier/include'
-      >>> bezier_lib
-      '.../site-packages/bezier/lib'
       >>> invoke_shell(f"""
       ... gcc \
       ...   -o example \
@@ -1079,6 +1040,7 @@ Procedures
       ...   -I {bezier_include} \
       ...   -L {bezier_lib} \
       ...   -L {gfortran_lib} \
+      ...   -Wl,-rpath,{bezier_lib} \
       ...   -lbezier \
       ...   -lm -lgfortran
       ... """)

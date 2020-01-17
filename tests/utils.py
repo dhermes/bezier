@@ -96,3 +96,21 @@ def repo_relative(*path_parts):
     """Get a path relative to the root of the ``git`` repository."""
     git_root = get_git_root()
     return os.path.join(git_root, *path_parts)
+
+
+def bezier_locate():
+    """Locate directories for ``libbezier``.
+
+    In particular, the lib (``-L``) and include (``-I``) directories.
+    """
+    # NOTE: This will **fail** with a ``KeyError`` if the environment
+    #       variable ``BEZIER_INSTALL_PREFIX`` is not set. This is
+    #       **intentional**.
+    install_prefix = os.environ["BEZIER_INSTALL_PREFIX"]
+    # NOTE: This assumes that ``cmake`` (or the build system that installed
+    #       ``libbezier``) uses ``include`` and ``lib`` directory names, e.g.
+    #       ``/usr/local/include`` and ``/usr/local/lib``.
+    bezier_include = os.path.join(install_prefix, "include")
+    bezier_lib = os.path.join(install_prefix, "lib")
+
+    return bezier_include, bezier_lib
