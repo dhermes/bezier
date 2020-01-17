@@ -10,17 +10,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Setup file for bezier."""
+"""Setup file for ``bezier``."""
 
 import os
+import shutil
 import sys
 
 import pkg_resources
 import setuptools
-
-import setup_helpers
-import setup_helpers_macos
-import setup_helpers_windows
+import setuptools.command.build_ext
 
 
 VERSION = "2020.1.15.dev1"  # Also in ``codemeta.json`` and ``__init__.py``.
@@ -34,11 +32,6 @@ $ python3.8 -m pip install numpy
 $ # OR
 $ conda install numpy
 """
-MISSING_F90_MESSAGE = """\
-No Fortran 90 compiler found.
-
-Skipping Fortran speedups via binary extension module.
-"""
 NO_EXTENSION_ENV = "BEZIER_NO_EXTENSION"
 NO_SPEEDUPS_MESSAGE = """\
 The {} environment variable has been used to explicitly disable the
@@ -46,11 +39,18 @@ building of the binary extension module.
 """.format(
     NO_EXTENSION_ENV
 )
+INSTALL_PREFIX_ENV = "BEZIER_INSTALL_PREFIX"
+NO_INSTALL_PREFIX_MESSAGE = (
+    "The {} environment variable must be set."
+).format(INSTALL_PREFIX_ENV)
 REQUIREMENTS = ("numpy >= 1.18.1",)
 EXTRAS_REQUIRE = {"full": ["scipy >= 1.4.1", "sympy >= 1.5.1"]}
 DESCRIPTION = (
     u"Helper for B\u00e9zier Curves, Triangles, and Higher Order Objects"
 )
+_IS_WINDOWS = os.name == "nt"
+_EXTRA_DLL = "extra-dll"
+_DLL_FILENAME = "bezier.dll"
 
 
 def is_installed(requirement):
@@ -63,10 +63,14 @@ def is_installed(requirement):
         return True
 
 
-def require_numpy():
-    if not is_installed("numpy>=1.9.0"):
+def numpy_include_dir():
+    if not is_installed("numpy >= 1.9.0"):
         print(NUMPY_MESSAGE, file=sys.stderr)
         sys.exit(1)
+
+    import numpy as np
+
+    return np.get_include()
 
 
 def extension_modules():
@@ -74,18 +78,56 @@ def extension_modules():
         print(NO_SPEEDUPS_MESSAGE, file=sys.stderr)
         return []
 
-    require_numpy()
-    if setup_helpers.BuildFortranThenExt.has_f90_compiler():
-        return setup_helpers.extension_modules()
+    install_prefix = os.environ.get(INSTALL_PREFIX_ENV)
+    if install_prefix is None:
+        print(NO_INSTALL_PREFIX_MESSAGE, file=sys.stderr)
+        sys.exit(1)
 
-    else:
-        print(MISSING_F90_MESSAGE, file=sys.stderr)
-        return []
+    rpath = os.path.join(install_prefix, "lib")
+    extra_link_args = []
+    if not _IS_WINDOWS:
+        extra_link_args.append("-Wl,-rpath,{}".format(rpath))
+
+    extension = setuptools.Extension(
+        "bezier._speedup",
+        [os.path.join("src", "python", "bezier", "_speedup.c")],
+        include_dirs=[
+            numpy_include_dir(),
+            os.path.join(install_prefix, "include"),
+        ],
+        libraries=["bezier"],
+        library_dirs=[rpath],
+        extra_link_args=extra_link_args,
+    )
+    return [extension]
 
 
 def make_readme():
     with open(README_FILENAME, "r") as file_obj:
         return file_obj.read()
+
+
+def copy_dll(build_lib):
+    if not _IS_WINDOWS:
+        return
+
+    install_prefix = os.environ.get(INSTALL_PREFIX_ENV)
+    if install_prefix is None:
+        return
+
+    # NOTE: ``bin`` is hardcoded here, expected to correspond to
+    #       ``CMAKE_INSTALL_BINDIR`` on Windows.
+    installed_dll = os.path.join(install_prefix, "bin", _DLL_FILENAME)
+    build_lib_extra_dll = os.path.join(build_lib, "bezier", _EXTRA_DLL)
+    os.makedirs(build_lib_extra_dll, exist_ok=True)
+    relocated_dll = os.path.join(build_lib_extra_dll, _DLL_FILENAME)
+    shutil.copyfile(installed_dll, relocated_dll)
+
+
+class BuildExtWithDLL(setuptools.command.build_ext.build_ext):
+    def run(self):
+        copy_dll(self.build_lib)
+        return setuptools.command.build_ext.build_ext.run(self)
 
 
 def setup():
@@ -115,7 +157,6 @@ def setup():
                 "*.pxd",
                 os.path.join("include", "*.h"),
                 os.path.join("include", "bezier", "*.h"),
-                os.path.join("lib", "*.a"),
                 os.path.join("lib", "*.lib"),
                 os.path.join("extra-dll", "*.dll"),
             ]
@@ -138,18 +179,11 @@ def setup():
             "Programming Language :: Python :: Implementation :: CPython",
             "Programming Language :: Python :: Implementation :: PyPy",
         ],
-        cmdclass={"build_ext": setup_helpers.BuildFortranThenExt},
+        cmdclass={"build_ext": BuildExtWithDLL},
     )
 
 
 def main():
-    # Add any "patches" needed for the Fortran compiler.
-    setup_helpers.BuildFortranThenExt.PATCH_FUNCTIONS[:] = [
-        setup_helpers.patch_f90_compiler,
-        setup_helpers_macos.patch_f90_compiler,
-        setup_helpers_windows.patch_f90_compiler,
-    ]
-    setup_helpers_windows.patch_cmd(setup_helpers.BuildFortranThenExt)
     setup()
 
 

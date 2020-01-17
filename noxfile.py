@@ -124,8 +124,13 @@ def pypy_setup(local_deps, session):
 def install_bezier(session, debug=False, env=None):
     if env is None:
         env = {}
+
     if debug:
-        env["DEBUG"] = "True"
+        install_prefix = _cmake(session, BUILD_TYPE_DEBUG)
+    else:
+        install_prefix = _cmake(session, BUILD_TYPE_RELEASE)
+    env["BEZIER_INSTALL_PREFIX"] = install_prefix
+
     session.install(".", env=env)
 
 
@@ -319,6 +324,7 @@ def lint(session):
         "--metadata",
         "--restructuredtext",
         "--strict",
+        env={"BEZIER_NO_EXTENSION": "True"},
     )
     # Run ``black --check`` over all Python files
     check_black = get_path("scripts", "black_check_all_files.py")
@@ -504,6 +510,9 @@ def _cmake(session, build_type):
     in which case we directly build as instructed. Additionally, it may
     correspond to a session that seeks to build ``libbezier`` as a dependency,
     e.g. ``nox -s unit-3.8``.
+
+    Returns:
+        str: The install prefix that was created / re-used.
     """
     virtualenv_location = _cmake_virtualenv(session, build_type)
 
@@ -544,6 +553,8 @@ def _cmake(session, build_type):
 
     # Get information on how the build was configured.
     session.run("cmake", "-L", build_dir, external=cmake_external)
+
+    return install_prefix
 
 
 @nox.session(py=DEFAULT_INTERPRETER, name=DEBUG_SESSION_NAME)

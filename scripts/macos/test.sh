@@ -30,6 +30,7 @@ elif [[ "${PY_VERSION}" == "3.7" ]]; then
     ${PY_BIN_DIR}/nox -s "unit-3.7"
 elif [[ "${PY_VERSION}" == "3.8" ]]; then
     ${PY_BIN_DIR}/nox -s libbezier-debug
+    ${PY_BIN_DIR}/nox -s libbezier-release
     ${PY_BIN_DIR}/nox -s cover
     ${PY_BIN_DIR}/nox -s "functional-3.8"
     ${PY_BIN_DIR}/nox -s doctest
