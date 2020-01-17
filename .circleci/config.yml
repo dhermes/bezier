@@ -13,12 +13,6 @@ jobs:
           name: Install `cmake` (should be done in `bezier.Dockerfile`).
           command: pip install --upgrade cmake
       - run:
-          name: Run and validate `cmake` Debug build of `libbezier`
-          command: nox -s libbezier-debug
-      - run:
-          name: Run and validate `cmake` Release build of `libbezier`
-          command: nox -s libbezier-release
-      - run:
           name: Check that all Cython generated files have been updated
           command: nox -s "update_generated(check=True)"
       - run:
