@@ -34,14 +34,16 @@ To build the Fortran shared library directly, use `CMake`_ version
 
 .. code-block:: console
 
-   $ mkdir src/fortran/build-debug/
+   $ BUILD_DIR=".../libbezier-debug/build"
+   $ INSTALL_PREFIX=".../libbezier-debug/usr"
+   $ mkdir -p "${{BUILD_DIR}}"
    $ cmake \
    >   -DCMAKE_BUILD_TYPE=Debug \
-   >   -DCMAKE_INSTALL_PREFIX:PATH="$(pwd)/src/fortran/usr-debug/" \
+   >   -DCMAKE_INSTALL_PREFIX:PATH="${{INSTALL_PREFIX}}" \
    >   -S src/fortran/ \
-   >   -B src/fortran/build-debug/
+   >   -B "${{BUILD_DIR}}"
    $ cmake \
-   >   --build src/fortran/build-debug/ \
+   >   --build "${{BUILD_DIR}}" \
    >   --config Debug \
    >   --target install
 
@@ -49,8 +51,8 @@ On Linux, this should result in:
 
 .. code-block:: console
 
-   $ tree src/fortran/usr-debug/
-   src/fortran/usr-debug/
+   $ tree "${{INSTALL_PREFIX}}"
+   .../libbezier-debug/usr/
    ├── include
    │   ├── bezier
    │   │   ├── curve.h
