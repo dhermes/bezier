@@ -119,44 +119,14 @@ with copies of ``libbezier``, ``libgfortran``, ``libquadmath`` and
 .. testsetup:: macos-dylibs, show-dll
 
    import os
-   import textwrap
 
    import bezier
+   import tests.utils
 
 
-   def sort_key(name):
-       return name.lower().lstrip("_")
-
-
-   def tree(directory, suffix=None):
-       names = sorted(os.listdir(directory), key=sort_key)
-       parts = []
-       for name in names:
-           path = os.path.join(directory, name)
-           if os.path.isdir(path):
-               sub_part = tree(path, suffix=suffix)
-               if sub_part is not None:
-                   # NOTE: We **always** use posix separator.
-                   parts.append(name + "/")
-                   parts.append(textwrap.indent(sub_part, "  "))
-           else:
-               if suffix is None or name.endswith(suffix):
-                   parts.append(name)
-
-       if parts:
-           return "\n".join(parts)
-       else:
-           return None
-
-
-   def print_tree(directory, suffix=None):
-       print(os.path.basename(directory) + os.path.sep)
-       full_tree = tree(directory, suffix=suffix)
-       print(textwrap.indent(full_tree, "  "))
-
-
-   # macOS specific.
+   print_tree = tests.utils.print_tree
    base_dir = os.path.abspath(os.path.dirname(bezier.__file__))
+   # macOS specific.
    dylibs_directory = os.path.join(base_dir, ".dylibs")
 
 .. doctest:: macos-dylibs
@@ -187,13 +157,12 @@ of ``libbezier``:
 
    def invoke_shell(*args):
        print("$ " + " ".join(args))
-       prev_cwd = os.getcwd()
-       os.chdir(bezier_directory)
        # NOTE: We print to the stdout of the doctest, rather than using
        #       `subprocess.call()` directly.
-       output_bytes = subprocess.check_output(args).rstrip()
+       output_bytes = subprocess.check_output(
+           args, cwd=bezier_directory
+       ).rstrip()
        print(output_bytes.decode("utf-8"))
-       os.chdir(prev_cwd)
 
 .. doctest:: macos-extension
    :options: +NORMALIZE_WHITESPACE
@@ -273,15 +242,14 @@ The Python extension module (``.pyd`` file) depends directly on this library:
 
    def invoke_shell(*args):
        print("> " + " ".join(args))
-       # Replace `"dumpbin"` with `dumpbin_exe`.
+       # Replace ``"dumpbin"`` with ``dumpbin_exe``.
        cmd = tuple(map(replace_dumpbin, args))
-       prev_cwd = os.getcwd()
-       os.chdir(bezier_directory)
        # NOTE: We print to the stdout of the doctest, rather than using
        #       `subprocess.call()` directly.
-       output_bytes = subprocess.check_output(cmd).rstrip()
+       output_bytes = subprocess.check_output(
+           cmd, cwd=bezier_directory
+       ).rstrip()
        print(output_bytes.decode("utf-8"))
-       os.chdir(prev_cwd)
 
 .. doctest:: windows-extension
    :options: +NORMALIZE_WHITESPACE

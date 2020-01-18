@@ -15,6 +15,7 @@ import pathlib
 import shlex
 import subprocess
 import sys
+import textwrap
 
 
 # See: https://docs.python.org/3/library/platform.html#cross-platform
@@ -114,3 +115,37 @@ def bezier_locate():
     bezier_lib = os.path.join(install_prefix, "lib")
 
     return bezier_include, bezier_lib
+
+
+def _sort_key(name):
+    """Sorting helper for members of a directory."""
+    return name.lower().lstrip("_")
+
+
+def tree(directory, suffix=None):
+    """Create string (recursively) containing a pretty-printed file tree."""
+    names = sorted(os.listdir(directory), key=_sort_key)
+    parts = []
+    for name in names:
+        path = os.path.join(directory, name)
+        if os.path.isdir(path):
+            sub_part = tree(path, suffix=suffix)
+            if sub_part is not None:
+                # NOTE: We **always** use posix separator.
+                parts.append(name + "/")
+                parts.append(textwrap.indent(sub_part, "  "))
+        else:
+            if suffix is None or name.endswith(suffix):
+                parts.append(name)
+
+    if parts:
+        return "\n".join(parts)
+    else:
+        return None
+
+
+def print_tree(directory, suffix=None):
+    """Pretty print a file tree."""
+    print(os.path.basename(directory) + os.path.sep)
+    full_tree = tree(directory, suffix=suffix)
+    print(textwrap.indent(full_tree, "  "))
