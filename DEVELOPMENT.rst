@@ -48,33 +48,6 @@ To build the Fortran shared library directly, use `CMake`_ version
    >   --config Debug \
    >   --target install
 
-On Linux, this will result in:
-
-.. code-block:: console
-
-   $ tree "${INSTALL_PREFIX}"
-   .../libbezier-debug/usr/
-   ├── include
-   │   ├── bezier
-   │   │   ├── curve.h
-   │   │   ├── curve_intersection.h
-   │   │   ├── helpers.h
-   │   │   ├── status.h
-   │   │   ├── triangle.h
-   │   │   └── triangle_intersection.h
-   │   └── bezier.h
-   ├── lib
-   │   ├── libbezier.so -> libbezier.so.2020
-   │   ├── libbezier.so.2020 -> libbezier.so.2020.1.14
-   │   └── libbezier.so.2020.1.14
-   └── share
-       └── bezier
-           └── cmake
-               ├── BezierConfig-debug.cmake
-               └── BezierConfig.cmake
-
-   6 directories, 12 files
-
 .. _CMake: https://cmake.org/
 
 ****************
