@@ -41,9 +41,6 @@ for PYBIN in /opt/python/*/bin; do
     fi
 done
 
-# Indicate that wheels are being built.
-export BEZIER_WHEEL=True
-
 # Compile wheels
 for PYBIN in ${VERSION_WHITELIST}; do
     "${PYBIN}/pip" install -r /io/scripts/requirements.txt

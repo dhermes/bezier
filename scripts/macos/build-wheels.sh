@@ -51,9 +51,6 @@ ${PY_BIN} -m pip install --upgrade delocate wheel virtualenv
 # Make sure install requirement are installed / up-to-date.
 ${PY_BIN} -m pip install --upgrade setuptools numpy
 
-# Indicate that wheels are being built.
-export BEZIER_WHEEL=True
-
 # Create the wheel.
 DIST_WHEELS="${MACOS_DIR}/dist_wheels"
 mkdir -p ${DIST_WHEELS}

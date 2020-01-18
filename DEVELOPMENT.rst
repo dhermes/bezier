@@ -527,10 +527,6 @@ This project uses environment variables for building the
 - ``BEZIER_INSTALL_PREFIX``: A directory where ``libbezier`` is installed,
   including the shared library (``lib/``) and headers (``include/``). This
   environment variable is required to build the binary extension.
-- ``BEZIER_WHEEL``: Indicates that the source is being built into a wheel.
-  When this is true, some compiler flags (e.g. ``-march=native``) will be
-  removed since those flags can produce machine instructions that are too
-  specific to the host platform / architecture.
 - ``BEZIER_NO_EXTENSION``: If set, this will indicate that only the pure
   Python package should be built and installed (i.e. without the binary
   extension).
