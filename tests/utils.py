@@ -113,6 +113,8 @@ def bezier_locate():
     #       ``/usr/local/include`` and ``/usr/local/lib``.
     bezier_include = os.path.join(install_prefix, "include")
     bezier_lib = os.path.join(install_prefix, "lib")
+    if not os.path.isdir(bezier_lib):
+        bezier_lib = os.path.join(install_prefix, "lib64")
 
     return bezier_include, bezier_lib
 

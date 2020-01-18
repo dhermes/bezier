@@ -562,7 +562,6 @@ def clean(session):
         get_path("src", "python", "bezier.egg-info"),
         get_path("src", "python", "bezier", "__pycache__"),
         get_path("src", "python", "bezier", "extra-dll"),
-        get_path("src", "python", "bezier", "lib"),
         get_path("tests", "__pycache__"),
         get_path("tests", "functional", "__pycache__"),
         get_path("tests", "unit", "__pycache__"),

@@ -16,7 +16,7 @@ SCRIPT_FI=$(readlink -f ${0})
 MANYLINUX_DIR=$(dirname ${SCRIPT_FI})
 SCRIPTS_DIR=$(dirname ${MANYLINUX_DIR})
 REPO_ROOT=$(dirname ${SCRIPTS_DIR})
-DOCKER_IMAGE=quay.io/pypa/manylinux1_x86_64
+DOCKER_IMAGE=quay.io/pypa/manylinux2010_x86_64
 PRE_CMD=
 
 docker run \

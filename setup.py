@@ -95,6 +95,8 @@ def extension_modules():
         sys.exit(1)
 
     rpath = os.path.join(install_prefix, "lib")
+    if not os.path.isdir(rpath):
+        rpath = os.path.join(install_prefix, "lib64")
     extra_link_args = []
     if not _IS_WINDOWS:
         extra_link_args.append("-Wl,-rpath,{}".format(rpath))
