@@ -10,7 +10,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Helper for B |eacute| zier Triangles / Triangles.
+"""Helper for B |eacute| zier Triangles.
 
 .. |eacute| unicode:: U+000E9 .. LATIN SMALL LETTER E WITH ACUTE
    :trim:
