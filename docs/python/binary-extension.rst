@@ -448,22 +448,3 @@ The Python extension module can be built from source via:
    $ BEZIER_INSTALL_PREFIX=.../usr/ python setup.py build_ext
    $ # OR
    $ BEZIER_INSTALL_PREFIX=.../usr/ python -m pip wheel .
-
-By providing a filename via an environment variable, a "journal" can
-be stored of the compiler commands invoked to build the extension:
-
-.. code-block:: console
-
-   $ export BEZIER_INSTALL_PREFIX=.../usr/ BEZIER_JOURNAL=path/to/journal.txt
-   $ python -m pip wheel .
-   $ unset BEZIER_INSTALL_PREFIX BEZIER_JOURNAL
-
-For examples, see:
-
-* `Linux journal`_
-* `macOS journal`_
-* `Windows journal`_
-
-.. _Linux journal: https://github.com/dhermes/bezier/blob/master/.circleci/expected_journal.txt
-.. _macOS journal: https://github.com/dhermes/bezier/blob/master/scripts/macos/travis_journal.txt
-.. _Windows journal: https://github.com/dhermes/bezier/blob/master/appveyor/expected_journal.txt

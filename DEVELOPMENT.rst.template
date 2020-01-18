@@ -105,29 +105,6 @@ variable:
 
    $ DEBUG=True python setup.py build_ext --inplace
 
-Using ``distutils`` and ``numpy.distutils`` to compile Fortran is not
-"fully-supported" (i.e. the tooling is ad-hoc). As a result, there is a
-decent amount of code in ``setup.py``, ``setup_helpers.py``,
-``setup_helpers_macos.py`` and ``setup_helpers_windows.py`` to specify the
-build process. To make sure these are working as expected, it's possible to
-track **how** the extension is being installed. To actually make sure the
-correct compiler commands are invoked, provide a filename as the
-``BEZIER_JOURNAL`` environment variable and then the commands invoked will
-be written there:
-
-.. code-block:: console
-
-   $ BEZIER_JOURNAL=$(pwd)/journal.txt python setup.py build_ext --inplace
-
-The ``nox`` session ``check_journal`` uses this journaling option to verify
-the commands used to compile the extension in Linux on `CircleCI`_, in
-macOS on `Travis CI`_ and in Windows on `AppVeyor`_.
-
-As the build complexity grows, it may make more sense to transition the steps
-out of Python and into `CMake`_, `SCons`_ or another build tool.
-
-.. _SCons: http://scons.org
-
 To explicitly disable the building of the extension, the
 ``BEZIER_NO_EXTENSION`` environment variable can be used:
 
@@ -578,9 +555,6 @@ Environment Variables
 This project uses environment variables for building the
 ``bezier._speedup`` binary extension:
 
-- ``BEZIER_JOURNAL``: If set to a path on the filesystem, all compiler
-  commands executed while building the binary extension will be logged to
-  the journal file
 - ``BEZIER_NO_EXTENSION``: If set, this will indicate that only the pure
   Python package should be built and installed (i.e. without the binary
   extension).
@@ -606,13 +580,5 @@ services:
   for PyPy 3.
 - ``GENERATE_IMAGES``: Indicates to ``nox -s doctest`` that images should
   be generated during cleanup of each test case.
-- ``APPVEYOR``: Indicates currently running on AppVeyor.
-- ``CIRCLECI``: Indicates currently running on CircleCI.
 - ``READTHEDOCS``: Indicates currently running on Read The Docs (RTD). This is
   used to tell Sphinx to use the RTD theme when **not** running on RTD.
-- ``TRAVIS``: Indicates currently running on Travis.
-- ``TRAVIS_BUILD_DIR``: Gives path to the Travis build directory. This is used
-  to modify the command journal to make it deterministic (i.e. independent
-  of the build directory).
-- ``TRAVIS_OS_NAME``: Gives the current operating system on Travis. We check
-  that it is ``osx``.

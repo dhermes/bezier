@@ -15,7 +15,6 @@ import os
 import pathlib
 import shutil
 import sys
-import tempfile
 
 import nox
 import nox.sessions
@@ -27,7 +26,6 @@ nox.options.error_on_missing_interpreters = True
 
 IS_MACOS = sys.platform == "darwin"
 IS_WINDOWS = os.name == "nt"
-ON_APPVEYOR = os.environ.get("APPVEYOR") == "True"
 DEPS = {
     "black": "black >= 19.10b0",
     "cmake-format": "cmake-format >= 0.6.5",
@@ -59,15 +57,6 @@ DOCS_DEPS = (
 DEFAULT_INTERPRETER = "3.8"
 PYPY = "pypy3"
 ALL_INTERPRETERS = ("3.6", "3.6-32", "3.7", "3.7-32", "3.8", "3.8-32", PYPY)
-# Constants used for checking the journal of commands.
-APPVEYOR = "appveyor"
-CIRCLE_CI = "circleci"
-TRAVIS_MACOS = "travis-macos"
-JOURNAL_PATHS = {
-    APPVEYOR: os.path.join("appveyor", "expected_journal.txt"),
-    CIRCLE_CI: os.path.join(".circleci", "expected_journal.txt"),
-    TRAVIS_MACOS: os.path.join("scripts", "macos", "travis_journal.txt"),
-}
 BUILD_TYPE_DEBUG = "Debug"
 BUILD_TYPE_RELEASE = "Release"
 DEBUG_SESSION_NAME = "libbezier-debug"
@@ -388,41 +377,6 @@ def blacken(session):
     session.install(DEPS["black"])
     check_black = get_path("scripts", "blacken_all_files.py")
     session.run("python", check_black)
-
-
-@nox.session(py=DEFAULT_INTERPRETER)
-@nox.parametrize("machine", [APPVEYOR, CIRCLE_CI, TRAVIS_MACOS])
-def check_journal(session, machine):
-    if machine == APPVEYOR and not ON_APPVEYOR:
-        session.skip("Not currently running in AppVeyor.")
-    if machine == CIRCLE_CI and os.environ.get("CIRCLECI") != "true":
-        session.skip("Not currently running in CircleCI.")
-    if machine == TRAVIS_MACOS:
-        if os.environ.get("TRAVIS") != "true":
-            session.skip("Not currently running in Travis.")
-        if os.environ.get("TRAVIS_OS_NAME") != "osx":
-            session.skip("Running in Travis, but not in a macOS job.")
-
-    # Get a temporary file where the journal will be written.
-    filehandle, journal_filename = tempfile.mkstemp(suffix="-journal.txt")
-    os.close(filehandle)
-    # Set the journal environment variable and install ``bezier``. Making sure
-    # to limit to a single build job so commands are always in serial.
-    session.install(DEPS["numpy"])  # Install requirement(s).
-    env = {"BEZIER_JOURNAL": journal_filename, "NPY_NUM_BUILD_JOBS": "1"}
-    install_bezier(session, env=env)
-    # Compare the expected file to the actual results.
-    session.run(
-        "python",
-        get_path("scripts", "post_process_journal.py"),
-        "--journal-filename",
-        journal_filename,
-        "--machine",
-        machine,
-    )
-    expected_journal = get_path(JOURNAL_PATHS[machine])
-    diff_tool = get_path("scripts", "diff.py")
-    session.run("python", diff_tool, journal_filename, expected_journal)
 
 
 @nox.session(py=DEFAULT_INTERPRETER)
