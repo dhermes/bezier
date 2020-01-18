@@ -41,6 +41,7 @@ To build the Fortran shared library directly, use `CMake`_ version
    $ cmake \
    >     -DCMAKE_BUILD_TYPE=Debug \
    >     -DCMAKE_INSTALL_PREFIX:PATH="${{INSTALL_PREFIX}}" \
+   >     -DCMAKE_VERBOSE_MAKEFILE:BOOL=ON \
    >     -S "${{SRC_DIR}}" \
    >     -B "${{BUILD_DIR}}"
    $ cmake \
