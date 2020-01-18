@@ -60,44 +60,10 @@ __all__ = [
     "Curve",
     "CurvedPolygon",
     "get_dll",
-    "get_include",
-    "get_lib",
     "Surface",
     "Triangle",
     "UnsupportedDegree",
 ]
-
-
-def get_include():
-    """Get the directory with ``.h`` header files.
-
-    Extension modules (and Cython modules) that need to compile against
-    ``libbezier`` should use this function to locate the appropriate
-    include directory.
-
-    For more information, see :doc:`../binary-extension`.
-
-    Returns:
-        str: ``include`` directory that contains header files for the
-        ``libbezier`` Fortran library.
-    """
-    return pkg_resources.resource_filename("bezier", "include")
-
-
-def get_lib():
-    """Get the directory with ``.a`` / ``.lib`` static libraries.
-
-    Extension modules (and Cython modules) that need to compile against
-    ``libbezier`` should use this function to locate the appropriate lib
-    directory.
-
-    For more information, see :doc:`../binary-extension`.
-
-    Returns:
-        str: ``lib`` directory that contains static libraries for the
-        ``libbezier`` Fortran library.
-    """
-    return pkg_resources.resource_filename("bezier", "lib")
 
 
 def get_dll():
@@ -119,5 +85,4 @@ def get_dll():
     if os.name == "nt":
         return pkg_resources.resource_filename("bezier", "extra-dll")
 
-    else:
-        raise OSError("This function should only be used on Windows.")
+    raise OSError("This function should only be used on Windows.")

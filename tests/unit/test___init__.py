@@ -54,30 +54,6 @@ class Test___author__(unittest.TestCase):
         self.assertEqual(hardcoded_author, installed_author)
 
 
-class Test_get_include(unittest.TestCase):
-    @staticmethod
-    def _call_function_under_test():
-        import bezier
-
-        return bezier.get_include()
-
-    def test_it(self):
-        include_directory = self._call_function_under_test()
-        _check_pkg_filename(self, include_directory, "include")
-
-
-class Test_get_lib(unittest.TestCase):
-    @staticmethod
-    def _call_function_under_test():
-        import bezier
-
-        return bezier.get_lib()
-
-    def test_it(self):
-        lib_directory = self._call_function_under_test()
-        _check_pkg_filename(self, lib_directory, "lib")
-
-
 class Test_get_dll(unittest.TestCase):
     @staticmethod
     def _call_function_under_test():

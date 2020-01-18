@@ -8,69 +8,16 @@ Cython declaration files are provided:
 .. testsetup:: show-pxd
 
    import os
-   import textwrap
 
    import bezier
+   import tests.utils
 
 
-   class Path:
-       """This class is a hack for Windows.
-
-       It wraps a simple string but prints / repr-s it with Windows
-       path separator converted to the standard *nix separator.
-
-       This way doctests will succeed on Windows without modification.
-       """
-
-       def __init__(self, path):
-           self.path = path
-
-       def __repr__(self):
-           posix_path = self.path.replace(os.path.sep, "/")
-           return repr(posix_path)
-
-
-   def sort_key(name):
-       return name.lower().lstrip("_")
-
-
-   def tree(directory, suffix=None):
-       names = sorted(os.listdir(directory), key=sort_key)
-       parts = []
-       for name in names:
-           path = os.path.join(directory, name)
-           if os.path.isdir(path):
-               sub_part = tree(path, suffix=suffix)
-               if sub_part is not None:
-                   # NOTE: We **always** use posix separator.
-                   parts.append(name + "/")
-                   parts.append(textwrap.indent(sub_part, "  "))
-           else:
-               if suffix is None or name.endswith(suffix):
-                   parts.append(name)
-
-       if parts:
-           return "\n".join(parts)
-       else:
-           return None
-
-
-   def print_tree(directory, suffix=None):
-       if isinstance(directory, Path):
-           # Make Windows act like posix.
-           directory = directory.path
-           separator = "/"
-       else:
-           separator = os.path.sep
-       print(os.path.basename(directory) + separator)
-       full_tree = tree(directory, suffix=suffix)
-       print(textwrap.indent(full_tree, "  "))
-
-
-   include_directory = bezier.get_include()
-   bezier_directory = Path(os.path.dirname(include_directory))
+   print_tree = tests.utils.print_tree
+   bezier_directory = os.path.dirname(bezier.__file__)
 
 .. doctest:: show-pxd
+   :windows-skip:
 
    >>> bezier_directory
    '.../site-packages/bezier'

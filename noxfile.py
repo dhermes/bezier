@@ -15,9 +15,9 @@ import os
 import pathlib
 import shutil
 import sys
-import tempfile
 
 import nox
+import nox.sessions
 import py.path
 
 
@@ -25,7 +25,7 @@ nox.options.error_on_external_run = True
 nox.options.error_on_missing_interpreters = True
 
 IS_MACOS = sys.platform == "darwin"
-ON_APPVEYOR = os.environ.get("APPVEYOR") == "True"
+IS_WINDOWS = os.name == "nt"
 DEPS = {
     "black": "black >= 19.10b0",
     "cmake-format": "cmake-format >= 0.6.5",
@@ -57,15 +57,11 @@ DOCS_DEPS = (
 DEFAULT_INTERPRETER = "3.8"
 PYPY = "pypy3"
 ALL_INTERPRETERS = ("3.6", "3.6-32", "3.7", "3.7-32", "3.8", "3.8-32", PYPY)
-# Constants used for checking the journal of commands.
-APPVEYOR = "appveyor"
-CIRCLE_CI = "circleci"
-TRAVIS_MACOS = "travis-macos"
-JOURNAL_PATHS = {
-    APPVEYOR: os.path.join("appveyor", "expected_journal.txt"),
-    CIRCLE_CI: os.path.join(".circleci", "expected_journal.txt"),
-    TRAVIS_MACOS: os.path.join("scripts", "macos", "travis_journal.txt"),
-}
+BUILD_TYPE_DEBUG = "Debug"
+BUILD_TYPE_RELEASE = "Release"
+DEBUG_SESSION_NAME = "libbezier-debug"
+RELEASE_SESSION_NAME = "libbezier-release"
+INSTALL_PREFIX_ENV = "BEZIER_INSTALL_PREFIX"
 
 
 def get_path(*names):
@@ -118,9 +114,15 @@ def pypy_setup(local_deps, session):
 def install_bezier(session, debug=False, env=None):
     if env is None:
         env = {}
+
     if debug:
-        env["DEBUG"] = "True"
+        install_prefix = _cmake(session, BUILD_TYPE_DEBUG)
+    else:
+        install_prefix = _cmake(session, BUILD_TYPE_RELEASE)
+    env[INSTALL_PREFIX_ENV] = install_prefix
+
     session.install(".", env=env)
+    return install_prefix
 
 
 @nox.session(py=DEFAULT_INTERPRETER)
@@ -237,15 +239,17 @@ def doctest(session):
     session.install(DEPS["sympy"], *DOCS_DEPS)
     # Install this package.
     if IS_MACOS:
+        install_prefix = _cmake(session, BUILD_TYPE_RELEASE)
         command = get_path("scripts", "macos", "nox-install-for-doctest.sh")
-        session.run(command, external=True)
+        env = {INSTALL_PREFIX_ENV: install_prefix}
+        session.run(command, external=True, env=env)
     else:
-        install_bezier(session)
+        install_prefix = install_bezier(session)
     # Run the script for building docs and running doctests.
     run_args = get_doctest_args(session)
     # Make sure that the root directory is on the Python path so that
     # ``tests`` is import-able.
-    env = {"PYTHONPATH": get_path()}
+    env = {"PYTHONPATH": get_path(), INSTALL_PREFIX_ENV: install_prefix}
     session.run(*run_args, env=env)
 
 
@@ -313,6 +317,7 @@ def lint(session):
         "--metadata",
         "--restructuredtext",
         "--strict",
+        env={"BEZIER_NO_EXTENSION": "True"},
     )
     # Run ``black --check`` over all Python files
     check_black = get_path("scripts", "black_check_all_files.py")
@@ -375,41 +380,6 @@ def blacken(session):
 
 
 @nox.session(py=DEFAULT_INTERPRETER)
-@nox.parametrize("machine", [APPVEYOR, CIRCLE_CI, TRAVIS_MACOS])
-def check_journal(session, machine):
-    if machine == APPVEYOR and not ON_APPVEYOR:
-        session.skip("Not currently running in AppVeyor.")
-    if machine == CIRCLE_CI and os.environ.get("CIRCLECI") != "true":
-        session.skip("Not currently running in CircleCI.")
-    if machine == TRAVIS_MACOS:
-        if os.environ.get("TRAVIS") != "true":
-            session.skip("Not currently running in Travis.")
-        if os.environ.get("TRAVIS_OS_NAME") != "osx":
-            session.skip("Running in Travis, but not in a macOS job.")
-
-    # Get a temporary file where the journal will be written.
-    filehandle, journal_filename = tempfile.mkstemp(suffix="-journal.txt")
-    os.close(filehandle)
-    # Set the journal environment variable and install ``bezier``. Making sure
-    # to limit to a single build job so commands are always in serial.
-    session.install(DEPS["numpy"])  # Install requirement(s).
-    env = {"BEZIER_JOURNAL": journal_filename, "NPY_NUM_BUILD_JOBS": "1"}
-    install_bezier(session, env=env)
-    # Compare the expected file to the actual results.
-    session.run(
-        "python",
-        get_path("scripts", "post_process_journal.py"),
-        "--journal-filename",
-        journal_filename,
-        "--machine",
-        machine,
-    )
-    expected_journal = get_path(JOURNAL_PATHS[machine])
-    diff_tool = get_path("scripts", "diff.py")
-    session.run("python", diff_tool, journal_filename, expected_journal)
-
-
-@nox.session(py=DEFAULT_INTERPRETER)
 def fortran_unit(session):
     session.install(DEPS["lcov_cobertura"], DEPS["pycobertura"])
     if py.path.local.sysfind("make") is None:
@@ -452,43 +422,80 @@ def validate_functional_test_cases(session):
     )
 
 
-def get_cmake_paths(build_type):
-    normalized = build_type.lower()
-    # NOTE: ``build_dir`` is a relative path, but ``install_prefix`` is an
-    #       absolute path
-    build_dir = os.path.join("src", "fortran", "build-{}".format(normalized))
-    install_prefix = get_path("src", "fortran", "usr-{}".format(normalized))
-    return build_dir, install_prefix
+def _cmake_virtualenv(session, build_type):
+    """The **path** to the ``cmake`` virtual environment.
 
-
-@nox.session(py=DEFAULT_INTERPRETER)
-def cmake(session):
-    """Run ``cmake`` to build and install ``libbezier``
-
-    For now this runs with build type fixed as ``Debug`` but allowing an
-    option to specify ``Release`` will be supported at a later date.
+    This path is dependent on build type. If the ``session`` is actually
+    running as part of the intended ``build_type``, this will ensure a full
+    virtual environment is created. Otherwise, it will just create a
+    subdirectory for the build. This subdirectory will be the same one that
+    would be created for ``build_type``, e.g. if ``build_type`` is ``Debug``,
+    then the ``.nox/libbezier-debug`` subdirectory would be created.
     """
-    # Install ``cmake`` into virtual environment. This isn't strictly necessary
-    # if the current system already has ``cmake`` installed.
-    session.install(DEPS["cmake"])
+    if build_type == BUILD_TYPE_DEBUG:
+        build_session_name = DEBUG_SESSION_NAME
+    elif build_type == BUILD_TYPE_RELEASE:
+        build_session_name = RELEASE_SESSION_NAME
+    else:
+        raise ValueError(f"Invalid build type {build_type!r}")
+
+    if session._runner.name == build_session_name:
+        virtualenv_location = session.virtualenv.location
+        # Force the virtual environment to be (re-)created if it doesn't
+        # have a ``bin`` directory. This can happen if a build was invoked from
+        # another session function.
+        if not os.path.isdir(session.bin):
+            reuse_value = session.virtualenv.reuse_existing
+            session.virtualenv.reuse_existing = False
+            session.virtualenv.create()
+            session.virtualenv.reuse_existing = reuse_value
+
+        return virtualenv_location
+
+    relative_path = nox.sessions._normalize_path(
+        session._runner.global_config.envdir, build_session_name
+    )
+    # Convert to an absolute path.
+    virtualenv_location = get_path(relative_path)
+    session.run(os.makedirs, virtualenv_location, exist_ok=True)
+    return virtualenv_location
+
+
+def _cmake(session, build_type):
+    """Build and install ``libbezier`` via ``cmake``.
+
+    The ``session`` may be one of ``libbezier-debug`` / ``libbezier-release``
+    in which case we directly build as instructed. Additionally, it may
+    correspond to a session that seeks to build ``libbezier`` as a dependency,
+    e.g. ``nox -s unit-3.8``.
+
+    Returns:
+        str: The install prefix that was created / re-used.
+    """
+    virtualenv_location = _cmake_virtualenv(session, build_type)
+
+    cmake_external = True
+    if py.path.local.sysfind("cmake") is None:
+        session.install(DEPS["cmake"])
+        cmake_external = False
 
     # Prepare build and install directories.
-    build_type = "Debug"
-    build_dir, install_prefix = get_cmake_paths(build_type)
-
-    # Create build directory if it doesn't already exist.
+    build_dir = os.path.join(virtualenv_location, "build")
+    install_prefix = os.path.join(virtualenv_location, "usr")
     session.run(os.makedirs, build_dir, exist_ok=True)
 
-    # Run ``cmake`` to prepare for build.
+    # Run ``cmake`` to prepare for / configure the build.
     build_args = [
         "cmake",
         "-DCMAKE_BUILD_TYPE={}".format(build_type),
         "-DCMAKE_INSTALL_PREFIX:PATH={}".format(install_prefix),
+        "-DCMAKE_VERBOSE_MAKEFILE:BOOL=ON",
     ]
-    # Add any positional arguments, e.g. ``-G "MinGW Makefiles"``
-    build_args.extend(session.posargs)
+    if IS_WINDOWS:
+        build_args.extend(["-G", "MinGW Makefiles"])
+
     build_args.extend(["-S", os.path.join("src", "fortran"), "-B", build_dir])
-    session.run(*build_args)
+    session.run(*build_args, external=cmake_external)
 
     # Build and install.
     session.run(
@@ -499,10 +506,25 @@ def cmake(session):
         build_type,
         "--target",
         "install",
+        external=cmake_external,
     )
 
     # Get information on how the build was configured.
-    session.run("cmake", "-L", build_dir)
+    session.run("cmake", "-L", build_dir, external=cmake_external)
+
+    return install_prefix
+
+
+@nox.session(py=DEFAULT_INTERPRETER, name=DEBUG_SESSION_NAME)
+def cmake_debug(session):
+    """Run a Debug build of ``libbezier`` and install (via ``cmake``)."""
+    _cmake(session, BUILD_TYPE_DEBUG)
+
+
+@nox.session(py=DEFAULT_INTERPRETER, name=RELEASE_SESSION_NAME)
+def cmake_release(session):
+    """Run a Release build of ``libbezier`` and install (via ``cmake``)."""
+    _cmake(session, BUILD_TYPE_RELEASE)
 
 
 @nox.session(py=False)
@@ -527,8 +549,6 @@ def clean(session):
         get_path("scripts", "macos", "__pycache__"),
         get_path("scripts", "macos", "dist_wheels"),
         get_path("scripts", "macos", "fixed_wheels"),
-        get_path("src", "fortran", "build-debug"),
-        get_path("src", "fortran", "usr-debug"),
         get_path("src", "python", "bezier.egg-info"),
         get_path("src", "python", "bezier", "__pycache__"),
         get_path("src", "python", "bezier", "extra-dll"),

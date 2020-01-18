@@ -15,6 +15,7 @@ import pathlib
 import shlex
 import subprocess
 import sys
+import textwrap
 
 
 # See: https://docs.python.org/3/library/platform.html#cross-platform
@@ -96,3 +97,55 @@ def repo_relative(*path_parts):
     """Get a path relative to the root of the ``git`` repository."""
     git_root = get_git_root()
     return os.path.join(git_root, *path_parts)
+
+
+def bezier_locate():
+    """Locate directories for ``libbezier``.
+
+    In particular, the lib (``-L``) and include (``-I``) directories.
+    """
+    # NOTE: This will **fail** with a ``KeyError`` if the environment
+    #       variable ``BEZIER_INSTALL_PREFIX`` is not set. This is
+    #       **intentional**.
+    install_prefix = os.environ["BEZIER_INSTALL_PREFIX"]
+    # NOTE: This assumes that ``cmake`` (or the build system that installed
+    #       ``libbezier``) uses ``include`` and ``lib`` directory names, e.g.
+    #       ``/usr/local/include`` and ``/usr/local/lib``.
+    bezier_include = os.path.join(install_prefix, "include")
+    bezier_lib = os.path.join(install_prefix, "lib")
+
+    return bezier_include, bezier_lib
+
+
+def _sort_key(name):
+    """Sorting helper for members of a directory."""
+    return name.lower().lstrip("_")
+
+
+def tree(directory, suffix=None):
+    """Create string (recursively) containing a pretty-printed file tree."""
+    names = sorted(os.listdir(directory), key=_sort_key)
+    parts = []
+    for name in names:
+        path = os.path.join(directory, name)
+        if os.path.isdir(path):
+            sub_part = tree(path, suffix=suffix)
+            if sub_part is not None:
+                # NOTE: We **always** use posix separator.
+                parts.append(name + "/")
+                parts.append(textwrap.indent(sub_part, "  "))
+        else:
+            if suffix is None or name.endswith(suffix):
+                parts.append(name)
+
+    if parts:
+        return "\n".join(parts)
+    else:
+        return None
+
+
+def print_tree(directory, suffix=None):
+    """Pretty print a file tree."""
+    print(os.path.basename(directory) + os.path.sep)
+    full_tree = tree(directory, suffix=suffix)
+    print(textwrap.indent(full_tree, "  "))

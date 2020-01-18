@@ -19,6 +19,7 @@ python -m pip install --upgrade delocate
 
 # 1. Build the wheel from source.
 BASIC_DIR=$(mktemp -d)
+# NOTE: ``pip wheel`` requires ``BEZIER_INSTALL_PREFIX`` to be set.
 python -m pip wheel . --wheel-dir ${BASIC_DIR}
 
 # 2. "delocate" the built wheel.

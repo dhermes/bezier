@@ -4,9 +4,9 @@ Binary Extension
 
 .. note::
 
-   This content was last updated January 11, 2020 (as part of the
-   ``0.11.0`` release). Much of the content is tested automatically to keep
-   from getting stale, but some of the console code blocks are not. As a
+   This content was last updated January 17, 2020 (as part of the
+   ``2020.1.15.dev1`` release). Much of the content is tested automatically to
+   keep from getting stale, but some of the console code blocks are not. As a
    result, this material may be out of date. If anything does not seem
    correct --- or even if the explanation is insufficient --- please
    `file an issue`_.
@@ -14,175 +14,15 @@ Binary Extension
    .. _file an issue: https://github.com/dhermes/bezier/issues/new
 
 The ``bezier`` Python package has optional speedups that wrap the
-``libbezier`` :doc:`library <../abi/index>`. These are incorporated into the
-Python interface via `Cython`_ as a binary extension.
+``libbezier`` library. These are incorporated into the Python interface via
+`Cython`_ as a binary extension. See :doc:`../abi/index` for more information
+on building and installing ``libbezier``.
 
 .. _Cython: https://cython.readthedocs.io/
 
-After the ``bezier`` Python package has been installed **with** these speedups,
-the library provides helpers to make it easier to build non-Python code that
-depends on ``libbezier``.
-
-*********
-C Headers
-*********
-
-The C headers for ``libbezier`` will be included in the installed package
-
-.. testsetup:: show-headers, show-lib, show-dll, macos-dylibs
-
-   import os
-   import textwrap
-
-   import bezier
-
-
-   class Path:
-       """This class is a hack for Windows.
-
-       It wraps a simple string but prints / repr-s it with Windows
-       path separator converted to the standard *nix separator.
-
-       This way doctests will succeed on Windows without modification.
-       """
-
-       def __init__(self, path):
-           self.path = path
-
-       def __repr__(self):
-           posix_path = self.path.replace(os.path.sep, "/")
-           return repr(posix_path)
-
-
-   def sort_key(name):
-       return name.lower().lstrip("_")
-
-
-   def tree(directory, suffix=None):
-       names = sorted(os.listdir(directory), key=sort_key)
-       parts = []
-       for name in names:
-           path = os.path.join(directory, name)
-           if os.path.isdir(path):
-               sub_part = tree(path, suffix=suffix)
-               if sub_part is not None:
-                   # NOTE: We **always** use posix separator.
-                   parts.append(name + "/")
-                   parts.append(textwrap.indent(sub_part, "  "))
-           else:
-               if suffix is None or name.endswith(suffix):
-                   parts.append(name)
-
-       if parts:
-           return "\n".join(parts)
-       else:
-           return None
-
-
-   def print_tree(directory, suffix=None):
-       if isinstance(directory, Path):
-           # Make Windows act like posix.
-           directory = directory.path
-           separator = "/"
-       else:
-           separator = os.path.sep
-       print(os.path.basename(directory) + separator)
-       full_tree = tree(directory, suffix=suffix)
-       print(textwrap.indent(full_tree, "  "))
-
-
-   # Monkey-patch functions to return a ``Path``.
-   original_get_include = bezier.get_include
-   original_get_lib = bezier.get_lib
-
-   def get_include():
-       return Path(original_get_include())
-
-   bezier.get_include = get_include
-
-   # macOS specific.
-   base_dir = os.path.dirname(original_get_include())
-   dylibs_directory = os.path.join(base_dir, ".dylibs")
-
-.. doctest:: show-headers
-
-   >>> include_directory = bezier.get_include()
-   >>> include_directory
-   '.../site-packages/bezier/include'
-   >>> print_tree(include_directory)
-   include/
-     bezier/
-       curve.h
-       curve_intersection.h
-       helpers.h
-       status.h
-       triangle.h
-       triangle_intersection.h
-     bezier.h
-
-.. testcleanup:: show-headers, show-lib, show-dll, macos-dylibs
-
-   # Restore the monkey-patched functions.
-   bezier.get_include = original_get_include
-
-Note that this includes a catch-all ``bezier.h`` that just includes all of
-the headers.
-
-.. _static-library:
-
-***********************
-Static / Shared Library
-***********************
-
-On Linux and macOS, ``libbezier`` is included as a single static
-library (i.e. a ``.a`` file):
-
-.. doctest:: show-lib
-   :windows-skip:
-
-   >>> lib_directory = bezier.get_lib()
-   >>> lib_directory
-   '.../site-packages/bezier/lib'
-   >>> print_tree(lib_directory)
-   lib/
-     libbezier.a
-
-.. note::
-
-   A static library is used (rather than a shared or dynamic library)
-   because the "final" install location of the Python package is not
-   dependable. Even on the same machine with the same operating system,
-   the ``bezier`` Python package can be installed in virtual environments, in
-   different Python versions, as an egg or wheel, and so on. Given the
-   capabilities of ``auditwheel`` and ``delocate`` discussed below, it may be
-   possible to use a shared library. See `issue 54`_ for more discussion.
-
-.. _issue 54: https://github.com/dhermes/bezier/issues/54
-
-On Windows, an `import library`_ (i.e. a ``.lib`` file) is included to
-specify the symbols in the Windows **shared** library (DLL):
-
-.. doctest:: show-dll
-   :windows-only:
-
-   >>> lib_directory = bezier.get_lib()
-   >>> lib_directory
-   '...\\site-packages\\bezier\\lib'
-   >>> print_tree(lib_directory)
-   lib\
-     bezier.lib
-   >>> dll_directory = bezier.get_dll()
-   >>> dll_directory
-   '...\\site-packages\\bezier\\extra-dll'
-   >>> print_tree(dll_directory)
-   extra-dll\
-     bezier.dll
-
-.. _import library: https://docs.python.org/3/extending/windows.html#differences-between-unix-and-windows
-
-******************
-Extra Dependencies
-******************
+***************************
+Extra (Binary) Dependencies
+***************************
 
 When the ``bezier`` Python package is installed via `pip`_, it will likely be
 installed from a `Python wheel`_. The wheels uploaded to PyPI are pre-built,
@@ -192,10 +32,10 @@ due to version conflicts, ABI incompatibility, a desire to use a different
 Fortran compiler (e.g. Intel's ``ifort``) and a host of other reasons.
 
 Some of the standard tooling for distributing wheels tries to address this. On
-Linux and macOS, they address it by placing a copy of ``libgfortran`` (and
+Linux and macOS, the tools address it by placing a copy of ``libgfortran`` (and
 potentially its dependencies) in the built wheel. (On Windows, there is no
 standard tooling beyond that provided by ``distutils`` and ``setuptools``.)
-This means that libraries that depend on ``libbezier`` should also link
+This means that libraries that depend on ``libbezier`` may also need to link
 against these local copies of dependencies.
 
 .. _pip: https://pip.pypa.io
@@ -206,26 +46,60 @@ Linux
 =====
 
 The command line tool `auditwheel`_ adds a ``bezier/.libs`` directory
-with a version of ``libgfortran`` that is used by ``libbezier``, e.g.
+with a modified ``libbezier`` and all of its dependencies (e.g.
+``libgfortran``)
 
 .. code-block:: console
 
-   $ cd .../site-packages/bezier/.libs
-   $ ls -1
-   libgfortran-ed201abd.so.3.0.0*
+   $ cd .../site-packages/bezier
+   $ ls -1 -F .libs/
+   libbezier-4f59b4c5.so.2020.1.14*
+   libgfortran-2e0d59d6.so.5.0.0*
+   libquadmath-2d0c479f.so.0.0.0*
+   libz-eb09ad1d.so.1.2.3*
 
-The ``bezier._speedup`` module depends on this local copy:
+The ``bezier._speedup`` module depends on this local copy of ``libbezier``:
 
 .. code-block:: console
 
    $ readelf -d _speedup.cpython-38-x86_64-linux-gnu.so
 
-   Dynamic section at offset 0x2f9000 contains 27 entries:
+   Dynamic section at offset 0x43e000 contains 27 entries:
      Tag        Type                         Name/Value
     0x000000000000000f (RPATH)              Library rpath: [$ORIGIN/.libs]
-    0x0000000000000001 (NEEDED)             Shared library: [libgfortran-ed201abd.so.3.0.0]
+    0x0000000000000001 (NEEDED)             Shared library: [libbezier-4f59b4c5.so.2020.1.14]
     0x0000000000000001 (NEEDED)             Shared library: [libpthread.so.0]
     0x0000000000000001 (NEEDED)             Shared library: [libc.so.6]
+    0x000000000000000c (INIT)               0x9d40
+   ...
+
+and the local copy of ``libbezier`` depends on the other dependencies in
+``.libs/`` (both directly and indirectly):
+
+.. code-block:: console
+
+   $ readelf -d .libs/libbezier-4f59b4c5.so.2020.1.14
+
+   Dynamic section at offset 0xafdb8 contains 28 entries:
+     Tag        Type                         Name/Value
+    0x0000000000000001 (NEEDED)             Shared library: [libgfortran-2e0d59d6.so.5.0.0]
+    0x0000000000000001 (NEEDED)             Shared library: [libm.so.6]
+    0x0000000000000001 (NEEDED)             Shared library: [libgcc_s.so.1]
+    0x0000000000000001 (NEEDED)             Shared library: [libc.so.6]
+    0x000000000000000e (SONAME)             Library soname: [libbezier-4f59b4c5.so.2020.1.14]
+    0x000000000000000c (INIT)               0x2ca0
+   ...
+   $ readelf -d .libs/libgfortran-2e0d59d6.so.5.0.0
+
+   Dynamic section at offset 0x207db8 contains 31 entries:
+     Tag        Type                         Name/Value
+    0x0000000000000001 (NEEDED)             Shared library: [libquadmath-2d0c479f.so.0.0.0]
+    0x0000000000000001 (NEEDED)             Shared library: [libz-eb09ad1d.so.1.2.3]
+    0x0000000000000001 (NEEDED)             Shared library: [libm.so.6]
+    0x0000000000000001 (NEEDED)             Shared library: [libgcc_s.so.1]
+    0x0000000000000001 (NEEDED)             Shared library: [libc.so.6]
+    0x000000000000000e (SONAME)             Library soname: [libgfortran-2e0d59d6.so.5.0.0]
+    0x000000000000000c (INIT)               0x19a78
    ...
 
 .. note::
@@ -239,7 +113,21 @@ macOS
 =====
 
 The command line tool `delocate`_ adds a ``bezier/.dylibs`` directory
-with copies of ``libgfortran``, ``libquadmath`` and ``libgcc_s``:
+with copies of ``libbezier``, ``libgfortran``, ``libquadmath`` and
+``libgcc_s``:
+
+.. testsetup:: macos-dylibs
+
+   import os
+
+   import bezier
+   import tests.utils
+
+
+   print_tree = tests.utils.print_tree
+   base_dir = os.path.abspath(os.path.dirname(bezier.__file__))
+   # macOS specific.
+   dylibs_directory = os.path.join(base_dir, ".dylibs")
 
 .. doctest:: macos-dylibs
    :macos-only:
@@ -248,12 +136,13 @@ with copies of ``libgfortran``, ``libquadmath`` and ``libgcc_s``:
    '.../site-packages/bezier/.dylibs'
    >>> print_tree(dylibs_directory)
    .dylibs/
+     libbezier.2020.1.14.dylib
      libgcc_s.1.dylib
      libgfortran.5.dylib
      libquadmath.0.dylib
 
 The ``bezier._speedup`` module depends on the local copy
-of ``libgfortran``:
+of ``libbezier``:
 
 .. testsetup:: macos-extension, macos-delocated-libgfortran
 
@@ -268,13 +157,12 @@ of ``libgfortran``:
 
    def invoke_shell(*args):
        print("$ " + " ".join(args))
-       prev_cwd = os.getcwd()
-       os.chdir(bezier_directory)
        # NOTE: We print to the stdout of the doctest, rather than using
        #       `subprocess.call()` directly.
-       output_bytes = subprocess.check_output(args).rstrip()
+       output_bytes = subprocess.check_output(
+           args, cwd=bezier_directory
+       ).rstrip()
        print(output_bytes.decode("utf-8"))
-       os.chdir(prev_cwd)
 
 .. doctest:: macos-extension
    :options: +NORMALIZE_WHITESPACE
@@ -284,34 +172,34 @@ of ``libgfortran``:
    >>> invoke_shell("otool", "-L", "_speedup.cpython-38-darwin.so")
    $ otool -L _speedup.cpython-38-darwin.so
    _speedup.cpython-38-darwin.so:
-           @loader_path/.dylibs/libgfortran.5.dylib (...)
+           @loader_path/.dylibs/libbezier.2020.1.14.dylib (...)
            /usr/lib/libSystem.B.dylib (...)
 
-Though the Python extension module (``.so`` file) only depends on
-``libgfortran``, it indirectly depends on ``libquadmath`` and
-``libgcc_s``:
+Though the Python extension module (``.so`` file) only depends on ``libbezier``
+it indirectly depends on ``libgfortran``, ``libquadmath`` and ``libgcc_s``:
 
 .. doctest:: macos-delocated-libgfortran
    :options: +NORMALIZE_WHITESPACE
    :macos-only:
 
-   >>> invoke_shell("otool", "-L", ".dylibs/libgfortran.5.dylib")
-   $ otool -L .dylibs/libgfortran.5.dylib
-   .dylibs/libgfortran.5.dylib:
-       /DLC/bezier/libgfortran.5.dylib (...)
-       @loader_path/libquadmath.0.dylib (...)
+   >>> invoke_shell("otool", "-L", ".dylibs/libbezier.2020.1.14.dylib")
+   $ otool -L .dylibs/libbezier.2020.1.14.dylib
+   .dylibs/libbezier.2020.1.14.dylib:
+       /DLC/bezier/libbezier.2020.1.14.dylib (...)
+       @loader_path/libgfortran.5.dylib (...)
        /usr/lib/libSystem.B.dylib (...)
        @loader_path/libgcc_s.1.dylib (...)
+       @loader_path/libquadmath.0.dylib (...)
 
 .. note::
 
-   To allow the package to be relocatable, the ``libgfortran`` dependency is
+   To allow the package to be relocatable, the ``libbezier`` dependency is
    relative to the ``@loader_path`` (i.e. the path where the Python extension
    module is loaded) instead of being an absolute path within the file
    system.
 
    Notice also that ``delocate`` uses the nonexistent root ``/DLC`` for
-   the ``install_name`` of ``libgfortran`` to avoid accidentally pointing
+   the ``install_name`` of ``libbezier`` to avoid accidentally pointing
    to an existing file on the target system.
 
 .. _delocate: https://github.com/matthew-brett/delocate
@@ -354,15 +242,14 @@ The Python extension module (``.pyd`` file) depends directly on this library:
 
    def invoke_shell(*args):
        print("> " + " ".join(args))
-       # Replace `"dumpbin"` with `dumpbin_exe`.
+       # Replace ``"dumpbin"`` with ``dumpbin_exe``.
        cmd = tuple(map(replace_dumpbin, args))
-       prev_cwd = os.getcwd()
-       os.chdir(bezier_directory)
        # NOTE: We print to the stdout of the doctest, rather than using
        #       `subprocess.call()` directly.
-       output_bytes = subprocess.check_output(cmd).rstrip()
+       output_bytes = subprocess.check_output(
+           cmd, cwd=bezier_directory
+       ).rstrip()
        print(output_bytes.decode("utf-8"))
-       os.chdir(prev_cwd)
 
 .. doctest:: windows-extension
    :options: +NORMALIZE_WHITESPACE
@@ -391,16 +278,18 @@ The Python extension module (``.pyd`` file) depends directly on this library:
    ...
 
 In order to ensure this DLL can be found, the ``bezier.__config__``
-module adds the ``extra-dll`` directory to ``os.environ["PATH"]`` on import
-(``%PATH%`` is used on Windows as part of the DLL search path). For Python
-versions starting with 3.8, modifying ``%PATH%`` no longer works; instead
-the ``os.add_dll_directory()``
+module adds the ``extra-dll`` directory to the DLL search path on import.
+(``%PATH%`` is used on Windows as part of the DLL search path. For Python
+versions starting with 3.8, modifying ``os.environ["PATH"]`` no longer works;
+instead the ``os.add_dll_directory()``
 `function <https://docs.python.org/3/library/os.html#os.add_dll_directory>`__
-achieves the same goal in a more official capacity.
+achieves the same goal in a more official capacity.)
 
 The ``libbezier`` DLL has **no external dependencies**, but does have
-a corresponding `import library`_ --- ``lib/bezier.lib`` --- which is
+a corresponding `import library`_ --- ``usr/lib/bezier.lib`` --- which is
 provided to specify the symbols in the DLL.
+
+.. _import library: https://docs.python.org/3/extending/windows.html#differences-between-unix-and-windows
 
 On Windows, building Python extensions is a bit more constrained. Each
 official Python is built with a particular `version of MSVC`_ and
@@ -555,63 +444,12 @@ The ``bezier`` Python package can be built from source if it is not feasible to
 link with these libraries, if a different Fortran compiler is required or
 "just because".
 
-The Python extension module (along with ``libbezier``) can be built from
-source via:
+The Python extension module can be built from source via:
 
 .. code-block:: console
 
-   $ python setup.py build_ext
-   $ # OR
-   $ python setup.py build_ext --fcompiler=${FC}
-
-By providing a filename via an environment variable, a "journal" can
-be stored of the compiler commands invoked to build the extension:
-
-.. code-block:: console
-
-   $ export BEZIER_JOURNAL=path/to/journal.txt
-   $ python setup.py build_ext
-   $ unset BEZIER_JOURNAL
-
-For examples, see:
-
-* `Linux journal`_
-* `macOS journal`_
-* `Windows journal`_
-
-.. _Linux journal: https://github.com/dhermes/bezier/blob/master/.circleci/expected_journal.txt
-.. _macOS journal: https://github.com/dhermes/bezier/blob/master/scripts/macos/travis_journal.txt
-.. _Windows journal: https://github.com/dhermes/bezier/blob/master/appveyor/expected_journal.txt
-
-***************************
-Building a Python Extension
-***************************
-
-To incorporate ``libbezier`` into a Python extension, either via
-Cython, C, C++ or some other means, simply include the header
-and library directories:
-
-.. testsetup:: setup-extension
-
-   import bezier
-
-.. doctest:: setup-extension
-
-   >>> import setuptools
-   >>>
-   >>> extension = setuptools.Extension(
-   ...     "wrapper",
-   ...     ["wrapper.c"],
-   ...     include_dirs=[
-   ...         bezier.get_include(),
-   ...     ],
-   ...     libraries=["bezier"],
-   ...     library_dirs=[
-   ...         bezier.get_lib(),
-   ...     ],
-   ... )
-   >>> extension
-   <setuptools.extension.Extension('wrapper') at 0x...>
-
-Typically, depending on ``libbezier`` implies (transitive) dependence on
-``libgfortran``. See the warning in :ref:`static-library` for more details.
+   $ # One of
+   $ BEZIER_INSTALL_PREFIX=.../usr/ python -m pip wheel .
+   $ BEZIER_INSTALL_PREFIX=.../usr/ python -m pip install .
+   $ BEZIER_INSTALL_PREFIX=.../usr/ python setup.py build_ext
+   $ BEZIER_INSTALL_PREFIX=.../usr/ python setup.py build_ext --inplace

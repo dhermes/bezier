@@ -34,43 +34,19 @@ To build the Fortran shared library directly, use `CMake`_ version
 
 .. code-block:: console
 
-   $ mkdir src/fortran/build-debug/
+   $ SRC_DIR="src/fortran/"
+   $ BUILD_DIR=".../libbezier-debug/build"
+   $ INSTALL_PREFIX=".../libbezier-debug/usr"
+   $ mkdir -p "${BUILD_DIR}"
    $ cmake \
    >   -DCMAKE_BUILD_TYPE=Debug \
-   >   -DCMAKE_INSTALL_PREFIX:PATH="$(pwd)/src/fortran/usr-debug/" \
-   >   -S src/fortran/ \
-   >   -B src/fortran/build-debug/
+   >   -DCMAKE_INSTALL_PREFIX:PATH="${INSTALL_PREFIX}" \
+   >   -S "${SRC_DIR}" \
+   >   -B "${BUILD_DIR}"
    $ cmake \
-   >   --build src/fortran/build-debug/ \
+   >   --build "${BUILD_DIR}" \
    >   --config Debug \
    >   --target install
-
-On Linux, this should result in:
-
-.. code-block:: console
-
-   $ tree src/fortran/usr-debug/
-   src/fortran/usr-debug/
-   ├── include
-   │   ├── bezier
-   │   │   ├── curve.h
-   │   │   ├── curve_intersection.h
-   │   │   ├── helpers.h
-   │   │   ├── status.h
-   │   │   ├── triangle.h
-   │   │   └── triangle_intersection.h
-   │   └── bezier.h
-   ├── lib
-   │   ├── libbezier.so -> libbezier.so.2020
-   │   ├── libbezier.so.2020 -> libbezier.so.2020.1.14
-   │   └── libbezier.so.2020.1.14
-   └── share
-       └── bezier
-           └── cmake
-               ├── BezierConfig-debug.cmake
-               └── BezierConfig.cmake
-
-   6 directories, 12 files
 
 .. _CMake: https://cmake.org/
 
@@ -86,52 +62,27 @@ See the `Python Binary Extension`_ page for a more detailed description.
 Building / Compiling
 ====================
 
-To compile the binary extension (with a Fortran compiler installed) run:
+To compile the binary extension (with ``libbezier`` built and installed
+already) run:
 
 .. code-block:: console
 
-   $ python setup.py build_ext --inplace
-   $ # OR
-   $ python setup.py build_ext --inplace --fcompiler=${FC}
+   $ # One of
+   $ BEZIER_INSTALL_PREFIX=.../usr/ python -m pip wheel .
+   $ BEZIER_INSTALL_PREFIX=.../usr/ python -m pip install .
+   $ BEZIER_INSTALL_PREFIX=.../usr/ python setup.py build_ext
+   $ BEZIER_INSTALL_PREFIX=.../usr/ python setup.py build_ext --inplace
 
-By default the Fortran code will be compiled in "optimized" mode, which
-may make debugging more difficult. To compile with debug symbols, without
-optimizations that move code around, etc. use the ``DEBUG`` environment
-variable:
-
-.. code-block:: console
-
-   $ DEBUG=True python setup.py build_ext --inplace
-
-Using ``distutils`` and ``numpy.distutils`` to compile Fortran is not
-"fully-supported" (i.e. the tooling is ad-hoc). As a result, there is a
-decent amount of code in ``setup.py``, ``setup_helpers.py``,
-``setup_helpers_macos.py`` and ``setup_helpers_windows.py`` to specify the
-build process. To make sure these are working as expected, it's possible to
-track **how** the extension is being installed. To actually make sure the
-correct compiler commands are invoked, provide a filename as the
-``BEZIER_JOURNAL`` environment variable and then the commands invoked will
-be written there:
-
-.. code-block:: console
-
-   $ BEZIER_JOURNAL=$(pwd)/journal.txt python setup.py build_ext --inplace
-
-The ``nox`` session ``check_journal`` uses this journaling option to verify
-the commands used to compile the extension in Linux on `CircleCI`_, in
-macOS on `Travis CI`_ and in Windows on `AppVeyor`_.
-
-As the build complexity grows, it may make more sense to transition the steps
-out of Python and into `CMake`_, `SCons`_ or another build tool.
-
-.. _SCons: http://scons.org
+Using a Release build of ``libbezier`` may make debugging more difficult.
+Instead, a Debug build of ``libbezier`` will include debug symbols, without
+optimizations that move code around, etc.
 
 To explicitly disable the building of the extension, the
 ``BEZIER_NO_EXTENSION`` environment variable can be used:
 
 .. code-block:: console
 
-   $ BEZIER_NO_EXTENSION=True .../bin/python -m pip install .
+   $ BEZIER_NO_EXTENSION=True .../bin/python -m pip wheel .
 
 This environment variable is actually used for the ``nox -s docs`` session
 to emulate the `RTD`_ build environment (where no Fortran compiler is
@@ -182,9 +133,10 @@ manage dependencies or build the binary extension):
 Testing the Binary Extension
 ============================
 
-When using ``nox``, the ``bezier`` package will automatically be installed
-into a virtual environment and the binary extension will be built during
-install.
+When using ``nox``, ``libbezier`` will be built and installed into a well-known
+``BEZIER_INSTALL_PREFIX`` within the ``nox`` envdir (typically ``.nox/``), the
+``bezier`` package will automatically be installed into a virtual environment
+and the binary extension will be built during install.
 
 However, if the tests are run directly from the source tree via
 
@@ -222,7 +174,7 @@ To run the coverage report locally:
 Slow Tests
 ==========
 
-To run unit tests without tests that have been (explicitly)
+To run unit tests without test cases that have been (explicitly)
 marked slow, use the ``--ignore-slow`` flag:
 
 .. code-block:: console
@@ -565,10 +517,6 @@ Versioning
 
 .. _calendar versioning: https://calver.org/
 
-It is currently in major version zero (``0.y.z``), which means that
-anything may change at any time and the public API should not be
-considered stable.
-
 *********************
 Environment Variables
 *********************
@@ -576,17 +524,16 @@ Environment Variables
 This project uses environment variables for building the
 ``bezier._speedup`` binary extension:
 
-- ``BEZIER_JOURNAL``: If set to a path on the filesystem, all compiler
-  commands executed while building the binary extension will be logged to
-  the journal file
-- ``BEZIER_NO_EXTENSION``: If set, this will indicate that only the pure
-  Python package should be built and installed (i.e. without the binary
-  extension).
+- ``BEZIER_INSTALL_PREFIX``: A directory where ``libbezier`` is installed,
+  including the shared library (``lib/``) and headers (``include/``). This
+  environment variable is required to build the binary extension.
 - ``BEZIER_WHEEL``: Indicates that the source is being built into a wheel.
   When this is true, some compiler flags (e.g. ``-march=native``) will be
   removed since those flags can produce machine instructions that are too
   specific to the host platform / architecture.
-- ``DEBUG``: Indicates the binary extension should be built in debug mode.
+- ``BEZIER_NO_EXTENSION``: If set, this will indicate that only the pure
+  Python package should be built and installed (i.e. without the binary
+  extension).
 
 for interacting with the system at import time:
 
@@ -604,13 +551,6 @@ services:
   for PyPy 3.
 - ``GENERATE_IMAGES``: Indicates to ``nox -s doctest`` that images should
   be generated during cleanup of each test case.
-- ``APPVEYOR``: Indicates currently running on AppVeyor.
-- ``CIRCLECI``: Indicates currently running on CircleCI.
 - ``READTHEDOCS``: Indicates currently running on Read The Docs (RTD). This is
   used to tell Sphinx to use the RTD theme when **not** running on RTD.
-- ``TRAVIS``: Indicates currently running on Travis.
-- ``TRAVIS_BUILD_DIR``: Gives path to the Travis build directory. This is used
-  to modify the command journal to make it deterministic (i.e. independent
-  of the build directory).
-- ``TRAVIS_OS_NAME``: Gives the current operating system on Travis. We check
-  that it is ``osx``.
+- ``COVERALLS_REPO_TOKEN``: To upload the coverage report.
