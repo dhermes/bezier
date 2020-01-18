@@ -4,7 +4,7 @@ Binary Extension
 
 .. note::
 
-   This content was last updated January 16, 2020 (as part of the
+   This content was last updated January 17, 2020 (as part of the
    ``2020.1.15.dev1`` release). Much of the content is tested automatically to
    keep from getting stale, but some of the console code blocks are not. As a
    result, this material may be out of date. If anything does not seem
@@ -35,7 +35,7 @@ Some of the standard tooling for distributing wheels tries to address this. On
 Linux and macOS, the tools address it by placing a copy of ``libgfortran`` (and
 potentially its dependencies) in the built wheel. (On Windows, there is no
 standard tooling beyond that provided by ``distutils`` and ``setuptools``.)
-This means that libraries that depend on ``libbezier`` should also link
+This means that libraries that depend on ``libbezier`` may also need to link
 against these local copies of dependencies.
 
 .. _pip: https://pip.pypa.io
@@ -46,26 +46,60 @@ Linux
 =====
 
 The command line tool `auditwheel`_ adds a ``bezier/.libs`` directory
-with a version of ``libgfortran`` that is used by ``libbezier``, e.g.
+with a modified ``libbezier`` and all of its dependencies (e.g.
+``libgfortran``)
 
 .. code-block:: console
 
-   $ cd .../site-packages/bezier/.libs
-   $ ls -1
-   libgfortran-ed201abd.so.3.0.0*
+   $ cd .../site-packages/bezier
+   $ ls -1 -F .libs/
+   libbezier-4f59b4c5.so.2020.1.14*
+   libgfortran-2e0d59d6.so.5.0.0*
+   libquadmath-2d0c479f.so.0.0.0*
+   libz-eb09ad1d.so.1.2.3*
 
-The ``bezier._speedup`` module depends on this local copy:
+The ``bezier._speedup`` module depends on this local copy of ``libbezier``:
 
 .. code-block:: console
 
    $ readelf -d _speedup.cpython-38-x86_64-linux-gnu.so
 
-   Dynamic section at offset 0x2f9000 contains 27 entries:
+   Dynamic section at offset 0x43e000 contains 27 entries:
      Tag        Type                         Name/Value
     0x000000000000000f (RPATH)              Library rpath: [$ORIGIN/.libs]
-    0x0000000000000001 (NEEDED)             Shared library: [libgfortran-ed201abd.so.3.0.0]
+    0x0000000000000001 (NEEDED)             Shared library: [libbezier-4f59b4c5.so.2020.1.14]
     0x0000000000000001 (NEEDED)             Shared library: [libpthread.so.0]
     0x0000000000000001 (NEEDED)             Shared library: [libc.so.6]
+    0x000000000000000c (INIT)               0x9d40
+   ...
+
+and the local copy of ``libbezier`` depends on the other dependencies in
+``.libs/`` (both directly and indirectly):
+
+.. code-block:: console
+
+   $ readelf -d .libs/libbezier-4f59b4c5.so.2020.1.14
+
+   Dynamic section at offset 0xafdb8 contains 28 entries:
+     Tag        Type                         Name/Value
+    0x0000000000000001 (NEEDED)             Shared library: [libgfortran-2e0d59d6.so.5.0.0]
+    0x0000000000000001 (NEEDED)             Shared library: [libm.so.6]
+    0x0000000000000001 (NEEDED)             Shared library: [libgcc_s.so.1]
+    0x0000000000000001 (NEEDED)             Shared library: [libc.so.6]
+    0x000000000000000e (SONAME)             Library soname: [libbezier-4f59b4c5.so.2020.1.14]
+    0x000000000000000c (INIT)               0x2ca0
+   ...
+   $ readelf -d .libs/libgfortran-2e0d59d6.so.5.0.0
+
+   Dynamic section at offset 0x207db8 contains 31 entries:
+     Tag        Type                         Name/Value
+    0x0000000000000001 (NEEDED)             Shared library: [libquadmath-2d0c479f.so.0.0.0]
+    0x0000000000000001 (NEEDED)             Shared library: [libz-eb09ad1d.so.1.2.3]
+    0x0000000000000001 (NEEDED)             Shared library: [libm.so.6]
+    0x0000000000000001 (NEEDED)             Shared library: [libgcc_s.so.1]
+    0x0000000000000001 (NEEDED)             Shared library: [libc.so.6]
+    0x000000000000000e (SONAME)             Library soname: [libgfortran-2e0d59d6.so.5.0.0]
+    0x000000000000000c (INIT)               0x19a78
    ...
 
 .. note::
@@ -79,9 +113,10 @@ macOS
 =====
 
 The command line tool `delocate`_ adds a ``bezier/.dylibs`` directory
-with copies of ``libgfortran``, ``libquadmath`` and ``libgcc_s``:
+with copies of ``libbezier``, ``libgfortran``, ``libquadmath`` and
+``libgcc_s``:
 
-.. testsetup:: macos-dylibs
+.. testsetup:: macos-dylibs, show-dll
 
    import os
    import textwrap
@@ -137,7 +172,7 @@ with copies of ``libgfortran``, ``libquadmath`` and ``libgcc_s``:
      libquadmath.0.dylib
 
 The ``bezier._speedup`` module depends on the local copy
-of ``libgfortran``:
+of ``libbezier``:
 
 .. testsetup:: macos-extension, macos-delocated-libgfortran
 
@@ -189,13 +224,13 @@ it indirectly depends on ``libgfortran``, ``libquadmath`` and ``libgcc_s``:
 
 .. note::
 
-   To allow the package to be relocatable, the ``libgfortran`` dependency is
+   To allow the package to be relocatable, the ``libbezier`` dependency is
    relative to the ``@loader_path`` (i.e. the path where the Python extension
    module is loaded) instead of being an absolute path within the file
    system.
 
    Notice also that ``delocate`` uses the nonexistent root ``/DLC`` for
-   the ``install_name`` of ``libgfortran`` to avoid accidentally pointing
+   the ``install_name`` of ``libbezier`` to avoid accidentally pointing
    to an existing file on the target system.
 
 .. _delocate: https://github.com/matthew-brett/delocate
@@ -275,16 +310,32 @@ The Python extension module (``.pyd`` file) depends directly on this library:
    ...
 
 In order to ensure this DLL can be found, the ``bezier.__config__``
-module adds the ``extra-dll`` directory to ``os.environ["PATH"]`` on import
-(``%PATH%`` is used on Windows as part of the DLL search path). For Python
-versions starting with 3.8, modifying ``%PATH%`` no longer works; instead
-the ``os.add_dll_directory()``
+module adds the ``extra-dll`` directory to the DLL search path on import.
+(``%PATH%`` is used on Windows as part of the DLL search path. For Python
+versions starting with 3.8, modifying ``os.environ["PATH"]`` no longer works;
+instead the ``os.add_dll_directory()``
 `function <https://docs.python.org/3/library/os.html#os.add_dll_directory>`__
-achieves the same goal in a more official capacity.
+achieves the same goal in a more official capacity.)
 
 The ``libbezier`` DLL has **no external dependencies**, but does have
 a corresponding `import library`_ --- ``lib/bezier.lib`` --- which is
 provided to specify the symbols in the DLL.
+
+.. doctest:: show-dll
+   :windows-only:
+
+   >>> lib_directory = bezier.get_lib()
+   >>> lib_directory
+   '...\\site-packages\\bezier\\lib'
+   >>> print_tree(lib_directory)
+   lib\
+     bezier.lib
+   >>> dll_directory = bezier.get_dll()
+   >>> dll_directory
+   '...\\site-packages\\bezier\\extra-dll'
+   >>> print_tree(dll_directory)
+   extra-dll\
+     bezier.dll
 
 .. _import library: https://docs.python.org/3/extending/windows.html#differences-between-unix-and-windows
 
@@ -445,6 +496,8 @@ The Python extension module can be built from source via:
 
 .. code-block:: console
 
-   $ BEZIER_INSTALL_PREFIX=.../usr/ python setup.py build_ext
-   $ # OR
+   $ # One of
    $ BEZIER_INSTALL_PREFIX=.../usr/ python -m pip wheel .
+   $ BEZIER_INSTALL_PREFIX=.../usr/ python -m pip install .
+   $ BEZIER_INSTALL_PREFIX=.../usr/ python setup.py build_ext
+   $ BEZIER_INSTALL_PREFIX=.../usr/ python setup.py build_ext --inplace
