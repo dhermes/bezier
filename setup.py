@@ -153,11 +153,7 @@ def setup():
         license="Apache 2.0",
         platforms="Posix; macOS; Windows",
         package_data={
-            "bezier": [
-                "*.pxd",
-                os.path.join("lib", "*.lib"),
-                os.path.join("extra-dll", "*.dll"),
-            ]
+            "bezier": ["*.pxd", os.path.join("extra-dll", "*.dll"),]
         },
         zip_safe=True,
         install_requires=REQUIREMENTS,

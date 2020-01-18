@@ -116,7 +116,7 @@ The command line tool `delocate`_ adds a ``bezier/.dylibs`` directory
 with copies of ``libbezier``, ``libgfortran``, ``libquadmath`` and
 ``libgcc_s``:
 
-.. testsetup:: macos-dylibs, show-dll
+.. testsetup:: macos-dylibs
 
    import os
 
@@ -286,24 +286,8 @@ instead the ``os.add_dll_directory()``
 achieves the same goal in a more official capacity.)
 
 The ``libbezier`` DLL has **no external dependencies**, but does have
-a corresponding `import library`_ --- ``lib/bezier.lib`` --- which is
+a corresponding `import library`_ --- ``usr/lib/bezier.lib`` --- which is
 provided to specify the symbols in the DLL.
-
-.. doctest:: show-dll
-   :windows-only:
-
-   >>> lib_directory = bezier.get_lib()
-   >>> lib_directory
-   '...\\site-packages\\bezier\\lib'
-   >>> print_tree(lib_directory)
-   lib\
-     bezier.lib
-   >>> dll_directory = bezier.get_dll()
-   >>> dll_directory
-   '...\\site-packages\\bezier\\extra-dll'
-   >>> print_tree(dll_directory)
-   extra-dll\
-     bezier.dll
 
 .. _import library: https://docs.python.org/3/extending/windows.html#differences-between-unix-and-windows
 
