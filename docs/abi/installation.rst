@@ -16,14 +16,14 @@ the package into ``/usr/local/``. For a more temporary install location,
    $ INSTALL_PREFIX=".../libbezier-release/usr"
    $ mkdir -p "${BUILD_DIR}"
    $ cmake \
-   >   -DCMAKE_BUILD_TYPE=Release \
-   >   -DCMAKE_INSTALL_PREFIX:PATH="${INSTALL_PREFIX}" \
-   >   -S "${SRC_DIR}" \
-   >   -B "${BUILD_DIR}"
+   >     -DCMAKE_BUILD_TYPE=Release \
+   >     -DCMAKE_INSTALL_PREFIX:PATH="${INSTALL_PREFIX}" \
+   >     -S "${SRC_DIR}" \
+   >     -B "${BUILD_DIR}"
    $ cmake \
-   >   --build "${BUILD_DIR}" \
-   >   --config Release \
-   >   --target install
+   >     --build "${BUILD_DIR}" \
+   >     --config Release \
+   >     --target install
 
 Note that this will require having a full checkout of the Fortran source
 code (in ``SRC_DIR``).

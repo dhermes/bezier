@@ -39,14 +39,14 @@ To build the Fortran shared library directly, use `CMake`_ version
    $ INSTALL_PREFIX=".../libbezier-debug/usr"
    $ mkdir -p "${BUILD_DIR}"
    $ cmake \
-   >   -DCMAKE_BUILD_TYPE=Debug \
-   >   -DCMAKE_INSTALL_PREFIX:PATH="${INSTALL_PREFIX}" \
-   >   -S "${SRC_DIR}" \
-   >   -B "${BUILD_DIR}"
+   >     -DCMAKE_BUILD_TYPE=Debug \
+   >     -DCMAKE_INSTALL_PREFIX:PATH="${INSTALL_PREFIX}" \
+   >     -S "${SRC_DIR}" \
+   >     -B "${BUILD_DIR}"
    $ cmake \
-   >   --build "${BUILD_DIR}" \
-   >   --config Debug \
-   >   --target install
+   >     --build "${BUILD_DIR}" \
+   >     --config Debug \
+   >     --target install
 
 .. _CMake: https://cmake.org/
 
@@ -167,9 +167,9 @@ To run the coverage report locally:
    $ nox -s cover
    $ # OR
    $ PYTHONPATH=src/python/ python -m pytest \
-   >   --cov=bezier \
-   >   --cov=tests.unit \
-   >   tests/unit/
+   >     --cov=bezier \
+   >     --cov=tests.unit \
+   >     tests/unit/
 
 Slow Tests
 ==========
@@ -393,10 +393,10 @@ To run the documentation tests:
    $ nox -s doctest
    $ # OR (from a Python 3.6 or later environment)
    $ PYTHONPATH=src/python/:. sphinx-build -W \
-   >   -b doctest \
-   >   -d docs/build/doctrees \
-   >   docs \
-   >   docs/build/doctest
+   >     -b doctest \
+   >     -d docs/build/doctrees \
+   >     docs \
+   >     docs/build/doctest
 
 Documentation Images
 ====================
@@ -417,10 +417,10 @@ To regenerate all the images:
    $ # OR (from a Python 3.6 or later environment)
    $ export MATPLOTLIBRC=docs/ GENERATE_IMAGES=True PYTHONPATH=src/python/
    $ sphinx-build -W \
-   >   -b doctest \
-   >   -d docs/build/doctrees \
-   >   docs \
-   >   docs/build/doctest
+   >     -b doctest \
+   >     -d docs/build/doctrees \
+   >     docs \
+   >     docs/build/doctest
    $ python tests/functional/make_segment_box_images.py
    $ python tests/functional/make_triangle_locate_images.py
    $ python tests/functional/make_curve_curve_images.py
