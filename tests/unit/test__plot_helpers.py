@@ -150,7 +150,10 @@ class Test_add_patch(utils.NumPyTestCase):
         # Verify mocks (quite a lot).
         self._path_val(path, expected_transpose)
         patches.PathPatch.assert_called_once_with(
-            path.Path.return_value, facecolor=color, alpha=0.625
+            path.Path.return_value,
+            facecolor=color,
+            edgecolor=color,
+            alpha=0.625,
         )
         ax.add_patch.assert_called_once_with(patches.PathPatch.return_value)
         line.get_color.assert_called_once_with()

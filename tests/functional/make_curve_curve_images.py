@@ -18,14 +18,19 @@ from tests.functional import utils
 
 
 _, INTERSECTIONS = utils.curve_intersections_info()
+# As of ``0.9.0``, this palette has (BLUE, ORANGE, GREEN, RED, PURPLE, BROWN).
+_COLORS = seaborn.color_palette(palette="deep", n_colors=6)
+BLUE = _COLORS[0]
+GREEN = _COLORS[2]
+del _COLORS
 
 
 def make_plot(intersection_info, save_plot):
     curve1 = intersection_info.curve1
     curve2 = intersection_info.curve2
     intersection_pts = intersection_info.intersections
-    ax = curve1.plot(64)
-    curve2.plot(64, ax=ax)
+    ax = curve1.plot(64, color=BLUE)
+    curve2.plot(64, ax=ax, color=GREEN)
     ax.plot(
         intersection_pts[0, :],
         intersection_pts[1, :],

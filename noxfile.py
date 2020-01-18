@@ -257,12 +257,22 @@ def doctest(session):
 def docs_images(session):
     # Install all dependencies.
     local_deps = DOCS_DEPS
-    local_deps += (DEPS["matplotlib"], DEPS["seaborn"], DEPS["pytest"])
+    local_deps += (
+        DEPS["matplotlib"],
+        DEPS["pytest"],
+        DEPS["seaborn"],
+        DEPS["sympy"],
+    )
     session.install(*local_deps)
     # Install this package.
-    install_bezier(session)
+    install_prefix = install_bezier(session)
     # Use custom RC-file for matplotlib.
-    env = {"MATPLOTLIBRC": "docs", "GENERATE_IMAGES": "True"}
+    env = {
+        INSTALL_PREFIX_ENV: install_prefix,
+        "GENERATE_IMAGES": "True",
+        "MATPLOTLIBRC": "docs",
+        "PYTHONPATH": get_path(),
+    }
     # Run the script for generating images for docs.
     run_args = get_doctest_args(session)
     session.run(*run_args, env=env)

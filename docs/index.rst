@@ -183,7 +183,6 @@ intersections):
 
 .. doctest:: getting-started
 
-   >>> import matplotlib.pyplot as plt
    >>> import seaborn
    >>> seaborn.set()
    >>>
@@ -195,7 +194,6 @@ intersections):
    >>> _ = ax.axis("scaled")
    >>> _ = ax.set_xlim(-0.125, 1.125)
    >>> _ = ax.set_ylim(-0.0625, 0.625)
-   >>> plt.show()
 
 .. testcleanup:: getting-started
 

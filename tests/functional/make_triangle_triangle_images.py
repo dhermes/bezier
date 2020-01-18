@@ -19,6 +19,12 @@ from tests.functional import utils
 
 
 _, INTERSECTIONS = utils.triangle_intersections_info()
+# As of ``0.9.0``, this palette has (BLUE, ORANGE, GREEN, RED, PURPLE, BROWN).
+_COLORS = seaborn.color_palette(palette="deep", n_colors=6)
+BLUE = _COLORS[0]
+GREEN = _COLORS[2]
+RED = _COLORS[3]
+del _COLORS
 
 
 def make_curved_polygon(triangle1, triangle2, curved_polygon_info):
@@ -49,9 +55,9 @@ def make_curved_polygon(triangle1, triangle2, curved_polygon_info):
 def make_plot(intersection_info, save_plot):
     triangle1 = intersection_info.triangle1
     triangle2 = intersection_info.triangle2
-    ax = triangle1.plot(64)
-    triangle2.plot(64, ax=ax)
-    color = None
+    ax = triangle1.plot(64, color=BLUE)
+    triangle2.plot(64, ax=ax, color=GREEN)
+    color = RED
     for curved_polygon_info in intersection_info.intersections:
         curved_polygon = make_curved_polygon(
             triangle1, triangle2, curved_polygon_info

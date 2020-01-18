@@ -39,8 +39,18 @@ import bezier
 from bezier import _plot_helpers
 
 
+BLUE = "blue"
+GREEN = "green"
+RED = "red"
 if seaborn is not None:
-    seaborn.set()  # Required in `seaborn >= 0.8`
+    seaborn.set()  # Required in ``seaborn >= 0.8``
+    # As of ``0.9.0``, this palette has
+    # (BLUE, ORANGE, GREEN, RED, PURPLE, BROWN).
+    _COLORS = seaborn.color_palette(palette="deep", n_colors=6)
+    BLUE = _COLORS[0]
+    GREEN = _COLORS[2]
+    RED = _COLORS[3]
+    del _COLORS
 _DOCS_DIR = os.path.abspath(os.path.dirname(__file__))
 IMAGES_DIR = os.path.join(_DOCS_DIR, "images")
 NO_IMAGES = "GENERATE_IMAGES" not in os.environ
@@ -86,8 +96,8 @@ def linearization_error(nodes):
     curve = bezier.Curve.from_nodes(nodes)
     line = bezier.Curve.from_nodes(nodes[:, (0, -1)])
     midpoints = np.hstack([curve.evaluate(0.5), line.evaluate(0.5)])
-    ax = curve.plot(256)
-    line.plot(256, ax=ax)
+    ax = curve.plot(256, color=BLUE)
+    line.plot(256, ax=ax, color=GREEN)
     ax.plot(
         midpoints[0, :], midpoints[1, :], color="black", linestyle="dashed"
     )
@@ -102,8 +112,8 @@ def newton_refine1(s, new_s, curve1, t, new_t, curve2):
 
     points = np.hstack([curve1.evaluate(s), curve2.evaluate(t)])
     points_new = np.hstack([curve1.evaluate(new_s), curve2.evaluate(new_t)])
-    ax = curve1.plot(256)
-    curve2.plot(256, ax=ax)
+    ax = curve1.plot(256, color=BLUE)
+    curve2.plot(256, ax=ax, color=GREEN)
     ax.plot(
         points[0, :],
         points[1, :],
@@ -129,9 +139,9 @@ def newton_refine2(s_vals, curve1, curve2):
     if NO_IMAGES:
         return
 
-    ax = curve1.plot(256)
+    ax = curve1.plot(256, color=BLUE)
     ax.lines[-1].zorder = 1
-    curve2.plot(256, ax=ax)
+    curve2.plot(256, ax=ax, color=GREEN)
     ax.lines[-1].zorder = 1
     points = curve1.evaluate_multi(np.asfortranarray(s_vals))
     colors = seaborn.dark_palette("blue", 5)
@@ -149,9 +159,9 @@ def newton_refine3(s_vals, curve1, curve2):
     if NO_IMAGES:
         return
 
-    ax = curve1.plot(256)
+    ax = curve1.plot(256, color=BLUE)
     ax.lines[-1].zorder = 1
-    curve2.plot(256, ax=ax)
+    curve2.plot(256, ax=ax, color=GREEN)
     ax.lines[-1].zorder = 1
     points = curve1.evaluate_multi(np.asfortranarray(s_vals))
     colors = seaborn.dark_palette("blue", 6)
@@ -171,8 +181,8 @@ def segment_intersection1(start0, end0, start1, end1, s):
 
     line0 = bezier.Curve.from_nodes(stack1d(start0, end0))
     line1 = bezier.Curve.from_nodes(stack1d(start1, end1))
-    ax = line0.plot(2)
-    line1.plot(256, ax=ax)
+    ax = line0.plot(2, color=BLUE)
+    line1.plot(256, ax=ax, color=GREEN)
     (x_val,), (y_val,) = line0.evaluate(s)
     ax.plot([x_val], [y_val], color="black", marker="o")
     ax.axis("scaled")
@@ -186,8 +196,8 @@ def segment_intersection2(start0, end0, start1, end1):
 
     line0 = bezier.Curve.from_nodes(stack1d(start0, end0))
     line1 = bezier.Curve.from_nodes(stack1d(start1, end1))
-    ax = line0.plot(2)
-    line1.plot(2, ax=ax)
+    ax = line0.plot(2, color=BLUE)
+    line1.plot(2, ax=ax, color=GREEN)
     ax.axis("scaled")
     save_image(ax.figure, "segment_intersection2.png")
 
@@ -200,8 +210,8 @@ def helper_parallel_lines(start0, end0, start1, end1, filename):
     figure = plt.figure()
     ax = figure.gca()
     points = stack1d(start0, end0, start1, end1)
-    ax.plot(points[0, :2], points[1, :2], marker="o")
-    ax.plot(points[0, 2:], points[1, 2:], marker="o")
+    ax.plot(points[0, :2], points[1, :2], marker="o", color=BLUE)
+    ax.plot(points[0, 2:], points[1, 2:], marker="o", color=GREEN)
     ax.axis("scaled")
     _plot_helpers.add_plot_boundary(ax)
     save_image(figure, filename)
@@ -213,7 +223,9 @@ def add_patch(
     # ``nodes`` is stored Fortran-contiguous with ``x-y`` points in each
     # column but ``Path()`` wants ``x-y`` points in each row.
     path = _path_mod.Path(nodes.T)
-    patch = patches.PathPatch(path, facecolor=color, alpha=alpha)
+    patch = patches.PathPatch(
+        path, edgecolor=color, facecolor=color, alpha=alpha
+    )
     ax.add_patch(patch)
     if with_nodes:
         ax.plot(
@@ -230,7 +242,7 @@ def curve_constructor(curve):
     if NO_IMAGES:
         return
 
-    ax = curve.plot(256)
+    ax = curve.plot(256, color=BLUE)
     line = ax.lines[0]
     nodes = curve._nodes
     ax.plot(
@@ -248,7 +260,7 @@ def curve_evaluate(curve):
     if NO_IMAGES:
         return
 
-    ax = curve.plot(256)
+    ax = curve.plot(256, color=BLUE)
     points = curve.evaluate_multi(np.asfortranarray([0.75]))
     ax.plot(
         points[0, :], points[1, :], color="black", linestyle="None", marker="o"
@@ -267,10 +279,10 @@ def curve_subdivide(curve, left, right):
     figure = plt.figure()
     ax = figure.gca()
     add_patch(ax, curve._nodes, "gray")
-    ax = left.plot(256, ax=ax)
+    ax = left.plot(256, ax=ax, color=BLUE)
     line = ax.lines[-1]
     add_patch(ax, left._nodes, line.get_color())
-    right.plot(256, ax=ax)
+    right.plot(256, ax=ax, color=GREEN)
     line = ax.lines[-1]
     add_patch(ax, right._nodes, line.get_color())
     ax.axis("scaled")
@@ -284,8 +296,8 @@ def curve_intersect(curve1, curve2, s_vals):
     if NO_IMAGES:
         return
 
-    ax = curve1.plot(256)
-    curve2.plot(256, ax=ax)
+    ax = curve1.plot(256, color=BLUE)
+    curve2.plot(256, ax=ax, color=GREEN)
     intersections = curve1.evaluate_multi(s_vals)
     ax.plot(
         intersections[0, :],
@@ -305,7 +317,7 @@ def triangle_constructor(triangle):
     if NO_IMAGES:
         return
 
-    ax = triangle.plot(256, with_nodes=True)
+    ax = triangle.plot(256, color=BLUE, with_nodes=True)
     line = ax.lines[0]
     nodes = triangle._nodes
     add_patch(ax, nodes[:, (0, 1, 2, 5)], line.get_color())
@@ -369,7 +381,7 @@ def triangle_evaluate_barycentric(triangle, point):
     if NO_IMAGES:
         return
 
-    ax = triangle.plot(256)
+    ax = triangle.plot(256, color=BLUE)
     ax.plot(
         point[0, :], point[1, :], color="black", linestyle="None", marker="o"
     )
@@ -384,7 +396,7 @@ def triangle_evaluate_cartesian_multi(triangle, points):
     if NO_IMAGES:
         return
 
-    ax = triangle.plot(256)
+    ax = triangle.plot(256, color=BLUE)
     ax.plot(
         points[0, :], points[1, :], color="black", linestyle="None", marker="o"
     )
@@ -425,7 +437,7 @@ def triangle_evaluate_barycentric_multi(triangle, points):
     if NO_IMAGES:
         return
 
-    ax = triangle.plot(256)
+    ax = triangle.plot(256, color=BLUE)
     ax.plot(
         points[0, :], points[1, :], color="black", linestyle="None", marker="o"
     )
@@ -474,7 +486,7 @@ def triangle_is_valid1(triangle):
     if NO_IMAGES:
         return
 
-    ax = triangle.plot(256)
+    ax = triangle.plot(256, color=BLUE)
     ax.axis("scaled")
     ax.set_xlim(-0.125, 2.125)
     ax.set_ylim(-0.125, 2.125)
@@ -486,7 +498,7 @@ def triangle_is_valid2(triangle):
     if NO_IMAGES:
         return
 
-    ax = triangle.plot(256)
+    ax = triangle.plot(256, color=BLUE)
     ax.axis("scaled")
     ax.set_xlim(-0.125, 1.0625)
     ax.set_ylim(-0.0625, 1.0625)
@@ -520,7 +532,7 @@ def triangle_is_valid3(triangle):
     # for each "true" edge.
     figure = plt.figure()
     ax = figure.gca()
-    (line,) = ax.plot(jac_edge[0, :], jac_edge[1, :])
+    (line,) = ax.plot(jac_edge[0, :], jac_edge[1, :], color=BLUE)
     color = line.get_color()
     ax.plot(points1[0, :], points1[1, :], color="black", linestyle="dashed")
     ax.plot(points2[0, :], points2[1, :], color="black", linestyle="dashed")
@@ -544,8 +556,8 @@ def triangle_subdivide1():
     triangle_a, triangle_b, triangle_c, triangle_d = triangle.subdivide()
     figure, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2)
     for ax in (ax1, ax2, ax3, ax4):
-        triangle.plot(2, ax=ax)
-    triangle_a.plot(2, ax=ax1)
+        triangle.plot(2, ax=ax, color=BLUE)
+    triangle_a.plot(2, ax=ax1, color=GREEN)
     ax1.text(
         1.0 / 6.0,
         1.0 / 6.0,
@@ -554,7 +566,7 @@ def triangle_subdivide1():
         verticalalignment="center",
         horizontalalignment="center",
     )
-    triangle_b.plot(2, ax=ax2)
+    triangle_b.plot(2, ax=ax2, color=GREEN)
     ax2.text(
         1.0 / 3.0,
         1.0 / 3.0,
@@ -563,7 +575,7 @@ def triangle_subdivide1():
         verticalalignment="center",
         horizontalalignment="center",
     )
-    triangle_c.plot(2, ax=ax3)
+    triangle_c.plot(2, ax=ax3, color=GREEN)
     ax3.text(
         2.0 / 3.0,
         1.0 / 6.0,
@@ -572,7 +584,7 @@ def triangle_subdivide1():
         verticalalignment="center",
         horizontalalignment="center",
     )
-    triangle_d.plot(2, ax=ax4)
+    triangle_d.plot(2, ax=ax4, color=GREEN)
     ax4.text(
         1.0 / 6.0,
         2.0 / 3.0,
@@ -641,7 +653,7 @@ def curved_polygon_constructor1(curved_poly):
     if NO_IMAGES:
         return
 
-    ax = curved_poly.plot(256)
+    ax = curved_poly.plot(256, color=BLUE)
     ax.axis("scaled")
     ax.set_xlim(-0.125, 2.125)
     ax.set_ylim(-0.625, 1.625)
@@ -653,7 +665,7 @@ def curved_polygon_constructor2(curved_poly):
     if NO_IMAGES:
         return
 
-    ax = curved_poly.plot(256)
+    ax = curved_poly.plot(256, color=BLUE)
     ax.axis("scaled")
     ax.set_xlim(-0.125, 2.125)
     ax.set_ylim(-0.125, 1.125)
@@ -665,7 +677,7 @@ def triangle_locate(triangle, point):
     if NO_IMAGES:
         return
 
-    ax = triangle.plot(256)
+    ax = triangle.plot(256, color=BLUE)
     ax.plot(
         point[0, :], point[1, :], color="black", linestyle="None", marker="o"
     )
@@ -680,12 +692,12 @@ def curve_specialize(curve, new_curve):
     if NO_IMAGES:
         return
 
-    ax = curve.plot(256)
+    ax = curve.plot(256, color=BLUE)
     interval = r"$\left[0, 1\right]$"
     line = ax.lines[-1]
     line.set_label(interval)
     color1 = line.get_color()
-    new_curve.plot(256, ax=ax)
+    new_curve.plot(256, ax=ax, color=GREEN)
     interval = r"$\left[-\frac{1}{4}, \frac{3}{4}\right]$"
     line = ax.lines[-1]
     line.set_label(interval)
@@ -720,8 +732,8 @@ def newton_refine_triangle(triangle, x_val, y_val, s, t, new_s, new_t):
     linear_triangle = bezier.Triangle.from_nodes(
         np.asfortranarray([[0.0, 1.0, 0.0], [0.0, 0.0, 1.0]])
     )
-    linear_triangle.plot(2, ax=ax1)
-    ax1.plot([0.25], [0.5], marker="H")
+    linear_triangle.plot(2, ax=ax1, color=BLUE)
+    ax1.plot([0.25], [0.5], marker="H", color=GREEN)
     ax1.plot([s], [t], color="black", linestyle="None", marker="o")
     ax1.plot(
         [new_s],
@@ -733,11 +745,11 @@ def newton_refine_triangle(triangle, x_val, y_val, s, t, new_s, new_t):
         markerfacecolor="None",
     )
     # Plot the equivalent output in ax2.
-    triangle.plot(256, ax=ax2)
+    triangle.plot(256, ax=ax2, color=BLUE)
     points = triangle.evaluate_cartesian_multi(
         np.asfortranarray([[s, t], [new_s, new_t]])
     )
-    ax2.plot([x_val], [y_val], marker="H")
+    ax2.plot([x_val], [y_val], marker="H", color=GREEN)
     ax2.plot(
         points[0, [0]],
         points[1, [0]],
@@ -771,11 +783,11 @@ def classify_help(s, curve1, triangle1, curve2, triangle2, interior, ax=None):
     assert triangle2.is_valid
     edge2, _, _ = triangle2.edges
     assert np.all(edge2._nodes == curve2._nodes)
-    ax = triangle1.plot(256, ax=ax)
+    ax = triangle1.plot(256, ax=ax, color=BLUE)
     # Manually reduce the alpha on the triangle patch(es).
     ax.patches[-1].set_alpha(0.1875)
     color1 = ax.lines[-1].get_color()
-    triangle2.plot(256, ax=ax)
+    triangle2.plot(256, ax=ax, color=GREEN)
     ax.patches[-1].set_alpha(0.1875)
     color2 = ax.lines[-1].get_color()
     # Remove the existing boundary (lines) and just add our edges.
@@ -789,7 +801,7 @@ def classify_help(s, curve1, triangle1, curve2, triangle2, interior, ax=None):
     elif interior == 1:
         color = color2
     else:
-        color = None
+        color = RED
     ax.plot([int_x], [int_y], color=color, linestyle="None", marker="o")
     ax.axis("scaled")
     return ax
@@ -948,7 +960,7 @@ def classify_intersection5(s, curve1, curve2):
         )
     )
     # NOTE: We don't require the intersection polygon be valid.
-    triangle3.plot(256, ax=ax1)
+    triangle3.plot(256, ax=ax1, color=RED)
     # The second comes from specializing to
     # left1(0.0, 0.5)-right1(0.5, 0.625)-left3(0.75, 1.0)
     triangle4 = bezier.Triangle.from_nodes(
@@ -960,7 +972,7 @@ def classify_intersection5(s, curve1, curve2):
         )
     )
     # NOTE: We don't require the intersection polygon be valid.
-    triangle4.plot(256, ax=ax2)
+    triangle4.plot(256, ax=ax2, color=RED)
     (int_x,), (int_y,) = curve1.evaluate(s)
     ax1.plot([int_x], [int_y], color=color1, linestyle="None", marker="o")
     ax2.plot([int_x], [int_y], color=color2, linestyle="None", marker="o")
@@ -1049,7 +1061,7 @@ def get_curvature(nodes, s, tangent_vec, curvature):
     point = curve.evaluate(s)
     circle_center = point + radius_dir / curvature
     # Add the curve.
-    ax = curve.plot(256)
+    ax = curve.plot(256, color=BLUE)
     # Add the circle.
     circle_center = circle_center.ravel(order="F")
     circle = plt.Circle(circle_center, 1.0 / abs(curvature), alpha=0.25)
@@ -1069,7 +1081,7 @@ def curve_locate(curve, point1, point2, point3):
     if NO_IMAGES:
         return
 
-    ax = curve.plot(256)
+    ax = curve.plot(256, color=BLUE)
     points = np.hstack([point1, point2, point3])
     ax.plot(
         points[0, :], points[1, :], color="black", linestyle="None", marker="o"
@@ -1085,8 +1097,8 @@ def newton_refine_curve(curve, point, s, new_s):
     if NO_IMAGES:
         return
 
-    ax = curve.plot(256)
-    ax.plot(point[0, :], point[1, :], marker="H")
+    ax = curve.plot(256, color=BLUE)
+    ax.plot(point[0, :], point[1, :], marker="H", color=GREEN)
     wrong_points = curve.evaluate_multi(np.asfortranarray([s, new_s]))
     ax.plot(
         wrong_points[0, [0]],
@@ -1116,7 +1128,7 @@ def newton_refine_curve_cusp(curve, s_vals):
     if NO_IMAGES:
         return
 
-    ax = curve.plot(256)
+    ax = curve.plot(256, color=BLUE)
     ax.lines[-1].zorder = 1
     points = curve.evaluate_multi(np.asfortranarray(s_vals))
     colors = seaborn.dark_palette("blue", 6)
@@ -1207,9 +1219,9 @@ def classify_intersection9(s, curve1, curve2):
     # Now add the "degenerate" intersection polygons.
     cp_edges1, cp_edges2 = _edges_classify_intersection9()
     curved_polygon1 = bezier.CurvedPolygon(*cp_edges1)
-    curved_polygon1.plot(256, ax=ax1)
+    curved_polygon1.plot(256, ax=ax1, color=RED)
     curved_polygon2 = bezier.CurvedPolygon(*cp_edges2)
-    curved_polygon2.plot(256, ax=ax2)
+    curved_polygon2.plot(256, ax=ax2, color=RED)
     (int_x,), (int_y,) = curve1.evaluate(s)
     ax1.plot([int_x], [int_y], color=color1, linestyle="None", marker="o")
     ax2.plot([int_x], [int_y], color=color2, linestyle="None", marker="o")
@@ -1228,10 +1240,10 @@ def curve_elevate(curve, elevated):
         return
 
     figure, (ax1, ax2) = plt.subplots(1, 2)
-    curve.plot(256, ax=ax1)
+    curve.plot(256, ax=ax1, color=BLUE)
     color = ax1.lines[-1].get_color()
     add_patch(ax1, curve._nodes, color)
-    elevated.plot(256, ax=ax2)
+    elevated.plot(256, ax=ax2, color=BLUE)
     color = ax2.lines[-1].get_color()
     add_patch(ax2, elevated._nodes, color)
     ax1.axis("scaled")
@@ -1248,11 +1260,11 @@ def triangle_elevate(triangle, elevated):
         return
 
     figure, (ax1, ax2) = plt.subplots(1, 2)
-    triangle.plot(256, ax=ax1)
+    triangle.plot(256, ax=ax1, color=BLUE)
     color = ax1.lines[-1].get_color()
     nodes = triangle._nodes[:, (0, 1, 2, 4, 5)]
     add_patch(ax1, nodes, color)
-    elevated.plot(256, ax=ax2)
+    elevated.plot(256, ax=ax2, color=BLUE)
     color = ax2.lines[-1].get_color()
     nodes = elevated._nodes[:, (0, 1, 2, 3, 6, 8, 9)]
     add_patch(ax2, nodes, color)
@@ -1271,7 +1283,7 @@ def unit_triangle():
 
     nodes = np.asfortranarray([[0.0, 1.0, 0.0], [0.0, 0.0, 1.0]])
     triangle = bezier.Triangle(nodes, degree=1)
-    ax = triangle.plot(256)
+    ax = triangle.plot(256, color=BLUE)
     ax.axis("scaled")
     _plot_helpers.add_plot_boundary(ax)
     save_image(ax.figure, "unit_triangle.png")
@@ -1283,10 +1295,10 @@ def curve_reduce(curve, reduced):
         return
 
     figure, (ax1, ax2) = plt.subplots(1, 2, sharex=True, sharey=True)
-    curve.plot(256, ax=ax1)
+    curve.plot(256, ax=ax1, color=BLUE)
     color = ax1.lines[-1].get_color()
     add_patch(ax1, curve._nodes, color)
-    reduced.plot(256, ax=ax2)
+    reduced.plot(256, ax=ax2, color=BLUE)
     color = ax2.lines[-1].get_color()
     add_patch(ax2, reduced._nodes, color)
     ax1.axis("scaled")
@@ -1300,10 +1312,10 @@ def curve_reduce_approx(curve, reduced):
     if NO_IMAGES:
         return
 
-    ax = curve.plot(256)
+    ax = curve.plot(256, color=BLUE)
     color = ax.lines[-1].get_color()
     add_patch(ax, curve._nodes, color, alpha=0.25, node_color=color)
-    reduced.plot(256, ax=ax)
+    reduced.plot(256, ax=ax, color=GREEN)
     color = ax.lines[-1].get_color()
     add_patch(ax, reduced._nodes, color, alpha=0.25, node_color=color)
     ax.axis("scaled")
