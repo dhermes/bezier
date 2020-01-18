@@ -20,6 +20,7 @@ dist
 docs/abi/example
 scripts/macos/dist_wheels/
 scripts/macos/fixed_wheels/
+scripts/macos/test-venv/
 src/fortran/*.o
 src/fortran/quadpack/*.o
 src/python/bezier/_speedup*.so

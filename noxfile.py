@@ -559,6 +559,7 @@ def clean(session):
         get_path("scripts", "macos", "__pycache__"),
         get_path("scripts", "macos", "dist_wheels"),
         get_path("scripts", "macos", "fixed_wheels"),
+        get_path("scripts", "macos", "test-venv"),
         get_path("src", "python", "bezier.egg-info"),
         get_path("src", "python", "bezier", "__pycache__"),
         get_path("src", "python", "bezier", "extra-dll"),
