@@ -155,8 +155,6 @@ def setup():
         package_data={
             "bezier": [
                 "*.pxd",
-                os.path.join("include", "*.h"),
-                os.path.join("include", "bezier", "*.h"),
                 os.path.join("lib", "*.lib"),
                 os.path.join("extra-dll", "*.dll"),
             ]
