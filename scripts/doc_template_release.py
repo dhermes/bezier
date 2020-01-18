@@ -29,7 +29,6 @@ script.
 
 import importlib.machinery
 import os
-import sys
 
 
 _SCRIPTS_DIR = os.path.dirname(__file__)
@@ -59,10 +58,6 @@ def get_version():
     Returns:
         str: The current version in ``setup.py``.
     """
-    # "Spoof" the ``setup.py`` helper modules.
-    sys.modules["setup_helpers"] = object()
-    sys.modules["setup_helpers_macos"] = object()
-    sys.modules["setup_helpers_windows"] = object()
     filename = os.path.join(_ROOT_DIR, "setup.py")
     loader = importlib.machinery.SourceFileLoader("setup", filename)
     setup_mod = loader.load_module()
