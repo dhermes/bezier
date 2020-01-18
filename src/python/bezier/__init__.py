@@ -60,28 +60,11 @@ __all__ = [
     "Curve",
     "CurvedPolygon",
     "get_dll",
-    "get_include",
     "get_lib",
     "Surface",
     "Triangle",
     "UnsupportedDegree",
 ]
-
-
-def get_include():
-    """Get the directory with ``.h`` header files.
-
-    Extension modules (and Cython modules) that need to compile against
-    ``libbezier`` should use this function to locate the appropriate
-    include directory.
-
-    For more information, see :doc:`../binary-extension`.
-
-    Returns:
-        str: ``include`` directory that contains header files for the
-        ``libbezier`` Fortran library.
-    """
-    return pkg_resources.resource_filename("bezier", "include")
 
 
 def get_lib():
