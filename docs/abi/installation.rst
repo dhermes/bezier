@@ -22,7 +22,7 @@ the package into ``/usr/local/``. For a more temporary install location,
    >   -B "${BUILD_DIR}"
    $ cmake \
    >   --build "${BUILD_DIR}" \
-   >   --config Debug \
+   >   --config Release \
    >   --target install
 
 Note that this will require having a full checkout of the Fortran source
