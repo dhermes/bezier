@@ -138,7 +138,12 @@ def tree(directory, suffix=None):
                 parts.append(textwrap.indent(sub_part, "  "))
         else:
             if suffix is None or name.endswith(suffix):
-                parts.append(name)
+                if os.path.islink(path):
+                    link_dst = os.readlink(path)
+                    to_add = f"{name} -> {link_dst}"
+                    parts.append(to_add)
+                else:
+                    parts.append(name)
 
     if parts:
         return "\n".join(parts)

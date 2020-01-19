@@ -38,85 +38,95 @@ for linking and C headers.
 Linux
 =====
 
-.. code-block:: console
+.. testsetup:: libbezier-linux, libbezier-macos, libbezier-windows
 
-   $ tree "${INSTALL_PREFIX}"
-   .../libbezier-release/usr/
-   ├── include
-   │   ├── bezier
-   │   │   ├── curve.h
-   │   │   ├── curve_intersection.h
-   │   │   ├── helpers.h
-   │   │   ├── status.h
-   │   │   ├── triangle.h
-   │   │   └── triangle_intersection.h
-   │   └── bezier.h
-   ├── lib
-   │   ├── libbezier.so -> libbezier.so.2020
-   │   ├── libbezier.so.2020 -> libbezier.so.2020.1.14
-   │   └── libbezier.so.2020.1.14
-   └── share
-       └── bezier
-           └── cmake
-               ├── BezierConfig-release.cmake
-               └── BezierConfig.cmake
+   import os
 
-   6 directories, 12 files
+   import tests.utils
+
+
+   install_prefix = os.environ["BEZIER_INSTALL_PREFIX"]
+   print_tree = tests.utils.print_tree
+
+.. doctest:: libbezier-linux
+   :options: +NORMALIZE_WHITESPACE
+   :linux-only:
+
+   >>> print_tree(install_prefix)
+   usr/
+     include/
+       bezier/
+         curve.h
+         curve_intersection.h
+         helpers.h
+         status.h
+         triangle.h
+         triangle_intersection.h
+       bezier.h
+     lib/
+       libbezier.so -> libbezier.so.2020
+       libbezier.so.2020 -> libbezier.so.2020.1.14
+       libbezier.so.2020.1.14
+     share/
+       bezier/
+         cmake/
+           BezierConfig-release.cmake
+           BezierConfig.cmake
 
 macOS
 =====
 
-.. code-block:: console
+.. doctest:: libbezier-macos
+   :options: +NORMALIZE_WHITESPACE
+   :macos-only:
 
-   $ tree "${INSTALL_PREFIX}"
-   .../libbezier-release/usr/
-   ├── include
-   │   ├── bezier
-   │   │   ├── curve.h
-   │   │   ├── curve_intersection.h
-   │   │   ├── helpers.h
-   │   │   ├── status.h
-   │   │   ├── triangle.h
-   │   │   └── triangle_intersection.h
-   │   └── bezier.h
-   ├── lib
-   │   ├── libbezier.2020.1.14.dylib
-   │   ├── libbezier.2020.dylib -> libbezier.2020.1.14.dylib
-   │   └── libbezier.dylib -> libbezier.2020.dylib
-   └── share
-       └── bezier
-           └── cmake
-               ├── BezierConfig-release.cmake
-               └── BezierConfig.cmake
-
-   6 directories, 12 files
+   >>> print_tree(install_prefix)
+   usr/
+     include/
+       bezier/
+         curve.h
+         curve_intersection.h
+         helpers.h
+         status.h
+         triangle.h
+         triangle_intersection.h
+       bezier.h
+     lib/
+       libbezier.2020.1.14.dylib
+       libbezier.2020.dylib -> libbezier.2020.1.14.dylib
+       libbezier.dylib -> libbezier.2020.dylib
+     share/
+       bezier/
+         cmake/
+           BezierConfig-release.cmake
+           BezierConfig.cmake
 
 Windows
 =======
 
-.. code-block:: console
+.. doctest:: libbezier-windows
+   :options: +NORMALIZE_WHITESPACE
+   :windows-only:
 
-   $ tree "${INSTALL_PREFIX}"
-   .../libbezier-release/usr/
-   ├── bin
-   │   └── bezier.dll
-   ├── include
-   │   ├── bezier
-   │   │   ├── curve.h
-   │   │   ├── curve_intersection.h
-   │   │   ├── helpers.h
-   │   │   ├── status.h
-   │   │   ├── triangle.h
-   │   │   └── triangle_intersection.h
-   │   └── bezier.h
-   ├── lib
-   │   └── bezier.lib
-   └── share
-       └── bezier
-           └── cmake
-               ├── BezierConfig-release.cmake
-               └── BezierConfig.cmake
-
-   7 directories, 11 files
+   >>> print_tree(install_prefix)
+   usr\
+     bin\
+       bezier.dll
+     include\
+       bezier\
+         curve.h
+         curve_intersection.h
+         helpers.h
+         status.h
+         triangle.h
+         triangle_intersection.h
+       bezier.h
+     lib\
+       bezier.lib
+     share\
+       bezier\
+         cmake\
+           BezierConfig-release.cmake
+           BezierConfig.cmake
 
 .. _CMake: https://cmake.org/
