@@ -11,17 +11,9 @@
 # limitations under the License.
 
 import email
-import os
 import unittest
-import unittest.mock
 
 import pkg_resources
-
-CHECK_PKG_MSG = """\
-path     = {!r}
-suffix   = {!r}
-site_pkg = {!r}
-from_egg = {!r}"""
 
 
 class Test___version__(unittest.TestCase):
@@ -52,32 +44,3 @@ class Test___author__(unittest.TestCase):
         metadata = distrib.get_metadata(distrib.PKG_INFO)
         installed_author = email.message_from_string(metadata).get("Author")
         self.assertEqual(hardcoded_author, installed_author)
-
-
-class Test_get_dll(unittest.TestCase):
-    @staticmethod
-    def _call_function_under_test():
-        import bezier
-
-        return bezier.get_dll()
-
-    @unittest.mock.patch("os.name", new="nt")
-    def test_windows(self):
-        dll_directory = self._call_function_under_test()
-        _check_pkg_filename(self, dll_directory, "extra-dll")
-
-    @unittest.mock.patch("os.name", new="posix")
-    def test_non_windows(self):
-        with self.assertRaises(OSError):
-            self._call_function_under_test()
-
-
-def _check_pkg_filename(test_case, path, last_segment):
-    short = os.path.join("bezier", last_segment)
-    from_egg = path.endswith(short) and ".egg" in path
-    src_path = os.path.join("src", "python", short)
-    from_source = path.endswith(src_path)
-    verbose = os.path.join("site-packages", short)
-    site_pkg = path.endswith(verbose)
-    msg = CHECK_PKG_MSG.format(path, verbose, site_pkg, from_egg)
-    test_case.assertTrue(from_egg or from_source or site_pkg, msg=msg)

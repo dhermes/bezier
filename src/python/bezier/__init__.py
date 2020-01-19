@@ -27,10 +27,6 @@ Plotting utilities are also provided.
 .. autoclass:: Surface
 """
 
-import os
-
-import pkg_resources
-
 # NOTE: ``__config__`` **must** be the first import because it (may)
 #       modify the search path used to locate shared libraries.
 from bezier import __config__
@@ -59,30 +55,7 @@ __all__ = [
     "__version__",
     "Curve",
     "CurvedPolygon",
-    "get_dll",
     "Surface",
     "Triangle",
     "UnsupportedDegree",
 ]
-
-
-def get_dll():
-    """Get the directory with the Windows shared library.
-
-    Extension modules (and Cython modules) that need to compile against
-    ``libbezier`` should use this function to locate the appropriate
-    Windows shared library or libraries (DLLs).
-
-    For more information, see :doc:`../binary-extension`.
-
-    Returns:
-        str: ``extra-dll`` directory that contains the Windows shared library
-        for the ``libbezier`` Fortran library.
-
-    Raises:
-        OSError: If this function is used anywhere other than Windows.
-    """
-    if os.name == "nt":
-        return pkg_resources.resource_filename("bezier", "extra-dll")
-
-    raise OSError("This function should only be used on Windows.")
