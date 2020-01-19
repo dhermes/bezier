@@ -15,8 +15,6 @@
 	#include <winres.h>
 #endif
 
-IDI_ICON1               ICON                    PRODUCT_ICON
-
 LANGUAGE LANG_ENGLISH, SUBLANG_DEFAULT
 
 VS_VERSION_INFO VERSIONINFO

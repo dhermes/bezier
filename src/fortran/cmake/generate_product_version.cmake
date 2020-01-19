@@ -13,7 +13,6 @@ set (GenerateProductVersionCurrentDir ${CMAKE_CURRENT_LIST_DIR})
 #   generate_product_version(
 #     SomeOutputResourceVariable
 #     NAME MyGreatProject
-#     ICON ${PATH_TO_APP_ICON}
 #     VERSION_MAJOR 2
 #     VERSION_MINOR 3
 #     VERSION_PATH ${BUILD_COUNTER}
@@ -27,7 +26,6 @@ set (GenerateProductVersionCurrentDir ${CMAKE_CURRENT_LIST_DIR})
 # You can specify resource strings in arguments:
 #   NAME               - name of executable (no defaults, ex: Microsoft Word)
 #   BUNDLE             - bundle (${NAME} is default, ex: Microsoft Office)
-#   ICON               - path to application icon (${CMAKE_SOURCE_DIR}/product.ico by default)
 #   VERSION_MAJOR      - 1 is default
 #   VERSION_MINOR      - 0 is default
 #   VERSION_PATCH      - 0 is default
@@ -43,7 +41,6 @@ function(generate_product_version outfiles)
     set (oneValueArgs
         NAME
         BUNDLE
-        ICON
         VERSION_MAJOR
         VERSION_MINOR
         VERSION_PATCH
@@ -59,9 +56,6 @@ function(generate_product_version outfiles)
 
     if (NOT PRODUCT_BUNDLE OR "${PRODUCT_BUNDLE}" STREQUAL "")
         set(PRODUCT_BUNDLE "${PRODUCT_NAME}")
-    endif()
-    if (NOT PRODUCT_ICON OR "${PRODUCT_ICON}" STREQUAL "")
-        set(PRODUCT_ICON "${CMAKE_SOURCE_DIR}/product.ico")
     endif()
 
     if (NOT PRODUCT_VERSION_MAJOR EQUAL 0 AND (NOT PRODUCT_VERSION_MAJOR OR "${PRODUCT_VERSION_MAJOR}" STREQUAL ""))
