@@ -77,27 +77,22 @@ Procedures
       import tests.utils
 
 
-      bezier_include, bezier_lib = tests.utils.bezier_locate()
-      gfortran_lib = tests.utils.get_gfortran_lib()
-      docs_abi_directory = tests.utils.repo_relative("docs", "abi")
-      invoke_shell = tests.utils.make_invoke_shell(docs_abi_directory)
+      build_and_run_c = tests.utils.build_and_run_c
 
    .. doctest:: example-compute-length
       :options: +NORMALIZE_WHITESPACE
       :windows-skip:
 
-      >>> invoke_shell(f"""
-      ... gcc \
-      ...   -o example \
-      ...   example_compute_length.c \
-      ...   -I {bezier_include} \
-      ...   -L {bezier_lib} \
-      ...   -L {gfortran_lib} \
-      ...   -Wl,-rpath,{bezier_lib} \
-      ...   -lbezier \
-      ...   -lm -lgfortran
-      ... """)
-      >>> invoke_shell("./example")
+      >>> build_and_run_c("example_compute_length.c")
+      $ gcc \
+      >     -o example \
+      >     example_compute_length.c \
+      >     -I .../libbezier-release/usr/include \
+      >     -L .../libbezier-release/usr/lib \
+      >     -Wl,-rpath,.../libbezier-release/usr/lib \
+      >     -lbezier \
+      >     -lm -lgfortran
+      $ ./example
       Length: 5.000000
       Error value: 0
 
@@ -160,18 +155,16 @@ Procedures
       :options: +NORMALIZE_WHITESPACE
       :windows-skip:
 
-      >>> invoke_shell(f"""
-      ... gcc \
-      ...   -o example \
-      ...   example_elevate_nodes_curve.c \
-      ...   -I {bezier_include} \
-      ...   -L {bezier_lib} \
-      ...   -L {gfortran_lib} \
-      ...   -Wl,-rpath,{bezier_lib} \
-      ...   -lbezier \
-      ...   -lm -lgfortran
-      ... """)
-      >>> invoke_shell("./example")
+      >>> build_and_run_c("example_elevate_nodes_curve.c")
+      $ gcc \
+      >     -o example \
+      >     example_elevate_nodes_curve.c \
+      >     -I .../libbezier-release/usr/include \
+      >     -L .../libbezier-release/usr/lib \
+      >     -Wl,-rpath,.../libbezier-release/usr/lib \
+      >     -lbezier \
+      >     -lm -lgfortran
+      $ ./example
       Elevated:
       0.000000, 1.000000, 2.000000, 3.000000
       0.000000, 1.000000, 1.000000, 0.000000
@@ -273,18 +266,16 @@ Procedures
       :options: +NORMALIZE_WHITESPACE
       :windows-skip:
 
-      >>> invoke_shell(f"""
-      ... gcc \
-      ...   -o example \
-      ...   example_evaluate_curve_barycentric.c \
-      ...   -I {bezier_include} \
-      ...   -L {bezier_lib} \
-      ...   -L {gfortran_lib} \
-      ...   -Wl,-rpath,{bezier_lib} \
-      ...   -lbezier \
-      ...   -lm -lgfortran
-      ... """)
-      >>> invoke_shell("./example")
+      >>> build_and_run_c("example_evaluate_curve_barycentric.c")
+      $ gcc \
+      >     -o example \
+      >     example_evaluate_curve_barycentric.c \
+      >     -I .../libbezier-release/usr/include \
+      >     -L .../libbezier-release/usr/lib \
+      >     -Wl,-rpath,.../libbezier-release/usr/lib \
+      >     -lbezier \
+      >     -lm -lgfortran
+      $ ./example
       Evaluated:
       2.437500, 0.687500, 0.750000, 1.187500
       2.125000, 0.687500, 0.750000, 1.687500
@@ -349,18 +340,16 @@ Procedures
       :options: +NORMALIZE_WHITESPACE
       :windows-skip:
 
-      >>> invoke_shell(f"""
-      ... gcc \
-      ...   -o example \
-      ...   example_evaluate_hodograph.c \
-      ...   -I {bezier_include} \
-      ...   -L {bezier_lib} \
-      ...   -L {gfortran_lib} \
-      ...   -Wl,-rpath,{bezier_lib} \
-      ...   -lbezier \
-      ...   -lm -lgfortran
-      ... """)
-      >>> invoke_shell("./example")
+      >>> build_and_run_c("example_evaluate_hodograph.c")
+      $ gcc \
+      >     -o example \
+      >     example_evaluate_hodograph.c \
+      >     -I .../libbezier-release/usr/include \
+      >     -L .../libbezier-release/usr/lib \
+      >     -Wl,-rpath,.../libbezier-release/usr/lib \
+      >     -lbezier \
+      >     -lm -lgfortran
+      $ ./example
       Hodograph:
       0.656250
       1.687500
@@ -434,18 +423,16 @@ Procedures
       :options: +NORMALIZE_WHITESPACE
       :windows-skip:
 
-      >>> invoke_shell(f"""
-      ... gcc \
-      ...   -o example \
-      ...   example_evaluate_multi.c \
-      ...   -I {bezier_include} \
-      ...   -L {bezier_lib} \
-      ...   -L {gfortran_lib} \
-      ...   -Wl,-rpath,{bezier_lib} \
-      ...   -lbezier \
-      ...   -lm -lgfortran
-      ... """)
-      >>> invoke_shell("./example")
+      >>> build_and_run_c("example_evaluate_multi.c")
+      $ gcc \
+      >     -o example \
+      >     example_evaluate_multi.c \
+      >     -I .../libbezier-release/usr/include \
+      >     -L .../libbezier-release/usr/lib \
+      >     -Wl,-rpath,.../libbezier-release/usr/lib \
+      >     -lbezier \
+      >     -lm -lgfortran
+      $ ./example
       Evaluated:
       1.000000, 1.500000, 2.000000
       0.000000, 0.500000, 1.000000
@@ -520,18 +507,16 @@ Procedures
       :options: +NORMALIZE_WHITESPACE
       :windows-skip:
 
-      >>> invoke_shell(f"""
-      ... gcc \
-      ...   -o example \
-      ...   example_full_reduce.c \
-      ...   -I {bezier_include} \
-      ...   -L {bezier_lib} \
-      ...   -L {gfortran_lib} \
-      ...   -Wl,-rpath,{bezier_lib} \
-      ...   -lbezier \
-      ...   -lm -lgfortran
-      ... """)
-      >>> invoke_shell("./example")
+      >>> build_and_run_c("example_full_reduce.c")
+      $ gcc \
+      >     -o example \
+      >     example_full_reduce.c \
+      >     -I .../libbezier-release/usr/include \
+      >     -L .../libbezier-release/usr/lib \
+      >     -Wl,-rpath,.../libbezier-release/usr/lib \
+      >     -lbezier \
+      >     -lm -lgfortran
+      $ ./example
       Number of reduced nodes: 2
       Reduced:
       1.000000, 2.000000
@@ -599,18 +584,16 @@ Procedures
       :options: +NORMALIZE_WHITESPACE
       :windows-skip:
 
-      >>> invoke_shell(f"""
-      ... gcc \
-      ...   -o example \
-      ...   example_get_curvature.c \
-      ...   -I {bezier_include} \
-      ...   -L {bezier_lib} \
-      ...   -L {gfortran_lib} \
-      ...   -Wl,-rpath,{bezier_lib} \
-      ...   -lbezier \
-      ...   -lm -lgfortran
-      ... """)
-      >>> invoke_shell("./example")
+      >>> build_and_run_c("example_get_curvature.c")
+      $ gcc \
+      >     -o example \
+      >     example_get_curvature.c \
+      >     -I .../libbezier-release/usr/include \
+      >     -L .../libbezier-release/usr/lib \
+      >     -Wl,-rpath,.../libbezier-release/usr/lib \
+      >     -lbezier \
+      >     -lm -lgfortran
+      $ ./example
       Curvature: -12.000000
 
 .. c:function:: void BEZ_locate_point_curve(const int *num_nodes, \
@@ -688,18 +671,16 @@ Procedures
       :options: +NORMALIZE_WHITESPACE
       :windows-skip:
 
-      >>> invoke_shell(f"""
-      ... gcc \
-      ...   -o example \
-      ...   example_locate_point_curve.c \
-      ...   -I {bezier_include} \
-      ...   -L {bezier_lib} \
-      ...   -L {gfortran_lib} \
-      ...   -Wl,-rpath,{bezier_lib} \
-      ...   -lbezier \
-      ...   -lm -lgfortran
-      ... """)
-      >>> invoke_shell("./example")
+      >>> build_and_run_c("example_locate_point_curve.c")
+      $ gcc \
+      >     -o example \
+      >     example_locate_point_curve.c \
+      >     -I .../libbezier-release/usr/include \
+      >     -L .../libbezier-release/usr/lib \
+      >     -Wl,-rpath,.../libbezier-release/usr/lib \
+      >     -lbezier \
+      >     -lm -lgfortran
+      $ ./example
       When B(s) = [-0.093750, 0.828125]; s =  0.500000
       When B(s) = [ 0.000000, 1.500000]; s = -1.000000
       When B(s) = [-0.250000, 1.375000]; s = -2.000000
@@ -780,18 +761,16 @@ Procedures
       :options: +NORMALIZE_WHITESPACE
       :windows-skip:
 
-      >>> invoke_shell(f"""
-      ... gcc \
-      ...   -o example \
-      ...   example_newton_refine_curve.c \
-      ...   -I {bezier_include} \
-      ...   -L {bezier_lib} \
-      ...   -L {gfortran_lib} \
-      ...   -Wl,-rpath,{bezier_lib} \
-      ...   -lbezier \
-      ...   -lm -lgfortran
-      ... """)
-      >>> invoke_shell("./example")
+      >>> build_and_run_c("example_newton_refine_curve.c")
+      $ gcc \
+      >     -o example \
+      >     example_newton_refine_curve.c \
+      >     -I .../libbezier-release/usr/include \
+      >     -L .../libbezier-release/usr/lib \
+      >     -Wl,-rpath,.../libbezier-release/usr/lib \
+      >     -lbezier \
+      >     -lm -lgfortran
+      $ ./example
       Updated s: 0.350000
 
    .. image:: ../images/newton_refine_curve.png
@@ -862,18 +841,16 @@ Procedures
       :options: +NORMALIZE_WHITESPACE
       :windows-skip:
 
-      >>> invoke_shell(f"""
-      ... gcc \
-      ...   -o example \
-      ...   example_reduce_pseudo_inverse.c \
-      ...   -I {bezier_include} \
-      ...   -L {bezier_lib} \
-      ...   -L {gfortran_lib} \
-      ...   -Wl,-rpath,{bezier_lib} \
-      ...   -lbezier \
-      ...   -lm -lgfortran
-      ... """)
-      >>> invoke_shell("./example")
+      >>> build_and_run_c("example_reduce_pseudo_inverse.c")
+      $ gcc \
+      >     -o example \
+      >     example_reduce_pseudo_inverse.c \
+      >     -I .../libbezier-release/usr/include \
+      >     -L .../libbezier-release/usr/lib \
+      >     -Wl,-rpath,.../libbezier-release/usr/lib \
+      >     -lbezier \
+      >     -lm -lgfortran
+      $ ./example
       Reduced:
       -3.000000, 1.500000, 0.000000
        3.000000, 1.500000, 6.000000
@@ -953,18 +930,16 @@ Procedures
       :options: +NORMALIZE_WHITESPACE
       :windows-skip:
 
-      >>> invoke_shell(f"""
-      ... gcc \
-      ...   -o example \
-      ...   example_specialize_curve.c \
-      ...   -I {bezier_include} \
-      ...   -L {bezier_lib} \
-      ...   -L {gfortran_lib} \
-      ...   -Wl,-rpath,{bezier_lib} \
-      ...   -lbezier \
-      ...   -lm -lgfortran
-      ... """)
-      >>> invoke_shell("./example")
+      >>> build_and_run_c("example_specialize_curve.c")
+      $ gcc \
+      >     -o example \
+      >     example_specialize_curve.c \
+      >     -I .../libbezier-release/usr/include \
+      >     -L .../libbezier-release/usr/lib \
+      >     -Wl,-rpath,.../libbezier-release/usr/lib \
+      >     -lbezier \
+      >     -lm -lgfortran
+      $ ./example
       New Nodes:
       -0.250000, 0.250000, 0.750000
       -0.625000, 0.875000, 0.375000
@@ -1033,18 +1008,16 @@ Procedures
       :options: +NORMALIZE_WHITESPACE
       :windows-skip:
 
-      >>> invoke_shell(f"""
-      ... gcc \
-      ...   -o example \
-      ...   example_subdivide_nodes_curve.c \
-      ...   -I {bezier_include} \
-      ...   -L {bezier_lib} \
-      ...   -L {gfortran_lib} \
-      ...   -Wl,-rpath,{bezier_lib} \
-      ...   -lbezier \
-      ...   -lm -lgfortran
-      ... """)
-      >>> invoke_shell("./example")
+      >>> build_and_run_c("example_subdivide_nodes_curve.c")
+      $ gcc \
+      >     -o example \
+      >     example_subdivide_nodes_curve.c \
+      >     -I .../libbezier-release/usr/include \
+      >     -L .../libbezier-release/usr/lib \
+      >     -Wl,-rpath,.../libbezier-release/usr/lib \
+      >     -lbezier \
+      >     -lm -lgfortran
+      $ ./example
       Left Nodes:
       0.000000, 0.625000, 1.125000
       0.000000, 1.500000, 1.750000

@@ -113,25 +113,20 @@ status module
       import tests.utils
 
 
-      bezier_include, bezier_lib = tests.utils.bezier_locate()
-      gfortran_lib = tests.utils.get_gfortran_lib()
-      docs_abi_directory = tests.utils.repo_relative("docs", "abi")
-      invoke_shell = tests.utils.make_invoke_shell(docs_abi_directory)
+      build_and_run_c = tests.utils.build_and_run_c
 
    .. doctest:: example-status
       :options: +NORMALIZE_WHITESPACE
       :windows-skip:
 
-      >>> invoke_shell(f"""
-      ... gcc \
-      ...   -o example \
-      ...   example_status.c \
-      ...   -I {bezier_include} \
-      ...   -L {bezier_lib} \
-      ...   -L {gfortran_lib} \
-      ...   -Wl,-rpath,{bezier_lib} \
-      ...   -lbezier \
-      ...   -lm -lgfortran
-      ... """)
-      >>> invoke_shell("./example")
+      >>> build_and_run_c("example_status.c")
+      $ gcc \
+      >     -o example \
+      >     example_status.c \
+      >     -I .../libbezier-release/usr/include \
+      >     -L .../libbezier-release/usr/lib \
+      >     -Wl,-rpath,.../libbezier-release/usr/lib \
+      >     -lbezier \
+      >     -lm -lgfortran
+      $ ./example
       Jacobian is singular.

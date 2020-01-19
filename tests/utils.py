@@ -30,37 +30,6 @@ IS_MACOS = sys.platform == "darwin"
 IS_WINDOWS = os.name == "nt"
 IS_LINUX = sys.platform in ("linux", "linux2")
 IS_PYPY = sys.implementation.name == "pypy"
-INVALID_PATH = "/invalid/path"
-
-
-def get_gfortran_lib():
-    """Find the first directory containing ``libgfortran``.
-
-    This is only intended for Linux or macOS.
-    """
-    cmd = ("gfortran", "-print-search-dirs")
-    process = subprocess.Popen(
-        cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE
-    )
-    return_code = process.wait()
-    if return_code != 0:
-        return INVALID_PATH
-
-    cmd_output = process.stdout.read().decode("utf-8")
-    parts = cmd_output.split("\nlibraries: =")
-    if len(parts) != 2:
-        return INVALID_PATH
-
-    library_lines = parts[1].split("\n", 1)
-    library_line = library_lines[0]
-    # NOTE: ``ctypes.util.find_library()`` can't be used for this because
-    #       ``LD_LIBRARY_PATH`` is only set at Python start.
-    for part in library_line.split(os.pathsep):
-        path = pathlib.Path(part).resolve()
-        if list(path.glob("libgfortran*")):
-            return str(path)
-
-    return INVALID_PATH
 
 
 def _invoke_shell(args_str, cmd_directory):
@@ -71,8 +40,8 @@ def _invoke_shell(args_str, cmd_directory):
     args = shlex.split(args_str)
     # NOTE: We print to the stdout of the doctest, rather than using
     #       `subprocess.call()` directly.
-    output_bytes = subprocess.check_output(args, cwd=cmd_directory).rstrip()
-    print(output_bytes.decode("utf-8"))
+    output_bytes = subprocess.check_output(args, cwd=cmd_directory)
+    print(output_bytes.decode("utf-8"), end="")
 
 
 def make_invoke_shell(cmd_directory):
@@ -82,6 +51,76 @@ def make_invoke_shell(cmd_directory):
         return _invoke_shell(args_str, cmd_directory)
 
     return wrapped
+
+
+def _strip_shell(cmd):
+    """Strip a (potentially multi-line) command.
+
+    For example
+
+    $ foo \
+    >     --bar baz \
+    >     --quux 10
+
+    would becomes `foo --bar baz --quux 10`.
+    """
+    parts = []
+    for line in cmd.strip().split("\n"):
+        without_console = line.lstrip("$> ").rstrip("\\ ")
+        parts.append(without_console)
+    return " ".join(parts)
+
+
+def _find_gcc_homebrew():
+    gcc_root_bytes = subprocess.check_output(("brew", "--cellar", "gcc"))
+    gcc_root = gcc_root_bytes.decode("utf-8").rstrip()
+    matches = list(pathlib.Path(gcc_root).glob("*/bin/gcc-[0-9]*"))
+    if len(matches) != 1:
+        raise ValueError("Could not find unique Homebrew-installed `gcc`")
+    return str(matches[0])
+
+
+def _find_gcc():
+    if IS_LINUX:
+        return "gcc"
+
+    if IS_MACOS:
+        return _find_gcc_homebrew()
+
+    if IS_WINDOWS:
+        raise NotImplementedError
+
+    raise OSError("Unexpected operating system")
+
+
+def build_and_run_c(filename):
+    """Build and run a C example from ``docs/abi/``."""
+    bezier_include, bezier_lib = bezier_locate()
+    docs_abi_directory = repo_relative("docs", "abi")
+    invoke_shell = make_invoke_shell(docs_abi_directory)
+
+    build_pretty = "\n".join(
+        [
+            "$ gcc \\",
+            ">     -o example \\",
+            f">     {filename} \\",
+            f">     -I {bezier_include} \\",
+            f">     -L {bezier_lib} \\",
+            f">     -Wl,-rpath,{bezier_lib} \\",
+            ">     -lbezier \\",
+            ">     -lm -lgfortran",
+        ]
+    )
+    print(build_pretty)
+    gcc_bin = _find_gcc()
+    build_pretty = build_pretty.replace("$ gcc", f"$ {gcc_bin}")
+    invoke_shell(_strip_shell(build_pretty))
+
+    run_pretty = "$ ./example"
+    print(run_pretty)
+    invoke_shell(_strip_shell(run_pretty))
+
+    os.unlink(os.path.join(docs_abi_directory, "example"))
 
 
 def get_git_root():
