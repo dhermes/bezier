@@ -8,6 +8,16 @@ set(AUTHOR "Danny Hermes")
 set(AUTHOR_DETAILS "daniel.j.hermes@gmail.com")
 set(DESCRIPTION "Library for Bezier curves and triangles.")
 
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake)
+include(generate_product_version)
+generate_product_version(
+    VersionFilesOutputVariable
+    NAME "bezier"
+    VERSION_MAJOR 2020
+    VERSION_MINOR 1
+    VERSION_PATCH 14
+)
+
 option(BUILD_SHARED_LIBS "Build shared libraries" ON)
 option(TARGET_NATIVE_ARCH "Optimize build for host (native) architecture" ON)
 

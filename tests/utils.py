@@ -133,8 +133,7 @@ def tree(directory, suffix=None):
         if os.path.isdir(path):
             sub_part = tree(path, suffix=suffix)
             if sub_part is not None:
-                # NOTE: We **always** use posix separator.
-                parts.append(name + "/")
+                parts.append(name + os.path.sep)
                 parts.append(textwrap.indent(sub_part, "  "))
         else:
             if suffix is None or name.endswith(suffix):
