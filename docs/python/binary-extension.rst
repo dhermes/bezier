@@ -260,14 +260,14 @@ The Python extension module (``.pyd`` file) depends directly on this library:
    > dumpbin /dependents _speedup.cp38-win_amd64.pyd
    Microsoft (R) COFF/PE Dumper Version ...
    Copyright (C) Microsoft Corporation.  All rights reserved.
-   <BLANKLINE>
-   <BLANKLINE>
+
+
    Dump of file _speedup.cp38-win_amd64.pyd
-   <BLANKLINE>
+
    File Type: DLL
-   <BLANKLINE>
+
      Image has the following dependencies:
-   <BLANKLINE>
+
        bezier.dll
        python38.dll
        KERNEL32.dll
@@ -381,14 +381,14 @@ on MinGW:
    > dumpbin /dependents extra-dll\bezier.dll
    Microsoft (R) COFF/PE Dumper Version ...
    Copyright (C) Microsoft Corporation.  All rights reserved.
-   <BLANKLINE>
-   <BLANKLINE>
+
+
    Dump of file extra-dll\bezier.dll
-   <BLANKLINE>
+
    File Type: DLL
-   <BLANKLINE>
+
      Image has the following dependencies:
-   <BLANKLINE>
+
        KERNEL32.dll
        msvcrt.dll
        USER32.dll
