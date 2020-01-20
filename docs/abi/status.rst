@@ -124,12 +124,14 @@ status module
       :options: +NORMALIZE_WHITESPACE
       :windows-skip:
 
+      $ INCLUDE_DIR=.../libbezier-release/usr/include
+      $ LIB_DIR=.../libbezier-release/usr/lib
       $ gcc \
       >     -o example \
       >     example_status.c \
-      >     -I .../libbezier-release/usr/include \
-      >     -L .../libbezier-release/usr/lib \
-      >     -Wl,-rpath,.../libbezier-release/usr/lib \
+      >     -I "${INCLUDE_DIR}" \
+      >     -L "${LIB_DIR}" \
+      >     -Wl,-rpath,"${LIB_DIR}" \
       >     -lbezier \
       >     -lm -lgfortran
       $ ./example

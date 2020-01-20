@@ -88,12 +88,14 @@ Procedures
       :options: +NORMALIZE_WHITESPACE
       :windows-skip:
 
+      $ INCLUDE_DIR=.../libbezier-release/usr/include
+      $ LIB_DIR=.../libbezier-release/usr/lib
       $ gcc \
       >     -o example \
       >     example_compute_length.c \
-      >     -I .../libbezier-release/usr/include \
-      >     -L .../libbezier-release/usr/lib \
-      >     -Wl,-rpath,.../libbezier-release/usr/lib \
+      >     -I "${INCLUDE_DIR}" \
+      >     -L "${LIB_DIR}" \
+      >     -Wl,-rpath,"${LIB_DIR}" \
       >     -lbezier \
       >     -lm -lgfortran
       $ ./example
@@ -164,12 +166,14 @@ Procedures
       :options: +NORMALIZE_WHITESPACE
       :windows-skip:
 
+      $ INCLUDE_DIR=.../libbezier-release/usr/include
+      $ LIB_DIR=.../libbezier-release/usr/lib
       $ gcc \
       >     -o example \
       >     example_elevate_nodes_curve.c \
-      >     -I .../libbezier-release/usr/include \
-      >     -L .../libbezier-release/usr/lib \
-      >     -Wl,-rpath,.../libbezier-release/usr/lib \
+      >     -I "${INCLUDE_DIR}" \
+      >     -L "${LIB_DIR}" \
+      >     -Wl,-rpath,"${LIB_DIR}" \
       >     -lbezier \
       >     -lm -lgfortran
       $ ./example
@@ -279,12 +283,14 @@ Procedures
       :options: +NORMALIZE_WHITESPACE
       :windows-skip:
 
+      $ INCLUDE_DIR=.../libbezier-release/usr/include
+      $ LIB_DIR=.../libbezier-release/usr/lib
       $ gcc \
       >     -o example \
       >     example_evaluate_curve_barycentric.c \
-      >     -I .../libbezier-release/usr/include \
-      >     -L .../libbezier-release/usr/lib \
-      >     -Wl,-rpath,.../libbezier-release/usr/lib \
+      >     -I "${INCLUDE_DIR}" \
+      >     -L "${LIB_DIR}" \
+      >     -Wl,-rpath,"${LIB_DIR}" \
       >     -lbezier \
       >     -lm -lgfortran
       $ ./example
@@ -357,12 +363,14 @@ Procedures
       :options: +NORMALIZE_WHITESPACE
       :windows-skip:
 
+      $ INCLUDE_DIR=.../libbezier-release/usr/include
+      $ LIB_DIR=.../libbezier-release/usr/lib
       $ gcc \
       >     -o example \
       >     example_evaluate_hodograph.c \
-      >     -I .../libbezier-release/usr/include \
-      >     -L .../libbezier-release/usr/lib \
-      >     -Wl,-rpath,.../libbezier-release/usr/lib \
+      >     -I "${INCLUDE_DIR}" \
+      >     -L "${LIB_DIR}" \
+      >     -Wl,-rpath,"${LIB_DIR}" \
       >     -lbezier \
       >     -lm -lgfortran
       $ ./example
@@ -444,12 +452,14 @@ Procedures
       :options: +NORMALIZE_WHITESPACE
       :windows-skip:
 
+      $ INCLUDE_DIR=.../libbezier-release/usr/include
+      $ LIB_DIR=.../libbezier-release/usr/lib
       $ gcc \
       >     -o example \
       >     example_evaluate_multi.c \
-      >     -I .../libbezier-release/usr/include \
-      >     -L .../libbezier-release/usr/lib \
-      >     -Wl,-rpath,.../libbezier-release/usr/lib \
+      >     -I "${INCLUDE_DIR}" \
+      >     -L "${LIB_DIR}" \
+      >     -Wl,-rpath,"${LIB_DIR}" \
       >     -lbezier \
       >     -lm -lgfortran
       $ ./example
@@ -532,12 +542,14 @@ Procedures
       :options: +NORMALIZE_WHITESPACE
       :windows-skip:
 
+      $ INCLUDE_DIR=.../libbezier-release/usr/include
+      $ LIB_DIR=.../libbezier-release/usr/lib
       $ gcc \
       >     -o example \
       >     example_full_reduce.c \
-      >     -I .../libbezier-release/usr/include \
-      >     -L .../libbezier-release/usr/lib \
-      >     -Wl,-rpath,.../libbezier-release/usr/lib \
+      >     -I "${INCLUDE_DIR}" \
+      >     -L "${LIB_DIR}" \
+      >     -Wl,-rpath,"${LIB_DIR}" \
       >     -lbezier \
       >     -lm -lgfortran
       $ ./example
@@ -613,12 +625,14 @@ Procedures
       :options: +NORMALIZE_WHITESPACE
       :windows-skip:
 
+      $ INCLUDE_DIR=.../libbezier-release/usr/include
+      $ LIB_DIR=.../libbezier-release/usr/lib
       $ gcc \
       >     -o example \
       >     example_get_curvature.c \
-      >     -I .../libbezier-release/usr/include \
-      >     -L .../libbezier-release/usr/lib \
-      >     -Wl,-rpath,.../libbezier-release/usr/lib \
+      >     -I "${INCLUDE_DIR}" \
+      >     -L "${LIB_DIR}" \
+      >     -Wl,-rpath,"${LIB_DIR}" \
       >     -lbezier \
       >     -lm -lgfortran
       $ ./example
@@ -704,12 +718,14 @@ Procedures
       :options: +NORMALIZE_WHITESPACE
       :windows-skip:
 
+      $ INCLUDE_DIR=.../libbezier-release/usr/include
+      $ LIB_DIR=.../libbezier-release/usr/lib
       $ gcc \
       >     -o example \
       >     example_locate_point_curve.c \
-      >     -I .../libbezier-release/usr/include \
-      >     -L .../libbezier-release/usr/lib \
-      >     -Wl,-rpath,.../libbezier-release/usr/lib \
+      >     -I "${INCLUDE_DIR}" \
+      >     -L "${LIB_DIR}" \
+      >     -Wl,-rpath,"${LIB_DIR}" \
       >     -lbezier \
       >     -lm -lgfortran
       $ ./example
@@ -798,12 +814,14 @@ Procedures
       :options: +NORMALIZE_WHITESPACE
       :windows-skip:
 
+      $ INCLUDE_DIR=.../libbezier-release/usr/include
+      $ LIB_DIR=.../libbezier-release/usr/lib
       $ gcc \
       >     -o example \
       >     example_newton_refine_curve.c \
-      >     -I .../libbezier-release/usr/include \
-      >     -L .../libbezier-release/usr/lib \
-      >     -Wl,-rpath,.../libbezier-release/usr/lib \
+      >     -I "${INCLUDE_DIR}" \
+      >     -L "${LIB_DIR}" \
+      >     -Wl,-rpath,"${LIB_DIR}" \
       >     -lbezier \
       >     -lm -lgfortran
       $ ./example
@@ -882,12 +900,14 @@ Procedures
       :options: +NORMALIZE_WHITESPACE
       :windows-skip:
 
+      $ INCLUDE_DIR=.../libbezier-release/usr/include
+      $ LIB_DIR=.../libbezier-release/usr/lib
       $ gcc \
       >     -o example \
       >     example_reduce_pseudo_inverse.c \
-      >     -I .../libbezier-release/usr/include \
-      >     -L .../libbezier-release/usr/lib \
-      >     -Wl,-rpath,.../libbezier-release/usr/lib \
+      >     -I "${INCLUDE_DIR}" \
+      >     -L "${LIB_DIR}" \
+      >     -Wl,-rpath,"${LIB_DIR}" \
       >     -lbezier \
       >     -lm -lgfortran
       $ ./example
@@ -975,12 +995,14 @@ Procedures
       :options: +NORMALIZE_WHITESPACE
       :windows-skip:
 
+      $ INCLUDE_DIR=.../libbezier-release/usr/include
+      $ LIB_DIR=.../libbezier-release/usr/lib
       $ gcc \
       >     -o example \
       >     example_specialize_curve.c \
-      >     -I .../libbezier-release/usr/include \
-      >     -L .../libbezier-release/usr/lib \
-      >     -Wl,-rpath,.../libbezier-release/usr/lib \
+      >     -I "${INCLUDE_DIR}" \
+      >     -L "${LIB_DIR}" \
+      >     -Wl,-rpath,"${LIB_DIR}" \
       >     -lbezier \
       >     -lm -lgfortran
       $ ./example
@@ -1057,12 +1079,14 @@ Procedures
       :options: +NORMALIZE_WHITESPACE
       :windows-skip:
 
+      $ INCLUDE_DIR=.../libbezier-release/usr/include
+      $ LIB_DIR=.../libbezier-release/usr/lib
       $ gcc \
       >     -o example \
       >     example_subdivide_nodes_curve.c \
-      >     -I .../libbezier-release/usr/include \
-      >     -L .../libbezier-release/usr/lib \
-      >     -Wl,-rpath,.../libbezier-release/usr/lib \
+      >     -I "${INCLUDE_DIR}" \
+      >     -L "${LIB_DIR}" \
+      >     -Wl,-rpath,"${LIB_DIR}" \
       >     -lbezier \
       >     -lm -lgfortran
       $ ./example

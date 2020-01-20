@@ -96,6 +96,9 @@ def _find_gcc():
 def build_and_run_c(filename):
     """Build and run a C example from ``docs/abi/``."""
     bezier_include, bezier_lib = bezier_locate()
+    print(f"$ INCLUDE_DIR={bezier_include}")
+    print(f"$ LIB_DIR={bezier_lib}")
+
     docs_abi_directory = repo_relative("docs", "abi")
     invoke_shell = make_invoke_shell(docs_abi_directory)
 
@@ -104,16 +107,20 @@ def build_and_run_c(filename):
             "$ gcc \\",
             ">     -o example \\",
             f">     {filename} \\",
-            f">     -I {bezier_include} \\",
-            f">     -L {bezier_lib} \\",
-            f">     -Wl,-rpath,{bezier_lib} \\",
+            '>     -I "${INCLUDE_DIR}" \\',
+            '>     -L "${LIB_DIR}" \\',
+            '>     -Wl,-rpath,"${LIB_DIR}" \\',
             ">     -lbezier \\",
             ">     -lm -lgfortran",
         ]
     )
     print(build_pretty)
     gcc_bin = _find_gcc()
-    build_pretty = build_pretty.replace("$ gcc", f"$ {gcc_bin}")
+    build_pretty = (
+        build_pretty.replace("$ gcc", f"$ {gcc_bin}")
+        .replace("${INCLUDE_DIR}", bezier_include)
+        .replace("${LIB_DIR}", bezier_lib)
+    )
     invoke_shell(_strip_shell(build_pretty))
 
     run_pretty = "$ ./example"
