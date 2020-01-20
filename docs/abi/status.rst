@@ -116,6 +116,7 @@ status module
       build_and_run_c = tests.utils.build_and_run_c
 
    .. testcode:: example-status
+      :hide:
 
       build_and_run_c("example_status.c")
 

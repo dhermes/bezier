@@ -80,6 +80,7 @@ Procedures
       build_and_run_c = tests.utils.build_and_run_c
 
    .. testcode:: example-compute-length
+      :hide:
 
       build_and_run_c("example_compute_length.c")
 
@@ -155,6 +156,7 @@ Procedures
    \end{array}\right] s^3`:
 
    .. testcode:: example-elevate-nodes-curve
+      :hide:
 
       build_and_run_c("example_elevate_nodes_curve.c")
 
@@ -269,6 +271,7 @@ Procedures
       \end{align*}
 
    .. testcode:: example-evaluate-curve-barycentric
+      :hide:
 
       build_and_run_c("example_evaluate_curve_barycentric.c")
 
@@ -346,6 +349,7 @@ Procedures
    \begin{array}{c} 21 \\ 54 \end{array}\right]`:
 
    .. testcode:: example-evaluate-hodograph
+      :hide:
 
       build_and_run_c("example_evaluate_hodograph.c")
 
@@ -432,6 +436,7 @@ Procedures
    :math:`B\left(1\right) = \left[\begin{array}{c} 2 \\ 1 \end{array}\right]`:
 
    .. testcode:: example-evaluate-multi
+      :hide:
 
       build_and_run_c("example_evaluate_multi.c")
 
@@ -519,6 +524,7 @@ Procedures
    \end{array}\right]`:
 
    .. testcode:: example-full-reduce
+      :hide:
 
       build_and_run_c("example_full_reduce.c")
 
@@ -599,6 +605,7 @@ Procedures
       :align: center
 
    .. testcode:: example-get-curvature
+      :hide:
 
       build_and_run_c("example_get_curvature.c")
 
@@ -689,6 +696,7 @@ Procedures
    is a self-crossing:
 
    .. testcode:: example-locate-point-curve
+      :hide:
 
       build_and_run_c("example_locate_point_curve.c")
 
@@ -782,6 +790,7 @@ Procedures
    a new parameter value :math:`s = \frac{7}{20}`:
 
    .. testcode:: example-newton-refine-curve
+      :hide:
 
       build_and_run_c("example_newton_refine_curve.c")
 
@@ -865,6 +874,7 @@ Procedures
    \end{array}\right]`:
 
    .. testcode:: example-reduce-pseudo-inverse
+      :hide:
 
       build_and_run_c("example_reduce_pseudo_inverse.c")
 
@@ -957,6 +967,7 @@ Procedures
    which still lies on :math:`y = 2x(1 - x)`:
 
    .. testcode:: example-specialize-curve
+      :hide:
 
       build_and_run_c("example_specialize_curve.c")
 
@@ -1038,6 +1049,7 @@ Procedures
    yields:
 
    .. testcode:: example-subdivide-nodes-curve
+      :hide:
 
       build_and_run_c("example_subdivide_nodes_curve.c")
 

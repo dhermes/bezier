@@ -154,6 +154,7 @@ The ``bezier._speedup`` module depends on the local copy
 of ``libbezier``:
 
 .. testcode:: macos-extension
+   :hide:
 
    invoke_shell("otool", "-L", "_speedup.cpython-38-darwin.so")
 
@@ -171,6 +172,7 @@ Though the Python extension module (``.so`` file) only depends on ``libbezier``
 it indirectly depends on ``libgfortran``, ``libquadmath`` and ``libgcc_s``:
 
 .. testcode:: macos-delocated-libgfortran
+   :hide:
 
    invoke_shell("otool", "-L", ".dylibs/libbezier.2020.1.14.dylib")
 
@@ -246,6 +248,7 @@ The Python extension module (``.pyd`` file) depends directly on this library:
        print(output_bytes.decode("utf-8"), end="")
 
 .. testcode:: windows-extension
+   :hide:
 
    invoke_shell("dumpbin", "/dependents", "_speedup.cp38-win_amd64.pyd")
 
@@ -367,6 +370,7 @@ included and the resulting shared library ``bezier.dll`` has no dependency
 on MinGW:
 
 .. testcode:: windows-dll
+   :hide:
 
    invoke_shell("dumpbin", "/dependents", "extra-dll\\bezier.dll")
 
