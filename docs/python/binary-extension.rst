@@ -64,10 +64,10 @@ The ``bezier._speedup`` module depends on this local copy of ``libbezier``:
 
    $ readelf -d _speedup.cpython-38-x86_64-linux-gnu.so
 
-   Dynamic section at offset 0x43e000 contains 27 entries:
+   Dynamic section at offset 0x43d000 contains 27 entries:
      Tag        Type                         Name/Value
     0x000000000000000f (RPATH)              Library rpath: [$ORIGIN/.libs]
-    0x0000000000000001 (NEEDED)             Shared library: [libbezier-4f59b4c5.so.2020.1.14]
+    0x0000000000000001 (NEEDED)             Shared library: [libbezier-85d21594.so.2020.1.14]
     0x0000000000000001 (NEEDED)             Shared library: [libpthread.so.0]
     0x0000000000000001 (NEEDED)             Shared library: [libc.so.6]
     0x000000000000000c (INIT)               0x9d40
@@ -78,16 +78,16 @@ and the local copy of ``libbezier`` depends on the other dependencies in
 
 .. code-block:: console
 
-   $ readelf -d .libs/libbezier-4f59b4c5.so.2020.1.14
+   $ readelf -d .libs/libbezier-85d21594.so.2020.1.14
 
-   Dynamic section at offset 0xafdb8 contains 28 entries:
+   Dynamic section at offset 0x44dd8 contains 28 entries:
      Tag        Type                         Name/Value
     0x0000000000000001 (NEEDED)             Shared library: [libgfortran-2e0d59d6.so.5.0.0]
     0x0000000000000001 (NEEDED)             Shared library: [libm.so.6]
     0x0000000000000001 (NEEDED)             Shared library: [libgcc_s.so.1]
     0x0000000000000001 (NEEDED)             Shared library: [libc.so.6]
-    0x000000000000000e (SONAME)             Library soname: [libbezier-4f59b4c5.so.2020.1.14]
-    0x000000000000000c (INIT)               0x2ca0
+    0x000000000000000e (SONAME)             Library soname: [libbezier-85d21594.so.2020.1.14]
+    0x000000000000000c (INIT)               0x2be8
    ...
    $ readelf -d .libs/libgfortran-2e0d59d6.so.5.0.0
 
@@ -116,9 +116,10 @@ The command line tool `delocate`_ adds a ``bezier/.dylibs`` directory
 with copies of ``libbezier``, ``libgfortran``, ``libquadmath`` and
 ``libgcc_s``:
 
-.. testsetup:: macos-dylibs
+.. testsetup:: macos-dylibs, macos-extension, macos-delocated-libgfortran
 
    import os
+   import subprocess
 
    import bezier
    import tests.utils
@@ -128,6 +129,14 @@ with copies of ``libbezier``, ``libgfortran``, ``libquadmath`` and
    base_dir = os.path.abspath(os.path.dirname(bezier.__file__))
    # macOS specific.
    dylibs_directory = os.path.join(base_dir, ".dylibs")
+
+
+   def invoke_shell(*args):
+       print("$ " + " ".join(args))
+       # NOTE: We print to the stdout of the doctest, rather than using
+       #       ``subprocess.call()`` directly.
+       output_bytes = subprocess.check_output(args, cwd=base_dir)
+       print(output_bytes.decode("utf-8"), end="")
 
 .. doctest:: macos-dylibs
    :macos-only:
@@ -144,32 +153,15 @@ with copies of ``libbezier``, ``libgfortran``, ``libquadmath`` and
 The ``bezier._speedup`` module depends on the local copy
 of ``libbezier``:
 
-.. testsetup:: macos-extension, macos-delocated-libgfortran
+.. testcode:: macos-extension
 
-   import os
-   import subprocess
+   invoke_shell("otool", "-L", "_speedup.cpython-38-darwin.so")
 
-   import bezier
-
-
-   bezier_directory = os.path.dirname(bezier.__file__)
-
-
-   def invoke_shell(*args):
-       print("$ " + " ".join(args))
-       # NOTE: We print to the stdout of the doctest, rather than using
-       #       `subprocess.call()` directly.
-       output_bytes = subprocess.check_output(
-           args, cwd=bezier_directory
-       ).rstrip()
-       print(output_bytes.decode("utf-8"))
-
-.. doctest:: macos-extension
+.. testoutput:: macos-extension
    :options: +NORMALIZE_WHITESPACE
    :macos-only:
    :pyversion: >= 3.8
 
-   >>> invoke_shell("otool", "-L", "_speedup.cpython-38-darwin.so")
    $ otool -L _speedup.cpython-38-darwin.so
    _speedup.cpython-38-darwin.so:
            @loader_path/.dylibs/libbezier.2020.1.14.dylib (...)
@@ -178,11 +170,14 @@ of ``libbezier``:
 Though the Python extension module (``.so`` file) only depends on ``libbezier``
 it indirectly depends on ``libgfortran``, ``libquadmath`` and ``libgcc_s``:
 
-.. doctest:: macos-delocated-libgfortran
+.. testcode:: macos-delocated-libgfortran
+
+   invoke_shell("otool", "-L", ".dylibs/libbezier.2020.1.14.dylib")
+
+.. testoutput:: macos-delocated-libgfortran
    :options: +NORMALIZE_WHITESPACE
    :macos-only:
 
-   >>> invoke_shell("otool", "-L", ".dylibs/libbezier.2020.1.14.dylib")
    $ otool -L .dylibs/libbezier.2020.1.14.dylib
    .dylibs/libbezier.2020.1.14.dylib:
        /DLC/bezier/libbezier.2020.1.14.dylib (...)
@@ -218,6 +213,7 @@ The Python extension module (``.pyd`` file) depends directly on this library:
 
    import bezier
 
+
    if os.name == "nt":
        c_compiler = distutils.ccompiler.new_compiler()
        assert c_compiler.compiler_type == "msvc"
@@ -245,18 +241,19 @@ The Python extension module (``.pyd`` file) depends directly on this library:
        # Replace ``"dumpbin"`` with ``dumpbin_exe``.
        cmd = tuple(map(replace_dumpbin, args))
        # NOTE: We print to the stdout of the doctest, rather than using
-       #       `subprocess.call()` directly.
-       output_bytes = subprocess.check_output(
-           cmd, cwd=bezier_directory
-       ).rstrip()
-       print(output_bytes.decode("utf-8"))
+       #       ``subprocess.call()`` directly.
+       output_bytes = subprocess.check_output(cmd, cwd=bezier_directory)
+       print(output_bytes.decode("utf-8"), end="")
 
-.. doctest:: windows-extension
+.. testcode:: windows-extension
+
+   invoke_shell("dumpbin", "/dependents", "_speedup.cp38-win_amd64.pyd")
+
+.. testoutput:: windows-extension
    :options: +NORMALIZE_WHITESPACE
    :windows-only:
    :pyversion: >= 3.8
 
-   >>> invoke_shell("dumpbin", "/dependents", "_speedup.cp38-win_amd64.pyd")
    > dumpbin /dependents _speedup.cp38-win_amd64.pyd
    Microsoft (R) COFF/PE Dumper Version ...
    Copyright (C) Microsoft Corporation.  All rights reserved.
@@ -369,11 +366,14 @@ all the symbols used from ``libgfortran`` or ``libgcc_s`` are statically
 included and the resulting shared library ``bezier.dll`` has no dependency
 on MinGW:
 
-.. doctest:: windows-dll
+.. testcode:: windows-dll
+
+   invoke_shell("dumpbin", "/dependents", "extra-dll\\bezier.dll")
+
+.. testoutput:: windows-dll
    :options: +NORMALIZE_WHITESPACE
    :windows-only:
 
-   >>> invoke_shell("dumpbin", "/dependents", "extra-dll\\bezier.dll")
    > dumpbin /dependents extra-dll\bezier.dll
    Microsoft (R) COFF/PE Dumper Version ...
    Copyright (C) Microsoft Corporation.  All rights reserved.

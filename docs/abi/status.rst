@@ -115,11 +115,14 @@ status module
 
       build_and_run_c = tests.utils.build_and_run_c
 
-   .. doctest:: example-status
+   .. testcode:: example-status
+
+      build_and_run_c("example_status.c")
+
+   .. testoutput:: example-status
       :options: +NORMALIZE_WHITESPACE
       :windows-skip:
 
-      >>> build_and_run_c("example_status.c")
       $ gcc \
       >     -o example \
       >     example_status.c \

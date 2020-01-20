@@ -79,11 +79,14 @@ Procedures
 
       build_and_run_c = tests.utils.build_and_run_c
 
-   .. doctest:: example-compute-length
+   .. testcode:: example-compute-length
+
+      build_and_run_c("example_compute_length.c")
+
+   .. testoutput:: example-compute-length
       :options: +NORMALIZE_WHITESPACE
       :windows-skip:
 
-      >>> build_and_run_c("example_compute_length.c")
       $ gcc \
       >     -o example \
       >     example_compute_length.c \
@@ -151,11 +154,14 @@ Procedures
    \end{array}\right] 3 (1 - s) s^2 + \left[\begin{array}{c} 3 \\ 0
    \end{array}\right] s^3`:
 
-   .. doctest:: example-elevate-nodes-curve
+   .. testcode:: example-elevate-nodes-curve
+
+      build_and_run_c("example_elevate_nodes_curve.c")
+
+   .. testoutput:: example-elevate-nodes-curve
       :options: +NORMALIZE_WHITESPACE
       :windows-skip:
 
-      >>> build_and_run_c("example_elevate_nodes_curve.c")
       $ gcc \
       >     -o example \
       >     example_elevate_nodes_curve.c \
@@ -262,11 +268,14 @@ Procedures
           \begin{array}{c} 19 \\ 27 \end{array}\right]
       \end{align*}
 
-   .. doctest:: example-evaluate-curve-barycentric
+   .. testcode:: example-evaluate-curve-barycentric
+
+      build_and_run_c("example_evaluate_curve_barycentric.c")
+
+   .. testoutput:: example-evaluate-curve-barycentric
       :options: +NORMALIZE_WHITESPACE
       :windows-skip:
 
-      >>> build_and_run_c("example_evaluate_curve_barycentric.c")
       $ gcc \
       >     -o example \
       >     example_evaluate_curve_barycentric.c \
@@ -336,11 +345,14 @@ Procedures
    we have :math:`B'\left(\frac{1}{8}\right) = \frac{1}{32} \left[
    \begin{array}{c} 21 \\ 54 \end{array}\right]`:
 
-   .. doctest:: example-evaluate-hodograph
+   .. testcode:: example-evaluate-hodograph
+
+      build_and_run_c("example_evaluate_hodograph.c")
+
+   .. testoutput:: example-evaluate-hodograph
       :options: +NORMALIZE_WHITESPACE
       :windows-skip:
 
-      >>> build_and_run_c("example_evaluate_hodograph.c")
       $ gcc \
       >     -o example \
       >     example_evaluate_hodograph.c \
@@ -419,11 +431,14 @@ Procedures
    \frac{1}{2} \left[\begin{array}{c} 3 \\ 1 \end{array}\right]` and
    :math:`B\left(1\right) = \left[\begin{array}{c} 2 \\ 1 \end{array}\right]`:
 
-   .. doctest:: example-evaluate-multi
+   .. testcode:: example-evaluate-multi
+
+      build_and_run_c("example_evaluate_multi.c")
+
+   .. testoutput:: example-evaluate-multi
       :options: +NORMALIZE_WHITESPACE
       :windows-skip:
 
-      >>> build_and_run_c("example_evaluate_multi.c")
       $ gcc \
       >     -o example \
       >     example_evaluate_multi.c \
@@ -503,11 +518,14 @@ Procedures
    \end{array}\right] s = \left[\begin{array}{c} 1 + s \\ 3 + 2s
    \end{array}\right]`:
 
-   .. doctest:: example-full-reduce
+   .. testcode:: example-full-reduce
+
+      build_and_run_c("example_full_reduce.c")
+
+   .. testoutput:: example-full-reduce
       :options: +NORMALIZE_WHITESPACE
       :windows-skip:
 
-      >>> build_and_run_c("example_full_reduce.c")
       $ gcc \
       >     -o example \
       >     example_full_reduce.c \
@@ -580,11 +598,14 @@ Procedures
    .. image:: ../images/get_curvature.png
       :align: center
 
-   .. doctest:: example-get-curvature
+   .. testcode:: example-get-curvature
+
+      build_and_run_c("example_get_curvature.c")
+
+   .. testoutput:: example-get-curvature
       :options: +NORMALIZE_WHITESPACE
       :windows-skip:
 
-      >>> build_and_run_c("example_get_curvature.c")
       $ gcc \
       >     -o example \
       >     example_get_curvature.c \
@@ -667,11 +688,14 @@ Procedures
 
    is a self-crossing:
 
-   .. doctest:: example-locate-point-curve
+   .. testcode:: example-locate-point-curve
+
+      build_and_run_c("example_locate_point_curve.c")
+
+   .. testoutput:: example-locate-point-curve
       :options: +NORMALIZE_WHITESPACE
       :windows-skip:
 
-      >>> build_and_run_c("example_locate_point_curve.c")
       $ gcc \
       >     -o example \
       >     example_locate_point_curve.c \
@@ -757,11 +781,14 @@ Procedures
    we expect a Newton update :math:`\Delta s = -\frac{2}{5}`, which produces
    a new parameter value :math:`s = \frac{7}{20}`:
 
-   .. doctest:: example-newton-refine-curve
+   .. testcode:: example-newton-refine-curve
+
+      build_and_run_c("example_newton_refine_curve.c")
+
+   .. testoutput:: example-newton-refine-curve
       :options: +NORMALIZE_WHITESPACE
       :windows-skip:
 
-      >>> build_and_run_c("example_newton_refine_curve.c")
       $ gcc \
       >     -o example \
       >     example_newton_refine_curve.c \
@@ -837,11 +864,14 @@ Procedures
    \left[\begin{array}{c} 3(1 - s)(2s - 1) \\ 3(2s^2 - s + 1)
    \end{array}\right]`:
 
-   .. doctest:: example-reduce-pseudo-inverse
+   .. testcode:: example-reduce-pseudo-inverse
+
+      build_and_run_c("example_reduce_pseudo_inverse.c")
+
+   .. testoutput:: example-reduce-pseudo-inverse
       :options: +NORMALIZE_WHITESPACE
       :windows-skip:
 
-      >>> build_and_run_c("example_reduce_pseudo_inverse.c")
       $ gcc \
       >     -o example \
       >     example_reduce_pseudo_inverse.c \
@@ -926,11 +956,14 @@ Procedures
    \left[\begin{array}{c} 2(4t - 1) \\ (4t - 1)(5 - 4t) \end{array}\right]`,
    which still lies on :math:`y = 2x(1 - x)`:
 
-   .. doctest:: example-specialize-curve
+   .. testcode:: example-specialize-curve
+
+      build_and_run_c("example_specialize_curve.c")
+
+   .. testoutput:: example-specialize-curve
       :options: +NORMALIZE_WHITESPACE
       :windows-skip:
 
-      >>> build_and_run_c("example_specialize_curve.c")
       $ gcc \
       >     -o example \
       >     example_specialize_curve.c \
@@ -1004,11 +1037,14 @@ Procedures
 
    yields:
 
-   .. doctest:: example-subdivide-nodes-curve
+   .. testcode:: example-subdivide-nodes-curve
+
+      build_and_run_c("example_subdivide_nodes_curve.c")
+
+   .. testoutput:: example-subdivide-nodes-curve
       :options: +NORMALIZE_WHITESPACE
       :windows-skip:
 
-      >>> build_and_run_c("example_subdivide_nodes_curve.c")
       $ gcc \
       >     -o example \
       >     example_subdivide_nodes_curve.c \
