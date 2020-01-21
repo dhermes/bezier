@@ -33,13 +33,24 @@ WHEELHOUSE="${BEZIER_ROOT}/scripts/manylinux/fixed_wheels"
 docker ps  # Diagnostic
 docker ps --no-trunc  # Diagnostic
 hostname  # Diagnostic
-CURRENT_CONTAINER_ID=$(docker ps --no-trunc --filter "id=$(hostname)" --format '{{ .ID }}')
-if [[ "$(echo "${CURRENT_CONTAINER_ID}" | wc -w)" == "1" ]]; then
-    # Invoking `docker run` within a container.
-    VOLUME_ARG="--volumes-from=${CURRENT_CONTAINER_ID}"
+env | grep -v COVERALLS_REPO_TOKEN # Diagnostic
+if [[ "${CI}" == "true" ]]; then
+    # Create a dummy container which will hold a volume with config.
+    docker create --volume "${BEZIER_ROOT}" --name bezier-manylinux quay.io/pypa/manylinux2010_x86_64 /bin/true
+    # Copy a config file into this volume.
+    docker cp "${REPO_ROOT}" bezier-manylinux:"${BEZIER_ROOT}"
+    # Rely on this dummy container.
+    VOLUME_ARG="--volumes-from=bezier-manylinux"
+    docker ps --all  # Diagnositc
 else
-    # Running on host
-    VOLUME_ARG="--volume=${REPO_ROOT}:${BEZIER_ROOT}"
+    CURRENT_CONTAINER_ID=$(docker ps --no-trunc --filter "id=$(hostname)" --format '{{ .ID }}')
+    if [[ "$(echo "${CURRENT_CONTAINER_ID}" | wc -w)" == "1" ]]; then
+        # Invoking `docker run` within a container.
+        VOLUME_ARG="--volumes-from=${CURRENT_CONTAINER_ID}"
+    else
+        # Running on host
+        VOLUME_ARG="--volume=${REPO_ROOT}:${BEZIER_ROOT}"
+    fi
 fi
 
 docker run \
