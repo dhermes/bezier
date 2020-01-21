@@ -330,7 +330,7 @@ can happen:
     an error.
 
 This problem has been `largely fixed`_ in newer versions of Python but is
-still worth knowing, especially for the older but still prominent Python 2.7.
+still worth knowing.
 
 Unfortunately, there is no Fortran compiler provided by MSVC. The
 `MinGW-w64`_ suite of tools is a port of the GNU Compiler Collection (``gcc``)
