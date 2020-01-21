@@ -28,27 +28,28 @@ DOCKER_IMAGE=quay.io/pypa/manylinux2010_x86_64
 DUMMY_IMAGE_NAME=bezier-manylinux
 # Variables within the container.
 PY_ROOT="/opt/python/cp38-cp38"
-BEZIER_ROOT="${REPO_ROOT}"
-WHEELHOUSE="${BEZIER_ROOT}/scripts/manylinux/fixed_wheels"
+# NOTE: This path determines the hash of ``libbezier.so`` (i.e. the builds
+#       are "deterministic" but not under relocation).
+BEZIER_ROOT="/io"
+WHEELHOUSE="/wheelhouse"
 
 # 0. Build the `manylinux` wheel (repaired with `auditwheel`).
-if [[ "${CI}" == "true" ]]; then
+CURRENT_CONTAINER_ID=$(docker ps --no-trunc --filter "id=$(hostname)" --format '{{ .ID }}')
+if [[ "${CI}" == "true" || "$(echo "${CURRENT_CONTAINER_ID}" | wc -w)" == "1" ]]; then
     # See: https://circleci.com/docs/2.0/building-docker-images/#mounting-folders
-    # Create a dummy container which will hold a volume.
-    docker create --volume "$(dirname "${BEZIER_ROOT}")" --name "${DUMMY_IMAGE_NAME}" "${DOCKER_IMAGE}" /bin/true
+    # Create a dummy container which will hold a volume. This **assumes** ``/``
+    # exists (i.e. the directory) containing ``BEZIER_ROOT``. If not, then
+    # ``--volume "$(dirname "${BEZIER_ROOT}")"`` is required as well.
+    docker create --name "${DUMMY_IMAGE_NAME}" "${DOCKER_IMAGE}" /bin/true
     # Copy source tree into this volume.
     docker cp "${REPO_ROOT}" "${DUMMY_IMAGE_NAME}":"${BEZIER_ROOT}"
     # Rely on this dummy container.
-    VOLUME_ARG="--volumes-from=${DUMMY_IMAGE_NAME}"
+    SRC_VOLUME_ARG="--volumes-from=${DUMMY_IMAGE_NAME}"
+    WHEELHOUSE_VOLUME_ARG=""
 else
-    CURRENT_CONTAINER_ID=$(docker ps --no-trunc --filter "id=$(hostname)" --format '{{ .ID }}')
-    if [[ "$(echo "${CURRENT_CONTAINER_ID}" | wc -w)" == "1" ]]; then
-        # Invoking `docker run` within a container.
-        VOLUME_ARG="--volumes-from=${CURRENT_CONTAINER_ID}"
-    else
-        # Running on host.
-        VOLUME_ARG="--volume=${REPO_ROOT}:${BEZIER_ROOT}"
-    fi
+    # Running on host.
+    SRC_VOLUME_ARG="--volume=${REPO_ROOT}:${BEZIER_ROOT}"
+    WHEELHOUSE_VOLUME_ARG="--volume=${LOCAL_WHEELHOUSE}:${WHEELHOUSE}"
 fi
 
 docker run \
@@ -56,11 +57,12 @@ docker run \
     --env PY_ROOT="${PY_ROOT}" \
     --env WHEELHOUSE="${WHEELHOUSE}" \
     --env BEZIER_ROOT="${BEZIER_ROOT}" \
-    "${VOLUME_ARG}" \
+    "${SRC_VOLUME_ARG}" \
+    "${WHEELHOUSE_VOLUME_ARG}" \
     "${DOCKER_IMAGE}" \
     "${BEZIER_ROOT}/scripts/manylinux/build-wheel-for-doctest.sh"
 
-if [[ "${CI}" == "true" ]]; then
+if [[ "${WHEELHOUSE_VOLUME_ARG}" == "" ]]; then
     # Copy built wheel(s) back into this container.
     docker cp "${DUMMY_IMAGE_NAME}":"${WHEELHOUSE}" "${LOCAL_WHEELHOUSE}"
 fi
