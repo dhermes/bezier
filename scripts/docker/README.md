@@ -13,6 +13,7 @@ This repository is intended to be used as a fully-functional environment for ins
 - `nox` test runner
 - `lcov` line coverage tool
 - `libatlas-base-dev`, `libblas-dev` and `liblapack-dev` (needed by SciPy)
+- `docker` for running the Docker CLI (assuming `/var/run/docker.sock` has been shared from the host OS)
 
 ## Commands
 
@@ -25,17 +26,18 @@ for those who don't use `docker` on a regular basis).
 
 ```
 $ docker build \
->   --file bezier.Dockerfile \
->   --tag dhermes/bezier:latest \
->   .
+>     --file bezier.Dockerfile \
+>     --tag dhermes/bezier:latest \
+>     .
 $ docker run \
->   --rm \
->   --tty \
->   --interactive \
->   --volume $(git rev-parse --show-toplevel):/var/code/bezier/ \
->   --workdir /var/code/bezier/ \
->   dhermes/bezier:latest \
->   /bin/bash
+>     --rm \
+>     --tty \
+>     --interactive \
+>     --volume /var/run/docker.sock:/var/run/docker.sock \
+>     --volume $(git rev-parse --show-toplevel):/var/code/bezier/ \
+>     --workdir /var/code/bezier/ \
+>     dhermes/bezier:latest \
+>     /bin/bash
 ```
 
 ### Generic

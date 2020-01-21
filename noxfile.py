@@ -24,6 +24,7 @@ import py.path
 nox.options.error_on_external_run = True
 nox.options.error_on_missing_interpreters = True
 
+IS_LINUX = sys.platform in ("linux", "linux2")
 IS_MACOS = sys.platform == "darwin"
 IS_WINDOWS = os.name == "nt"
 DEPS = {
@@ -243,6 +244,10 @@ def doctest(session):
         command = get_path("scripts", "macos", "nox-install-for-doctest.sh")
         env = {INSTALL_PREFIX_ENV: install_prefix}
         session.run(command, external=True, env=env)
+    elif IS_LINUX:
+        command = get_path("scripts", "nox-install-for-doctest-linux.sh")
+        session.run(command, external=True)
+        install_prefix = _cmake(session, BUILD_TYPE_RELEASE)
     else:
         install_prefix = install_bezier(session)
     # Run the script for building docs and running doctests.
@@ -560,6 +565,7 @@ def clean(session):
         get_path("scripts", "macos", "dist_wheels"),
         get_path("scripts", "macos", "fixed_wheels"),
         get_path("scripts", "macos", "test-venv"),
+        get_path("scripts", "manylinux", "fixed_wheels"),
         get_path("src", "python", "bezier.egg-info"),
         get_path("src", "python", "bezier", "__pycache__"),
         get_path("src", "python", "bezier", "extra-dll"),

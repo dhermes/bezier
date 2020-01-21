@@ -49,25 +49,59 @@ The command line tool `auditwheel`_ adds a ``bezier/.libs`` directory
 with a modified ``libbezier`` and all of its dependencies (e.g.
 ``libgfortran``)
 
-.. code-block:: console
+.. testsetup:: linux-libs, linux-readelf-py, linux-readelf-lib, macos-dylibs,
+               macos-extension, macos-delocated-libgfortran
 
-   $ cd .../site-packages/bezier
-   $ ls -1 -F .libs/
-   libbezier-4f59b4c5.so.2020.1.14*
-   libgfortran-2e0d59d6.so.5.0.0*
-   libquadmath-2d0c479f.so.0.0.0*
-   libz-eb09ad1d.so.1.2.3*
+   import os
+   import subprocess
+
+   import bezier
+   import tests.utils
+
+
+   print_tree = tests.utils.print_tree
+   base_dir = os.path.abspath(os.path.dirname(bezier.__file__))
+   # macOS specific.
+   dylibs_directory = os.path.join(base_dir, ".dylibs")
+   # Linux specific.
+   libs_directory = os.path.join(base_dir, ".libs")
+
+
+   def invoke_shell(*args):
+       print("$ " + " ".join(args))
+       # NOTE: We print to the stdout of the doctest, rather than using
+       #       ``subprocess.call()`` directly.
+       output_bytes = subprocess.check_output(args, cwd=base_dir)
+       print(output_bytes.decode("utf-8"), end="")
+
+.. doctest:: linux-libs
+   :linux-only:
+
+   >>> libs_directory
+   '.../site-packages/bezier/.libs'
+   >>> print_tree(libs_directory)
+   .libs/
+     libbezier-28a97ca3.so.2020.1.14
+     libgfortran-2e0d59d6.so.5.0.0
+     libquadmath-2d0c479f.so.0.0.0
+     libz-eb09ad1d.so.1.2.3
 
 The ``bezier._speedup`` module depends on this local copy of ``libbezier``:
 
-.. code-block:: console
+.. testcode:: linux-readelf-py
+   :hide:
+
+   invoke_shell("readelf", "-d", "_speedup.cpython-38-x86_64-linux-gnu.so")
+
+.. testoutput:: linux-readelf-py
+   :linux-only:
 
    $ readelf -d _speedup.cpython-38-x86_64-linux-gnu.so
 
    Dynamic section at offset 0x43d000 contains 27 entries:
      Tag        Type                         Name/Value
     0x000000000000000f (RPATH)              Library rpath: [$ORIGIN/.libs]
-    0x0000000000000001 (NEEDED)             Shared library: [libbezier-85d21594.so.2020.1.14]
+    0x0000000000000001 (NEEDED)             Shared library: [libbezier-28a97ca3.so.2020.1.14]
     0x0000000000000001 (NEEDED)             Shared library: [libpthread.so.0]
     0x0000000000000001 (NEEDED)             Shared library: [libc.so.6]
     0x000000000000000c (INIT)               0x9d40
@@ -76,9 +110,16 @@ The ``bezier._speedup`` module depends on this local copy of ``libbezier``:
 and the local copy of ``libbezier`` depends on the other dependencies in
 ``.libs/`` (both directly and indirectly):
 
-.. code-block:: console
+.. testcode:: linux-readelf-lib
+   :hide:
 
-   $ readelf -d .libs/libbezier-85d21594.so.2020.1.14
+   invoke_shell("readelf", "-d", ".libs/libbezier-28a97ca3.so.2020.1.14")
+   invoke_shell("readelf", "-d", ".libs/libgfortran-2e0d59d6.so.5.0.0")
+
+.. testoutput:: linux-readelf-lib
+   :linux-only:
+
+   $ readelf -d .libs/libbezier-28a97ca3.so.2020.1.14
 
    Dynamic section at offset 0x44dd8 contains 28 entries:
      Tag        Type                         Name/Value
@@ -86,7 +127,7 @@ and the local copy of ``libbezier`` depends on the other dependencies in
     0x0000000000000001 (NEEDED)             Shared library: [libm.so.6]
     0x0000000000000001 (NEEDED)             Shared library: [libgcc_s.so.1]
     0x0000000000000001 (NEEDED)             Shared library: [libc.so.6]
-    0x000000000000000e (SONAME)             Library soname: [libbezier-85d21594.so.2020.1.14]
+    0x000000000000000e (SONAME)             Library soname: [libbezier-28a97ca3.so.2020.1.14]
     0x000000000000000c (INIT)               0x2be8
    ...
    $ readelf -d .libs/libgfortran-2e0d59d6.so.5.0.0
@@ -115,28 +156,6 @@ macOS
 The command line tool `delocate`_ adds a ``bezier/.dylibs`` directory
 with copies of ``libbezier``, ``libgfortran``, ``libquadmath`` and
 ``libgcc_s``:
-
-.. testsetup:: macos-dylibs, macos-extension, macos-delocated-libgfortran
-
-   import os
-   import subprocess
-
-   import bezier
-   import tests.utils
-
-
-   print_tree = tests.utils.print_tree
-   base_dir = os.path.abspath(os.path.dirname(bezier.__file__))
-   # macOS specific.
-   dylibs_directory = os.path.join(base_dir, ".dylibs")
-
-
-   def invoke_shell(*args):
-       print("$ " + " ".join(args))
-       # NOTE: We print to the stdout of the doctest, rather than using
-       #       ``subprocess.call()`` directly.
-       output_bytes = subprocess.check_output(args, cwd=base_dir)
-       print(output_bytes.decode("utf-8"), end="")
 
 .. doctest:: macos-dylibs
    :macos-only:
