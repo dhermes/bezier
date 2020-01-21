@@ -28,19 +28,21 @@ DOCKER_IMAGE=quay.io/pypa/manylinux2010_x86_64
 DUMMY_IMAGE_NAME=bezier-manylinux
 # Variables within the container.
 PY_ROOT="/opt/python/cp38-cp38"
-# NOTE: This path determines the hash of ``libbezier.so`` (i.e. the builds
+# NOTE: This path determines the hash of `libbezier.so` (i.e. the builds
 #       are "deterministic" but not under relocation).
-BEZIER_ROOT="/io"
-WHEELHOUSE="/wheelhouse"
+BEZIER_ROOT="/var/code/bezier"
+WHEELHOUSE="/var/code/wheelhouse"  # Under same path as `${BEZIER_ROOT}`
 
 # 0. Build the `manylinux` wheel (repaired with `auditwheel`).
 CURRENT_CONTAINER_ID=$(docker ps --no-trunc --filter "id=$(hostname)" --format '{{ .ID }}')
 if [[ "${CI}" == "true" || "$(echo "${CURRENT_CONTAINER_ID}" | wc -w)" == "1" ]]; then
     # See: https://circleci.com/docs/2.0/building-docker-images/#mounting-folders
-    # Create a dummy container which will hold a volume. This **assumes** ``/``
-    # exists (i.e. the directory) containing ``BEZIER_ROOT``. If not, then
-    # ``--volume "$(dirname "${BEZIER_ROOT}")"`` is required as well.
-    docker create --name "${DUMMY_IMAGE_NAME}" "${DOCKER_IMAGE}" /bin/true
+    # Create a dummy container which will hold a volume.
+    docker create \
+        --volume "$(dirname "${BEZIER_ROOT}")" \
+        --name "${DUMMY_IMAGE_NAME}" \
+        "${DOCKER_IMAGE}" \
+        /bin/true
     # Copy source tree into this volume.
     docker cp "${REPO_ROOT}" "${DUMMY_IMAGE_NAME}":"${BEZIER_ROOT}"
     # Rely on this dummy container.
@@ -48,7 +50,7 @@ if [[ "${CI}" == "true" || "$(echo "${CURRENT_CONTAINER_ID}" | wc -w)" == "1" ]]
     VOLUME_COPY="yes"
 else
     # Running on host.
-    VOLUME_ARGS=("--volume=${REPO_ROOT}:${BEZIER_ROOT}", "--volume=${LOCAL_WHEELHOUSE}:${WHEELHOUSE}")
+    VOLUME_ARGS=("--volume=${REPO_ROOT}:${BEZIER_ROOT}" "--volume=${LOCAL_WHEELHOUSE}:${WHEELHOUSE}")
     VOLUME_COPY="no"
 fi
 
