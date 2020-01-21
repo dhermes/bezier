@@ -30,6 +30,9 @@ BEZIER_ROOT="${REPO_ROOT}"
 WHEELHOUSE="${BEZIER_ROOT}/scripts/manylinux/fixed_wheels"
 
 # 0. Build the `manylinux` wheel (repaired with `auditwheel`).
+docker ps  # Diagnostic
+docker ps --no-trunc  # Diagnostic
+hostname  # Diagnostic
 CURRENT_CONTAINER_ID=$(docker ps --no-trunc --filter "id=$(hostname)" --format '{{ .ID }}')
 if [[ "$(echo "${CURRENT_CONTAINER_ID}" | wc -w)" == "1" ]]; then
     # Invoking `docker run` within a container.
