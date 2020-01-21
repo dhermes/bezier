@@ -124,7 +124,7 @@ and the local copy of ``libbezier`` depends on the other dependencies in
    Dynamic section at offset 0x44dd8 contains 28 entries:
      Tag        Type                         Name/Value
     0x0000000000000001 (NEEDED)             Shared library: [libgfortran-2e0d59d6.so.5.0.0]
-    0x0000000000000001 (NEEDED)             Shared library: [libm.so.6]
+    0x0000000000000001 (NEEDED)             Shared library: [libm.so.6--NOPE]
     0x0000000000000001 (NEEDED)             Shared library: [libgcc_s.so.1]
     0x0000000000000001 (NEEDED)             Shared library: [libc.so.6]
     0x000000000000000e (SONAME)             Library soname: [libbezier-28a97ca3.so.2020.1.14]
