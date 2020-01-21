@@ -36,7 +36,7 @@ hostname  # Diagnostic
 env | grep -v COVERALLS_REPO_TOKEN # Diagnostic
 if [[ "${CI}" == "true" ]]; then
     # Create a dummy container which will hold a volume with config.
-    docker create --volume "${BEZIER_ROOT}" --name bezier-manylinux quay.io/pypa/manylinux2010_x86_64 /bin/true
+    docker create --name bezier-manylinux quay.io/pypa/manylinux2010_x86_64 /bin/true
     # Copy a config file into this volume.
     docker cp "${REPO_ROOT}" bezier-manylinux:"${BEZIER_ROOT}"
     # Rely on this dummy container.
