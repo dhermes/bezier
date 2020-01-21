@@ -20,19 +20,21 @@ python -m pip install --upgrade delocate
 # 1. Build the wheel from source.
 BASIC_DIR=$(mktemp -d)
 # NOTE: ``pip wheel`` requires ``BEZIER_INSTALL_PREFIX`` to be set.
-python -m pip wheel . --wheel-dir ${BASIC_DIR}
+python -m pip wheel . --wheel-dir "${BASIC_DIR}"
 
 # 2. "delocate" the built wheel.
 DELOCATED_DIR=$(mktemp -d)
 # NOTE: This intentionally does not use ``--check-archs``.
 delocate-wheel \
-    --wheel-dir ${DELOCATED_DIR} \
+    --wheel-dir "${DELOCATED_DIR}" \
     --verbose \
-    ${BASIC_DIR}/bezier*.whl
+    "${BASIC_DIR}"/bezier*.whl
 
 # 3. Install from the "delocated" wheel.
-python -m pip install ${DELOCATED_DIR}/bezier*.whl
+python -m pip install bezier \
+    --no-index \
+    --find-links "${DELOCATED_DIR}"
 
 # 4. Clean up temporary directories.
-rm -fr ${BASIC_DIR}
-rm -fr ${DELOCATED_DIR}
+rm -fr "${BASIC_DIR}"
+rm -fr "${DELOCATED_DIR}"

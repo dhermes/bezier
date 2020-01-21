@@ -9,6 +9,7 @@ jobs:
       MATPLOTLIBRC: tests
     steps:
       - checkout
+      - setup_remote_docker
       - run:
           name: Check that all Cython generated files have been updated
           command: nox -s "update_generated(check=True)"

@@ -42,3 +42,26 @@ RUN set -ex \
   && pypy3-env/bin/python -m pip install ${WHEELHOUSE}/numpy*.whl \
   && pypy3-env/bin/python -m pip wheel --wheel-dir=${WHEELHOUSE} "scipy == 1.3.3" \
   && rm -fr pypy3-env
+
+# Install Docker CLI (used to build `manylinux` wheel for `nox -s doctest`).
+# Via: https://docs.docker.com/install/linux/docker-ce/ubuntu/
+# Includes a diagnostic-only use of `apt-key fingerprint`.
+RUN apt-get update \
+  && apt-get install -y --no-install-recommends \
+    apt-transport-https \
+    ca-certificates \
+    curl \
+    gnupg-agent \
+    software-properties-common \
+  && curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add - \
+  && apt-key fingerprint 0EBFCD88 \
+  && add-apt-repository \
+    "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
+    $(lsb_release -cs) \
+    stable" \
+  && apt-get update \
+  && apt-get install -y docker-ce-cli \
+  && apt-get clean autoclean \
+  && apt-get autoremove -y \
+  && rm -rf /var/lib/apt/lists/* \
+  && rm -f /var/cache/apt/archives/*.deb
