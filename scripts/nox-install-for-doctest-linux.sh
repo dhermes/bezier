@@ -44,12 +44,12 @@ if [[ "${CI}" == "true" || "$(echo "${CURRENT_CONTAINER_ID}" | wc -w)" == "1" ]]
     # Copy source tree into this volume.
     docker cp "${REPO_ROOT}" "${DUMMY_IMAGE_NAME}":"${BEZIER_ROOT}"
     # Rely on this dummy container.
-    SRC_VOLUME_ARG="--volumes-from=${DUMMY_IMAGE_NAME}"
-    WHEELHOUSE_VOLUME_ARG=""
+    VOLUME_ARGS=("--volumes-from=${DUMMY_IMAGE_NAME}")
+    VOLUME_COPY="yes"
 else
     # Running on host.
-    SRC_VOLUME_ARG="--volume=${REPO_ROOT}:${BEZIER_ROOT}"
-    WHEELHOUSE_VOLUME_ARG="--volume=${LOCAL_WHEELHOUSE}:${WHEELHOUSE}"
+    VOLUME_ARGS=("--volume=${REPO_ROOT}:${BEZIER_ROOT}", "--volume=${LOCAL_WHEELHOUSE}:${WHEELHOUSE}")
+    VOLUME_COPY="no"
 fi
 
 docker run \
@@ -57,12 +57,11 @@ docker run \
     --env PY_ROOT="${PY_ROOT}" \
     --env WHEELHOUSE="${WHEELHOUSE}" \
     --env BEZIER_ROOT="${BEZIER_ROOT}" \
-    "${SRC_VOLUME_ARG}" \
-    "${WHEELHOUSE_VOLUME_ARG}" \
+    "${VOLUME_ARGS[@]}" \
     "${DOCKER_IMAGE}" \
     "${BEZIER_ROOT}/scripts/manylinux/build-wheel-for-doctest.sh"
 
-if [[ "${WHEELHOUSE_VOLUME_ARG}" == "" ]]; then
+if [[ "${VOLUME_COPY}" == "yes" ]]; then
     # Copy built wheel(s) back into this container.
     docker cp "${DUMMY_IMAGE_NAME}":"${WHEELHOUSE}" "${LOCAL_WHEELHOUSE}"
 fi
