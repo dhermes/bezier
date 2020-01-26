@@ -130,6 +130,14 @@ class TestCurve(utils.NumPyTestCase):
         result = curve.evaluate_multi(s_vals)
         self.assertEqual(expected, result)
 
+    def test_evaluate_hodograph(self):
+        s = 0.25
+        nodes = np.asfortranarray([[0.0, 0.5, 1.0], [0.0, 0.5, 1.25]])
+        curve = self._make_one(nodes, 2)
+        expected = np.asfortranarray([[1.0], [1.125]])
+        result = curve.evaluate_hodograph(s)
+        self.assertEqual(expected, result)
+
     def test_plot_wrong_dimension(self):
         nodes = np.asfortranarray([[0.0, 1.0], [0.0, 3.0], [0.0, 4.0]])
         curve = self._make_one(nodes, 1)
