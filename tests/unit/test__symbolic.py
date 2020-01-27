@@ -15,6 +15,8 @@
 #       they were written before ``pytest`` was used in this project (the
 #       original test runner was ``nose``).
 
+import sys
+
 import numpy as np
 import pytest
 
@@ -45,9 +47,7 @@ class Test_to_symbolic:
         return _symbolic.to_symbolic(nodes)
 
     def test_sympy_missing(self, monkeypatch):
-        from bezier import _symbolic
-
-        monkeypatch.setattr(_symbolic, "sympy", None)
+        monkeypatch.setitem(sys.modules, "sympy", None)
         with pytest.raises(OSError) as exc_info:
             self._call_function_under_test(None)
 
