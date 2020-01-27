@@ -21,6 +21,7 @@ environment:
     MINGW_32: C:\mingw-w64\i686-6.3.0-posix-dwarf-rt_v5-rev1\mingw32\bin
     MINGW_64: C:\mingw-w64\x86_64-6.3.0-posix-seh-rt_v5-rev1\mingw64\bin
     DEFAULT_PYTHON: "C:\\Python38-x64"
+    VIRTUALENV_NO_DOWNLOAD: "true"
 
   matrix:
 
@@ -61,7 +62,7 @@ install:
       $env:Path += ";$MINGW"
 
   # Packaging requirements
-  - python -m pip install --upgrade pip setuptools
+  - python -m pip install --upgrade "pip !=20.0,!=20.0.1" setuptools
   - python -m pip install --upgrade wheel
 
   # Install the build dependencies of the project.
