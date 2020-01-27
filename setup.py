@@ -51,7 +51,9 @@ NO_INSTALL_PREFIX_MESSAGE = (
     "The {} environment variable must be set."
 ).format(INSTALL_PREFIX_ENV)
 REQUIREMENTS = ("numpy >= 1.18.1",)
-EXTRAS_REQUIRE = {"full": ["scipy >= 1.4.1", "sympy >= 1.5.1"]}
+EXTRAS_REQUIRE = {
+    "full": ["matplotlib >= 3.0.0", "scipy >= 1.4.1", "sympy >= 1.5.1"]
+}
 DESCRIPTION = (
     u"Helper for B\u00e9zier Curves, Triangles, and Higher Order Objects"
 )
