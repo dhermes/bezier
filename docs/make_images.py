@@ -271,6 +271,45 @@ def curve_evaluate(curve):
     save_image(ax.figure, "curve_evaluate.png")
 
 
+def curve_evaluate_hodograph(curve, s):
+    """Image for :meth`.Curve.evaluate_hodograph` docstring."""
+    if NO_IMAGES:
+        return
+
+    ax = curve.plot(256, color=BLUE)
+
+    points = curve.evaluate_multi(np.asfortranarray([s]))
+    if points.shape != (2, 1):
+        raise ValueError("Unexpected shape", points)
+    point = points[:, 0]
+
+    tangents = curve.evaluate_hodograph(s)
+    if tangents.shape != (2, 1):
+        raise ValueError("Unexpected shape", tangents)
+    tangent = tangents[:, 0]
+
+    ax.plot(
+        [point[0] - 2 * tangent[0], point[0] + 2 * tangent[0]],
+        [point[1] - 2 * tangent[1], point[1] + 2 * tangent[1]],
+        color=BLUE,
+        alpha=0.5,
+    )
+
+    ax.plot(
+        [point[0], point[0] + tangent[0]],
+        [point[1], point[1] + tangent[1]],
+        color="black",
+        linestyle="dashed",
+        marker="o",
+        markersize=5,
+    )
+
+    ax.axis("scaled")
+    ax.set_xlim(-0.125, 1.75)
+    ax.set_ylim(-0.0625, 0.75)
+    save_image(ax.figure, "curve_evaluate_hodograph.png")
+
+
 def curve_subdivide(curve, left, right):
     """Image for :meth`.Curve.subdivide` docstring."""
     if NO_IMAGES:

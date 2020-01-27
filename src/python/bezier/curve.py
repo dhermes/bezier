@@ -276,6 +276,38 @@ class Curve(_base.Base):
         """
         return _curve_helpers.evaluate_multi(self._nodes, s_vals)
 
+    def evaluate_hodograph(self, s):
+        r"""Evaluate the tangent vector :math:`B'(s)` along the curve.
+
+        .. image:: ../../images/curve_evaluate_hodograph.png
+           :align: center
+
+        .. doctest:: curve-evaluate-hodograph
+           :options: +NORMALIZE_WHITESPACE
+
+           >>> nodes = np.asfortranarray([
+           ...     [0.0, 0.625, 1.0],
+           ...     [0.0, 0.5  , 0.5],
+           ... ])
+           >>> curve = bezier.Curve(nodes, degree=2)
+           >>> curve.evaluate_hodograph(0.75)
+           array([[0.875],
+                  [0.25 ]])
+
+        .. testcleanup:: curve-evaluate-hodograph
+
+           import make_images
+           make_images.curve_evaluate_hodograph(curve, 0.75)
+
+        Args:
+            s (float): Parameter along the curve.
+
+        Returns:
+            numpy.ndarray: The tangent vector along the curve (as a two
+            dimensional NumPy array with a single column).
+        """
+        return _curve_helpers.evaluate_hodograph(s, self._nodes)
+
     def plot(self, num_pts, color=None, alpha=None, ax=None):
         """Plot the current curve.
 
