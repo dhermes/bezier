@@ -18,8 +18,6 @@ path so that the ``libbezier`` DLL can be located.
 
 import os
 
-import pkg_resources
-
 
 # Error messages for ``handle_import_error``.
 TEMPLATE = "No module named 'bezier.{}'"  # 3.6, 3.7, 3.8, pypy3
@@ -57,6 +55,8 @@ def modify_path():
     """
     if os.name != "nt":
         return
+
+    import pkg_resources  # pylint: disable=import-outside-toplevel
 
     try:
         extra_dll_dir = pkg_resources.resource_filename("bezier", "extra-dll")
