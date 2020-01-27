@@ -43,11 +43,6 @@ is the "intersection polynomial" for :math:`t`.
 import numpy as np
 from numpy.polynomial import polynomial
 
-try:
-    import scipy.linalg.lapack as _scipy_lapack
-except ImportError:  # pragma: NO COVER
-    _scipy_lapack = None
-
 from bezier import _curve_helpers
 from bezier import _geometric_intersection
 from bezier import _helpers
@@ -1047,11 +1042,13 @@ def _reciprocal_condition_number(lu_mat, one_norm):
         RuntimeError: If the reciprocal 1-norm condition number could not
             be computed.
     """
-    if _scipy_lapack is None:
+    try:
+        import scipy.linalg.lapack  # pylint: disable=import-outside-toplevel
+    except ImportError:  # pragma: NO COVER
         raise OSError("This function requires SciPy for calling into LAPACK.")
 
     # pylint: disable=no-member
-    rcond, info = _scipy_lapack.dgecon(lu_mat, one_norm)
+    rcond, info = scipy.linalg.lapack.dgecon(lu_mat, one_norm)
     # pylint: enable=no-member
     if info != 0:
         raise RuntimeError(

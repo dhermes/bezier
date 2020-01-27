@@ -20,11 +20,6 @@ import functools
 
 import numpy as np
 
-try:
-    import scipy.integrate as _scipy_int
-except ImportError:  # pragma: NO COVER
-    _scipy_int = None
-
 from bezier import _py_helpers
 
 
@@ -333,11 +328,13 @@ def compute_length(nodes):
         # NOTE: We convert to 1D to make sure NumPy uses vector norm.
         return np.linalg.norm(first_deriv[:, 0], ord=2)
 
-    if _scipy_int is None:
+    try:
+        import scipy.integrate  # pylint: disable=import-outside-toplevel
+    except ImportError:  # pragma: NO COVER
         raise OSError("This function requires SciPy for quadrature.")
 
     size_func = functools.partial(vec_size, first_deriv)
-    length, _ = _scipy_int.quad(size_func, 0.0, 1.0)
+    length, _ = scipy.integrate.quad(size_func, 0.0, 1.0)
     return length
 
 

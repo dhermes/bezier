@@ -10,6 +10,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import sys
 import unittest
 import unittest.mock
 
@@ -1066,28 +1067,33 @@ class Test__reciprocal_condition_number(utils.NumPyTestCase):
             lu_mat, one_norm
         )
 
-    @unittest.mock.patch(
-        "bezier._algebraic_intersection._scipy_lapack", new=None
-    )
     def test_without_scipy(self):
-        lu_mat = np.zeros((2, 2), order="F")
-        one_norm = 0.0
-        with self.assertRaises(OSError):
-            self._call_function_under_test(lu_mat, one_norm)
+        try:
+            sys.modules["scipy.linalg.lapack"] = None
+            lu_mat = np.zeros((2, 2), order="F")
+            one_norm = 0.0
+            with self.assertRaises(OSError):
+                self._call_function_under_test(lu_mat, one_norm)
+        finally:
+            del sys.modules["scipy.linalg.lapack"]
 
-    @unittest.mock.patch("bezier._algebraic_intersection._scipy_lapack")
-    def test_dgecon_failure(self, _scipy_lapack):
-        rcond = 0.5
-        info = -1
-        _scipy_lapack.dgecon.return_value = rcond, info
-        one_norm = 1.0
-        with self.assertRaises(RuntimeError):
-            self._call_function_under_test(
+    def test_dgecon_failure(self):
+        try:
+            _scipy_lapack = unittest.mock.MagicMock()
+            sys.modules["scipy.linalg.lapack"] = _scipy_lapack
+            rcond = 0.5
+            info = -1
+            _scipy_lapack.dgecon.return_value = rcond, info
+            one_norm = 1.0
+            with self.assertRaises(RuntimeError):
+                self._call_function_under_test(
+                    unittest.mock.sentinel.lu_mat, one_norm
+                )
+            _scipy_lapack.dgecon.assert_called_once_with(
                 unittest.mock.sentinel.lu_mat, one_norm
             )
-        _scipy_lapack.dgecon.assert_called_once_with(
-            unittest.mock.sentinel.lu_mat, one_norm
-        )
+        finally:
+            del sys.modules["scipy.linalg.lapack"]
 
     @unittest.skipIf(SCIPY_LAPACK is None, "SciPy not installed")
     def test_singular(self):

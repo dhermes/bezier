@@ -10,8 +10,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import sys
 import unittest
-import unittest.mock
 
 import numpy as np
 
@@ -414,12 +414,13 @@ class Test_compute_length(unittest.TestCase):
         self.assertAlmostEqual(length, expected, delta=local_eps)
 
     def test_without_scipy(self):
-        nodes = np.zeros((2, 5), order="F")
-        with unittest.mock.patch(
-            "bezier._py_curve_helpers._scipy_int", new=None
-        ):
+        try:
+            sys.modules["scipy.integrate"] = None
+            nodes = np.zeros((2, 5), order="F")
             with self.assertRaises(OSError):
                 self._call_function_under_test(nodes)
+        finally:
+            del sys.modules["scipy.integrate"]
 
 
 class Test_elevate_nodes(utils.NumPyTestCase):
