@@ -35,7 +35,7 @@ def to_symbolic(nodes):
     Raises:
         ValueError: If ``nodes`` is not 2D.
     """
-    # NOTE: We import SympPy at runtime to avoid the import-time cost for users
+    # NOTE: We import SymPy at runtime to avoid the import-time cost for users
     #       that don't want to do symbolic computation. The ``sympy`` import is
     #       a tad expensive.
     import sympy  # pylint: disable=import-outside-toplevel
@@ -64,7 +64,7 @@ def curve_weights(degree, s):
         sympy.Matrix: The de Casteljau weights for the curve as a
         ``(degree + 1) x 1`` matrix.
     """
-    # NOTE: We import SympPy at runtime to avoid the import-time cost for users
+    # NOTE: We import SymPy at runtime to avoid the import-time cost for users
     #       that don't want to do symbolic computation. The ``sympy`` import is
     #       a tad expensive.
     import sympy  # pylint: disable=import-outside-toplevel
@@ -90,7 +90,7 @@ def curve_as_polynomial(nodes, degree):
         * The symbol ``s`` used in the polynomial
         * The curve :math:`B(s)`.
     """
-    # NOTE: We import SympPy at runtime to avoid the import-time cost for users
+    # NOTE: We import SymPy at runtime to avoid the import-time cost for users
     #       that don't want to do symbolic computation. The ``sympy`` import is
     #       a tad expensive.
     import sympy  # pylint: disable=import-outside-toplevel
@@ -117,7 +117,7 @@ def implicitize_2d(x_fn, y_fn, s):
         sympy.Expr: The implicitized function :math:`f(x, y)` such that the
         curve satisfies :math:`f(x(s), y(s)) = 0`.
     """
-    # NOTE: We import SympPy at runtime to avoid the import-time cost for users
+    # NOTE: We import SymPy at runtime to avoid the import-time cost for users
     #       that don't want to do symbolic computation. The ``sympy`` import is
     #       a tad expensive.
     import sympy  # pylint: disable=import-outside-toplevel
@@ -166,7 +166,7 @@ def triangle_weights(degree, s, t):
         sympy.Matrix: The de Casteljau weights for the triangle as an ``N x 1``
         matrix, where ``N == (degree + 1)(degree + 2) / 2``.
     """
-    # NOTE: We import SympPy at runtime to avoid the import-time cost for users
+    # NOTE: We import SymPy at runtime to avoid the import-time cost for users
     #       that don't want to do symbolic computation. The ``sympy`` import is
     #       a tad expensive.
     import sympy  # pylint: disable=import-outside-toplevel
@@ -201,7 +201,7 @@ def triangle_as_polynomial(nodes, degree):
         * The symbol ``t`` used in the polynomial
         * The triangle :math:`B(s, t)`.
     """
-    # NOTE: We import SympPy at runtime to avoid the import-time cost for users
+    # NOTE: We import SymPy at runtime to avoid the import-time cost for users
     #       that don't want to do symbolic computation. The ``sympy`` import is
     #       a tad expensive.
     import sympy  # pylint: disable=import-outside-toplevel
@@ -232,7 +232,7 @@ def implicitize_3d(x_fn, y_fn, z_fn, s, t):
         sympy.Expr: The implicitized function :math:`f(x, y, z)` such that the
         triangle satisfies :math:`f(x(s, t), y(s, t), z(s, t)) = 0`.
     """
-    # NOTE: We import SympPy at runtime to avoid the import-time cost for users
+    # NOTE: We import SymPy at runtime to avoid the import-time cost for users
     #       that don't want to do symbolic computation. The ``sympy`` import is
     #       a tad expensive.
     import sympy  # pylint: disable=import-outside-toplevel

@@ -315,6 +315,7 @@ def lint(session):
         DEPS["matplotlib"],
         DEPS["Pygments"],
         DEPS["pylint"],
+        DEPS["scipy"],
         DEPS["seaborn"],
         DEPS["sympy"],
     )

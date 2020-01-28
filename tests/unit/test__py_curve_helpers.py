@@ -413,14 +413,6 @@ class Test_compute_length(unittest.TestCase):
         local_eps = abs(SPACING(expected))
         self.assertAlmostEqual(length, expected, delta=local_eps)
 
-    def test_without_scipy(self):
-        nodes = np.zeros((2, 5), order="F")
-        with unittest.mock.patch(
-            "bezier._py_curve_helpers._scipy_int", new=None
-        ):
-            with self.assertRaises(OSError):
-                self._call_function_under_test(nodes)
-
 
 class Test_elevate_nodes(utils.NumPyTestCase):
     @staticmethod
