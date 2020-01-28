@@ -22,34 +22,24 @@ Includes functions for:
    :trim:
 """
 
-import functools
 
-try:
-    import sympy
-except ImportError:  # pragma: NO COVER
-    sympy = None
-
-
-def require_sympy(wrapped):
-    """Function decorator to require ``sympy`` to exist.
-
-    Args:
-        wrapped (Callable): A function to be wrapped.
+def require_sympy():
+    """Import and return ``sympy`` if it is installed, otherwise raise OSError.
 
     Returns:
-        Callable: The wrapped function.
+        module: The SymPy module
+
+    Raises:
+        OSError: If SymPy is not installed.
     """
 
-    @functools.wraps(wrapped)
-    def ensure_sympy(*args, **kwargs):
-        if sympy is None:
-            raise OSError("This function requires SymPy.")
-        return wrapped(*args, **kwargs)
-
-    return ensure_sympy
+    try:
+        import sympy  # pylint: disable=import-outside-toplevel
+    except ImportError:  # pragma: NO COVER
+        raise OSError("This function requires SymPy.")
+    return sympy
 
 
-@require_sympy
 def to_symbolic(nodes):
     """Convert a 2D NumPy array to a SymPy matrix of rational numbers.
 
@@ -62,6 +52,7 @@ def to_symbolic(nodes):
     Raises:
         ValueError: If ``nodes`` is not 2D.
     """
+    sympy = require_sympy()
     if nodes.ndim != 2:
         raise ValueError("Nodes must be 2-dimensional, not", nodes.ndim)
 
@@ -70,7 +61,6 @@ def to_symbolic(nodes):
     )
 
 
-@require_sympy
 def curve_weights(degree, s):
     """Compute de Casteljau weights for a curve.
 
@@ -87,6 +77,7 @@ def curve_weights(degree, s):
         sympy.Matrix: The de Casteljau weights for the curve as a
         ``(degree + 1) x 1`` matrix.
     """
+    sympy = require_sympy()
     return sympy.Matrix(
         [
             [sympy.binomial(degree, k) * s ** k * (1 - s) ** (degree - k)]
@@ -95,7 +86,6 @@ def curve_weights(degree, s):
     )
 
 
-@require_sympy
 def curve_as_polynomial(nodes, degree):
     """Convert ``nodes`` into a SymPy polynomial array :math:`B(s)`.
 
@@ -109,6 +99,7 @@ def curve_as_polynomial(nodes, degree):
         * The symbol ``s`` used in the polynomial
         * The curve :math:`B(s)`.
     """
+    sympy = require_sympy()
     nodes_sym = to_symbolic(nodes)
 
     s = sympy.Symbol("s")
@@ -119,7 +110,6 @@ def curve_as_polynomial(nodes, degree):
     return s, sympy.Matrix(factored).reshape(*b_polynomial.shape)
 
 
-@require_sympy
 def implicitize_2d(x_fn, y_fn, s):
     """Implicitize a 2D parametric curve.
 
@@ -132,11 +122,11 @@ def implicitize_2d(x_fn, y_fn, s):
         sympy.Expr: The implicitized function :math:`f(x, y)` such that the
         curve satisfies :math:`f(x(s), y(s)) = 0`.
     """
+    sympy = require_sympy()
     x_sym, y_sym = sympy.symbols("x, y")
     return sympy.resultant(x_fn - x_sym, y_fn - y_sym, s).factor()
 
 
-@require_sympy
 def implicitize_curve(nodes, degree):
     """Implicitize a 2D parametric curve, given the nodes.
 
@@ -160,7 +150,6 @@ def implicitize_curve(nodes, degree):
     return implicitize_2d(x_fn, y_fn, s)
 
 
-@require_sympy
 def triangle_weights(degree, s, t):
     """Compute de Casteljau weights for a triangle.
 
@@ -178,6 +167,7 @@ def triangle_weights(degree, s, t):
         sympy.Matrix: The de Casteljau weights for the triangle as an ``N x 1``
         matrix, where ``N == (degree + 1)(degree + 2) / 2``.
     """
+    sympy = require_sympy()
     lambda1 = 1 - s - t
     lambda2 = s
     lambda3 = t
@@ -194,7 +184,6 @@ def triangle_weights(degree, s, t):
     return sympy.Matrix(values).reshape(len(values), 1)
 
 
-@require_sympy
 def triangle_as_polynomial(nodes, degree):
     """Convert ``nodes`` into a SymPy polynomial array :math:`B(s, t)`.
 
@@ -209,6 +198,7 @@ def triangle_as_polynomial(nodes, degree):
         * The symbol ``t`` used in the polynomial
         * The triangle :math:`B(s, t)`.
     """
+    sympy = require_sympy()
     nodes_sym = to_symbolic(nodes)
 
     s, t = sympy.symbols("s, t")
@@ -219,7 +209,6 @@ def triangle_as_polynomial(nodes, degree):
     return s, t, sympy.Matrix(factored).reshape(*b_polynomial.shape)
 
 
-@require_sympy
 def implicitize_3d(x_fn, y_fn, z_fn, s, t):
     """Implicitize a 3D parametric triangle.
 
@@ -236,6 +225,7 @@ def implicitize_3d(x_fn, y_fn, z_fn, s, t):
         sympy.Expr: The implicitized function :math:`f(x, y, z)` such that the
         triangle satisfies :math:`f(x(s, t), y(s, t), z(s, t)) = 0`.
     """
+    sympy = require_sympy()
     x_sym, y_sym, z_sym = sympy.symbols("x, y, z")
 
     f_xy = sympy.resultant(x_fn - x_sym, y_fn - y_sym, s)
@@ -243,7 +233,6 @@ def implicitize_3d(x_fn, y_fn, z_fn, s, t):
     return sympy.resultant(f_xy, f_yz, t).factor()
 
 
-@require_sympy
 def implicitize_triangle(nodes, degree):
     """Implicitize a 3D parametric triangle, given the nodes.
 
