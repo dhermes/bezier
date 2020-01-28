@@ -15,8 +15,6 @@
 #       they were written before ``pytest`` was used in this project (the
 #       original test runner was ``nose``).
 
-import sys
-
 import numpy as np
 import pytest
 
@@ -45,14 +43,6 @@ class Test_to_symbolic:
         from bezier import _symbolic
 
         return _symbolic.to_symbolic(nodes)
-
-    def test_sympy_missing(self, monkeypatch):
-        monkeypatch.setitem(sys.modules, "sympy", None)
-        with pytest.raises(OSError) as exc_info:
-            self._call_function_under_test(None)
-
-        exc_args = exc_info.value.args
-        assert exc_args == ("This function requires SymPy.",)
 
     def test_bad_shape(self):
         nodes = np.empty((1, 1, 1), order="F")

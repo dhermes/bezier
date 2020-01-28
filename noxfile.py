@@ -316,6 +316,7 @@ def lint(session):
         DEPS["Pygments"],
         DEPS["pylint"],
         DEPS["seaborn"],
+        DEPS["sympy"],
     )
     session.install(*local_deps)
     # Install this package.

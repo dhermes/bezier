@@ -23,23 +23,6 @@ Includes functions for:
 """
 
 
-def require_sympy():
-    """Import and return ``sympy`` if it is installed, otherwise raise OSError.
-
-    Returns:
-        module: The SymPy module
-
-    Raises:
-        OSError: If SymPy is not installed.
-    """
-
-    try:
-        import sympy  # pylint: disable=import-outside-toplevel
-    except ImportError:  # pragma: NO COVER
-        raise OSError("This function requires SymPy.")
-    return sympy
-
-
 def to_symbolic(nodes):
     """Convert a 2D NumPy array to a SymPy matrix of rational numbers.
 
@@ -52,7 +35,11 @@ def to_symbolic(nodes):
     Raises:
         ValueError: If ``nodes`` is not 2D.
     """
-    sympy = require_sympy()
+    # NOTE: We import SympPy at runtime to avoid the import-time cost for users
+    #       that don't want to do symbolic computation. The ``sympy`` import is
+    #       a tad expensive.
+    import sympy  # pylint: disable=import-outside-toplevel
+
     if nodes.ndim != 2:
         raise ValueError("Nodes must be 2-dimensional, not", nodes.ndim)
 
@@ -77,7 +64,11 @@ def curve_weights(degree, s):
         sympy.Matrix: The de Casteljau weights for the curve as a
         ``(degree + 1) x 1`` matrix.
     """
-    sympy = require_sympy()
+    # NOTE: We import SympPy at runtime to avoid the import-time cost for users
+    #       that don't want to do symbolic computation. The ``sympy`` import is
+    #       a tad expensive.
+    import sympy  # pylint: disable=import-outside-toplevel
+
     return sympy.Matrix(
         [
             [sympy.binomial(degree, k) * s ** k * (1 - s) ** (degree - k)]
@@ -99,7 +90,11 @@ def curve_as_polynomial(nodes, degree):
         * The symbol ``s`` used in the polynomial
         * The curve :math:`B(s)`.
     """
-    sympy = require_sympy()
+    # NOTE: We import SympPy at runtime to avoid the import-time cost for users
+    #       that don't want to do symbolic computation. The ``sympy`` import is
+    #       a tad expensive.
+    import sympy  # pylint: disable=import-outside-toplevel
+
     nodes_sym = to_symbolic(nodes)
 
     s = sympy.Symbol("s")
@@ -122,7 +117,11 @@ def implicitize_2d(x_fn, y_fn, s):
         sympy.Expr: The implicitized function :math:`f(x, y)` such that the
         curve satisfies :math:`f(x(s), y(s)) = 0`.
     """
-    sympy = require_sympy()
+    # NOTE: We import SympPy at runtime to avoid the import-time cost for users
+    #       that don't want to do symbolic computation. The ``sympy`` import is
+    #       a tad expensive.
+    import sympy  # pylint: disable=import-outside-toplevel
+
     x_sym, y_sym = sympy.symbols("x, y")
     return sympy.resultant(x_fn - x_sym, y_fn - y_sym, s).factor()
 
@@ -167,7 +166,11 @@ def triangle_weights(degree, s, t):
         sympy.Matrix: The de Casteljau weights for the triangle as an ``N x 1``
         matrix, where ``N == (degree + 1)(degree + 2) / 2``.
     """
-    sympy = require_sympy()
+    # NOTE: We import SympPy at runtime to avoid the import-time cost for users
+    #       that don't want to do symbolic computation. The ``sympy`` import is
+    #       a tad expensive.
+    import sympy  # pylint: disable=import-outside-toplevel
+
     lambda1 = 1 - s - t
     lambda2 = s
     lambda3 = t
@@ -198,7 +201,11 @@ def triangle_as_polynomial(nodes, degree):
         * The symbol ``t`` used in the polynomial
         * The triangle :math:`B(s, t)`.
     """
-    sympy = require_sympy()
+    # NOTE: We import SympPy at runtime to avoid the import-time cost for users
+    #       that don't want to do symbolic computation. The ``sympy`` import is
+    #       a tad expensive.
+    import sympy  # pylint: disable=import-outside-toplevel
+
     nodes_sym = to_symbolic(nodes)
 
     s, t = sympy.symbols("s, t")
@@ -225,7 +232,11 @@ def implicitize_3d(x_fn, y_fn, z_fn, s, t):
         sympy.Expr: The implicitized function :math:`f(x, y, z)` such that the
         triangle satisfies :math:`f(x(s, t), y(s, t), z(s, t)) = 0`.
     """
-    sympy = require_sympy()
+    # NOTE: We import SympPy at runtime to avoid the import-time cost for users
+    #       that don't want to do symbolic computation. The ``sympy`` import is
+    #       a tad expensive.
+    import sympy  # pylint: disable=import-outside-toplevel
+
     x_sym, y_sym, z_sym = sympy.symbols("x, y, z")
 
     f_xy = sympy.resultant(x_fn - x_sym, y_fn - y_sym, s)
