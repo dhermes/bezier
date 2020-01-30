@@ -519,6 +519,8 @@ def _cmake(session, build_type):
     ]
     if IS_WINDOWS:
         build_args.extend(["-G", "MinGW Makefiles"])
+    if os.environ.get("TARGET_NATIVE_ARCH") == "OFF":
+        build_args.append("-DTARGET_NATIVE_ARCH:BOOL=OFF")
 
     build_args.extend(["-S", os.path.join("src", "fortran"), "-B", build_dir])
     session.run(*build_args, external=cmake_external)
