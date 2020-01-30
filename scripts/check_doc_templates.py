@@ -38,12 +38,6 @@ RELEASE_INDEX_FILE = os.path.join(
 )
 DEVELOPMENT_TEMPLATE = os.path.join(_ROOT_DIR, "DEVELOPMENT.rst.template")
 DEVELOPMENT_FILE = os.path.join(_ROOT_DIR, "DEVELOPMENT.rst")
-BINARY_EXT_FILE = os.path.join(
-    _ROOT_DIR, "docs", "python", "binary-extension.rst"
-)
-BINARY_EXT_TEMPLATE = os.path.join(
-    _ROOT_DIR, "docs", "python", "binary-extension.rst.template"
-)
 RTD_VERSION = "latest"
 REVISION = "master"
 PLAIN_CODE_BLOCK = ".. code-block:: python"
@@ -571,31 +565,6 @@ def development_verify():
         print("DEVELOPMENT.rst contents are as expected.")
 
 
-def native_libraries_verify():
-    """Populate the template and compare to ``binary-extension.rst``.
-
-    Raises:
-        ValueError: If the current ``docs/python/binary-extension.rst`` doesn't
-            agree with the expected value computed from the template.
-    """
-    with open(BINARY_EXT_TEMPLATE, "r") as file_obj:
-        template = file_obj.read()
-    expected = template.format(revision=REVISION)
-    with open(BINARY_EXT_FILE, "r") as file_obj:
-        contents = file_obj.read()
-    if contents != expected:
-        err_msg = "\n" + get_diff(
-            contents,
-            expected,
-            "docs/python/binary-extension.rst.actual",
-            "docs/python/binary-extension.rst.expected",
-        )
-        raise ValueError(err_msg)
-
-    else:
-        print("docs/python/binary-extension.rst contents are as expected.")
-
-
 def main():
     """Verify specialized versions of ``README.rst.template``."""
     readme_verify()
@@ -603,7 +572,6 @@ def main():
     docs_index_verify()
     release_docs_index_verify()
     development_verify()
-    native_libraries_verify()
 
 
 if __name__ == "__main__":

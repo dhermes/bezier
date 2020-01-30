@@ -41,12 +41,6 @@ RELEASE_INDEX_FILE = os.path.join(
 )
 DEVELOPMENT_TEMPLATE = os.path.join(_ROOT_DIR, "DEVELOPMENT.rst.template")
 DEVELOPMENT_FILE = os.path.join(_ROOT_DIR, "DEVELOPMENT.rst")
-BINARY_EXT_FILE = os.path.join(
-    _ROOT_DIR, "docs", "python", "binary-extension.rst"
-)
-BINARY_EXT_TEMPLATE = os.path.join(
-    _ROOT_DIR, "docs", "python", "binary-extension.rst.template"
-)
 
 
 def get_version():
@@ -124,19 +118,6 @@ def populate_index(
         file_obj.write(contents)
 
 
-def populate_native_libraries(version):
-    """Populates ``binary-extension.rst`` with release-specific data.
-
-    Args:
-        version (str): The current version.
-    """
-    with open(BINARY_EXT_TEMPLATE, "r") as file_obj:
-        template = file_obj.read()
-    contents = template.format(revision=version)
-    with open(BINARY_EXT_FILE, "w") as file_obj:
-        file_obj.write(contents)
-
-
 def populate_development(version):
     """Populates ``DEVELOPMENT.rst`` with release-specific data.
 
@@ -169,7 +150,6 @@ def main():
     populate_index(
         version, circleci_build, appveyor_build, coveralls_build, travis_build
     )
-    populate_native_libraries(version)
     populate_development(version)
 
 
