@@ -27,7 +27,6 @@ environment:
 
     # See: https://www.appveyor.com/docs/installed-software/#python
 
-    - NOX_SESSION: "doctest"
     - NOX_SESSION: "unit-3.6-32"
     - NOX_SESSION: "unit-3.6"
     - NOX_SESSION: "unit-3.7-32"
@@ -35,7 +34,7 @@ environment:
     - NOX_SESSION: "unit-3.8-32"
     - NOX_SESSION: "cover"
     - NOX_SESSION: "functional-3.8"
-    # - NOX_SESSION: "doctest"
+    - NOX_SESSION: "doctest"
 
 install:
   - echo "Filesystem root:"
