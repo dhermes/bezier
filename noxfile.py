@@ -487,6 +487,19 @@ def _cmake_virtualenv(session, build_type):
     return virtualenv_location
 
 
+def _cmake_needed():
+    """Determine if a ``cmake`` binary is needed.
+
+    This will check if ``cmake`` is on the path so it can be used if needed.
+    Installing ``cmake`` into the ``nox``-managed virtual environment can be
+    forced by setting the ``NOX_INSTALL_CMAKE`` environment variable.
+    """
+    if "NOX_INSTALL_CMAKE" in os.environ:
+        return True
+
+    return py.path.local.sysfind("cmake") is None
+
+
 def _cmake(session, build_type):
     """Build and install ``libbezier`` via ``cmake``.
 
@@ -501,9 +514,12 @@ def _cmake(session, build_type):
     virtualenv_location = _cmake_virtualenv(session, build_type)
 
     cmake_external = True
-    if py.path.local.sysfind("cmake") is None:
+    if _cmake_needed():
         session.install(DEPS["cmake"])
         cmake_external = False
+    else:
+        session.run(print, "Using pre-installed ``cmake``")
+        session.run("cmake", "--version", external=cmake_external)
 
     # Prepare build and install directories.
     build_dir = os.path.join(virtualenv_location, "build")
