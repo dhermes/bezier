@@ -76,7 +76,7 @@ def _find_gcc_homebrew():
     gcc_root = gcc_root_bytes.decode("utf-8").rstrip()
     matches = list(pathlib.Path(gcc_root).glob("*/bin/gcc-[0-9]*"))
     if len(matches) != 1:
-        raise ValueError("Could not find unique Homebrew-installed `gcc`")
+        raise ValueError("Could not find unique Homebrew-installed ``gcc``")
     return str(matches[0])
 
 

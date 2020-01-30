@@ -12,7 +12,9 @@
 
 """Setup file for ``bezier``."""
 
+import hashlib
 import os
+import pathlib
 import shutil
 import sys
 
@@ -50,12 +52,21 @@ INSTALL_PREFIX_ENV = "BEZIER_INSTALL_PREFIX"
 NO_INSTALL_PREFIX_MESSAGE = (
     "The {} environment variable must be set."
 ).format(INSTALL_PREFIX_ENV)
+WHEEL_ENV = "BEZIER_WHEEL"
+"""Environment variable used to indicate a wheel is being built.
+
+If this is present (e.g. ``BEZIER_WHEEL="True"``) then copied DLL on Windows
+will be modified.
+"""
+# NOTE: This is a workaround, put in place for "deterministic" hashing of the
+#       DLL in cases where that matters (i.e. ``doctest``.)
+DLL_HASH_ENV = "BEZIER_DLL_HASH"
 REQUIREMENTS = ("numpy >= 1.18.1",)
 EXTRAS_REQUIRE = {
     "full": ["matplotlib >= 3.0.0", "scipy >= 1.4.1", "sympy >= 1.5.1"]
 }
 DESCRIPTION = (
-    u"Helper for B\u00e9zier Curves, Triangles, and Higher Order Objects"
+    "Helper for B\u00e9zier Curves, Triangles, and Higher Order Objects"
 )
 _IS_WINDOWS = os.name == "nt"
 _EXTRA_DLL = "extra-dll"
@@ -80,6 +91,24 @@ def numpy_include_dir():
     import numpy as np
 
     return np.get_include()
+
+
+def _sha256_hash(filename, blocksize=65536):
+    """Hash the contents of an open file handle with SHA256"""
+    hash_obj = hashlib.sha256()
+
+    with open(filename, "rb") as file_obj:
+        block = file_obj.read(blocksize)
+        while block:
+            hash_obj.update(block)
+            block = file_obj.read(blocksize)
+
+    return hash_obj.hexdigest()
+
+
+def _sha256_short_hash(filename):
+    full_hash = _sha256_hash(filename)
+    return full_hash[:8]
 
 
 def extension_modules():
@@ -124,25 +153,68 @@ def make_readme():
 
 def copy_dll(build_lib):
     if not _IS_WINDOWS:
-        return
+        return None
 
     install_prefix = os.environ.get(INSTALL_PREFIX_ENV)
     if install_prefix is None:
-        return
+        return None
 
     # NOTE: ``bin`` is hardcoded here, expected to correspond to
     #       ``CMAKE_INSTALL_BINDIR`` on Windows.
     installed_dll = os.path.join(install_prefix, "bin", _DLL_FILENAME)
     build_lib_extra_dll = os.path.join(build_lib, "bezier", _EXTRA_DLL)
     os.makedirs(build_lib_extra_dll, exist_ok=True)
-    relocated_dll = os.path.join(build_lib_extra_dll, _DLL_FILENAME)
+
+    if WHEEL_ENV in os.environ:
+        provided_hash = os.environ.get(DLL_HASH_ENV)
+        if provided_hash is None:
+            short_hash = _sha256_short_hash(installed_dll)
+        else:
+            short_hash = provided_hash
+        dll_name = f"bezier-{short_hash}.dll"
+        return_value = dll_name
+    else:
+        dll_name = _DLL_FILENAME
+        return_value = None
+
+    relocated_dll = os.path.join(build_lib_extra_dll, dll_name)
     shutil.copyfile(installed_dll, relocated_dll)
+
+    return return_value
+
+
+def _find_speedup_pyd(build_lib):
+    bezier_dir = pathlib.Path(build_lib) / "bezier"
+    speedup_glob = "_speedup*.pyd"
+    matches = list(bezier_dir.glob(speedup_glob))
+    if len(matches) != 1:
+        raise ValueError(f"Could not find unique ``{speedup_glob}``", matches)
+
+    return str(matches[0])
+
+
+def rewrite_pyd_reference(dll_name, build_lib):
+    if dll_name is None:
+        return
+
+    import machomachomangler.pe
+
+    speedup_filename = _find_speedup_pyd(build_lib)
+    with open(speedup_filename, "rb") as file_obj:
+        pyd_bytes = file_obj.read()
+
+    new_pyd_bytes = machomachomangler.pe.redll(
+        pyd_bytes, {_DLL_FILENAME.encode("ascii"): dll_name.encode("ascii")}
+    )
+    with open(speedup_filename, "wb") as file_obj:
+        file_obj.write(new_pyd_bytes)
 
 
 class BuildExtWithDLL(setuptools.command.build_ext.build_ext):
     def run(self):
-        copy_dll(self.build_lib)
-        return setuptools.command.build_ext.build_ext.run(self)
+        dll_name = copy_dll(self.build_lib)
+        setuptools.command.build_ext.build_ext.run(self)
+        rewrite_pyd_reference(dll_name, self.build_lib)
 
 
 def setup():

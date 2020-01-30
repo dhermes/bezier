@@ -531,6 +531,10 @@ This project uses environment variables for building the
 - ``BEZIER_NO_EXTENSION``: If set, this will indicate that only the pure
   Python package should be built and installed (i.e. without the binary
   extension).
+- ``BEZIER_WHEEL``: If set, this will indicate to ``setup.py`` that the
+  current build is intended for a wheel. On Windows, this will involve
+  renaming ``bezier.dll`` to a unique name (to avoid name collision) and
+  updating ``_speedup*.pyd`` to refer to the new name.
 
 for interacting with the system at import time:
 
