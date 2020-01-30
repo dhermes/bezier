@@ -58,6 +58,9 @@ WHEEL_ENV = "BEZIER_WHEEL"
 If this is present (e.g. ``BEZIER_WHEEL="True"``) then copied DLL on Windows
 will be modified.
 """
+# NOTE: This is a workaround, put in place for "deterministic" hashing of the
+#       DLL in cases where that matters (i.e. ``doctest``.)
+DLL_HASH_ENV = "BEZIER_DLL_HASH"
 REQUIREMENTS = ("numpy >= 1.18.1",)
 EXTRAS_REQUIRE = {
     "full": ["matplotlib >= 3.0.0", "scipy >= 1.4.1", "sympy >= 1.5.1"]
@@ -163,7 +166,11 @@ def copy_dll(build_lib):
     os.makedirs(build_lib_extra_dll, exist_ok=True)
 
     if WHEEL_ENV in os.environ:
-        short_hash = _sha256_short_hash(installed_dll)
+        provided_hash = os.environ.get(DLL_HASH_ENV)
+        if provided_hash is None:
+            short_hash = _sha256_short_hash(installed_dll)
+        else:
+            short_hash = provided_hash
         dll_name = f"bezier-{short_hash}.dll"
         return_value = dll_name
     else:

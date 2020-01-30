@@ -223,7 +223,7 @@ it indirectly depends on ``libgfortran``, ``libquadmath`` and ``libgcc_s``:
 Windows
 =======
 
-A single Windows shared library (DLL) is provided: ``extra-dll/bezier.dll``.
+A single Windows shared library (DLL) is provided: ``bezier.dll``.
 The Python extension module (``.pyd`` file) depends directly on this library:
 
 .. testsetup:: windows-extension, windows-dll
@@ -287,7 +287,7 @@ The Python extension module (``.pyd`` file) depends directly on this library:
 
      Image has the following dependencies:
 
-       bezier.dll
+       bezier-e5dbb97a.dll
        python38.dll
        KERNEL32.dll
        VCRUNTIME140.dll
@@ -295,6 +295,11 @@ The Python extension module (``.pyd`` file) depends directly on this library:
        api-ms-win-crt-heap-l1-1-0.dll
        api-ms-win-crt-runtime-l1-1-0.dll
    ...
+
+For built wheels, the dependency will be renamed from ``bezier.dll`` to a
+unique name containing the SHA256 hash of the DLL file (to avoid a name
+collision) and placed in a directory within the ``bezier`` package:
+``extra-dll/bezier-e5dbb97a.dll``.
 
 In order to ensure this DLL can be found, the ``bezier.__config__``
 module adds the ``extra-dll`` directory to the DLL search path on import.
@@ -346,7 +351,7 @@ each of the Fortran submodules:
 
    $ gfortran \
    >   -shared \
-   >   -o extra-dll/bezier.dll \
+   >   -o bezier.dll \
    >   ${OBJ_FILES} \
    >   -Wl,--output-def,bezier.def
 
@@ -361,7 +366,7 @@ provided by MinGW:
 
 .. code-block:: rest
 
-   > dumpbin /dependents .\extra-dll\bezier.dll
+   > dumpbin /dependents ...\bezier.dll
    ...
      Image has the following dependencies:
 
@@ -380,7 +385,7 @@ the ``-static`` flag
    $ gfortran \
    >   -static \
    >   -shared \
-   >   -o extra-dll/bezier.dll \
+   >   -o bezier.dll \
    >   ${OBJ_FILES} \
    >   -Wl,--output-def,bezier.def
 
@@ -391,18 +396,18 @@ on MinGW:
 .. testcode:: windows-dll
    :hide:
 
-   invoke_shell("dumpbin", "/dependents", "extra-dll\\bezier.dll")
+   invoke_shell("dumpbin", "/dependents", "extra-dll\\bezier-e5dbb97a.dll")
 
 .. testoutput:: windows-dll
    :options: +NORMALIZE_WHITESPACE
    :windows-only:
 
-   > dumpbin /dependents extra-dll\bezier.dll
+   > dumpbin /dependents extra-dll\bezier-e5dbb97a.dll
    Microsoft (R) COFF/PE Dumper Version ...
    Copyright (C) Microsoft Corporation.  All rights reserved.
 
 
-   Dump of file extra-dll\bezier.dll
+   Dump of file extra-dll\bezier-e5dbb97a.dll
 
    File Type: DLL
 

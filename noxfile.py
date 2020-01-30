@@ -65,6 +65,7 @@ DEBUG_SESSION_NAME = "libbezier-debug"
 RELEASE_SESSION_NAME = "libbezier-release"
 INSTALL_PREFIX_ENV = "BEZIER_INSTALL_PREFIX"
 WHEEL_ENV = "BEZIER_WHEEL"
+DLL_HASH_ENV = "BEZIER_DLL_HASH"
 
 
 def get_path(*names):
@@ -252,7 +253,9 @@ def doctest(session):
         install_prefix = _cmake(session, BUILD_TYPE_RELEASE)
     elif IS_WINDOWS:
         session.install(DEPS["machomachomangler"])
-        install_prefix = install_bezier(session, env={WHEEL_ENV: "true"})
+        install_prefix = install_bezier(
+            session, env={WHEEL_ENV: "true", DLL_HASH_ENV: "e5dbb97a"}
+        )
     else:
         raise OSError("Unknown operating system")
 
