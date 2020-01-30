@@ -297,15 +297,15 @@ The Python extension module (``.pyd`` file) depends directly on this library:
    ...
 
 For built wheels, the dependency will be renamed from ``bezier.dll`` to a
-unique name containing the SHA256 hash of the DLL file (to avoid a name
-collision) and placed in a directory within the ``bezier`` package:
-``extra-dll/bezier-e5dbb97a.dll``.
+unique name containing the first 8 characters of the SHA256 hash of the DLL
+file (to avoid a name collision) and placed in a directory within the
+``bezier`` package: for example ``extra-dll/bezier-e5dbb97a.dll``.
 
 In order to ensure this DLL can be found, the ``bezier.__config__``
 module adds the ``extra-dll`` directory to the DLL search path on import.
 (``%PATH%`` is used on Windows as part of the DLL search path. For Python
-versions starting with 3.8, modifying ``os.environ["PATH"]`` no longer works;
-instead the ``os.add_dll_directory()``
+versions starting with 3.8, modifying ``os.environ["PATH"]`` **after** Python
+startup no longer works; instead the ``os.add_dll_directory()``
 `function <https://docs.python.org/3/library/os.html#os.add_dll_directory>`__
 achieves the same goal in a more official capacity.)
 
