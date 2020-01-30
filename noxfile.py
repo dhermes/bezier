@@ -543,13 +543,13 @@ def _cmake(session, build_type):
     return install_prefix
 
 
-@nox.session(py=DEFAULT_INTERPRETER, name=DEBUG_SESSION_NAME)
+@nox.session(name=DEBUG_SESSION_NAME)
 def cmake_debug(session):
     """Run a Debug build of ``libbezier`` and install (via ``cmake``)."""
     _cmake(session, BUILD_TYPE_DEBUG)
 
 
-@nox.session(py=DEFAULT_INTERPRETER, name=RELEASE_SESSION_NAME)
+@nox.session(name=RELEASE_SESSION_NAME)
 def cmake_release(session):
     """Run a Release build of ``libbezier`` and install (via ``cmake``)."""
     _cmake(session, BUILD_TYPE_RELEASE)
