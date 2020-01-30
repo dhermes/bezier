@@ -252,7 +252,7 @@ def doctest(session):
         install_prefix = _cmake(session, BUILD_TYPE_RELEASE)
     elif IS_WINDOWS:
         session.install(DEPS["machomachomangler"])
-        install_prefix = install_bezier(session)
+        install_prefix = install_bezier(session, env={WHEEL_ENV: "true"})
     else:
         raise OSError("Unknown operating system")
 
@@ -260,11 +260,7 @@ def doctest(session):
     run_args = get_doctest_args(session)
     # Make sure that the root directory is on the Python path so that
     # ``tests`` is import-able.
-    env = {
-        "PYTHONPATH": get_path(),
-        INSTALL_PREFIX_ENV: install_prefix,
-        WHEEL_ENV: "true",
-    }
+    env = {"PYTHONPATH": get_path(), INSTALL_PREFIX_ENV: install_prefix}
     session.run(*run_args, env=env)
 
 
