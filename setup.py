@@ -163,12 +163,12 @@ def copy_dll(build_lib):
     os.makedirs(build_lib_extra_dll, exist_ok=True)
 
     if WHEEL_ENV in os.environ:
-        dll_name = _DLL_FILENAME
-        return_value = None
-    else:
         short_hash = _sha256_short_hash(installed_dll)
         dll_name = f"bezier-{short_hash}.dll"
         return_value = dll_name
+    else:
+        dll_name = _DLL_FILENAME
+        return_value = None
 
     relocated_dll = os.path.join(build_lib_extra_dll, dll_name)
     shutil.copyfile(installed_dll, relocated_dll)
