@@ -38,6 +38,7 @@ DEPS = {
     "flake8-import-order": "flake8-import-order",
     "jsonschema": "jsonschema >= 3.2.0",
     "lcov_cobertura": "lcov_cobertura",
+    "machomachomangler": "machomachomangler == 0.0.1",
     "matplotlib": "matplotlib >= 3.1.2",
     "numpy": "numpy >= 1.18.1",
     "pycobertura": "pycobertura",
@@ -63,6 +64,7 @@ BUILD_TYPE_RELEASE = "Release"
 DEBUG_SESSION_NAME = "libbezier-debug"
 RELEASE_SESSION_NAME = "libbezier-release"
 INSTALL_PREFIX_ENV = "BEZIER_INSTALL_PREFIX"
+WHEEL_ENV = "BEZIER_WHEEL"
 
 
 def get_path(*names):
@@ -248,13 +250,21 @@ def doctest(session):
         command = get_path("scripts", "nox-install-for-doctest-linux.sh")
         session.run(command, external=True)
         install_prefix = _cmake(session, BUILD_TYPE_RELEASE)
-    else:
+    elif IS_WINDOWS:
+        session.install(DEPS["machomachomangler"])
         install_prefix = install_bezier(session)
+    else:
+        raise OSError("Unknown operating system")
+
     # Run the script for building docs and running doctests.
     run_args = get_doctest_args(session)
     # Make sure that the root directory is on the Python path so that
     # ``tests`` is import-able.
-    env = {"PYTHONPATH": get_path(), INSTALL_PREFIX_ENV: install_prefix}
+    env = {
+        "PYTHONPATH": get_path(),
+        INSTALL_PREFIX_ENV: install_prefix,
+        WHEEL_ENV: "true",
+    }
     session.run(*run_args, env=env)
 
 
