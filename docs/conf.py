@@ -372,7 +372,7 @@ intersphinx_mapping = {
     "matplotlib": ("https://matplotlib.org/", None),
     "numpy": ("https://docs.scipy.org/doc/numpy/", None),
     "python": ("https://docs.python.org/3/", None),
-    "sympy": ("https://docs.sympy.org/1.5.1/", None),
+    "sympy": ("https://docs.sympy.org/latest/", None),
 }
 
 # Autodoc config
