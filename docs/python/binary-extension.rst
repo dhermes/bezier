@@ -4,8 +4,8 @@ Binary Extension
 
 .. note::
 
-   This content was last updated January 17, 2020 (as part of the
-   ``2020.1.15.dev1`` release). Much of the content is tested automatically to
+   This content was last updated February 3, 2020 (as part of the
+   ``2020.2.3`` release). Much of the content is tested automatically to
    keep from getting stale, but some of the console code blocks are not. As a
    result, this material may be out of date. If anything does not seem
    correct --- or even if the explanation is insufficient --- please
@@ -81,7 +81,7 @@ with a modified ``libbezier`` and all of its dependencies (e.g.
    '.../site-packages/bezier/.libs'
    >>> print_tree(libs_directory)
    .libs/
-     libbezier-28a97ca3.so.2020.1.14
+     libbezier-28a97ca3.so.2020.2.3
      libgfortran-2e0d59d6.so.5.0.0
      libquadmath-2d0c479f.so.0.0.0
      libz-eb09ad1d.so.1.2.3
@@ -101,7 +101,7 @@ The ``bezier._speedup`` module depends on this local copy of ``libbezier``:
    Dynamic section at offset 0x43d000 contains 27 entries:
      Tag        Type                         Name/Value
     0x000000000000000f (RPATH)              Library rpath: [$ORIGIN/.libs]
-    0x0000000000000001 (NEEDED)             Shared library: [libbezier-28a97ca3.so.2020.1.14]
+    0x0000000000000001 (NEEDED)             Shared library: [libbezier-28a97ca3.so.2020.2.3]
     0x0000000000000001 (NEEDED)             Shared library: [libpthread.so.0]
     0x0000000000000001 (NEEDED)             Shared library: [libc.so.6]
     0x000000000000000c (INIT)               0x9d40
@@ -113,13 +113,13 @@ and the local copy of ``libbezier`` depends on the other dependencies in
 .. testcode:: linux-readelf-lib
    :hide:
 
-   invoke_shell("readelf", "-d", ".libs/libbezier-28a97ca3.so.2020.1.14")
+   invoke_shell("readelf", "-d", ".libs/libbezier-28a97ca3.so.2020.2.3")
    invoke_shell("readelf", "-d", ".libs/libgfortran-2e0d59d6.so.5.0.0")
 
 .. testoutput:: linux-readelf-lib
    :linux-only:
 
-   $ readelf -d .libs/libbezier-28a97ca3.so.2020.1.14
+   $ readelf -d .libs/libbezier-28a97ca3.so.2020.2.3
 
    Dynamic section at offset 0x44dd8 contains 28 entries:
      Tag        Type                         Name/Value
@@ -127,7 +127,7 @@ and the local copy of ``libbezier`` depends on the other dependencies in
     0x0000000000000001 (NEEDED)             Shared library: [libm.so.6]
     0x0000000000000001 (NEEDED)             Shared library: [libgcc_s.so.1]
     0x0000000000000001 (NEEDED)             Shared library: [libc.so.6]
-    0x000000000000000e (SONAME)             Library soname: [libbezier-28a97ca3.so.2020.1.14]
+    0x000000000000000e (SONAME)             Library soname: [libbezier-28a97ca3.so.2020.2.3]
     0x000000000000000c (INIT)               0x2be8
    ...
    $ readelf -d .libs/libgfortran-2e0d59d6.so.5.0.0
@@ -164,7 +164,7 @@ with copies of ``libbezier``, ``libgfortran``, ``libquadmath`` and
    '.../site-packages/bezier/.dylibs'
    >>> print_tree(dylibs_directory)
    .dylibs/
-     libbezier.2020.1.14.dylib
+     libbezier.2020.2.3.dylib
      libgcc_s.1.dylib
      libgfortran.5.dylib
      libquadmath.0.dylib
@@ -184,7 +184,7 @@ of ``libbezier``:
 
    $ otool -L _speedup.cpython-38-darwin.so
    _speedup.cpython-38-darwin.so:
-           @loader_path/.dylibs/libbezier.2020.1.14.dylib (...)
+           @loader_path/.dylibs/libbezier.2020.2.3.dylib (...)
            /usr/lib/libSystem.B.dylib (...)
 
 Though the Python extension module (``.so`` file) only depends on ``libbezier``
@@ -193,15 +193,15 @@ it indirectly depends on ``libgfortran``, ``libquadmath`` and ``libgcc_s``:
 .. testcode:: macos-delocated-libgfortran
    :hide:
 
-   invoke_shell("otool", "-L", ".dylibs/libbezier.2020.1.14.dylib")
+   invoke_shell("otool", "-L", ".dylibs/libbezier.2020.2.3.dylib")
 
 .. testoutput:: macos-delocated-libgfortran
    :options: +NORMALIZE_WHITESPACE
    :macos-only:
 
-   $ otool -L .dylibs/libbezier.2020.1.14.dylib
-   .dylibs/libbezier.2020.1.14.dylib:
-       /DLC/bezier/libbezier.2020.1.14.dylib (...)
+   $ otool -L .dylibs/libbezier.2020.2.3.dylib
+   .dylibs/libbezier.2020.2.3.dylib:
+       /DLC/bezier/libbezier.2020.2.3.dylib (...)
        @loader_path/libgfortran.5.dylib (...)
        /usr/lib/libSystem.B.dylib (...)
        @loader_path/libgcc_s.1.dylib (...)

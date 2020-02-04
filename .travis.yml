@@ -1,7 +1,7 @@
 ---
 language: generic
 os: osx
-osx_image: xcode11.3 # This is latest as of January 11, 2020
+osx_image: xcode11.3 # This is latest as of February 3, 2020
 
 branches:
   only:
