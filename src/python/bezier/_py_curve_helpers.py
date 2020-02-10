@@ -20,7 +20,7 @@ import functools
 
 import numpy as np
 
-from bezier import _py_helpers
+from bezier.hazmat import helpers as _py_helpers
 
 
 _MAX_LOCATE_SUBDIVISIONS = 20

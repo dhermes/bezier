@@ -582,13 +582,13 @@ class TestTriangle(utils.NumPyTestCase):
         self.assertFalse(triangle._compute_valid())
 
     def test__compute_valid_bad_degree(self):
-        from bezier import _py_helpers
+        from bezier.hazmat import helpers
 
         degree = 4
         num_nodes = ((degree + 1) * (degree + 2)) // 2
         nodes = np.zeros((2, num_nodes), order="F")
         triangle = self._make_one(nodes, degree=degree)
-        with self.assertRaises(_py_helpers.UnsupportedDegree) as exc_info:
+        with self.assertRaises(helpers.UnsupportedDegree) as exc_info:
             triangle._compute_valid()
         self.assertEqual(exc_info.exception.degree, degree)
         self.assertEqual(exc_info.exception.supported, (1, 2, 3))

@@ -36,6 +36,13 @@ bezier package
    :undoc-members:
    :show-inheritance:
 
+Subpackages
+-----------
+
+.. toctree::
+
+   bezier.hazmat
+
 Submodules
 ----------
 
@@ -59,6 +66,13 @@ Submodules
    bezier.curve
    bezier.curved_polygon
    bezier.triangle
+
+Subpackages
+-----------
+
+.. toctree::
+
+   bezier.hazmat
 """
 _SCRIPTS_DIR = os.path.dirname(__file__)
 _DOCS_DIR = os.path.abspath(os.path.join(_SCRIPTS_DIR, "..", "docs"))

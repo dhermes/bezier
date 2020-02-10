@@ -17,7 +17,7 @@ exact same interface which calls out to a Fortran implementation. The speedup
 will be used if the extension can be built.
 """
 
-from bezier import _py_helpers
+from bezier.hazmat import helpers as _py_helpers
 
 try:
     from bezier import _speedup
