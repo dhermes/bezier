@@ -21,9 +21,6 @@ Plotting utilities are also provided.
 .. |eacute| unicode:: U+000E9 .. LATIN SMALL LETTER E WITH ACUTE
    :trim:
 
-.. autoclass:: UnsupportedDegree
-   :members:
-
 .. autoclass:: Surface
 """
 

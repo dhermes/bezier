@@ -285,7 +285,7 @@ def simple_convex_hull(points):
                    Geometry/Convex_hull/Monotone_chain
 
     This uses Andrew's monotone chain convex hull algorithm and this code
-    used a `wikibooks`_ implementation as motivation. tion. The code there
+    used a `wikibooks`_ implementation as motivation. The code there
     is licensed CC BY-SA 3.0.
 
     .. note::
@@ -454,13 +454,13 @@ def solve2x2(lhs, rhs):
     two calls to ``dgetrf`` and ``dgetrs``. We wrap for two reasons:
 
     * We seek to avoid exceptions as part of the control flow (which is
-      what :func`numpy.linalg.solve` does).
+      what :func:`numpy.linalg.solve` does).
     * We seek to avoid excessive type- and size-checking, since this
       special case is already known.
 
     Args:
-        lhs (numpy.ndarray) A ``2 x 2`` array of real numbers.
-        rhs (numpy.ndarray) A 1D array of 2 real numbers.
+        lhs (numpy.ndarray): A ``2 x 2`` array of real numbers.
+        rhs (numpy.ndarray): A 1D array of 2 real numbers.
 
     Returns:
         Tuple[bool, float, float]: A triple of
