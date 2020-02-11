@@ -605,7 +605,8 @@ contains
     concavity = concavity * (num_nodes - 1) * (num_nodes - 2)
 
     call cross_product(tangent_vec, concavity, curvature)
-    curvature = curvature / norm2(tangent_vec)**3
+    curvature = curvature / sqrt(dot_product(tangent_vec(:, 1), tangent_vec(:, 1)))**3
+    ! curvature = curvature / norm2(tangent_vec)**3
 
   end subroutine get_curvature
 
@@ -662,13 +663,15 @@ contains
     real(c_double), intent(out) :: error
 
     ! If "dim" is not passed to ``norm2``, will be Frobenius norm.
-    error = norm2(nodes - projected)
+    error = sqrt(sum((nodes - projected) * (nodes - projected)))
+    ! error = norm2(nodes - projected)
     if (error == 0.0_dp) then
        return
     end if
 
     ! Make the error relative (in Frobenius norm).
-    error = error / norm2(nodes)
+    error = error / sqrt(sum(nodes * nodes))
+    ! error = error / norm2(nodes)
 
   end subroutine projection_error
 
@@ -825,7 +828,8 @@ contains
        error_val = 0
        return
     else if (num_nodes == 2) then
-       length = norm2(first_deriv)
+       length = sqrt(dot_product(first_deriv(:, 1), first_deriv(:, 1)))
+       ! length = norm2(first_deriv)
        error_val = 0
        return
     end if
@@ -848,7 +852,8 @@ contains
       ! of nodes, so our derivative is one less than that.
       call evaluate_multi( &
            num_nodes - 1, dimension_, first_deriv, 1, [s_val], evaluated)
-      norm_ = norm2(evaluated)
+      norm_ = sqrt(dot_product(evaluated(:, 1), evaluated(:, 1)))
+      ! norm_ = norm2(evaluated)
 
     end function vec_size
 

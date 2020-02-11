@@ -111,15 +111,18 @@ contains
     ! Variables outside of signature.
     real(c_double) :: size1, size2
 
-    size1 = norm2(vec1)
-    size2 = norm2(vec2)
+    size1 = sqrt(dot_product(vec1, vec1))
+    size2 = sqrt(dot_product(vec2, vec2))
+    ! size1 = norm2(vec1)
+    ! size2 = norm2(vec2)
     if (size1 == 0.0_dp) then
        is_close = size2 <= eps
     else if (size2 == 0.0_dp) then
        is_close = size1 <= eps
     else
        ! This is the most common path.
-       is_close = norm2(vec1 - vec2) <= eps * min(size1, size2)
+       is_close = sqrt(dot_product(vec1 - vec2, vec1 - vec2)) <= eps * min(size1, size2)
+       ! is_close = norm2(vec1 - vec2) <= eps * min(size1, size2)
     end if
 
   end function vector_close

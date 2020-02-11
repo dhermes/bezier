@@ -34,7 +34,7 @@ if(${BUILD_SHARED_LIBS})
   set_target_properties(quadpack PROPERTIES POSITION_INDEPENDENT_CODE ON)
 endif()
 
-if(CMAKE_Fortran_COMPILER_ID MATCHES "GNU")
+if(CMAKE_Fortran_COMPILER_ID MATCHES "^GNU$")
   # ``-Wextra`` includes ``no-compare-reals``, but we have comparisons like
   # ``value == 0.0_dp``.
   target_compile_options(
@@ -56,15 +56,31 @@ if(CMAKE_Fortran_COMPILER_ID MATCHES "GNU")
     endif()
     target_compile_options(quadpack PUBLIC -DNDEBUG -O3 -funroll-loops)
   endif()
-elseif(CMAKE_Fortran_COMPILER_ID MATCHES "Intel")
+elseif(CMAKE_Fortran_COMPILER_ID MATCHES "^Intel$")
   target_compile_options(quadpack PUBLIC -warn all)
   if(CMAKE_BUILD_TYPE MATCHES "^Debug$")
     target_compile_options(quadpack PUBLIC -check all)
   elseif(CMAKE_BUILD_TYPE MATCHES "^Release$")
     target_compile_options(quadpack PUBLIC -fast)
   endif()
-elseif(CMAKE_Fortran_COMPILER_ID MATCHES "Flang")
-  message(FATAL_ERROR "TODO: flang")
+elseif(CMAKE_Fortran_COMPILER_ID MATCHES "^Flang$")
+  target_compile_options(
+    quadpack
+    PRIVATE -Wall
+            -Wextra
+            -Wimplicit
+            -ferror-limit=1
+            -std=f2008)
+  if(CMAKE_BUILD_TYPE MATCHES "^Debug$")
+    target_compile_options(quadpack PRIVATE -fcheck=all -fbacktrace
+                                            -fimplicit-none -pedantic)
+    target_compile_options(quadpack PUBLIC -g)
+  elseif(CMAKE_BUILD_TYPE MATCHES "^Release$")
+    if(${TARGET_NATIVE_ARCH})
+      target_compile_options(quadpack PRIVATE -march=native)
+    endif()
+    target_compile_options(quadpack PUBLIC -DNDEBUG -O3 -funroll-loops)
+  endif()
 else()
   message(FATAL_ERROR "gfortran, ifort and flang are the only supported compilers (current compiler ID is ${CMAKE_Fortran_COMPILER_ID})")
 endif()

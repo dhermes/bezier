@@ -112,7 +112,8 @@ contains
          2.0_dp * nodes(:, 2:num_nodes - 1) + &
          nodes(:, 3:))
     worst_case = maxval(abs(second_deriv), 2)
-    error = 0.125_dp * (num_nodes - 1) * (num_nodes - 2) * norm2(worst_case)
+    error = 0.125_dp * (num_nodes - 1) * (num_nodes - 2) * sqrt(dot_product(worst_case, worst_case))
+    ! error = 0.125_dp * (num_nodes - 1) * (num_nodes - 2) * norm2(worst_case)
 
   end subroutine linearization_error
 
@@ -574,7 +575,8 @@ contains
        end if
 
        norm_update_prev = norm_update
-       norm_update = norm2([delta_s, delta_t])
+       norm_update = sqrt(delta_s * delta_s + delta_t * delta_t)
+       ! norm_update = norm2([delta_s, delta_t])
        ! If ||p{n} - p{n-1}|| > 0.25 ||p{n-1} - p{n-2}||, then that means
        ! our convergence is acting linear at the current step.
        if (i > 1 .AND. norm_update > 0.25 * norm_update_prev) then
@@ -587,7 +589,8 @@ contains
        end if
 
        ! Determine the norm of the "old" solution before updating.
-       norm_soln = norm2([new_s, new_t])
+       norm_soln = sqrt(new_s * new_s + new_t * new_t)
+       ! norm_soln = norm2([new_s, new_t])
        new_s = new_s - delta_s
        new_t = new_t - delta_t
 
@@ -1084,7 +1087,8 @@ contains
        workspace(2) = t
     end if
 
-    norm_candidate = norm2(workspace)
+    norm_candidate = sqrt(dot_product(workspace, workspace))
+    ! norm_candidate = norm2(workspace)
     ! First, check if the intersection is a duplicate (up to precision,
     ! determined by ``ulps_away``).
     do index_ = 1, num_intersections
@@ -1095,7 +1099,8 @@ contains
        !       precision.
        workspace(1) = s - intersections(1, index_)
        workspace(2) = t - intersections(2, index_)
-       if (norm2(workspace) < NEWTON_ERROR_RATIO * norm_candidate) then
+       ! if (norm2(workspace) < NEWTON_ERROR_RATIO * norm_candidate) then
+       if (sqrt(dot_product(workspace, workspace)) < NEWTON_ERROR_RATIO * norm_candidate) then
           return
        end if
     end do
