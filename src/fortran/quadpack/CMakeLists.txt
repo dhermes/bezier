@@ -5,8 +5,8 @@ project(
   DESCRIPTION "Library for numerical integration of one-dimensional functions."
   LANGUAGES Fortran)
 
-if(NOT CMAKE_Fortran_COMPILER_ID MATCHES "^(GNU|Intel)$")
-  message(FATAL_ERROR "gfortran and ifort are the only supported compilers")
+if(NOT CMAKE_Fortran_COMPILER_ID MATCHES "^(GNU|Intel|Flang)$")
+  message(FATAL_ERROR "gfortran, ifort and flang are the only supported compilers (current compiler ID is ${CMAKE_Fortran_COMPILER_ID})")
 endif()
 
 if(NOT CMAKE_BUILD_TYPE)
@@ -63,8 +63,10 @@ elseif(CMAKE_Fortran_COMPILER_ID MATCHES "Intel")
   elseif(CMAKE_BUILD_TYPE MATCHES "^Release$")
     target_compile_options(quadpack PUBLIC -fast)
   endif()
+elseif(CMAKE_Fortran_COMPILER_ID MATCHES "Flang")
+  message(FATAL_ERROR "TODO: flang")
 else()
-  message(FATAL_ERROR "gfortran and ifort are the only supported compilers")
+  message(FATAL_ERROR "gfortran, ifort and flang are the only supported compilers (current compiler ID is ${CMAKE_Fortran_COMPILER_ID})")
 endif()
 
 # Restore all Fortran flags.

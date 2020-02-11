@@ -11,8 +11,8 @@ set(DESCRIPTION "Library for Bezier curves and triangles.")
 option(BUILD_SHARED_LIBS "Build shared libraries" ON)
 option(TARGET_NATIVE_ARCH "Optimize build for host (native) architecture" ON)
 
-if(NOT CMAKE_Fortran_COMPILER_ID MATCHES "^(GNU|Intel)$")
-  message(FATAL_ERROR "gfortran and ifort are the only supported compilers")
+if(NOT CMAKE_Fortran_COMPILER_ID MATCHES "^(GNU|Intel|Flang)$")
+  message(FATAL_ERROR "gfortran, ifort and flang are the only supported compilers (current compiler ID is ${CMAKE_Fortran_COMPILER_ID})")
 endif()
 
 if(NOT CMAKE_BUILD_TYPE)
@@ -33,7 +33,7 @@ if(WIN32 AND CMAKE_Fortran_COMPILER_ID MATCHES "GNU")
 endif()
 
 if(NOT CMAKE_BUILD_TYPE MATCHES "^(Debug|Release)$")
-  message(FATAL_ERROR "Debug and Release are the only supported build types")
+  message(FATAL_ERROR "Debug and Release are the only supported build types (current build type is ${CMAKE_BUILD_TYPE})")
 endif()
 
 # Unset all Fortran flags (instead rely on our flags).
@@ -90,8 +90,10 @@ elseif(CMAKE_Fortran_COMPILER_ID MATCHES "Intel")
   elseif(CMAKE_BUILD_TYPE MATCHES "^Release$")
     target_compile_options(quadpack PUBLIC -fast)
   endif()
+elseif(CMAKE_Fortran_COMPILER_ID MATCHES "Flang")
+  message(FATAL_ERROR "TODO: flang")
 else()
-  message(FATAL_ERROR "gfortran and ifort are the only supported compilers")
+  message(FATAL_ERROR "gfortran, ifort and flang are the only supported compilers (current compiler ID is ${CMAKE_Fortran_COMPILER_ID})")
 endif()
 
 include(GNUInstallDirs)
