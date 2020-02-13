@@ -48,7 +48,7 @@ from bezier import _geometric_intersection
 from bezier import _helpers
 from bezier import _intersection_helpers
 from bezier import _py_geometric_intersection
-from bezier import _py_helpers
+from bezier.hazmat import helpers as _py_helpers
 
 
 # NOTE: These are hardcoded from:

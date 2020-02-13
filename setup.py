@@ -233,7 +233,7 @@ def setup():
             "Issue Tracker": "https://github.com/dhermes/bezier/issues",
         },
         keywords=["Geometry", "Curve", "Bezier", "Intersection", "Python"],
-        packages=["bezier"],
+        packages=["bezier", "bezier.hazmat"],
         package_dir={"": os.path.join("src", "python")},
         license="Apache 2.0",
         platforms="Posix; macOS; Windows",

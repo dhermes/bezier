@@ -22,8 +22,8 @@ import operator
 import numpy as np
 
 from bezier import _py_curve_helpers
-from bezier import _py_helpers
 from bezier import _py_intersection_helpers
+from bezier.hazmat import helpers as _py_helpers
 
 
 _MAX_POLY_SUBDIVISIONS = 5

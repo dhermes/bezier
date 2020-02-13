@@ -12,3 +12,10 @@ Submodules
    bezier.curve
    bezier.curved_polygon
    bezier.triangle
+
+Subpackages
+-----------
+
+.. toctree::
+
+   bezier.hazmat

@@ -210,7 +210,7 @@ class Test_de_casteljau_one_round(utils.NumPyTestCase):
         self.assertEqual(result, expected)
 
     def test_cubic(self):
-        from bezier import _py_helpers
+        from bezier.hazmat import helpers
 
         nodes = np.asfortranarray(
             [
@@ -235,7 +235,7 @@ class Test_de_casteljau_one_round(utils.NumPyTestCase):
                 [0.0, 0.0, 0.0, 0.0, 0.0, t_val],
             ]
         )
-        expected = _py_helpers.matrix_product(nodes, transform)
+        expected = helpers.matrix_product(nodes, transform)
         result = self._call_function_under_test(
             nodes, 3, lambda1, s_val, t_val
         )
@@ -2313,11 +2313,11 @@ class Test_shoelace_for_area(unittest.TestCase):
         self.assertEqual(shoelace_val, 4.0)
 
     def test_unsupported_degree(self):
-        from bezier import _py_helpers
+        from bezier.hazmat import helpers
 
         degree = 5
         edge_nodes = np.empty((2, degree + 1), order="F")
-        with self.assertRaises(_py_helpers.UnsupportedDegree) as exc_info:
+        with self.assertRaises(helpers.UnsupportedDegree) as exc_info:
             self._call_function_under_test(edge_nodes)
 
         self.assertEqual(exc_info.exception.degree, degree)
@@ -2353,11 +2353,11 @@ class Test_compute_area(unittest.TestCase):
         utils.almost(self, 4.0 / 3.0, area, 1)
 
     def test_unsupported_degree(self):
-        from bezier import _py_helpers
+        from bezier.hazmat import helpers
 
         degree = 5
         edge1 = np.empty((2, degree + 1), order="F")
-        with self.assertRaises(_py_helpers.UnsupportedDegree) as exc_info:
+        with self.assertRaises(helpers.UnsupportedDegree) as exc_info:
             self._call_function_under_test((edge1,))
 
         self.assertEqual(exc_info.exception.degree, degree)

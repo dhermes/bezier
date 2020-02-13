@@ -21,7 +21,7 @@ import enum
 import numpy as np
 
 from bezier import _py_curve_helpers
-from bezier import _py_helpers
+from bezier.hazmat import helpers as _py_helpers
 
 
 # For ``full_newton()``.
@@ -337,7 +337,7 @@ def newton_refine(s, nodes1, t, nodes2):
     .. testsetup:: newton-refine4
 
        import numpy as np
-       from bezier import _py_helpers
+       from bezier.hazmat import helpers
 
        def modified_update(s, t):
            minus_G = np.asfortranarray([
@@ -352,8 +352,8 @@ def newton_refine(s, nodes1, t, nodes2):
            ])
            DG_t = np.asfortranarray(DG.T)
 
-           LHS = _py_helpers.matrix_product(DG_t, DG)
-           RHS = _py_helpers.matrix_product(DG_t, minus_G)
+           LHS = helpers.matrix_product(DG_t, DG)
+           RHS = helpers.matrix_product(DG_t, minus_G)
            delta_params = np.linalg.solve(LHS, RHS)
            delta_s, delta_t = delta_params.flatten()
            return s + delta_s, t + delta_t

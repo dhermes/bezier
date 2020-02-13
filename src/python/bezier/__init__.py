@@ -21,9 +21,6 @@ Plotting utilities are also provided.
 .. |eacute| unicode:: U+000E9 .. LATIN SMALL LETTER E WITH ACUTE
    :trim:
 
-.. autoclass:: UnsupportedDegree
-   :members:
-
 .. autoclass:: Surface
 """
 
@@ -31,9 +28,9 @@ Plotting utilities are also provided.
 #       modify the search path used to locate shared libraries.
 from bezier import __config__
 from bezier._legacy import Surface
-from bezier._py_helpers import UnsupportedDegree
 from bezier.curve import Curve
 from bezier.curved_polygon import CurvedPolygon
+from bezier.hazmat.helpers import UnsupportedDegree
 from bezier.triangle import Triangle
 
 try:

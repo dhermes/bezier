@@ -316,7 +316,7 @@ def reduce_pseudo_inverse(double[::1, :] nodes):
     if not_implemented:
         # NOTE: This import at runtime is expensive, but we don't mind it
         #       because the exception is intended to halt the program.
-        from bezier._py_helpers import UnsupportedDegree
+        from bezier.hazmat.helpers import UnsupportedDegree
         raise UnsupportedDegree(num_nodes - 1, supported=(1, 2, 3, 4))
 
     return reduced
@@ -343,7 +343,7 @@ def full_reduce(double[::1, :] nodes):
     if not_implemented:
         # NOTE: This import at runtime is expensive, but we don't mind it
         #       because the exception is intended to halt the program.
-        from bezier._py_helpers import UnsupportedDegree
+        from bezier.hazmat.helpers import UnsupportedDegree
         raise UnsupportedDegree(num_nodes - 1, supported=(0, 1, 2, 3, 4))
 
     if num_reduced_nodes == num_nodes:
@@ -874,7 +874,7 @@ def compute_area(tuple edges):
 
             # NOTE: This import at runtime is expensive, but we don't mind it
             #       because the exception is intended to halt the program.
-            from bezier._py_helpers import UnsupportedDegree
+            from bezier.hazmat.helpers import UnsupportedDegree
             raise UnsupportedDegree(num_nodes - 1, supported=(1, 2, 3, 4))
 
         sizes[i] = num_nodes

@@ -19,9 +19,9 @@ import numpy as np
 
 from bezier import _algebraic_intersection
 from bezier import _py_geometric_intersection
-from bezier import _py_helpers
 from bezier import _py_intersection_helpers
 from bezier import _py_triangle_helpers
+from bezier.hazmat import helpers as _py_helpers
 
 
 MAX_LOCATE_SUBDIVISIONS = 20

@@ -43,7 +43,7 @@ def vector_close(vec1, vec2, eps=_EPS):
 
        This function assumes that both vectors have finite values,
        i.e. that no NaN or infinite numbers occur. NumPy provides
-       :func:`np.allclose` for coverage of **all** cases.
+       :func:`numpy.allclose` for coverage of **all** cases.
 
     .. note::
 
@@ -197,8 +197,8 @@ def matrix_product(mat1, mat2):
 def wiggle_interval(value, wiggle=0.5 ** 44):
     r"""Check if ``value`` is in :math:`\left[0, 1\right]`.
 
-    Allows a little bit of wiggle room outside the interval. Any value
-    within ``wiggle`` of ``0.0` will be converted to ``0.0` and similar
+    Allows a little bit of wiggle room outside the interval. A value
+    within ``wiggle`` of ``0.0`` will be converted to ``0.0`` and similar
     for ``1.0``.
 
     .. note::
@@ -209,12 +209,12 @@ def wiggle_interval(value, wiggle=0.5 ** 44):
     Args:
         value (float): Value to check in interval.
         wiggle (Optional[float]): The amount of wiggle room around the
-            the endpoints ``0.0`` and ``1.0``.
+            the endpoints ``0.0`` and ``1.0``. Defaults to :math:`2^{-44}`.
 
     Returns:
         Tuple[float, bool]: Pair of
 
-        * The ``value`` if it's in the interval, or ``0`` or ``1``
+        * The ``value`` if it's in the interval, or ``0.0`` or ``1.0``
           if the value lies slightly outside. If the ``value`` is
           too far outside the unit interval, will be NaN.
         * Boolean indicating if the ``value`` is inside the unit interval.
@@ -285,7 +285,7 @@ def simple_convex_hull(points):
                    Geometry/Convex_hull/Monotone_chain
 
     This uses Andrew's monotone chain convex hull algorithm and this code
-    used a `wikibooks`_ implementation as motivation. tion. The code there
+    used a `wikibooks`_ implementation as motivation. The code there
     is licensed CC BY-SA 3.0.
 
     .. note::
@@ -454,13 +454,13 @@ def solve2x2(lhs, rhs):
     two calls to ``dgetrf`` and ``dgetrs``. We wrap for two reasons:
 
     * We seek to avoid exceptions as part of the control flow (which is
-      what :func`numpy.linalg.solve` does).
+      what :func:`numpy.linalg.solve` does).
     * We seek to avoid excessive type- and size-checking, since this
       special case is already known.
 
     Args:
-        lhs (numpy.ndarray) A ``2 x 2`` array of real numbers.
-        rhs (numpy.ndarray) A 1D array of 2 real numbers.
+        lhs (numpy.ndarray): A ``2 x 2`` array of real numbers.
+        rhs (numpy.ndarray): A 1D array of 2 real numbers.
 
     Returns:
         Tuple[bool, float, float]: A triple of
@@ -538,8 +538,9 @@ class UnsupportedDegree(NotImplementedError):
        >>> curve.reduce_()
        Traceback (most recent call last):
          ...
-       bezier._py_helpers.UnsupportedDegree: The only degrees supported at this
-                                             time are 1, 2, 3 and 4 (degree=5)
+       bezier.hazmat.helpers.UnsupportedDegree: The only degrees supported at
+                                                this time are 1, 2, 3 and
+                                                4 (degree=5)
 
     Args:
         degree (int): The degree that is not possible to support.

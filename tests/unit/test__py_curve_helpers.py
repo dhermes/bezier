@@ -671,13 +671,13 @@ class Test_reduce_pseudo_inverse(utils.NumPyTestCase):
 
     def _actually_inverse_helper(self, degree):
         from bezier import _py_curve_helpers
-        from bezier import _py_helpers
+        from bezier.hazmat import helpers
 
         nodes = np.eye(degree + 2, order="F")
         reduction_mat = self._call_function_under_test(nodes)
         id_mat = np.eye(degree + 1, order="F")
         elevation_mat = _py_curve_helpers.elevate_nodes(id_mat)
-        result = _py_helpers.matrix_product(elevation_mat, reduction_mat)
+        result = helpers.matrix_product(elevation_mat, reduction_mat)
         return result, id_mat
 
     def test_to_linear_actually_inverse(self):
@@ -725,13 +725,13 @@ class Test_reduce_pseudo_inverse(utils.NumPyTestCase):
         self.assertLess(max_err, self.EPS)
 
     def test_unsupported_degree(self):
-        from bezier import _py_helpers
+        from bezier.hazmat import helpers
 
         degree = 5
         nodes = utils.get_random_nodes(
             shape=(2, degree + 1), seed=3820, num_bits=8
         )
-        with self.assertRaises(_py_helpers.UnsupportedDegree) as exc_info:
+        with self.assertRaises(helpers.UnsupportedDegree) as exc_info:
             self._call_function_under_test(nodes)
         self.assertEqual(exc_info.exception.degree, degree)
         self.assertEqual(exc_info.exception.supported, (1, 2, 3, 4))
@@ -817,13 +817,13 @@ class Test_maybe_reduce(utils.NumPyTestCase):
         self.assertEqual(expected, new_nodes)
 
     def test_unsupported_degree(self):
-        from bezier import _py_helpers
+        from bezier.hazmat import helpers
 
         degree = 5
         nodes = utils.get_random_nodes(
             shape=(2, degree + 1), seed=77618, num_bits=8
         )
-        with self.assertRaises(_py_helpers.UnsupportedDegree) as exc_info:
+        with self.assertRaises(helpers.UnsupportedDegree) as exc_info:
             self._call_function_under_test(nodes)
         self.assertEqual(exc_info.exception.degree, degree)
         self.assertEqual(exc_info.exception.supported, (0, 1, 2, 3, 4))
@@ -862,13 +862,13 @@ class Test_full_reduce(utils.NumPyTestCase):
         self.assertIs(new_nodes, nodes)
 
     def test_unsupported_degree(self):
-        from bezier import _py_helpers
+        from bezier.hazmat import helpers
 
         degree = 5
         nodes = utils.get_random_nodes(
             shape=(2, degree + 1), seed=360009, num_bits=8
         )
-        with self.assertRaises(_py_helpers.UnsupportedDegree) as exc_info:
+        with self.assertRaises(helpers.UnsupportedDegree) as exc_info:
             self._call_function_under_test(nodes)
         self.assertEqual(exc_info.exception.degree, degree)
         self.assertEqual(exc_info.exception.supported, (0, 1, 2, 3, 4))

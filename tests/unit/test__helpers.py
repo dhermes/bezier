@@ -10,12 +10,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from tests.unit import test__py_helpers
 from tests.unit import utils
+from tests.unit.hazmat import test_helpers
 
 
 @utils.needs_speedup
-class Test_speedup_vector_close(test__py_helpers.Test_vector_close):
+class Test_speedup_vector_close(test_helpers.Test_vector_close):
     @staticmethod
     def _call_function_under_test(vec1, vec2, **kwargs):
         from bezier import _speedup
@@ -24,7 +24,7 @@ class Test_speedup_vector_close(test__py_helpers.Test_vector_close):
 
 
 @utils.needs_speedup
-class Test_speedup_in_interval(test__py_helpers.Test_in_interval):
+class Test_speedup_in_interval(test_helpers.Test_in_interval):
     @staticmethod
     def _call_function_under_test(value, start, end):
         from bezier import _speedup
@@ -33,7 +33,7 @@ class Test_speedup_in_interval(test__py_helpers.Test_in_interval):
 
 
 @utils.needs_speedup
-class Test_speedup_bbox(test__py_helpers.Test_bbox):
+class Test_speedup_bbox(test_helpers.Test_bbox):
     @staticmethod
     def _call_function_under_test(nodes):
         from bezier import _speedup
@@ -42,7 +42,7 @@ class Test_speedup_bbox(test__py_helpers.Test_bbox):
 
 
 @utils.needs_speedup
-class Test_speedup_contains_nd(test__py_helpers.Test_contains_nd):
+class Test_speedup_contains_nd(test_helpers.Test_contains_nd):
     @staticmethod
     def _call_function_under_test(nodes, point):
         from bezier import _speedup
@@ -51,7 +51,7 @@ class Test_speedup_contains_nd(test__py_helpers.Test_contains_nd):
 
 
 @utils.needs_speedup
-class Test_speedup_cross_product(test__py_helpers.Test_cross_product):
+class Test_speedup_cross_product(test_helpers.Test_cross_product):
     @staticmethod
     def _call_function_under_test(vec0, vec1):
         from bezier import _speedup
@@ -60,7 +60,7 @@ class Test_speedup_cross_product(test__py_helpers.Test_cross_product):
 
 
 @utils.needs_speedup
-class Test_speedup_wiggle_interval(test__py_helpers.Test_wiggle_interval):
+class Test_speedup_wiggle_interval(test_helpers.Test_wiggle_interval):
     def _call_function_under_test(self, value, **kwargs):
         from bezier import _speedup
 
@@ -76,9 +76,7 @@ class Test_speedup_wiggle_interval(test__py_helpers.Test_wiggle_interval):
 
 
 @utils.needs_speedup
-class Test_speedup_simple_convex_hull(
-    test__py_helpers.Test_simple_convex_hull
-):
+class Test_speedup_simple_convex_hull(test_helpers.Test_simple_convex_hull):
     @staticmethod
     def _call_function_under_test(points):
         from bezier import _speedup
@@ -87,7 +85,7 @@ class Test_speedup_simple_convex_hull(
 
 
 @utils.needs_speedup
-class Test_speedup_polygon_collide(test__py_helpers.Test_polygon_collide):
+class Test_speedup_polygon_collide(test_helpers.Test_polygon_collide):
     @staticmethod
     def _call_function_under_test(polygon1, polygon2):
         from bezier import _speedup
