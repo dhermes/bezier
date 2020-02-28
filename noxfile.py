@@ -36,6 +36,7 @@ DEPS = {
     "docutils": "docutils",
     "flake8": "flake8",
     "flake8-import-order": "flake8-import-order",
+    "importlib-metadata": 'importlib-metadata; :python_version<"3.8"',
     "jsonschema": "jsonschema >= 3.2.0",
     "lcov_cobertura": "lcov_cobertura",
     "machomachomangler": "machomachomangler == 0.0.1",
@@ -50,7 +51,7 @@ DEPS = {
     "sympy": "sympy >= 1.5.1",
     "seaborn": "seaborn >= 0.9.0",
 }
-BASE_DEPS = (DEPS["numpy"], DEPS["pytest"])
+BASE_DEPS = (DEPS["numpy"], DEPS["pytest"], DEPS["importlib-metadata"])
 NOX_DIR = os.path.abspath(os.path.dirname(__file__))
 DOCS_DEPS = (
     "--requirement",
@@ -272,6 +273,7 @@ def docs_images(session):
     # Install all dependencies.
     local_deps = DOCS_DEPS
     local_deps += (
+        DOCS["importlib-metadata"],
         DEPS["matplotlib"],
         DEPS["pytest"],
         DEPS["seaborn"],
