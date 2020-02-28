@@ -36,7 +36,7 @@ DEPS = {
     "docutils": "docutils",
     "flake8": "flake8",
     "flake8-import-order": "flake8-import-order",
-    "importlib-metadata": 'importlib-metadata; :python_version<"3.8"',
+    "importlib-metadata": 'importlib-metadata; python_version<"3.8"',
     "jsonschema": "jsonschema >= 3.2.0",
     "lcov_cobertura": "lcov_cobertura",
     "machomachomangler": "machomachomangler == 0.0.1",
