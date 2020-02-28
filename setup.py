@@ -62,8 +62,13 @@ will be modified.
 #       DLL in cases where that matters (i.e. ``doctest``.)
 DLL_HASH_ENV = "BEZIER_DLL_HASH"
 REQUIREMENTS = ("numpy >= 1.18.1",)
+# See: https://www.python.org/dev/peps/pep-0508/
+#      Dependency specification for Python Software Packages
 EXTRAS_REQUIRE = {
-    "full": ["matplotlib >= 3.0.0", "scipy >= 1.4.1", "sympy >= 1.5.1"]
+    "full": ["matplotlib >= 3.0.0", "scipy >= 1.4.1", "sympy >= 1.5.1"],
+    ':python_version<"3.8" and platform_system=="Windows"': [
+        "importlib-metadata"
+    ],
 }
 DESCRIPTION = (
     "Helper for B\u00e9zier Curves, Triangles, and Higher Order Objects"

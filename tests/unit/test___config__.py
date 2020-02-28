@@ -10,9 +10,46 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+try:
+    import importlib.metadata as importlib_metadata
+except ImportError:  # pragma: NO COVER
+    import importlib_metadata
 import os
+import pathlib
 import unittest
 import unittest.mock
+
+
+MOCK_PACKAGE_PATH = importlib_metadata.PackagePath("extra-dll", "bezier.dll")
+MOCK_PACKAGE_PATH.dist = importlib_metadata.PathDistribution(pathlib.Path(""))
+
+
+class Test__get_extra_dll_dir(unittest.TestCase):
+    @staticmethod
+    def _call_function_under_test(bezier_files):
+        from bezier import __config__
+
+        return __config__._get_extra_dll_dir(bezier_files)
+
+    def test_no_matches(self):
+        with self.assertRaises(ImportError) as exc_info:
+            self._call_function_under_test(())
+
+        expected = ("No DLL directory found", ())
+        self.assertEqual(exc_info.exception.args, expected)
+
+    def test_multiple_choices_with_match(self):
+        mock_path1 = importlib_metadata.PackagePath("bezier", "__config__.py")
+        mock_path1.dist = MOCK_PACKAGE_PATH.dist
+        mock_path2 = importlib_metadata.PackagePath(
+            "bezier", "extra-dll", "bezier.dll"
+        )
+        mock_path2.dist = MOCK_PACKAGE_PATH.dist
+        bezier_files = (mock_path1, mock_path2)
+
+        extra_dll_dir = self._call_function_under_test(bezier_files)
+        expected = os.path.sep.join(mock_path2.parent.parts)
+        self.assertEqual(extra_dll_dir, expected)
 
 
 class Test_modify_path(unittest.TestCase):
@@ -29,78 +66,79 @@ class Test_modify_path(unittest.TestCase):
         self.assertEqual(os.environ, {})
 
     @unittest.mock.patch.multiple(os, name="nt", environ={})
-    @unittest.mock.patch(
-        "pkg_resources.resource_filename", side_effect=ImportError
+    @unittest.mock.patch.object(
+        importlib_metadata,
+        "files",
+        side_effect=importlib_metadata.PackageNotFoundError,
     )
-    def test_windows_without_dll(self, resource_filename):
+    def test_windows_without_dll(self, metadata_files):
         return_value = self._call_function_under_test()
         self.assertIsNone(return_value)
         self.assertEqual(os.environ, {})
         # Check mock.
-        resource_filename.assert_called_once_with("bezier", "extra-dll")
+        metadata_files.assert_called_once_with("bezier")
 
     @unittest.mock.patch.multiple(
         os, name="nt", environ={"PATH": "before" + os.pathsep}
     )
     @unittest.mock.patch("os.path.isdir", return_value=True)
-    @unittest.mock.patch(
-        "pkg_resources.resource_filename", return_value="not-a-path"
+    @unittest.mock.patch.object(
+        importlib_metadata, "files", return_value=(MOCK_PACKAGE_PATH,)
     )
     @unittest.mock.patch("bezier.__config__.OS_ADD_DLL_DIRECTORY", new=None)
-    def test_windows_with_dll(self, resource_filename, isdir):
+    def test_windows_with_dll(self, metadata_files, isdir):
         return_value = self._call_function_under_test()
         self.assertIsNone(return_value)
-        expected_path = "before" + os.pathsep + resource_filename.return_value
+        expected_path = "before" + os.pathsep + str(MOCK_PACKAGE_PATH.parent)
         self.assertEqual(os.environ, {"PATH": expected_path})
         # Check mocks.
-        resource_filename.assert_called_once_with("bezier", "extra-dll")
-        isdir.assert_called_once_with(resource_filename.return_value)
+        metadata_files.assert_called_once_with("bezier")
+        isdir.assert_called_once_with("extra-dll")
 
     @unittest.mock.patch.multiple(os, name="nt", environ={})
     @unittest.mock.patch("os.path.isdir", return_value=True)
-    @unittest.mock.patch(
-        "pkg_resources.resource_filename", return_value="not-a-path"
+    @unittest.mock.patch.object(
+        importlib_metadata, "files", return_value=(MOCK_PACKAGE_PATH,)
     )
     @unittest.mock.patch("bezier.__config__.OS_ADD_DLL_DIRECTORY", new=None)
-    def test_windows_with_dll_no_path(self, resource_filename, isdir):
+    def test_windows_with_dll_no_path(self, metadata_files, isdir):
         return_value = self._call_function_under_test()
         self.assertIsNone(return_value)
-        self.assertEqual(os.environ, {"PATH": resource_filename.return_value})
+        expected_path = str(MOCK_PACKAGE_PATH.parent)
+        self.assertEqual(os.environ, {"PATH": expected_path})
         # Check mocks.
-        resource_filename.assert_called_once_with("bezier", "extra-dll")
-        isdir.assert_called_once_with(resource_filename.return_value)
+        metadata_files.assert_called_once_with("bezier")
+        isdir.assert_called_once_with("extra-dll")
 
     @unittest.mock.patch.multiple(os, name="nt", environ={})
     @unittest.mock.patch("os.path.isdir", return_value=True)
-    @unittest.mock.patch(
-        "pkg_resources.resource_filename", return_value="not-a-path"
+    @unittest.mock.patch.object(
+        importlib_metadata, "files", return_value=(MOCK_PACKAGE_PATH,)
     )
     @unittest.mock.patch("bezier.__config__.OS_ADD_DLL_DIRECTORY")
     def test_windows_with_dll_at_least_38(
-        self, os_add_dll_directory, resource_filename, isdir
+        self, os_add_dll_directory, metadata_files, isdir
     ):
         return_value = self._call_function_under_test()
         self.assertIsNone(return_value)
         self.assertEqual(os.environ, {})
         # Check mocks.
-        resource_filename.assert_called_once_with("bezier", "extra-dll")
-        isdir.assert_called_once_with(resource_filename.return_value)
-        os_add_dll_directory.assert_called_once_with(
-            resource_filename.return_value
-        )
+        metadata_files.assert_called_once_with("bezier")
+        isdir.assert_called_once_with("extra-dll")
+        os_add_dll_directory.assert_called_once_with("extra-dll")
 
     @unittest.mock.patch.multiple(os, name="nt", environ={})
     @unittest.mock.patch("os.path.isdir", return_value=False)
-    @unittest.mock.patch(
-        "pkg_resources.resource_filename", return_value="not-a-path"
+    @unittest.mock.patch.object(
+        importlib_metadata, "files", return_value=(MOCK_PACKAGE_PATH,)
     )
-    def test_windows_with_dll_but_not_a_dir(self, resource_filename, isdir):
+    def test_windows_with_dll_but_not_a_dir(self, metadata_files, isdir):
         return_value = self._call_function_under_test()
         self.assertIsNone(return_value)
         self.assertEqual(os.environ, {})
         # Check mocks.
-        resource_filename.assert_called_once_with("bezier", "extra-dll")
-        isdir.assert_called_once_with(resource_filename.return_value)
+        metadata_files.assert_called_once_with("bezier")
+        isdir.assert_called_once_with("extra-dll")
 
 
 class Test_handle_import_error(unittest.TestCase):
