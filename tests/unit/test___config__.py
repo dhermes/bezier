@@ -48,7 +48,8 @@ class Test__get_extra_dll_dir(unittest.TestCase):
         bezier_files = (mock_path1, mock_path2)
 
         extra_dll_dir = self._call_function_under_test(bezier_files)
-        self.assertEqual(extra_dll_dir, str(mock_path2.parent))
+        expected = os.path.sep.join(mock_path2.parent.parts)
+        self.assertEqual(extra_dll_dir, expected)
 
 
 class Test_modify_path(unittest.TestCase):
