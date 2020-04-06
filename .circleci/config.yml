@@ -12,6 +12,9 @@ jobs:
       - checkout
       - setup_remote_docker
       - run:
+          name: Run all doctests
+          command: nox -s doctest
+      - run:
           name: Check that all Cython generated files have been updated
           command: nox -s "update_generated(check=True)"
       - run:
@@ -32,9 +35,6 @@ jobs:
       - run:
           name: Functional tests in Python 3.8
           command: nox -s "functional-3.8"
-      - run:
-          name: Run all doctests
-          command: nox -s doctest
       - run:
           name: Build docs
           command: nox -s docs
