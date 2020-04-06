@@ -79,6 +79,11 @@ with a modified ``libbezier`` and all of its dependencies (e.g.
 
    >>> libs_directory
    '.../site-packages/bezier/.libs'
+   >>> libs_parent = os.path.dirname(libs_directory)  # Temporary
+   >>> libs_parent  # Temporary
+   '.../site-packages/bezier'
+   >>> print_tree(libs_parent)  # Temporary
+   -1
    >>> print_tree(libs_directory)
    .libs/
      libbezier-28a97ca3.so.2020.2.3
