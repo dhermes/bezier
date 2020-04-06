@@ -74,23 +74,6 @@ with a modified ``libbezier`` and all of its dependencies (e.g.
        output_bytes = subprocess.check_output(args, cwd=base_dir)
        print(output_bytes.decode("utf-8"), end="")
 
-.. doctest:: linux-libs
-   :linux-only:
-
-   >>> libs_directory
-   '.../site-packages/bezier/.libs'
-   >>> libs_parent = os.path.dirname(libs_directory)  # Temporary
-   >>> libs_parent  # Temporary
-   '.../site-packages/bezier'
-   >>> print_tree(libs_parent)  # Temporary
-   -1
-   >>> print_tree(libs_directory)
-   .libs/
-     libbezier-28a97ca3.so.2020.2.3
-     libgfortran-2e0d59d6.so.5.0.0
-     libquadmath-2d0c479f.so.0.0.0
-     libz-eb09ad1d.so.1.2.3
-
 The ``bezier._speedup`` module depends on this local copy of ``libbezier``:
 
 .. testcode:: linux-readelf-py
@@ -154,6 +137,23 @@ and the local copy of ``libbezier`` depends on the other dependencies in
    relative to the directory where the extension module (``.so`` file) is.
 
 .. _auditwheel: https://github.com/pypa/auditwheel
+
+.. doctest:: linux-libs
+   :linux-only:
+
+   >>> libs_directory
+   '.../site-packages/bezier/.libs'
+   >>> libs_parent = os.path.dirname(libs_directory)  # Temporary
+   >>> libs_parent  # Temporary
+   '.../site-packages/bezier'
+   >>> print_tree(libs_parent)  # Temporary
+   -1
+   >>> print_tree(libs_directory)
+   .libs/
+     libbezier-28a97ca3.so.2020.2.3
+     libgfortran-2e0d59d6.so.5.0.0
+     libquadmath-2d0c479f.so.0.0.0
+     libz-eb09ad1d.so.1.2.3
 
 macOS
 =====
