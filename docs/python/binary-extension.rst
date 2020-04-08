@@ -45,9 +45,9 @@ against these local copies of dependencies.
 Linux
 =====
 
-The command line tool `auditwheel`_ adds a ``bezier/.libs`` directory
-with a modified ``libbezier`` and all of its dependencies (e.g.
-``libgfortran``)
+The command line tool `auditwheel`_ adds a ``bezier.libs`` directory to
+``site-packages`` (i.e. it is **next to** ``bezier``) with a modified
+``libbezier`` and all of its dependencies (e.g. ``libgfortran``)
 
 .. testsetup:: linux-libs, linux-readelf-py, linux-readelf-lib, macos-dylibs,
                macos-extension, macos-delocated-libgfortran
@@ -64,7 +64,7 @@ with a modified ``libbezier`` and all of its dependencies (e.g.
    # macOS specific.
    dylibs_directory = os.path.join(base_dir, ".dylibs")
    # Linux specific.
-   libs_directory = os.path.join(base_dir, ".libs")
+   libs_directory = os.path.abspath(os.path.join(base_dir, "..", "bezier.libs"))
 
 
    def invoke_shell(*args):
@@ -78,9 +78,9 @@ with a modified ``libbezier`` and all of its dependencies (e.g.
    :linux-only:
 
    >>> libs_directory
-   '.../site-packages/bezier/.libs'
+   '.../site-packages/bezier.libs'
    >>> print_tree(libs_directory)
-   .libs/
+   bezier.libs/
      libbezier-28a97ca3.so.2020.2.3
      libgfortran-2e0d59d6.so.5.0.0
      libquadmath-2d0c479f.so.0.0.0
@@ -100,7 +100,7 @@ The ``bezier._speedup`` module depends on this local copy of ``libbezier``:
 
    Dynamic section at offset 0x43e000 contains 27 entries:
      Tag        Type                         Name/Value
-    0x000000000000000f (RPATH)              Library rpath: [$ORIGIN/.libs]
+    0x000000000000000f (RPATH)              Library rpath: [$ORIGIN/../bezier.libs]
     0x0000000000000001 (NEEDED)             Shared library: [libbezier-28a97ca3.so.2020.2.3]
     0x0000000000000001 (NEEDED)             Shared library: [libpthread.so.0]
     0x0000000000000001 (NEEDED)             Shared library: [libc.so.6]
@@ -108,18 +108,18 @@ The ``bezier._speedup`` module depends on this local copy of ``libbezier``:
    ...
 
 and the local copy of ``libbezier`` depends on the other dependencies in
-``.libs/`` (both directly and indirectly):
+``bezier.libs/`` (both directly and indirectly):
 
 .. testcode:: linux-readelf-lib
    :hide:
 
-   invoke_shell("readelf", "-d", ".libs/libbezier-28a97ca3.so.2020.2.3")
-   invoke_shell("readelf", "-d", ".libs/libgfortran-2e0d59d6.so.5.0.0")
+   invoke_shell("readelf", "-d", "../bezier.libs/libbezier-28a97ca3.so.2020.2.3")
+   invoke_shell("readelf", "-d", "../bezier.libs/libgfortran-2e0d59d6.so.5.0.0")
 
 .. testoutput:: linux-readelf-lib
    :linux-only:
 
-   $ readelf -d .libs/libbezier-28a97ca3.so.2020.2.3
+   $ readelf -d ../bezier.libs/libbezier-28a97ca3.so.2020.2.3
 
    Dynamic section at offset 0x44dd8 contains 28 entries:
      Tag        Type                         Name/Value
@@ -130,7 +130,7 @@ and the local copy of ``libbezier`` depends on the other dependencies in
     0x000000000000000e (SONAME)             Library soname: [libbezier-28a97ca3.so.2020.2.3]
     0x000000000000000c (INIT)               0x2be8
    ...
-   $ readelf -d .libs/libgfortran-2e0d59d6.so.5.0.0
+   $ readelf -d ../bezier.libs/libgfortran-2e0d59d6.so.5.0.0
 
    Dynamic section at offset 0x207db8 contains 31 entries:
      Tag        Type                         Name/Value
