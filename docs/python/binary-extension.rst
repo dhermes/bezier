@@ -45,9 +45,9 @@ against these local copies of dependencies.
 Linux
 =====
 
-The command line tool `auditwheel`_ adds a ``bezier.libs`` directory
-with a modified ``libbezier`` and all of its dependencies (e.g.
-``libgfortran``)
+The command line tool `auditwheel`_ adds a ``bezier.libs`` directory to
+``site-packages`` (i.e. it is **next to** ``bezier``) with a modified
+``libbezier`` and all of its dependencies (e.g. ``libgfortran``)
 
 .. testsetup:: linux-libs, linux-readelf-py, linux-readelf-lib, macos-dylibs,
                macos-extension, macos-delocated-libgfortran
