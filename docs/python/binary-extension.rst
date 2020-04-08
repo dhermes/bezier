@@ -4,12 +4,11 @@ Binary Extension
 
 .. note::
 
-   This content was last updated February 3, 2020 (as part of the
-   ``2020.2.3`` release). Much of the content is tested automatically to
-   keep from getting stale, but some of the console code blocks are not. As a
-   result, this material may be out of date. If anything does not seem
-   correct --- or even if the explanation is insufficient --- please
-   `file an issue`_.
+   This content was last updated April 7, 2020. Much of the content is tested
+   automatically to keep from getting stale, but some of the console code
+   blocks are not. As a result, this material may be out of date. If anything
+   does not seem correct --- or even if the explanation is insufficient ---
+   please `file an issue`_.
 
    .. _file an issue: https://github.com/dhermes/bezier/issues/new
 
