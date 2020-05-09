@@ -2206,7 +2206,7 @@ class Test_compute_edge_nodes(utils.NumPyTestCase):
 
     def test_linear(self):
         nodes = np.asfortranarray([[1.0, 4.0, 0.0], [2.0, 2.5, 4.0]])
-        p100, p010, p001 = nodes.T
+        p100, p010, p001 = nodes.T  # pylint: disable=unpacking-non-sequence
         self._check(
             nodes,
             1,
@@ -2222,7 +2222,9 @@ class Test_compute_edge_nodes(utils.NumPyTestCase):
                 [0.0, 0.5, 1.0, 0.75, 2.0, 3.0],
             ]
         )
+        # pylint: disable=unpacking-non-sequence
         p200, p110, p020, p101, p011, p002 = nodes.T
+        # pylint: enable=unpacking-non-sequence
         self._check(
             nodes,
             2,
@@ -2260,6 +2262,7 @@ class Test_compute_edge_nodes(utils.NumPyTestCase):
                 ],
             ]
         )
+        # pylint: disable=unpacking-non-sequence
         (
             p300,
             p210,
@@ -2272,6 +2275,7 @@ class Test_compute_edge_nodes(utils.NumPyTestCase):
             p012,
             p003,
         ) = nodes.T
+        # pylint: enable=unpacking-non-sequence
         self._check(
             nodes,
             3,

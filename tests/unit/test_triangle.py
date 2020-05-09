@@ -162,7 +162,9 @@ class TestTriangle(utils.NumPyTestCase):
 
     def test__compute_edges_linear(self):
         nodes = np.asfortranarray([[0.0, 2.0, -3.0], [0.0, 1.0, 3.0]])
+        # pylint: disable=unpacking-non-sequence
         p100, p010, p001 = nodes.T
+        # pylint: enable=unpacking-non-sequence
         triangle = self._make_one(nodes, 1)
         edge1, edge2, edge3 = triangle._compute_edges()
         nodes1 = np.asfortranarray(np.vstack([p100, p010]).T)
@@ -172,7 +174,9 @@ class TestTriangle(utils.NumPyTestCase):
 
     def test__compute_edges_quadratic(self):
         nodes = self.QUADRATIC
+        # pylint: disable=unpacking-non-sequence
         p200, p110, p020, p101, p011, p002 = nodes.T
+        # pylint: enable=unpacking-non-sequence
         triangle = self._make_one(nodes, 2)
         edges = triangle._compute_edges()
         nodes1 = np.asfortranarray(np.vstack([p200, p110, p020]).T)
@@ -211,6 +215,7 @@ class TestTriangle(utils.NumPyTestCase):
                 ],
             ]
         )
+        # pylint: disable=unpacking-non-sequence
         (
             p300,
             p210,
@@ -223,6 +228,7 @@ class TestTriangle(utils.NumPyTestCase):
             p012,
             p003,
         ) = nodes.T
+        # pylint: enable=unpacking-non-sequence
         triangle = self._make_one(nodes, 3)
         edges = triangle._compute_edges()
         self._edges_helper(
