@@ -1273,7 +1273,7 @@ def intersect_curves(nodes1, nodes2):
 
     Raises:
         NotImplementedError: If the "intersection polynomial" is
-        all zeros -- which indicates coincident curves.
+            all zeros -- which indicates coincident curves.
     """
     nodes1 = _curve_helpers.full_reduce(nodes1)
     nodes2 = _curve_helpers.full_reduce(nodes2)
