@@ -19,7 +19,7 @@ will be used if the extension can be built.
 
 import atexit
 
-from bezier import _py_triangle_intersection
+from bezier.hazmat import triangle_intersection
 
 try:
     from bezier import _speedup
@@ -29,9 +29,9 @@ except ImportError:  # pragma: NO COVER
 
 # pylint: disable=invalid-name
 if _speedup is None:  # pragma: NO COVER
-    newton_refine = _py_triangle_intersection.newton_refine
-    locate_point = _py_triangle_intersection.locate_point
-    geometric_intersect = _py_triangle_intersection.geometric_intersect
+    newton_refine = triangle_intersection.newton_refine
+    locate_point = triangle_intersection.locate_point
+    geometric_intersect = triangle_intersection.geometric_intersect
 else:
     newton_refine = _speedup.newton_refine_triangle
     locate_point = _speedup.locate_point_triangle
