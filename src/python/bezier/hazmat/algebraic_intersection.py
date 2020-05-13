@@ -143,7 +143,7 @@ def _evaluate3(nodes, x_val, y_val):
 def evaluate(nodes, x_val, y_val):
     r"""Evaluate the implicitized bivariate polynomial containing the curve.
 
-    Assumes `algebraic curve`_ containing :math:`B(s, t)` is given by
+    Assumes the `algebraic curve`_ containing :math:`B(s, t)` is given by
     :math:`f(x, y) = 0`. This function evaluates :math:`f(x, y)`.
 
     .. note::
@@ -220,7 +220,7 @@ def eval_intersection_polynomial(nodes1, nodes2, t):
 
     .. math::
 
-       g(t) = f_1\left(x_2(t), y_2(t)right)
+       g(t) = f_1\left(x_2(t), y_2(t)\right)
 
     Args:
         nodes1 (numpy.ndarray): The nodes in the first curve.
@@ -489,7 +489,7 @@ def to_power_basis(nodes1, nodes2):
 
     .. note::
 
-       This assumes that the degree of the curve given by ``nodes1`` is
+       This requires that the degree of the curve given by ``nodes1`` is
        less than or equal to the degree of that given by ``nodes2``.
 
     Args:
@@ -577,7 +577,7 @@ def polynomial_norm(coeffs):
 def normalize_polynomial(coeffs, threshold=_L2_THRESHOLD):
     r"""Normalizes a polynomial in the :math:`L_2` sense.
 
-    Does so on the interval :math:\left[0, 1\right]` via
+    Does so on the interval :math:`\left[0, 1\right]` via
     :func:`polynomial_norm`.
 
     Args:
@@ -585,7 +585,7 @@ def normalize_polynomial(coeffs, threshold=_L2_THRESHOLD):
             power basis.
         threshold (Optional[float]): The point :math:`\tau` below which a
             polynomial will be considered to be numerically equal to zero,
-            applies to all :math:`f` with :math`\| f \|_{L_2} < \tau`.
+            applies to all :math:`f` with :math:`\| f \|_{L_2} < \tau`.
 
     Returns:
         numpy.ndarray: The normalized polynomial.
@@ -1412,7 +1412,7 @@ def all_intersections(nodes_first, nodes_second):
 
     .. note::
 
-       This assumes both curves are :math:`\mathbf{R}^2`, but does not
+       This assumes both curves are in :math:`\mathbf{R}^2`, but does not
        **explicitly** check this. However, functions used here will fail if
        that assumption fails.
 
