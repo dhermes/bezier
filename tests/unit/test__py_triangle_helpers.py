@@ -981,12 +981,12 @@ class Test_classify_tangent_intersection(unittest.TestCase):
         )
 
     def _call_helper(self, intersection, first, second):
-        from bezier import _py_curve_helpers
+        from bezier.hazmat import curve_helpers
 
         nodes1 = first._nodes
-        tangent1 = _py_curve_helpers.evaluate_hodograph(intersection.s, nodes1)
+        tangent1 = curve_helpers.evaluate_hodograph(intersection.s, nodes1)
         nodes2 = second._nodes
-        tangent2 = _py_curve_helpers.evaluate_hodograph(intersection.t, nodes2)
+        tangent2 = curve_helpers.evaluate_hodograph(intersection.t, nodes2)
         return self._call_function_under_test(
             intersection, nodes1, tangent1, nodes2, tangent2
         )
