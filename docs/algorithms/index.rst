@@ -20,4 +20,3 @@ This is to help with the exposition of the computation and
 
    curve-curve-intersection
    geometric-helpers
-   algebraic-helpers
