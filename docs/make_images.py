@@ -1132,7 +1132,7 @@ def curve_locate(curve, point1, point2, point3):
 
 
 def newton_refine_curve(curve, point, s, new_s):
-    """Image for :func:`._py_curve_helpers.newton_refine` docstring."""
+    """Image for :func:`.hazmat.curve_helpers.newton_refine` docstring."""
     if NO_IMAGES:
         return
 
@@ -1163,7 +1163,7 @@ def newton_refine_curve(curve, point, s, new_s):
 
 
 def newton_refine_curve_cusp(curve, s_vals):
-    """Image for :func:`._py_curve_helpers.newton_refine` docstring."""
+    """Image for :func:`.hazmat.curve_helpers.newton_refine` docstring."""
     if NO_IMAGES:
         return
 

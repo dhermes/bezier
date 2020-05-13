@@ -31,9 +31,9 @@ SPACING = np.spacing  # pylint: disable=no-member
 class Test_make_subdivision_matrices(utils.NumPyTestCase):
     @staticmethod
     def _call_function_under_test(degree):
-        from bezier import _py_curve_helpers
+        from bezier.hazmat import curve_helpers
 
-        return _py_curve_helpers.make_subdivision_matrices(degree)
+        return curve_helpers.make_subdivision_matrices(degree)
 
     def _helper(self, degree, expected_l, expected_r):
         left, right = self._call_function_under_test(degree)
@@ -41,30 +41,30 @@ class Test_make_subdivision_matrices(utils.NumPyTestCase):
         self.assertEqual(right, expected_r)
 
     def test_linear(self):
-        from bezier import _py_curve_helpers
+        from bezier.hazmat import curve_helpers
 
         self._helper(
             1,
-            _py_curve_helpers._LINEAR_SUBDIVIDE_LEFT,
-            _py_curve_helpers._LINEAR_SUBDIVIDE_RIGHT,
+            curve_helpers._LINEAR_SUBDIVIDE_LEFT,
+            curve_helpers._LINEAR_SUBDIVIDE_RIGHT,
         )
 
     def test_quadratic(self):
-        from bezier import _py_curve_helpers
+        from bezier.hazmat import curve_helpers
 
         self._helper(
             2,
-            _py_curve_helpers._QUADRATIC_SUBDIVIDE_LEFT,
-            _py_curve_helpers._QUADRATIC_SUBDIVIDE_RIGHT,
+            curve_helpers._QUADRATIC_SUBDIVIDE_LEFT,
+            curve_helpers._QUADRATIC_SUBDIVIDE_RIGHT,
         )
 
     def test_cubic(self):
-        from bezier import _py_curve_helpers
+        from bezier.hazmat import curve_helpers
 
         self._helper(
             3,
-            _py_curve_helpers._CUBIC_SUBDIVIDE_LEFT,
-            _py_curve_helpers._CUBIC_SUBDIVIDE_RIGHT,
+            curve_helpers._CUBIC_SUBDIVIDE_LEFT,
+            curve_helpers._CUBIC_SUBDIVIDE_RIGHT,
         )
 
     def test_quartic(self):
@@ -95,9 +95,9 @@ class Test_make_subdivision_matrices(utils.NumPyTestCase):
 class Test_subdivide_nodes(utils.NumPyTestCase):
     @staticmethod
     def _call_function_under_test(nodes):
-        from bezier import _py_curve_helpers
+        from bezier.hazmat import curve_helpers
 
-        return _py_curve_helpers.subdivide_nodes(nodes)
+        return curve_helpers.subdivide_nodes(nodes)
 
     def _helper(self, nodes, expected_l, expected_r):
         left, right = self._call_function_under_test(nodes)
@@ -105,7 +105,7 @@ class Test_subdivide_nodes(utils.NumPyTestCase):
         self.assertEqual(right, expected_r)
 
     def _points_check(self, nodes, pts_exponent=5):
-        from bezier import _py_curve_helpers
+        from bezier.hazmat import curve_helpers
 
         left, right = self._call_function_under_test(nodes)
         # Using the exponent means that ds = 1/2**exp, which
@@ -118,8 +118,8 @@ class Test_subdivide_nodes(utils.NumPyTestCase):
         for sub_curve, half in pairs:
             # Make sure sub_curve([0, 1]) == curve(half)
             self.assertEqual(
-                _py_curve_helpers.evaluate_multi(nodes, half),
-                _py_curve_helpers.evaluate_multi(sub_curve, unit_interval),
+                curve_helpers.evaluate_multi(nodes, half),
+                curve_helpers.evaluate_multi(sub_curve, unit_interval),
             )
 
     def test_line(self):
@@ -172,9 +172,9 @@ class Test_subdivide_nodes(utils.NumPyTestCase):
 class Test_evaluate_multi_barycentric(utils.NumPyTestCase):
     @staticmethod
     def _call_function_under_test(nodes, lambda1, lambda2):
-        from bezier import _py_curve_helpers
+        from bezier.hazmat import curve_helpers
 
-        return _py_curve_helpers.evaluate_multi_barycentric(
+        return curve_helpers.evaluate_multi_barycentric(
             nodes, lambda1, lambda2
         )
 
@@ -198,9 +198,9 @@ class Test_evaluate_multi_barycentric(utils.NumPyTestCase):
 class Test_evaluate_multi(utils.NumPyTestCase):
     @staticmethod
     def _call_function_under_test(nodes, s_vals):
-        from bezier import _py_curve_helpers
+        from bezier.hazmat import curve_helpers
 
-        return _py_curve_helpers.evaluate_multi(nodes, s_vals)
+        return curve_helpers.evaluate_multi(nodes, s_vals)
 
     def test_linear(self):
         num_vals = 129
@@ -346,9 +346,9 @@ class Test_evaluate_multi(utils.NumPyTestCase):
 class Test_vec_size(unittest.TestCase):
     @staticmethod
     def _call_function_under_test(nodes, s_val):
-        from bezier import _py_curve_helpers
+        from bezier.hazmat import curve_helpers
 
-        return _py_curve_helpers.vec_size(nodes, s_val)
+        return curve_helpers.vec_size(nodes, s_val)
 
     def test_linear(self):
         nodes = np.asfortranarray([[0.0, 3.0], [0.0, -4.0]])
@@ -364,9 +364,9 @@ class Test_vec_size(unittest.TestCase):
 class Test_compute_length(unittest.TestCase):
     @staticmethod
     def _call_function_under_test(nodes):
-        from bezier import _py_curve_helpers
+        from bezier.hazmat import curve_helpers
 
-        return _py_curve_helpers.compute_length(nodes)
+        return curve_helpers.compute_length(nodes)
 
     def _scipy_skip(self):
         if SCIPY_INT is None:  # pragma: NO COVER
@@ -417,9 +417,9 @@ class Test_compute_length(unittest.TestCase):
 class Test_elevate_nodes(utils.NumPyTestCase):
     @staticmethod
     def _call_function_under_test(nodes):
-        from bezier import _py_curve_helpers
+        from bezier.hazmat import curve_helpers
 
-        return _py_curve_helpers.elevate_nodes(nodes)
+        return curve_helpers.elevate_nodes(nodes)
 
     def test_linear(self):
         nodes = np.asfortranarray([[0.0, 2.0], [0.0, 4.0]])
@@ -445,11 +445,9 @@ class Test_elevate_nodes(utils.NumPyTestCase):
 class Test_de_casteljau_one_round(utils.NumPyTestCase):
     @staticmethod
     def _call_function_under_test(nodes, lambda1, lambda2):
-        from bezier import _py_curve_helpers
+        from bezier.hazmat import curve_helpers
 
-        return _py_curve_helpers.de_casteljau_one_round(
-            nodes, lambda1, lambda2
-        )
+        return curve_helpers.de_casteljau_one_round(nodes, lambda1, lambda2)
 
     def test_it(self):
         nodes = np.asfortranarray([[0.0, 3.0], [1.0, 5.0]])
@@ -460,9 +458,9 @@ class Test_de_casteljau_one_round(utils.NumPyTestCase):
 class Test_specialize_curve(utils.NumPyTestCase):
     @staticmethod
     def _call_function_under_test(nodes, start, end):
-        from bezier import _py_curve_helpers
+        from bezier.hazmat import curve_helpers
 
-        return _py_curve_helpers.specialize_curve(nodes, start, end)
+        return curve_helpers.specialize_curve(nodes, start, end)
 
     def test_linear(self):
         nodes = np.asfortranarray([[0.0, 1.0], [0.0, 1.0]])
@@ -511,9 +509,9 @@ class Test_specialize_curve(utils.NumPyTestCase):
 class Test_evaluate_hodograph(utils.NumPyTestCase):
     @staticmethod
     def _call_function_under_test(s, nodes):
-        from bezier import _py_curve_helpers
+        from bezier.hazmat import curve_helpers
 
-        return _py_curve_helpers.evaluate_hodograph(s, nodes)
+        return curve_helpers.evaluate_hodograph(s, nodes)
 
     def test_line(self):
         nodes = np.asfortranarray([[0.0, 1.0], [0.0, 1.0]])
@@ -555,15 +553,15 @@ class Test_evaluate_hodograph(utils.NumPyTestCase):
 class Test_get_curvature(unittest.TestCase):
     @staticmethod
     def _call_function_under_test(nodes, tangent_vec, s):
-        from bezier import _py_curve_helpers
+        from bezier.hazmat import curve_helpers
 
-        return _py_curve_helpers.get_curvature(nodes, tangent_vec, s)
+        return curve_helpers.get_curvature(nodes, tangent_vec, s)
 
     @staticmethod
     def _get_tangent_vec(s, nodes):
-        from bezier import _py_curve_helpers
+        from bezier.hazmat import curve_helpers
 
-        return _py_curve_helpers.evaluate_hodograph(s, nodes)
+        return curve_helpers.evaluate_hodograph(s, nodes)
 
     def test_line(self):
         s = 0.5
@@ -590,9 +588,9 @@ class Test_get_curvature(unittest.TestCase):
 class Test_newton_refine(unittest.TestCase):
     @staticmethod
     def _call_function_under_test(nodes, point, s):
-        from bezier import _py_curve_helpers
+        from bezier.hazmat import curve_helpers
 
-        return _py_curve_helpers.newton_refine(nodes, point, s)
+        return curve_helpers.newton_refine(nodes, point, s)
 
     def test_it(self):
         nodes = np.asfortranarray(
@@ -607,9 +605,9 @@ class Test_newton_refine(unittest.TestCase):
 class Test_locate_point(unittest.TestCase):
     @staticmethod
     def _call_function_under_test(nodes, point):
-        from bezier import _py_curve_helpers
+        from bezier.hazmat import curve_helpers
 
-        return _py_curve_helpers.locate_point(nodes, point)
+        return curve_helpers.locate_point(nodes, point)
 
     def test_it(self):
         nodes = np.asfortranarray(
@@ -653,9 +651,9 @@ class Test_reduce_pseudo_inverse(utils.NumPyTestCase):
 
     @staticmethod
     def _call_function_under_test(nodes):
-        from bezier import _py_curve_helpers
+        from bezier.hazmat import curve_helpers
 
-        return _py_curve_helpers.reduce_pseudo_inverse(nodes)
+        return curve_helpers.reduce_pseudo_inverse(nodes)
 
     def test_to_constant(self):
         nodes = np.asfortranarray([[-2.0, -2.0], [1.0, 1.0]])
@@ -670,13 +668,13 @@ class Test_reduce_pseudo_inverse(utils.NumPyTestCase):
         self.assertEqual(result, expected)
 
     def _actually_inverse_helper(self, degree):
-        from bezier import _py_curve_helpers
+        from bezier.hazmat import curve_helpers
         from bezier.hazmat import helpers
 
         nodes = np.eye(degree + 2, order="F")
         reduction_mat = self._call_function_under_test(nodes)
         id_mat = np.eye(degree + 1, order="F")
-        elevation_mat = _py_curve_helpers.elevate_nodes(id_mat)
+        elevation_mat = curve_helpers.elevate_nodes(id_mat)
         result = helpers.matrix_product(elevation_mat, reduction_mat)
         return result, id_mat
 
@@ -685,13 +683,13 @@ class Test_reduce_pseudo_inverse(utils.NumPyTestCase):
         self.assertEqual(result, id_mat)
 
     def test_from_quadratic_not_elevated(self):
-        from bezier import _py_curve_helpers
+        from bezier.hazmat import curve_helpers
 
         nodes = np.asfortranarray([[0.0, 1.0, 2.0], [0.0, 1.5, 0.0]])
         result = self._call_function_under_test(nodes)
         expected = np.asfortranarray([[0.0, 2.0], [0.5, 0.5]])
         self.assertEqual(result, expected)
-        re_elevated = _py_curve_helpers.elevate_nodes(result)
+        re_elevated = curve_helpers.elevate_nodes(result)
         self.assertTrue(np.any(nodes != re_elevated))
 
     def test_to_quadratic(self):
@@ -740,9 +738,9 @@ class Test_reduce_pseudo_inverse(utils.NumPyTestCase):
 class Test_projection_error(unittest.TestCase):
     @staticmethod
     def _call_function_under_test(nodes, projected):
-        from bezier import _py_curve_helpers
+        from bezier.hazmat import curve_helpers
 
-        return _py_curve_helpers.projection_error(nodes, projected)
+        return curve_helpers.projection_error(nodes, projected)
 
     def test_it(self):
         nodes = np.asfortranarray([[0.0, 3.0], [4.0, 0.0]])
@@ -761,9 +759,9 @@ class Test_projection_error(unittest.TestCase):
 class Test_maybe_reduce(utils.NumPyTestCase):
     @staticmethod
     def _call_function_under_test(nodes):
-        from bezier import _py_curve_helpers
+        from bezier.hazmat import curve_helpers
 
-        return _py_curve_helpers.maybe_reduce(nodes)
+        return curve_helpers.maybe_reduce(nodes)
 
     def _low_degree_helper(self, nodes):
         was_reduced, new_nodes = self._call_function_under_test(nodes)
@@ -832,9 +830,9 @@ class Test_maybe_reduce(utils.NumPyTestCase):
 class Test_full_reduce(utils.NumPyTestCase):
     @staticmethod
     def _call_function_under_test(nodes):
-        from bezier import _py_curve_helpers
+        from bezier.hazmat import curve_helpers
 
-        return _py_curve_helpers.full_reduce(nodes)
+        return curve_helpers.full_reduce(nodes)
 
     def test_linear(self):
         nodes = np.asfortranarray([[5.5, 5.5]])

@@ -20,7 +20,7 @@ import enum
 
 import numpy as np
 
-from bezier import _py_curve_helpers
+from bezier.hazmat import curve_helpers
 from bezier.hazmat import helpers as _py_helpers
 
 
@@ -393,17 +393,17 @@ def newton_refine(s, nodes1, t, nodes2):
         ValueError: If the Jacobian is singular at ``(s, t)``.
     """
     # NOTE: We form -F(s, t) since we want to solve -DF^{-1} F(s, t).
-    func_val = _py_curve_helpers.evaluate_multi(
+    func_val = curve_helpers.evaluate_multi(
         nodes2, np.asfortranarray([t])
-    ) - _py_curve_helpers.evaluate_multi(nodes1, np.asfortranarray([s]))
+    ) - curve_helpers.evaluate_multi(nodes1, np.asfortranarray([s]))
     if np.all(func_val == 0.0):
         # No refinement is needed.
         return s, t
 
     # NOTE: This assumes the curves are 2D.
     jac_mat = np.empty((2, 2), order="F")
-    jac_mat[:, :1] = _py_curve_helpers.evaluate_hodograph(s, nodes1)
-    jac_mat[:, 1:] = -_py_curve_helpers.evaluate_hodograph(t, nodes2)
+    jac_mat[:, :1] = curve_helpers.evaluate_hodograph(s, nodes1)
+    jac_mat[:, 1:] = -curve_helpers.evaluate_hodograph(t, nodes2)
     # Solve the system.
     singular, delta_s, delta_t = _py_helpers.solve2x2(jac_mat, func_val[:, 0])
     if singular:
@@ -467,19 +467,19 @@ class NewtonSimpleRoot:  # pylint: disable=too-few-public-methods
             * The RHS vector ``F``, a ``2 x 1`` array.
         """
         s_vals = np.asfortranarray([s])
-        b1_s = _py_curve_helpers.evaluate_multi(self.nodes1, s_vals)
+        b1_s = curve_helpers.evaluate_multi(self.nodes1, s_vals)
         t_vals = np.asfortranarray([t])
-        b2_t = _py_curve_helpers.evaluate_multi(self.nodes2, t_vals)
+        b2_t = curve_helpers.evaluate_multi(self.nodes2, t_vals)
         func_val = b1_s - b2_t
         if np.all(func_val == 0.0):
             return None, func_val
 
         else:
             jacobian = np.empty((2, 2), order="F")
-            jacobian[:, :1] = _py_curve_helpers.evaluate_multi(
+            jacobian[:, :1] = curve_helpers.evaluate_multi(
                 self.first_deriv1, s_vals
             )
-            jacobian[:, 1:] = -_py_curve_helpers.evaluate_multi(
+            jacobian[:, 1:] = -curve_helpers.evaluate_multi(
                 self.first_deriv2, t_vals
             )
             return jacobian, func_val
@@ -589,11 +589,11 @@ class NewtonDoubleRoot:  # pylint: disable=too-few-public-methods
             * The RHS vector ``DG^T G``, a ``2 x 1`` array.
         """
         s_vals = np.asfortranarray([s])
-        b1_s = _py_curve_helpers.evaluate_multi(self.nodes1, s_vals)
-        b1_ds = _py_curve_helpers.evaluate_multi(self.first_deriv1, s_vals)
+        b1_s = curve_helpers.evaluate_multi(self.nodes1, s_vals)
+        b1_ds = curve_helpers.evaluate_multi(self.first_deriv1, s_vals)
         t_vals = np.asfortranarray([t])
-        b2_t = _py_curve_helpers.evaluate_multi(self.nodes2, t_vals)
-        b2_dt = _py_curve_helpers.evaluate_multi(self.first_deriv2, t_vals)
+        b2_t = curve_helpers.evaluate_multi(self.nodes2, t_vals)
+        b2_dt = curve_helpers.evaluate_multi(self.first_deriv2, t_vals)
         func_val = np.empty((3, 1), order="F")
         func_val[:2, :] = b1_s - b2_t
         func_val[2, :] = _py_helpers.cross_product(b1_ds[:, 0], b2_dt[:, 0])
@@ -608,9 +608,9 @@ class NewtonDoubleRoot:  # pylint: disable=too-few-public-methods
                 jacobian[2, 0] = 0.0
             else:
                 jacobian[2, 0] = _py_helpers.cross_product(
-                    _py_curve_helpers.evaluate_multi(
-                        self.second_deriv1, s_vals
-                    )[:, 0],
+                    curve_helpers.evaluate_multi(self.second_deriv1, s_vals)[
+                        :, 0
+                    ],
                     b2_dt[:, 0],
                 )
             if self.second_deriv2.size == 0:
@@ -618,9 +618,9 @@ class NewtonDoubleRoot:  # pylint: disable=too-few-public-methods
             else:
                 jacobian[2, 1] = _py_helpers.cross_product(
                     b1_ds[:, 0],
-                    _py_curve_helpers.evaluate_multi(
-                        self.second_deriv2, t_vals
-                    )[:, 0],
+                    curve_helpers.evaluate_multi(self.second_deriv2, t_vals)[
+                        :, 0
+                    ],
                 )
             modified_lhs = _py_helpers.matrix_product(jacobian.T, jacobian)
             modified_rhs = _py_helpers.matrix_product(jacobian.T, func_val)

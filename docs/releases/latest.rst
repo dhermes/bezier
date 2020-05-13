@@ -12,6 +12,9 @@ Breaking Changes
 -  Moved non-public ``bezier._algebraic_intersection`` module to
    ``bezier.hazmat.algebraic_intersection``
    (`#216 <https://github.com/dhermes/bezier/pull/216>`__).
+-  Moved non-public ``bezier._py_curve_helpers`` module to
+   ``bezier.hazmat.curve_helpers``
+   (`#217 <https://github.com/dhermes/bezier/pull/217>`__).
 
 Documentation
 --------------

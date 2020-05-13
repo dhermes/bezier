@@ -104,7 +104,7 @@ class Test_linearization_error(unittest.TestCase):
         self.assertEqual(error_val, expected)
 
     def test_quadratic(self):
-        from bezier import _py_curve_helpers
+        from bezier.hazmat import curve_helpers
 
         nodes = np.asfortranarray([[0.0, 1.0, 5.0], [0.0, 1.0, 6.0]])
         # NOTE: This is hand picked so that
@@ -117,7 +117,7 @@ class Test_linearization_error(unittest.TestCase):
         # For a degree two curve, the 2nd derivative is constant
         # so by subdividing, our error should drop by a factor
         # of (1/2)^2 = 4.
-        left_nodes, right_nodes = _py_curve_helpers.subdivide_nodes(nodes)
+        left_nodes, right_nodes = curve_helpers.subdivide_nodes(nodes)
         error_left = self._call_function_under_test(left_nodes)
         error_right = self._call_function_under_test(right_nodes)
         self.assertEqual(error_left, 0.25 * expected)
@@ -507,16 +507,14 @@ class Test_from_linearized(utils.NumPyTestCase):
         # NOTE: There is no corresponding "enable", but the disable only
         #       applies in this lexical scope.
         # pylint: disable=too-many-locals
-        from bezier import _py_curve_helpers
+        from bezier.hazmat import curve_helpers
 
         start1 = 5461.0 / 8192.0
         end1 = 5462.0 / 8192.0
         original_nodes1 = np.asfortranarray(
             [[0.0, 0.375, 0.75], [0.0, 0.75, 0.375]]
         )
-        nodes1 = _py_curve_helpers.specialize_curve(
-            original_nodes1, start1, end1
-        )
+        nodes1 = curve_helpers.specialize_curve(original_nodes1, start1, end1)
         curve1 = subdivided_curve(
             nodes1, original_nodes=original_nodes1, start=start1, end=end1
         )
@@ -526,9 +524,7 @@ class Test_from_linearized(utils.NumPyTestCase):
         original_nodes2 = np.asfortranarray(
             [[0.25, 0.625, 1.0], [0.625, 0.25, 1.0]]
         )
-        nodes2 = _py_curve_helpers.specialize_curve(
-            original_nodes2, start2, end2
-        )
+        nodes2 = curve_helpers.specialize_curve(original_nodes2, start2, end2)
         curve2 = subdivided_curve(
             nodes2, original_nodes=original_nodes2, start=start2, end=end2
         )
@@ -547,7 +543,7 @@ class Test_from_linearized(utils.NumPyTestCase):
         # NOTE: There is no corresponding "enable", but the disable only
         #       applies in this lexical scope.
         # pylint: disable=too-many-locals
-        from bezier import _py_curve_helpers
+        from bezier.hazmat import curve_helpers
 
         # B1([5461/16384, 5462/16384]) and B2([0, 1]) are linearized
         # and when the segments intersect they produce s = -1/3 < 0.
@@ -556,9 +552,7 @@ class Test_from_linearized(utils.NumPyTestCase):
         original_nodes1 = np.asfortranarray(
             [[0.0, 1.5, 3.0], [2.25, -2.25, 2.25]]
         )
-        nodes1 = _py_curve_helpers.specialize_curve(
-            original_nodes1, start1, end1
-        )
+        nodes1 = curve_helpers.specialize_curve(original_nodes1, start1, end1)
         curve1 = subdivided_curve(
             nodes1, original_nodes=original_nodes1, start=start1, end=end1
         )
@@ -577,7 +571,7 @@ class Test_from_linearized(utils.NumPyTestCase):
         utils.almost(self, 1.0 / 3.0, t, 1)
 
     def _wiggle_outside_helper(self, swap=False):
-        from bezier import _py_curve_helpers
+        from bezier.hazmat import curve_helpers
 
         # B1([127/128, 1]) and B2([0, 1]) are linearized and when the segments
         # intersect they produce s = 0.9999999999940287 and
@@ -596,9 +590,7 @@ class Test_from_linearized(utils.NumPyTestCase):
                 [-0.9648818559703933, -0.9825154456957814, -1.0],
             ]
         )
-        nodes1 = _py_curve_helpers.specialize_curve(
-            original_nodes1, start1, end1
-        )
+        nodes1 = curve_helpers.specialize_curve(original_nodes1, start1, end1)
         curve1 = subdivided_curve(
             nodes1, original_nodes=original_nodes1, start=start1, end=end1
         )
@@ -1074,10 +1066,10 @@ class Test_coincident_parameters(unittest.TestCase):
         self.assertIsNone(result)
 
     def test_elevated_degree(self):
-        from bezier import _py_curve_helpers
+        from bezier.hazmat import curve_helpers
 
         nodes1 = np.asfortranarray([[0.0, 3.0, 6.0], [0.0, 3.0, 0.0]])
-        nodes2 = _py_curve_helpers.elevate_nodes(nodes1)
+        nodes2 = curve_helpers.elevate_nodes(nodes1)
         result = self._call_function_under_test(nodes1, nodes2)
         expected = ((0.0, 0.0), (1.0, 1.0))
         self.assertEqual(result, expected)
@@ -1101,24 +1093,24 @@ class Test_coincident_parameters(unittest.TestCase):
         )
 
     def test_touch_no_intersect_same_curve(self):
-        from bezier import _py_curve_helpers
+        from bezier.hazmat import curve_helpers
 
         nodes1 = np.asfortranarray([[0.0, 1.0, 3.0], [0.0, 2.0, 2.0]])
         new_params = ((1.0, 2.0), (2.0, 1.0), (-1.0, 0.0), (0.0, -1.0))
         for start, end in new_params:
-            nodes2 = _py_curve_helpers.specialize_curve(nodes1, start, end)
+            nodes2 = curve_helpers.specialize_curve(nodes1, start, end)
             result = self._call_function_under_test(nodes1, nodes2)
             self.assertIsNone(result)
 
     def test_disjoint_segments_same_curve(self):
-        from bezier import _py_curve_helpers
+        from bezier.hazmat import curve_helpers
 
         nodes1 = np.asfortranarray(
             [[1.0, 1.0, 3.0, 4.0], [0.0, 2.0, 2.0, 0.0]]
         )
         new_params = ((1.5, 2.0), (2.0, 1.5), (-1.0, -0.5), (-0.5, -1.0))
         for start, end in new_params:
-            nodes2 = _py_curve_helpers.specialize_curve(nodes1, start, end)
+            nodes2 = curve_helpers.specialize_curve(nodes1, start, end)
             result = self._call_function_under_test(nodes1, nodes2)
             self.assertIsNone(result)
 
@@ -1135,7 +1127,7 @@ class Test_coincident_parameters(unittest.TestCase):
         self.assertEqual(result, expected)
 
     def test_contained_and_touching(self):
-        from bezier import _py_curve_helpers
+        from bezier.hazmat import curve_helpers
 
         nodes1 = np.asfortranarray([[4.0, 6.0, 2.0], [1.0, 3.0, 1.0]])
         new_params = (
@@ -1149,7 +1141,7 @@ class Test_coincident_parameters(unittest.TestCase):
             (1.0, -1.0),
         )
         for start, end in new_params:
-            nodes2 = _py_curve_helpers.specialize_curve(nodes1, start, end)
+            nodes2 = curve_helpers.specialize_curve(nodes1, start, end)
             result = self._call_function_under_test(nodes1, nodes2)
             if start == 2.0 or end == 2.0:
                 expected = (
@@ -1166,12 +1158,12 @@ class Test_coincident_parameters(unittest.TestCase):
             self.assertEqual(result, expected)
 
     def test_fully_contained(self):
-        from bezier import _py_curve_helpers
+        from bezier.hazmat import curve_helpers
 
         nodes1 = np.asfortranarray([[-1.0, 0.0, 2.0], [-1.0, 2.0, 0.0]])
         new_params = ((0.25, 0.75), (0.75, 0.25), (-0.5, 1.5), (1.5, -0.5))
         for start, end in new_params:
-            nodes2 = _py_curve_helpers.specialize_curve(nodes1, start, end)
+            nodes2 = curve_helpers.specialize_curve(nodes1, start, end)
             result = self._call_function_under_test(nodes1, nodes2)
             if start == -0.5 or end == -0.5:
                 expected = (
@@ -1183,14 +1175,14 @@ class Test_coincident_parameters(unittest.TestCase):
             self.assertEqual(result, expected)
 
     def test_staggered_overlap(self):
-        from bezier import _py_curve_helpers
+        from bezier.hazmat import curve_helpers
 
         nodes1 = np.asfortranarray(
             [[0.0, 1.0, 1.0, 3.0], [-1.0, 2.0, 0.0, 2.0]]
         )
         new_params = ((0.5, 1.5), (1.5, 0.5), (-0.5, 0.5), (0.5, -0.5))
         for start, end in new_params:
-            nodes2 = _py_curve_helpers.specialize_curve(nodes1, start, end)
+            nodes2 = curve_helpers.specialize_curve(nodes1, start, end)
             result = self._call_function_under_test(nodes1, nodes2)
             if start == 1.5 or end == 1.5:
                 expected = ((0.5, start - 0.5), (1.0, 0.5))

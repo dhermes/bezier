@@ -121,7 +121,7 @@ def make_subdivision_matrices(degree):
 
     Returns:
         Tuple[numpy.ndarray, numpy.ndarray]: The matrices used to convert
-           the nodes into left and right nodes, respectively.
+        the nodes into left and right nodes, respectively.
     """
     left = np.zeros((degree + 1, degree + 1), order="F")
     right = np.zeros((degree + 1, degree + 1), order="F")
@@ -267,7 +267,7 @@ def vec_size(nodes, s_val):
         This is a helper for :func:`compute_length` and does not have
         a Fortran speedup.
 
-    Intended to be used with ``functools.partial`` to fill in the
+    Intended to be used with :func:`functools.partial` to fill in the
     value of ``nodes`` and create a callable that only accepts ``s_val``.
 
     Args:
@@ -338,7 +338,7 @@ def compute_length(nodes):
 
 
 def elevate_nodes(nodes):
-    r"""Degree-elevate a B |eacute| zier curves.
+    r"""Degree-elevate a B |eacute| zier curve.
 
     Does this by converting the current nodes :math:`v_0, \ldots, v_n`
     to new nodes :math:`w_0, \ldots, w_{n + 1}` where
@@ -493,15 +493,15 @@ def get_curvature(nodes, tangent_vec, s):
 
        \frac{B'(s) \times B''(s)}{\left\lVert B'(s) \right\rVert_2^3}
 
-    .. image:: ../images/get_curvature.png
+    .. image:: ../../images/get_curvature.png
        :align: center
 
     .. testsetup:: get-curvature
 
        import numpy as np
        import bezier
-       from bezier._py_curve_helpers import evaluate_hodograph
-       from bezier._py_curve_helpers import get_curvature
+       from bezier.hazmat.curve_helpers import evaluate_hodograph
+       from bezier.hazmat.curve_helpers import get_curvature
 
     .. doctest:: get-curvature
        :options: +NORMALIZE_WHITESPACE
@@ -599,14 +599,14 @@ def newton_refine(nodes, point, s):
        \Longrightarrow \Delta s &= -\frac{2}{5}
        \end{align*}
 
-    .. image:: ../images/newton_refine_curve.png
+    .. image:: ../../images/newton_refine_curve.png
        :align: center
 
     .. testsetup:: newton-refine-curve, newton-refine-curve-cusp
 
        import numpy as np
        import bezier
-       from bezier._py_curve_helpers import newton_refine
+       from bezier.hazmat.curve_helpers import newton_refine
 
     .. doctest:: newton-refine-curve
        :options: +NORMALIZE_WHITESPACE
@@ -634,7 +634,7 @@ def newton_refine(nodes, point, s):
     injective with non-zero gradient), Newton's method may
     break down and converge linearly:
 
-    .. image:: ../images/newton_refine_curve_cusp.png
+    .. image:: ../../images/newton_refine_curve_cusp.png
        :align: center
 
     .. doctest:: newton-refine-curve-cusp
@@ -681,7 +681,7 @@ def newton_refine(nodes, point, s):
 
        import numpy as np
        import bezier
-       from bezier._py_curve_helpers import newton_refine
+       from bezier.hazmat.curve_helpers import newton_refine
 
        nodes = np.asfortranarray([
            [ 6.0, -2.0, -2.0, 6.0],
@@ -844,7 +844,7 @@ def projection_error(nodes, projected):
     .. note::
 
         This is a helper for :func:`maybe_reduce`, which is in turn a helper
-        for :func:`_full_reduce`. Hence there is no corresponding Fortran
+        for :func:`.full_reduce`. Hence there is no corresponding Fortran
         speedup.
 
     For now, just compute the relative error in the Frobenius norm. But,
@@ -869,7 +869,7 @@ def maybe_reduce(nodes):
 
     .. note::
 
-        This is a helper for :func:`_full_reduce`. Hence there is no
+        This is a helper for :func:`.full_reduce`. Hence there is no
         corresponding Fortran speedup.
 
     We check if the nodes are degree-elevated by projecting onto the

@@ -17,7 +17,7 @@ exact same interface which calls out to a Fortran implementation. The speedup
 will be used if the extension can be built.
 """
 
-from bezier import _py_curve_helpers
+from bezier.hazmat import curve_helpers
 
 try:
     from bezier import _speedup
@@ -27,18 +27,18 @@ except ImportError:  # pragma: NO COVER
 
 # pylint: disable=invalid-name
 if _speedup is None:  # pragma: NO COVER
-    subdivide_nodes = _py_curve_helpers.subdivide_nodes
-    evaluate_multi = _py_curve_helpers.evaluate_multi
-    evaluate_multi_barycentric = _py_curve_helpers.evaluate_multi_barycentric
-    compute_length = _py_curve_helpers.compute_length
-    elevate_nodes = _py_curve_helpers.elevate_nodes
-    specialize_curve = _py_curve_helpers.specialize_curve
-    evaluate_hodograph = _py_curve_helpers.evaluate_hodograph
-    get_curvature = _py_curve_helpers.get_curvature
-    newton_refine = _py_curve_helpers.newton_refine
-    locate_point = _py_curve_helpers.locate_point
-    reduce_pseudo_inverse = _py_curve_helpers.reduce_pseudo_inverse
-    full_reduce = _py_curve_helpers.full_reduce
+    subdivide_nodes = curve_helpers.subdivide_nodes
+    evaluate_multi = curve_helpers.evaluate_multi
+    evaluate_multi_barycentric = curve_helpers.evaluate_multi_barycentric
+    compute_length = curve_helpers.compute_length
+    elevate_nodes = curve_helpers.elevate_nodes
+    specialize_curve = curve_helpers.specialize_curve
+    evaluate_hodograph = curve_helpers.evaluate_hodograph
+    get_curvature = curve_helpers.get_curvature
+    newton_refine = curve_helpers.newton_refine
+    locate_point = curve_helpers.locate_point
+    reduce_pseudo_inverse = curve_helpers.reduce_pseudo_inverse
+    full_reduce = curve_helpers.full_reduce
 else:
     subdivide_nodes = _speedup.subdivide_nodes_curve
     evaluate_multi = _speedup.evaluate_multi
