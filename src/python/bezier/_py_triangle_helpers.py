@@ -1634,9 +1634,9 @@ def classify_intersection(intersection, edge_nodes1, edge_nodes2):
 
        import numpy as np
        import bezier
-       from bezier import curve_helpers
        from bezier._py_intersection_helpers import Intersection
        from bezier._py_triangle_helpers import classify_intersection
+       from bezier.hazmat import curve_helpers
 
        def hodograph(curve, s):
            return curve_helpers.evaluate_hodograph(
