@@ -774,8 +774,8 @@ def bezier_roots(coeffs):
 
        import numpy as np
        import numpy.linalg
-       from bezier._algebraic_intersection import bernstein_companion
-       from bezier._algebraic_intersection import bezier_roots
+       from bezier.hazmat.algebraic_intersection import bernstein_companion
+       from bezier.hazmat.algebraic_intersection import bezier_roots
 
        machine_eps = np.finfo(np.float64).eps
 
@@ -956,7 +956,7 @@ def lu_companion(top_row, value):
 
        import numpy as np
        import numpy.linalg
-       from bezier._algebraic_intersection import lu_companion
+       from bezier.hazmat.algebraic_intersection import lu_companion
 
     .. doctest:: lu-companion
 
@@ -1068,7 +1068,7 @@ def bezier_value_check(coeffs, s_val, rhs_val=0.0):
        Is it true that :math:`f\left(s_{\ast}\right) = 0`?
 
     Does so by re-stating as a matrix rank problem. As in
-    :func:`~bezier._algebraic_intersection.bezier_roots`, we can rewrite
+    :func:`~bezier.hazmat.algebraic_intersection.bezier_roots`, we can rewrite
 
     .. math::
 

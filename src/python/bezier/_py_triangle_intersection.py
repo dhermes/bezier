@@ -17,10 +17,10 @@ import itertools
 
 import numpy as np
 
-from bezier import _algebraic_intersection
 from bezier import _py_geometric_intersection
 from bezier import _py_intersection_helpers
 from bezier import _py_triangle_helpers
+from bezier.hazmat import algebraic_intersection
 from bezier.hazmat import helpers as _py_helpers
 
 
@@ -864,7 +864,7 @@ def algebraic_intersect(nodes1, degree1, nodes2, degree2, verify):
         * The nodes of three edges of the first triangle being intersected
           followed by the nodes of the three edges of the second.
     """
-    all_intersections = _algebraic_intersection.all_intersections
+    all_intersections = algebraic_intersection.all_intersections
     return generic_intersect(
         nodes1, degree1, nodes2, degree2, verify, all_intersections
     )

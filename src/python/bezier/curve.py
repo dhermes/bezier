@@ -29,13 +29,13 @@ See :doc:`../../algorithms/curve-curve-intersection` for examples using the
 
 import numpy as np
 
-from bezier import _algebraic_intersection
 from bezier import _base
 from bezier import _curve_helpers
 from bezier import _geometric_intersection
 from bezier import _plot_helpers
 from bezier import _py_intersection_helpers
 from bezier import _symbolic
+from bezier.hazmat import algebraic_intersection
 
 
 _LOCATE_ERROR_TEMPLATE = (
@@ -451,7 +451,7 @@ class Curve(_base.Base):
         if strategy == IntersectionStrategy.GEOMETRIC:
             all_intersections = _geometric_intersection.all_intersections
         elif strategy == IntersectionStrategy.ALGEBRAIC:
-            all_intersections = _algebraic_intersection.all_intersections
+            all_intersections = algebraic_intersection.all_intersections
         else:
             raise ValueError("Unexpected strategy.", strategy)
 

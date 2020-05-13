@@ -15,11 +15,11 @@ import itertools
 import numpy as np
 import pytest
 
-from bezier import _algebraic_intersection
 from bezier import _geometric_intersection
 from bezier import _py_geometric_intersection
 from bezier import _py_intersection_helpers
 import bezier.curve
+from bezier.hazmat import algebraic_intersection
 from tests import utils as base_utils
 from tests.functional import utils
 from tests.functional.utils import CurveIntersectionType
@@ -151,10 +151,10 @@ ULPS_ALLOWED_OVERRIDE = {
         },
     },
 }
-NON_SIMPLE_ERR = _algebraic_intersection._NON_SIMPLE_ERR
+NON_SIMPLE_ERR = algebraic_intersection._NON_SIMPLE_ERR
 TOO_MANY = _py_geometric_intersection._TOO_MANY_TEMPLATE
 BAD_MULTIPLICITY = (_py_intersection_helpers.NEWTON_NO_CONVERGE,)
-COINCIDENT_ERR = (_algebraic_intersection._COINCIDENT_ERR,)
+COINCIDENT_ERR = (algebraic_intersection._COINCIDENT_ERR,)
 TANGENT_OVERRIDES = {
     GEOMETRIC: {
         4: {"success": True},
@@ -196,7 +196,7 @@ def get_sorted_intersections(intersection_info, strategy):
             nodes1, nodes2
         )
     else:
-        intersections, _ = _algebraic_intersection.all_intersections(
+        intersections, _ = algebraic_intersection.all_intersections(
             nodes1, nodes2
         )
     # Make we have the right number of intersections.
