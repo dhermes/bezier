@@ -957,9 +957,9 @@ class Test_algebraic_intersect(Test_geometric_intersect):
 
     @staticmethod
     def parallel_err():
-        from bezier import _algebraic_intersection
+        from bezier.hazmat import algebraic_intersection
 
-        return _algebraic_intersection._COINCIDENT_ERR
+        return algebraic_intersection._COINCIDENT_ERR
 
     def _check_linear_intersection1(self, value):
         expected = 0.125
@@ -967,33 +967,33 @@ class Test_algebraic_intersect(Test_geometric_intersect):
         self.assertAlmostEqual(value, expected, delta=delta)
 
     def test_opposed_tangencies(self):
-        from bezier import _algebraic_intersection
+        from bezier.hazmat import algebraic_intersection
 
         with self.assertRaises(NotImplementedError) as exc_info:
             super(Test_algebraic_intersect, self).test_opposed_tangencies()
         exc_args = exc_info.exception.args
         self.assertEqual(len(exc_args), 2)
-        self.assertEqual(exc_args[0], _algebraic_intersection._NON_SIMPLE_ERR)
+        self.assertEqual(exc_args[0], algebraic_intersection._NON_SIMPLE_ERR)
         self.assertIsInstance(exc_args[1], np.ndarray)
         self.assertEqual(exc_args[1].shape, (3,))
 
     def test_tangent_contained(self):
-        from bezier import _algebraic_intersection
+        from bezier.hazmat import algebraic_intersection
 
         with self.assertRaises(NotImplementedError) as exc_info:
             super(Test_algebraic_intersect, self).test_tangent_contained()
         exc_args = exc_info.exception.args
         self.assertEqual(len(exc_args), 2)
-        self.assertEqual(exc_args[0], _algebraic_intersection._NON_SIMPLE_ERR)
+        self.assertEqual(exc_args[0], algebraic_intersection._NON_SIMPLE_ERR)
         self.assertIsInstance(exc_args[1], np.ndarray)
         self.assertEqual(exc_args[1].shape, (3,))
 
     def _check_triple_root_err(self, exception):
-        from bezier import _algebraic_intersection
+        from bezier.hazmat import algebraic_intersection
 
         exc_args = exception.args
         self.assertEqual(len(exc_args), 2)
-        self.assertEqual(exc_args[0], _algebraic_intersection._NON_SIMPLE_ERR)
+        self.assertEqual(exc_args[0], algebraic_intersection._NON_SIMPLE_ERR)
         self.assertIsInstance(exc_args[1], np.ndarray)
         self.assertEqual(exc_args[1].shape, (5,))
 

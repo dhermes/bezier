@@ -17,11 +17,11 @@ import numpy as np
 import pytest
 
 import bezier
-from bezier import _algebraic_intersection
 from bezier import _py_geometric_intersection
 from bezier import _py_triangle_helpers
 from bezier import _py_triangle_intersection
 from bezier import curve
+from bezier.hazmat import algebraic_intersection
 from tests import utils as base_utils
 from tests.functional import utils
 
@@ -127,7 +127,7 @@ def check_tangent_manager(strategy, too_many=None):
         assert exc_args == (err_msg,)
     else:
         assert len(exc_args) == 2
-        assert exc_args[0] == _algebraic_intersection._NON_SIMPLE_ERR
+        assert exc_args[0] == algebraic_intersection._NON_SIMPLE_ERR
 
 
 @contextlib.contextmanager
@@ -147,7 +147,7 @@ def check_coincident_manager(strategy, too_many=None, curvature=False):
             err_msg = TOO_MANY.format(too_many)
             assert exc_args == (err_msg,)
     else:
-        assert exc_args == (_algebraic_intersection._COINCIDENT_ERR,)
+        assert exc_args == (algebraic_intersection._COINCIDENT_ERR,)
 
 
 @contextlib.contextmanager

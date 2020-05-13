@@ -1,0 +1,107 @@
+``2020.2.3``
+============
+
+|pypi| |docs|
+
+ABI Changes
+-----------
+
+Packaging
+~~~~~~~~~
+
+-  Introduced first-class build and install support for ``libbezier`` via
+   `CMake`_. Achieved with the following PRs
+
+   -  Added ``CMakeLists.txt`` files to enable building ``libbezier`` with
+      `CMake`_ (`#175 <https://github.com/dhermes/bezier/pull/175>`__).
+   -  Added ``-DTARGET_NATIVE_ARCH:BOOL=OFF`` flag to enable portable release
+      builds (`#182 <https://github.com/dhermes/bezier/pull/182>`__).
+
+   and closed the following issues
+
+   -  Use a shared library (rather than a static library) for ``libbezier``
+      (`#54 <https://github.com/dhermes/bezier/issues/54>`__).
+   -  Enable Python installs to be "hybrid-editable"
+      (`#56 <https://github.com/dhermes/bezier/issues/56>`__). (This means that
+      the Python files reference the source tree but the built components, i.e.
+      ``libbezier`` and ``_speedup.so``, are already built and utilize caching
+      of `CMake`_.)
+   -  Use build system other than Python / ``distutils`` / ``setuptools``
+      (`#62 <https://github.com/dhermes/bezier/issues/62>`__).
+   -  Add ability to disable ``-march=native`` flag to make release builds
+      portable across compatible operating systems
+      (`#181 <https://github.com/dhermes/bezier/issues/181>`__).
+
+.. _CMake: https://cmake.org/
+
+Python Changes
+--------------
+
+Additive Changes
+~~~~~~~~~~~~~~~~
+
+-  Exposing ``Curve.evaluate_hodograph()``
+   `method <https://bezier.readthedocs.io/en/2020.2.3/python/reference/bezier.curve.html#bezier.curve.Curve.evaluate_hodograph>`__
+   as part of the public API
+   (`#191 <https://github.com/dhermes/bezier/pull/191>`__).
+   Fixed `#138 <https://github.com/dhermes/bezier/issues/138>`__.
+
+Packaging
+~~~~~~~~~
+
+-  Removed build dependency on ``gfortran`` and other heavyweight tools (and
+   hacks) such as ``numpy.distutils``. Now, ``libbezier`` must be built before
+   the Python package can be installed and the install location must be
+   provided via the ``BEZIER_INSTALL_PREFIX`` environment variable. Achieved
+   with the following PRs
+
+   -  Requiring prebuilt ``libbezier`` when building ``bezier._speedup`` Python
+      binary extension (`#176 <https://github.com/dhermes/bezier/pull/176>`__).
+   -  Support building of wheels on all platforms that depend on
+      ``libbezier`` (`#182 <https://github.com/dhermes/bezier/pull/182>`__).
+
+-  Switch from ``manylinux1`` to ``manylinux2010`` for built wheels
+   (`#178 <https://github.com/dhermes/bezier/pull/178>`__).
+-  Delaying imports of ``pkg_resources``, ``scipy`` and ``sympy`` until
+   actually needed (if ever)
+   (`#194 <https://github.com/dhermes/bezier/pull/194>`__,
+   `#195 <https://github.com/dhermes/bezier/pull/195>`__,
+   `38602d8 <https://github.com/dhermes/bezier/commit/38602d88714b5358fdab2730392c7bbf27b2b8c2>`__).
+-  Adding ``matplotlib`` to ``pip install bezier[full]``
+   (`8beb036 <https://github.com/dhermes/bezier/commit/8beb036ce06decb26ae25de118a8a3778c18c519>`__).
+-  Avoiding ``bezier.dll`` name collision on Windows in wheels distributed on
+   PyPI
+   (`#190 <https://github.com/dhermes/bezier/pull/190>`__).
+   Fixed `#189 <https://github.com/dhermes/bezier/issues/189>`__.
+
+Breaking Changes
+~~~~~~~~~~~~~~~~
+
+-  Removed ``bezier.get_dll()`` helper
+   (`#184 <https://github.com/dhermes/bezier/pull/184>`__).
+
+Documentation
+--------------
+
+-  Changed "Read the Docs" landing page to point to ``.../stable/``
+   documentation (i.e. the last published release) instead of ``.../latest``
+   documentation (i.e. the last **merged** commit).
+-  Making sure `CMake`_ installed trees (on Linux, macOS and Windows) are
+   verified in ``doctest`` as part of CI
+   (`48e4166 <https://github.com/dhermes/bezier/commit/48e416651878f02f7fce35e4944c56ba98463427>`__).
+-  Making sure ``example_*.c`` ABI examples are compiled and run (on Linux
+   and macOS) in ``doctest`` as part of CI
+   (`ffdcdf7 <https://github.com/dhermes/bezier/commit/ffdcdf7e0b6608bb2a2b37337abbf49090f922c2>`__,
+   `9551495 <https://github.com/dhermes/bezier/commit/95514952d54224d52d909876cb54bb75e672b653>`__,
+   `0766649 <https://github.com/dhermes/bezier/commit/07666494a318d81770323a03aba694a282a8434b>`__).
+-  Converting (untested, potentially stale) console codeblocks to ``doctest``
+   (that get run in CI) for Linux sections of binary extension documentation
+   (`#188 <https://github.com/dhermes/bezier/pull/188>`__).
+   Fixed `#74 <https://github.com/dhermes/bezier/issues/74>`__.
+
+.. |pypi| image:: https://img.shields.io/pypi/v/bezier/2020.2.3.svg
+   :target: https://pypi.org/project/bezier/2020.2.3/
+   :alt: PyPI link to release 2020.2.3
+.. |docs| image:: https://readthedocs.org/projects/bezier/badge/?version=2020.2.3
+   :target: https://bezier.readthedocs.io/en/2020.2.3/
+   :alt: Documentation for release 2020.2.3

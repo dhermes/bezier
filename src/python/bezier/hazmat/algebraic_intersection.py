@@ -143,7 +143,7 @@ def _evaluate3(nodes, x_val, y_val):
 def evaluate(nodes, x_val, y_val):
     r"""Evaluate the implicitized bivariate polynomial containing the curve.
 
-    Assumes `algebraic curve`_ containing :math:`B(s, t)` is given by
+    Assumes the `algebraic curve`_ containing :math:`B(s, t)` is given by
     :math:`f(x, y) = 0`. This function evaluates :math:`f(x, y)`.
 
     .. note::
@@ -220,7 +220,7 @@ def eval_intersection_polynomial(nodes1, nodes2, t):
 
     .. math::
 
-       g(t) = f_1\left(x_2(t), y_2(t)right)
+       g(t) = f_1\left(x_2(t), y_2(t)\right)
 
     Args:
         nodes1 (numpy.ndarray): The nodes in the first curve.
@@ -489,7 +489,7 @@ def to_power_basis(nodes1, nodes2):
 
     .. note::
 
-       This assumes that the degree of the curve given by ``nodes1`` is
+       This requires that the degree of the curve given by ``nodes1`` is
        less than or equal to the degree of that given by ``nodes2``.
 
     Args:
@@ -577,7 +577,7 @@ def polynomial_norm(coeffs):
 def normalize_polynomial(coeffs, threshold=_L2_THRESHOLD):
     r"""Normalizes a polynomial in the :math:`L_2` sense.
 
-    Does so on the interval :math:\left[0, 1\right]` via
+    Does so on the interval :math:`\left[0, 1\right]` via
     :func:`polynomial_norm`.
 
     Args:
@@ -585,7 +585,7 @@ def normalize_polynomial(coeffs, threshold=_L2_THRESHOLD):
             power basis.
         threshold (Optional[float]): The point :math:`\tau` below which a
             polynomial will be considered to be numerically equal to zero,
-            applies to all :math:`f` with :math`\| f \|_{L_2} < \tau`.
+            applies to all :math:`f` with :math:`\| f \|_{L_2} < \tau`.
 
     Returns:
         numpy.ndarray: The normalized polynomial.
@@ -774,8 +774,8 @@ def bezier_roots(coeffs):
 
        import numpy as np
        import numpy.linalg
-       from bezier._algebraic_intersection import bernstein_companion
-       from bezier._algebraic_intersection import bezier_roots
+       from bezier.hazmat.algebraic_intersection import bernstein_companion
+       from bezier.hazmat.algebraic_intersection import bezier_roots
 
        machine_eps = np.finfo(np.float64).eps
 
@@ -956,7 +956,7 @@ def lu_companion(top_row, value):
 
        import numpy as np
        import numpy.linalg
-       from bezier._algebraic_intersection import lu_companion
+       from bezier.hazmat.algebraic_intersection import lu_companion
 
     .. doctest:: lu-companion
 
@@ -1068,7 +1068,7 @@ def bezier_value_check(coeffs, s_val, rhs_val=0.0):
        Is it true that :math:`f\left(s_{\ast}\right) = 0`?
 
     Does so by re-stating as a matrix rank problem. As in
-    :func:`~bezier._algebraic_intersection.bezier_roots`, we can rewrite
+    :func:`~bezier.hazmat.algebraic_intersection.bezier_roots`, we can rewrite
 
     .. math::
 
@@ -1273,7 +1273,7 @@ def intersect_curves(nodes1, nodes2):
 
     Raises:
         NotImplementedError: If the "intersection polynomial" is
-        all zeros -- which indicates coincident curves.
+            all zeros -- which indicates coincident curves.
     """
     nodes1 = _curve_helpers.full_reduce(nodes1)
     nodes2 = _curve_helpers.full_reduce(nodes2)
@@ -1412,7 +1412,7 @@ def all_intersections(nodes_first, nodes_second):
 
     .. note::
 
-       This assumes both curves are :math:`\mathbf{R}^2`, but does not
+       This assumes both curves are in :math:`\mathbf{R}^2`, but does not
        **explicitly** check this. However, functions used here will fail if
        that assumption fails.
 

@@ -52,10 +52,8 @@ unset(SOURCES)
 
 if(${BUILD_SHARED_LIBS})
   set_target_properties(
-    bezier
-    PROPERTIES VERSION ${bezier_VERSION} SOVERSION 2020
-
-               POSITION_INDEPENDENT_CODE ON)
+    bezier PROPERTIES VERSION ${bezier_VERSION} SOVERSION 2020
+                      POSITION_INDEPENDENT_CODE ON)
 endif()
 
 target_include_directories(bezier PUBLIC $<INSTALL_INTERFACE:include>)
