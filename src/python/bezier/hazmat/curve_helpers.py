@@ -493,7 +493,7 @@ def get_curvature(nodes, tangent_vec, s):
 
        \frac{B'(s) \times B''(s)}{\left\lVert B'(s) \right\rVert_2^3}
 
-    .. image:: ../images/get_curvature.png
+    .. image:: ../../images/get_curvature.png
        :align: center
 
     .. testsetup:: get-curvature
@@ -599,7 +599,7 @@ def newton_refine(nodes, point, s):
        \Longrightarrow \Delta s &= -\frac{2}{5}
        \end{align*}
 
-    .. image:: ../images/newton_refine_curve.png
+    .. image:: ../../images/newton_refine_curve.png
        :align: center
 
     .. testsetup:: newton-refine-curve, newton-refine-curve-cusp
@@ -634,7 +634,7 @@ def newton_refine(nodes, point, s):
     injective with non-zero gradient), Newton's method may
     break down and converge linearly:
 
-    .. image:: ../images/newton_refine_curve_cusp.png
+    .. image:: ../../images/newton_refine_curve_cusp.png
        :align: center
 
     .. doctest:: newton-refine-curve-cusp
@@ -844,7 +844,7 @@ def projection_error(nodes, projected):
     .. note::
 
         This is a helper for :func:`maybe_reduce`, which is in turn a helper
-        for :func:`_full_reduce`. Hence there is no corresponding Fortran
+        for :func:`.full_reduce`. Hence there is no corresponding Fortran
         speedup.
 
     For now, just compute the relative error in the Frobenius norm. But,
@@ -869,7 +869,7 @@ def maybe_reduce(nodes):
 
     .. note::
 
-        This is a helper for :func:`_full_reduce`. Hence there is no
+        This is a helper for :func:`.full_reduce`. Hence there is no
         corresponding Fortran speedup.
 
     We check if the nodes are degree-elevated by projecting onto the
