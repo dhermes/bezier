@@ -151,7 +151,7 @@ def newton_refine(nodes, degree, x_val, y_val, s, t):
 
        import numpy as np
        import bezier
-       from bezier._py_triangle_intersection import newton_refine
+       from bezier.hazmat.triangle_intersection import newton_refine
 
     .. doctest:: newton-refine-triangle
 
@@ -479,8 +479,8 @@ def verify_edge_segments(edge_infos):
 def add_edge_end_unused(intersection, duplicates, intersections):
     """Add intersection that is ``COINCIDENT_UNUSED`` but on an edge end.
 
-    This is a helper for :func:`~._py_triangle_intersection.add_intersection`.
-    It assumes that
+    This is a helper for
+    :func:`~.hazmat.triangle_intersection.add_intersection`. It assumes that
 
     * ``intersection`` will have at least one of ``s == 0.0`` or ``t == 0.0``
     * A "misclassified" intersection in ``intersections`` that matches

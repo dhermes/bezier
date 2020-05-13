@@ -27,9 +27,9 @@ class Test_newton_refine_solve(unittest.TestCase):
     def _call_function_under_test(
         jac_both, x_val, triangle_x, y_val, triangle_y
     ):
-        from bezier import _py_triangle_intersection
+        from bezier.hazmat import triangle_intersection
 
-        return _py_triangle_intersection.newton_refine_solve(
+        return triangle_intersection.newton_refine_solve(
             jac_both, x_val, triangle_x, y_val, triangle_y
         )
 
@@ -45,9 +45,9 @@ class Test_newton_refine_solve(unittest.TestCase):
 class Test_newton_refine(unittest.TestCase):
     @staticmethod
     def _call_function_under_test(nodes, degree, x_val, y_val, s, t):
-        from bezier import _py_triangle_intersection
+        from bezier.hazmat import triangle_intersection
 
-        return _py_triangle_intersection.newton_refine(
+        return triangle_intersection.newton_refine(
             nodes, degree, x_val, y_val, s, t
         )
 
@@ -97,9 +97,9 @@ class Test_update_locate_candidates(unittest.TestCase):
     def _call_function_under_test(
         candidate, next_candidates, x_val, y_val, degree
     ):
-        from bezier import _py_triangle_intersection
+        from bezier.hazmat import triangle_intersection
 
-        return _py_triangle_intersection.update_locate_candidates(
+        return triangle_intersection.update_locate_candidates(
             candidate, next_candidates, x_val, y_val, degree
         )
 
@@ -145,9 +145,9 @@ class Test_update_locate_candidates(unittest.TestCase):
 class Test_mean_centroid(unittest.TestCase):
     @staticmethod
     def _call_function_under_test(candidates):
-        from bezier import _py_triangle_intersection
+        from bezier.hazmat import triangle_intersection
 
-        return _py_triangle_intersection.mean_centroid(candidates)
+        return triangle_intersection.mean_centroid(candidates)
 
     def test_it(self):
         candidates = (
@@ -163,11 +163,9 @@ class Test_mean_centroid(unittest.TestCase):
 class Test_locate_point(unittest.TestCase):
     @staticmethod
     def _call_function_under_test(nodes, degree, x_val, y_val):
-        from bezier import _py_triangle_intersection
+        from bezier.hazmat import triangle_intersection
 
-        return _py_triangle_intersection.locate_point(
-            nodes, degree, x_val, y_val
-        )
+        return triangle_intersection.locate_point(nodes, degree, x_val, y_val)
 
     def test_it(self):
         nodes = UNIT_TRIANGLE.copy(order="F")
@@ -212,9 +210,9 @@ class Test_locate_point(unittest.TestCase):
 class Test_same_intersection(unittest.TestCase):
     @staticmethod
     def _call_function_under_test(intersection1, intersection2, **kwargs):
-        from bezier import _py_triangle_intersection
+        from bezier.hazmat import triangle_intersection
 
-        return _py_triangle_intersection.same_intersection(
+        return triangle_intersection.same_intersection(
             intersection1, intersection2, **kwargs
         )
 
@@ -259,9 +257,9 @@ class Test_same_intersection(unittest.TestCase):
 class Test_verify_duplicates(unittest.TestCase):
     @staticmethod
     def _call_function_under_test(duplicates, uniques):
-        from bezier import _py_triangle_intersection
+        from bezier.hazmat import triangle_intersection
 
-        return _py_triangle_intersection.verify_duplicates(duplicates, uniques)
+        return triangle_intersection.verify_duplicates(duplicates, uniques)
 
     def test_empty(self):
         self.assertIsNone(self._call_function_under_test([], []))
@@ -306,9 +304,9 @@ class Test_verify_duplicates(unittest.TestCase):
 class Test_verify_edge_segments(unittest.TestCase):
     @staticmethod
     def _call_function_under_test(edge_infos):
-        from bezier import _py_triangle_intersection
+        from bezier.hazmat import triangle_intersection
 
-        return _py_triangle_intersection.verify_edge_segments(edge_infos)
+        return triangle_intersection.verify_edge_segments(edge_infos)
 
     def test_none(self):
         return_value = self._call_function_under_test(None)
@@ -320,7 +318,7 @@ class Test_verify_edge_segments(unittest.TestCase):
         self.assertIsNone(return_value)
 
     def test_bad_params(self):
-        from bezier import _py_triangle_intersection
+        from bezier.hazmat import triangle_intersection
 
         edge_infos = [((0, 0.0, 1.5), (4, 0.25, 1.0), (5, 0.0, 0.75))]
         with self.assertRaises(ValueError) as exc_info:
@@ -328,13 +326,13 @@ class Test_verify_edge_segments(unittest.TestCase):
 
         exc_args = exc_info.exception.args
         expected = (
-            _py_triangle_intersection.BAD_SEGMENT_PARAMS,
+            triangle_intersection.BAD_SEGMENT_PARAMS,
             (0, 0.0, 1.5),
         )
         self.assertEqual(exc_args, expected)
 
     def test_consecutive_segments(self):
-        from bezier import _py_triangle_intersection
+        from bezier.hazmat import triangle_intersection
 
         edge_infos = [
             ((0, 0.25, 0.5), (4, 0.25, 1.0), (5, 0.0, 0.75), (0, 0.0, 0.25))
@@ -344,7 +342,7 @@ class Test_verify_edge_segments(unittest.TestCase):
 
         exc_args = exc_info.exception.args
         expected = (
-            _py_triangle_intersection.SEGMENTS_SAME_EDGE,
+            triangle_intersection.SEGMENTS_SAME_EDGE,
             (0, 0.0, 0.25),
             (0, 0.25, 0.5),
         )
@@ -354,9 +352,9 @@ class Test_verify_edge_segments(unittest.TestCase):
 class Test_add_edge_end_unused(unittest.TestCase):
     @staticmethod
     def _call_function_under_test(intersection, duplicates, intersections):
-        from bezier import _py_triangle_intersection
+        from bezier.hazmat import triangle_intersection
 
-        return _py_triangle_intersection.add_edge_end_unused(
+        return triangle_intersection.add_edge_end_unused(
             intersection, duplicates, intersections
         )
 
@@ -415,9 +413,9 @@ class Test_add_edge_end_unused(unittest.TestCase):
 class Test_check_unused(unittest.TestCase):
     @staticmethod
     def _call_function_under_test(intersection, duplicates, unused):
-        from bezier import _py_triangle_intersection
+        from bezier.hazmat import triangle_intersection
 
-        return _py_triangle_intersection.check_unused(
+        return triangle_intersection.check_unused(
             intersection, duplicates, unused
         )
 
@@ -476,9 +474,9 @@ class Test_add_intersection(unittest.TestCase):
         duplicates,
         intersections,
     ):
-        from bezier import _py_triangle_intersection
+        from bezier.hazmat import triangle_intersection
 
-        return _py_triangle_intersection.add_intersection(
+        return triangle_intersection.add_intersection(
             index1,
             s,
             index2,
@@ -596,11 +594,9 @@ class Test_add_intersection(unittest.TestCase):
 class Test_classify_coincident(unittest.TestCase):
     @staticmethod
     def _call_function_under_test(st_vals, coincident):
-        from bezier import _py_triangle_intersection
+        from bezier.hazmat import triangle_intersection
 
-        return _py_triangle_intersection.classify_coincident(
-            st_vals, coincident
-        )
+        return triangle_intersection.classify_coincident(st_vals, coincident)
 
     def test_not_coincident(self):
         interior_curve = self._call_function_under_test(None, False)
@@ -624,9 +620,9 @@ class Test_classify_coincident(unittest.TestCase):
 class Test_should_use(unittest.TestCase):
     @staticmethod
     def _call_function_under_test(intersection):
-        from bezier import _py_triangle_intersection
+        from bezier.hazmat import triangle_intersection
 
-        return _py_triangle_intersection.should_use(intersection)
+        return triangle_intersection.should_use(intersection)
 
     def test_acceptable(self):
         intersection = make_intersect(
@@ -662,9 +658,9 @@ class Test_should_use(unittest.TestCase):
 class Test_triangle_intersections(utils.NumPyTestCase):
     @staticmethod
     def _call_function_under_test(edge_nodes1, edge_nodes2, all_intersections):
-        from bezier import _py_triangle_intersection
+        from bezier.hazmat import triangle_intersection
 
-        return _py_triangle_intersection.triangle_intersections(
+        return triangle_intersection.triangle_intersections(
             edge_nodes1, edge_nodes2, all_intersections
         )
 
@@ -721,9 +717,9 @@ class Test_generic_intersect(utils.NumPyTestCase):
     def _call_function_under_test(
         nodes1, degree1, nodes2, degree2, verify, all_intersections
     ):
-        from bezier import _py_triangle_intersection
+        from bezier.hazmat import triangle_intersection
 
-        return _py_triangle_intersection.generic_intersect(
+        return triangle_intersection.generic_intersect(
             nodes1, degree1, nodes2, degree2, verify, all_intersections
         )
 
@@ -753,9 +749,9 @@ class Test_geometric_intersect(utils.NumPyTestCase):
 
     @staticmethod
     def _call_function_under_test(nodes1, degree1, nodes2, degree2, **kwargs):
-        from bezier import _py_triangle_intersection
+        from bezier.hazmat import triangle_intersection
 
-        return _py_triangle_intersection.geometric_intersect(
+        return triangle_intersection.geometric_intersect(
             nodes1, degree1, nodes2, degree2, **kwargs
         )
 
@@ -949,9 +945,9 @@ class Test_algebraic_intersect(Test_geometric_intersect):
 
     @staticmethod
     def _call_function_under_test(nodes1, degree1, nodes2, degree2, **kwargs):
-        from bezier import _py_triangle_intersection
+        from bezier.hazmat import triangle_intersection
 
-        return _py_triangle_intersection.algebraic_intersect(
+        return triangle_intersection.algebraic_intersect(
             nodes1, degree1, nodes2, degree2, **kwargs
         )
 

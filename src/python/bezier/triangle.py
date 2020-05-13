@@ -28,13 +28,13 @@ from bezier import _curve_helpers
 from bezier import _plot_helpers
 from bezier import _py_intersection_helpers
 from bezier import _py_triangle_helpers
-from bezier import _py_triangle_intersection
 from bezier import _symbolic
 from bezier import _triangle_helpers
 from bezier import _triangle_intersection
 from bezier import curve as _curve_mod
 from bezier import curved_polygon
 from bezier.hazmat import helpers as _py_helpers
+from bezier.hazmat import triangle_intersection as _py_triangle_intersection
 
 
 _SIGN = np.sign  # pylint: disable=no-member

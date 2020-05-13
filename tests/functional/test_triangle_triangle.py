@@ -19,9 +19,9 @@ import pytest
 import bezier
 from bezier import _py_geometric_intersection
 from bezier import _py_triangle_helpers
-from bezier import _py_triangle_intersection
 from bezier import curve
 from bezier.hazmat import algebraic_intersection
+from bezier.hazmat import triangle_intersection
 from tests import utils as base_utils
 from tests.functional import utils
 
@@ -200,7 +200,7 @@ def check_consecutive_manager():
 
     assert caught_exc is not None
     exc_args = caught_exc.args
-    assert exc_args[0] == _py_triangle_intersection.SEGMENTS_SAME_EDGE
+    assert exc_args[0] == triangle_intersection.SEGMENTS_SAME_EDGE
     assert len(exc_args) == 3
 
 
@@ -223,7 +223,7 @@ def extra_verify(strategy, intersections):
             for curved_polygon in intersections
             if isinstance(curved_polygon, bezier.CurvedPolygon)
         ]
-        _py_triangle_intersection.verify_edge_segments(edge_infos)
+        triangle_intersection.verify_edge_segments(edge_infos)
 
 
 def triangle_triangle_check(strategy, triangle1, triangle2, *all_intersected):
