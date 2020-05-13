@@ -5,6 +5,7 @@ Releases
    :maxdepth: 1
 
    latest
+   2020.2.3
    2020.1.14
    0.11.0
    0.10.0
