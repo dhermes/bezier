@@ -2499,11 +2499,14 @@ def ends_to_curve(start_node, end_node):
 
     Raises:
         ValueError: If the ``start_node`` and ``end_node`` disagree on
-            the first curve when classified as "FIRST".
+            the first curve when classified as
+            :attr:`~.IntersectionClassification.FIRST`.
         ValueError: If the ``start_node`` and ``end_node`` disagree on
-            the second curve when classified as "SECOND".
+            the second curve when classified as
+            :attr:`~.IntersectionClassification.SECOND`.
         ValueError: If the ``start_node`` and ``end_node`` disagree on
-            the both curves when classified as "COINCIDENT".
+            the both curves when classified as
+            :attr:`~.IntersectionClassification.COINCIDENT`.
         ValueError: If the ``start_node`` is not classified as
             :attr:`~.IntersectionClassification.FIRST`,
             :attr:`~.IntersectionClassification.TANGENT_FIRST`,
