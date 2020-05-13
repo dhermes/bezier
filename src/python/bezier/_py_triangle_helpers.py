@@ -2661,8 +2661,9 @@ def basic_interior_combine(intersections, max_edges=10):
        enforce it.
 
     Args:
-        intersections (List[.Intersection]): Intersections from each of the
-            9 edge-edge pairs from a triangle-triangle pairing.
+        intersections (List[~bezier._py_intersection_helpers.Intersection]):
+            Intersections from each of the 9 edge-edge pairs from a
+            triangle-triangle pairing.
         max_edges (Optional[int]): The maximum number of allowed / expected
             edges per intersection. This is to avoid infinite loops.
 
@@ -2721,7 +2722,7 @@ def basic_interior_combine(intersections, max_edges=10):
 def combine_intersections(
     intersections, nodes1, degree1, nodes2, degree2, all_types
 ):
-    r"""Combine curve-curve intersections into curved polygon(s).
+    """Combine curve-curve intersections into curved polygon(s).
 
     .. note::
 
@@ -2737,17 +2738,19 @@ def combine_intersections(
        as ``FIRST`` and ``SECOND`` were kept.
 
     Args:
-        intersections (List[.Intersection]): Intersections from each of the
-            9 edge-edge pairs from a triangle-triangle pairing.
+        intersections (List[~bezier._py_intersection_helpers.Intersection]):
+            Intersections from each of the 9 edge-edge pairs from a
+            triangle-triangle pairing.
         nodes1 (numpy.ndarray): The nodes defining the first triangle in
-            the intersection (assumed in :math:\mathbf{R}^2`).
+            the intersection (assumed in :math:`\\mathbf{R}^2`).
         degree1 (int): The degree of the triangle given by ``nodes1``.
         nodes2 (numpy.ndarray): The nodes defining the second triangle in
-            the intersection (assumed in :math:\mathbf{R}^2`).
+            the intersection (assumed in :math:`\\mathbf{R}^2`).
         degree2 (int): The degree of the triangle given by ``nodes2``.
-        all_types (Set[.IntersectionClassification]): The set of all
-            intersection classifications encountered among the intersections
-            for the given triangle-triangle pair.
+        all_types (Set[ \
+            ~bezier._py_intersection_helpers.IntersectionClassification]): The
+            set of all intersection classifications encountered among the
+            intersections for the given triangle-triangle pair.
 
     Returns:
         Tuple[Optional[list], Optional[bool]]: Pair (2-tuple) of

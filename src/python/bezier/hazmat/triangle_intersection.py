@@ -10,7 +10,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Pure Python helper methods for :mod:`bezier.triangle`."""
+"""Pure Python helper methods for :mod:`bezier.triangle`.
+
+.. |eacute| unicode:: U+000E9 .. LATIN SMALL LETTER E WITH ACUTE
+   :trim:
+"""
 
 import collections
 import itertools
@@ -144,7 +148,7 @@ def newton_refine(nodes, degree, x_val, y_val, s, t):
            \left[\begin{array}{c} -10 \\ 7 \end{array}\right]
        \end{align*}
 
-    .. image:: ../images/newton_refine_triangle.png
+    .. image:: ../../images/newton_refine_triangle.png
        :align: center
 
     .. testsetup:: newton-refine-triangle
@@ -271,7 +275,7 @@ def mean_centroid(candidates):
        This is used **only** as a helper for :func:`locate_point`.
 
     Args:
-        candidates (List[Tuple[float, float, float, numpy.ndarray]): List of
+        candidates (List[Tuple[float, float, float, numpy.ndarray]]): List of
             4-tuples, each of which has been produced by :func:`locate_point`.
             Each 4-tuple contains
 
@@ -393,10 +397,11 @@ def verify_duplicates(duplicates, uniques):
        This is a helper used only by :func:`generic_intersect`.
 
     Args:
-        duplicates (List[.Intersection]): List of intersections
-            corresponding to duplicates that were filtered out.
-        uniques (List[.Intersection]): List of "final" intersections
-            with duplicates filtered out.
+        duplicates (List[~bezier._py_intersection_helpers.Intersection]): List
+            of intersections corresponding to duplicates that were filtered
+            out.
+        uniques (List[~bezier._py_intersection_helpers.Intersection]): List of
+            "final" intersections with duplicates filtered out.
 
     Raises:
         ValueError: If the ``uniques`` are not actually all unique.
@@ -448,7 +453,7 @@ def verify_edge_segments(edge_infos):
     Args:
         edge_infos (Optional[list]): List of "edge info" lists. Each list
             represents a curved polygon and contains 3-tuples of edge index,
-            start and end (see the output of :func:`ends_to_curve`).
+            start and end (see the output of :func:`.ends_to_curve`).
 
     Raises:
         ValueError: If two consecutive edge segments lie on the same edge
@@ -489,9 +494,10 @@ def add_edge_end_unused(intersection, duplicates, intersections):
 
     Args:
         intersection (.Intersection): An intersection to be added.
-        duplicates (List[.Intersection]): List of duplicate intersections.
-        intersections (List[.Intersection]): List of "accepted" (i.e.
-            non-duplicate) intersections.
+        duplicates (List[~bezier._py_intersection_helpers.Intersection]): List
+            of duplicate intersections.
+        intersections (List[~bezier._py_intersection_helpers.Intersection]):
+            List of "accepted" (i.e. non-duplicate) intersections.
     """
     found = None
     for other in intersections:
@@ -524,9 +530,10 @@ def check_unused(intersection, duplicates, intersections):
 
     Args:
         intersection (.Intersection): An intersection to be added.
-        duplicates (List[.Intersection]): List of duplicate intersections.
-        intersections (List[.Intersection]): List of "accepted" (i.e.
-            non-duplicate) intersections.
+        duplicates (List[~bezier._py_intersection_helpers.Intersection]): List
+            of duplicate intersections.
+        intersections (List[~bezier._py_intersection_helpers.Intersection]):
+            List of "accepted" (i.e. non-duplicate) intersections.
 
     Returns:
         bool: Indicates if the ``intersection`` is a duplicate.
@@ -559,7 +566,7 @@ def add_intersection(  # pylint: disable=too-many-arguments
     duplicates,
     intersections,
 ):
-    """Create an :class:`Intersection` and append.
+    """Create an :class:`.Intersection` and append.
 
     The intersection will be classified as either a duplicate or a valid
     intersection and appended to one of ``duplicates`` or ``intersections``
@@ -572,16 +579,18 @@ def add_intersection(  # pylint: disable=too-many-arguments
         index2 (int): The index (among 0, 1, 2) of the second edge in the
             intersection.
         t (float): The parameter along the second curve of the intersection.
-        interior_curve (Optional[.IntersectionClassification]): The
+        interior_curve (Optional[ \
+            ~bezier._py_intersection_helpers.IntersectionClassification]): The
             classification of the intersection, if known. If :data:`None`,
             the classification will be computed below.
         edge_nodes1 (Tuple[numpy.ndarray, numpy.ndarray, numpy.ndarray]): The
             nodes of the three edges of the first triangle being intersected.
         edge_nodes2 (Tuple[numpy.ndarray, numpy.ndarray, numpy.ndarray]): The
             nodes of the three edges of the second triangle being intersected.
-        duplicates (List[.Intersection]): List of duplicate intersections.
-        intersections (List[.Intersection]): List of "accepted" (i.e.
-            non-duplicate) intersections.
+        duplicates (List[~bezier._py_intersection_helpers.Intersection]): List
+            of duplicate intersections.
+        intersections (List[~bezier._py_intersection_helpers.Intersection]):
+            List of "accepted" (i.e. non-duplicate) intersections.
     """
     # NOTE: There is no corresponding "enable", but the disable only applies
     #       in this lexical scope.
@@ -643,8 +652,8 @@ def classify_coincident(st_vals, coincident):
             endpoints of coincident segments of two curves.
 
     Returns:
-        Optional[.IntersectionClassification]: The classification of the
-        intersections.
+        Optional[~bezier._py_intersection_helpers.IntersectionClassification]:
+        The classification of the intersections.
     """
     if not coincident:
         return None
@@ -694,15 +703,15 @@ def triangle_intersections(edge_nodes1, edge_nodes2, all_intersections):
             nodes of the three edges of the first triangle being intersected.
         edge_nodes2 (Tuple[numpy.ndarray, numpy.ndarray, numpy.ndarray]): The
             nodes of the three edges of the second triangle being intersected.
-        all_intersections (Callable): A helper that intersects B |eacute| zier
-            curves. Takes the nodes of each curve as input and returns an
-            array (``2 x N``) of intersections.
+        all_intersections (Callable[..., Any]): A helper that intersects
+            B |eacute| zier curves. Takes the nodes of each curve as input and
+            returns an array (``2 x N``) of intersections.
 
     Returns:
         Tuple[list, list, list, set]: 4-tuple of
 
-        * The actual "unique" :class:`Intersection`-s
-        * Duplicate :class:`Intersection`-s encountered (these will be
+        * The actual "unique" :class:`.Intersection`-s
+        * Duplicate :class:`.Intersection`-s encountered (these will be
           corner intersections)
         * Intersections that won't be used, such as a tangent intersection
           along an edge
@@ -760,16 +769,16 @@ def generic_intersect(
         degree2 (int): The degree of the triangle given by ``nodes2``.
         verify (Optional[bool]): Indicates if duplicate intersections
             should be checked.
-        all_intersections (Callable): A helper that intersects B |eacute| zier
-            curves. Takes the nodes of each curve as input and returns an
-            array (``2 x N``) of intersections.
+        all_intersections (Callable[..., Any]): A helper that intersects
+            B |eacute| zier curves. Takes the nodes of each curve as input and
+            returns an array (``2 x N``) of intersections.
 
     Returns:
         Tuple[Optional[list], Optional[bool], tuple]: 3-tuple of
 
         * List of "edge info" lists. Each list represents a curved polygon
           and contains 3-tuples of edge index, start and end (see the
-          output of :func:`ends_to_curve`).
+          output of :func:`.ends_to_curve`).
         * "Contained" boolean. If not :data:`None`, indicates
           that one of the triangles is contained in the other.
         * The nodes of three edges of the first triangle being intersected
@@ -825,7 +834,7 @@ def geometric_intersect(nodes1, degree1, nodes2, degree2, verify):
 
         * List of "edge info" lists. Each list represents a curved polygon
           and contains 3-tuples of edge index, start and end (see the
-          output of :func:`ends_to_curve`).
+          output of :func:`.ends_to_curve`).
         * "Contained" boolean. If not :data:`None`, indicates
           that one of the triangles is contained in the other.
         * The nodes of three edges of the first triangle being intersected
@@ -858,7 +867,7 @@ def algebraic_intersect(nodes1, degree1, nodes2, degree2, verify):
 
         * List of "edge info" lists. Each list represents a curved polygon
           and contains 3-tuples of edge index, start and end (see the
-          output of :func:`ends_to_curve`).
+          output of :func:`.ends_to_curve`).
         * "Contained" boolean. If not :data:`None`, indicates
           that one of the triangles is contained in the other.
         * The nodes of three edges of the first triangle being intersected

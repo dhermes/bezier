@@ -10,7 +10,10 @@ Functions
 .. autofunction:: bezier._py_geometric_intersection.linearization_error
 .. autofunction:: bezier._py_geometric_intersection.segment_intersection
 .. autofunction:: bezier._py_geometric_intersection.parallel_lines_parameters
+.. autofunction:: bezier._py_triangle_helpers.basic_interior_combine
 .. autofunction:: bezier._py_triangle_helpers.classify_intersection
+.. autofunction:: bezier._py_triangle_helpers.combine_intersections
+.. autofunction:: bezier._py_triangle_helpers.ends_to_curve
 .. autofunction:: bezier._py_triangle_helpers.jacobian_det
 
 *****
