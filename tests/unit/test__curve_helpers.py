@@ -10,8 +10,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from tests.unit.hazmat import test_curve_helpers
 from tests.unit import utils
+from tests.unit.hazmat import test_curve_helpers
 
 
 @utils.needs_speedup
