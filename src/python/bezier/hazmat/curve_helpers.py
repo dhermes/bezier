@@ -121,7 +121,7 @@ def make_subdivision_matrices(degree):
 
     Returns:
         Tuple[numpy.ndarray, numpy.ndarray]: The matrices used to convert
-           the nodes into left and right nodes, respectively.
+        the nodes into left and right nodes, respectively.
     """
     left = np.zeros((degree + 1, degree + 1), order="F")
     right = np.zeros((degree + 1, degree + 1), order="F")
@@ -267,7 +267,7 @@ def vec_size(nodes, s_val):
         This is a helper for :func:`compute_length` and does not have
         a Fortran speedup.
 
-    Intended to be used with ``functools.partial`` to fill in the
+    Intended to be used with :func:`functools.partial` to fill in the
     value of ``nodes`` and create a callable that only accepts ``s_val``.
 
     Args:
@@ -338,7 +338,7 @@ def compute_length(nodes):
 
 
 def elevate_nodes(nodes):
-    r"""Degree-elevate a B |eacute| zier curves.
+    r"""Degree-elevate a B |eacute| zier curve.
 
     Does this by converting the current nodes :math:`v_0, \ldots, v_n`
     to new nodes :math:`w_0, \ldots, w_{n + 1}` where
