@@ -12,4 +12,5 @@ Submodules
 
 .. toctree::
 
+   bezier.hazmat.algebraic_intersection
    bezier.hazmat.helpers
