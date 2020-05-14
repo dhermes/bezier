@@ -17,7 +17,7 @@ exact same interface which calls out to a Fortran implementation. The speedup
 will be used if the extension can be built.
 """
 
-from bezier import _py_intersection_helpers
+from bezier.hazmat import intersection_helpers
 
 try:
     from bezier import _speedup
@@ -27,7 +27,7 @@ except ImportError:  # pragma: NO COVER
 
 # pylint: disable=invalid-name
 if _speedup is None:  # pragma: NO COVER
-    newton_refine = _py_intersection_helpers.newton_refine
+    newton_refine = intersection_helpers.newton_refine
 else:
     newton_refine = _speedup.newton_refine_curve_intersect
 # pylint: enable=invalid-name

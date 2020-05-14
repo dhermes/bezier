@@ -22,9 +22,6 @@ See :doc:`../../algorithms/curve-curve-intersection` for examples using the
 
    import numpy as np
    import bezier
-
-.. autoclass:: IntersectionStrategy
-   :members:
 """
 
 import numpy as np
@@ -33,16 +30,16 @@ from bezier import _base
 from bezier import _curve_helpers
 from bezier import _geometric_intersection
 from bezier import _plot_helpers
-from bezier import _py_intersection_helpers
 from bezier import _symbolic
 from bezier.hazmat import algebraic_intersection
+from bezier.hazmat import intersection_helpers
 
 
 _LOCATE_ERROR_TEMPLATE = (
     "Dimension mismatch: This curve is {:d}-dimensional, so the point should "
     "be a {:d} x 1 NumPy array. Instead the point {} has dimensions {}."
 )
-IntersectionStrategy = _py_intersection_helpers.IntersectionStrategy
+IntersectionStrategy = intersection_helpers.IntersectionStrategy
 
 
 class Curve(_base.Base):
@@ -419,7 +416,8 @@ class Curve(_base.Base):
 
         Args:
             other (Curve): Other curve to intersect with.
-            strategy (Optional[~bezier.curve.IntersectionStrategy]): The
+            strategy (Optional[ \
+                ~bezier.hazmat.intersection_helpers.IntersectionStrategy]): The
                 intersection algorithm to use. Defaults to geometric.
             _verify (Optional[bool]): Indicates if extra caution should be
                 used to verify assumptions about the input and current

@@ -1347,7 +1347,7 @@ class Test_to_front(unittest.TestCase):
         self.assertIs(result, intersection)
 
     def test_move_s(self):
-        from bezier import _py_intersection_helpers
+        from bezier.hazmat import intersection_helpers
 
         enum_val = get_enum("FIRST")
         intersection = make_intersect(
@@ -1355,7 +1355,7 @@ class Test_to_front(unittest.TestCase):
         )
         result = self._call_function_under_test(intersection, [], [])
         self.assertIsNot(result, intersection)
-        self.assertIsInstance(result, _py_intersection_helpers.Intersection)
+        self.assertIsInstance(result, intersection_helpers.Intersection)
         self.assertEqual(result.s, 0.0)
         self.assertEqual(result.index_first, 0)
         self.assertIsNone(result.t)
@@ -1389,7 +1389,7 @@ class Test_to_front(unittest.TestCase):
         self.assertEqual(unused, [])
 
     def test_move_t(self):
-        from bezier import _py_intersection_helpers
+        from bezier.hazmat import intersection_helpers
 
         enum_val = get_enum("SECOND")
         intersection = make_intersect(
@@ -1397,7 +1397,7 @@ class Test_to_front(unittest.TestCase):
         )
         result = self._call_function_under_test(intersection, [], [])
         self.assertIsNot(result, intersection)
-        self.assertIsInstance(result, _py_intersection_helpers.Intersection)
+        self.assertIsInstance(result, intersection_helpers.Intersection)
         self.assertIsNone(result.s)
         self.assertIsNone(result.index_first)
         self.assertEqual(result.t, 0.0)
@@ -1441,11 +1441,11 @@ class Test_get_next_first(unittest.TestCase):
         )
 
     def test_move_to_corner(self):
-        from bezier import _py_intersection_helpers
+        from bezier.hazmat import intersection_helpers
 
         intersection = make_intersect(1, 0.25, None, None)
         result = self._call_function_under_test(intersection, [])
-        self.assertIsInstance(result, _py_intersection_helpers.Intersection)
+        self.assertIsInstance(result, intersection_helpers.Intersection)
         self.assertEqual(result.s, 1.0)
         self.assertEqual(result.index_first, 1)
         self.assertIsNone(result.t)
@@ -1495,11 +1495,11 @@ class Test_get_next_second(unittest.TestCase):
         )
 
     def test_move_to_corner(self):
-        from bezier import _py_intersection_helpers
+        from bezier.hazmat import intersection_helpers
 
         intersection = make_intersect(None, None, 1, 0.625)
         result = self._call_function_under_test(intersection, [])
-        self.assertIsInstance(result, _py_intersection_helpers.Intersection)
+        self.assertIsInstance(result, intersection_helpers.Intersection)
         self.assertIsNone(result.s)
         self.assertIsNone(result.index_first)
         self.assertEqual(result.t, 1.0)
@@ -1549,7 +1549,7 @@ class Test_get_next_coincident(unittest.TestCase):
         )
 
     def test_move_on_first(self):
-        from bezier import _py_intersection_helpers
+        from bezier.hazmat import intersection_helpers
 
         intersection = make_intersect(
             0, 0.0, 1, 0.5, interior_curve=get_enum("COINCIDENT")
@@ -1558,7 +1558,7 @@ class Test_get_next_coincident(unittest.TestCase):
             make_intersect(0, 0.5, 2, 0.0, interior_curve=get_enum("FIRST"))
         ]
         result = self._call_function_under_test(intersection, intersections)
-        self.assertIsInstance(result, _py_intersection_helpers.Intersection)
+        self.assertIsInstance(result, intersection_helpers.Intersection)
         self.assertEqual(result.s, 0.5)
         self.assertEqual(result.index_first, 0)
         self.assertEqual(result.t, 0.0)
@@ -1566,7 +1566,7 @@ class Test_get_next_coincident(unittest.TestCase):
         self.assertIs(result.interior_curve, get_enum("FIRST"))
 
     def test_move_on_second(self):
-        from bezier import _py_intersection_helpers
+        from bezier.hazmat import intersection_helpers
 
         intersection = make_intersect(
             1, 0.75, 2, 0.0, interior_curve=get_enum("COINCIDENT")
@@ -1575,7 +1575,7 @@ class Test_get_next_coincident(unittest.TestCase):
             make_intersect(2, 0.0, 2, 0.75, interior_curve=get_enum("SECOND"))
         ]
         result = self._call_function_under_test(intersection, intersections)
-        self.assertIsInstance(result, _py_intersection_helpers.Intersection)
+        self.assertIsInstance(result, intersection_helpers.Intersection)
         self.assertEqual(result.s, 0.0)
         self.assertEqual(result.index_first, 2)
         self.assertEqual(result.t, 0.75)
@@ -1583,13 +1583,13 @@ class Test_get_next_coincident(unittest.TestCase):
         self.assertIs(result.interior_curve, get_enum("SECOND"))
 
     def test_move_to_double_corner(self):
-        from bezier import _py_intersection_helpers
+        from bezier.hazmat import intersection_helpers
 
         intersection = make_intersect(
             2, 0.0, 0, 0.5, interior_curve=get_enum("COINCIDENT")
         )
         result = self._call_function_under_test(intersection, [])
-        self.assertIsInstance(result, _py_intersection_helpers.Intersection)
+        self.assertIsInstance(result, intersection_helpers.Intersection)
         self.assertEqual(result.s, 1.0)
         self.assertEqual(result.index_first, 2)
         self.assertEqual(result.t, 1.0)
@@ -2363,12 +2363,12 @@ class Test_compute_area(unittest.TestCase):
 
 
 def make_intersect(*args, **kwargs):
-    from bezier import _py_intersection_helpers
+    from bezier.hazmat import intersection_helpers
 
-    return _py_intersection_helpers.Intersection(*args, **kwargs)
+    return intersection_helpers.Intersection(*args, **kwargs)
 
 
 def get_enum(str_val):
-    from bezier import _py_intersection_helpers
+    from bezier.hazmat import intersection_helpers
 
-    return _py_intersection_helpers.IntersectionClassification[str_val]
+    return intersection_helpers.IntersectionClassification[str_val]

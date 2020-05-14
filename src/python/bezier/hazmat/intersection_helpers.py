@@ -26,8 +26,13 @@ from bezier.hazmat import helpers as _py_helpers
 
 # For ``full_newton()``.
 ZERO_THRESHOLD = 0.5 ** 10  # ~1e-3
+"""float: The bound below values are considered to be "too close" to ``0``."""
 MAX_NEWTON_ITERATIONS = 10
+"""int: The maximum number of iterations for Newton's method to converge."""
 NEWTON_ERROR_RATIO = 0.5 ** 36
+"""float: Cap on error ratio during Newton's method
+
+See :func:`.newton_iterate` for more details."""
 NEWTON_NO_CONVERGE = """\
 Unsupported multiplicity.
 
@@ -118,14 +123,14 @@ def newton_refine(s, nodes1, t, nodes2):
             -1 \\ 2 \end{array}\right].
         \end{align*}
 
-    .. image:: ../images/newton_refine1.png
+    .. image:: ../../images/newton_refine1.png
        :align: center
 
     .. testsetup:: newton-refine1, newton-refine2, newton-refine3
 
        import numpy as np
        import bezier
-       from bezier._py_intersection_helpers import newton_refine
+       from bezier.hazmat.intersection_helpers import newton_refine
 
        machine_eps = np.finfo(np.float64).eps
 
@@ -161,7 +166,7 @@ def newton_refine(s, nodes1, t, nodes2):
     This means that the number of correct digits doubles every
     iteration (until machine precision is reached).
 
-    .. image:: ../images/newton_refine2.png
+    .. image:: ../../images/newton_refine2.png
        :align: center
 
     .. doctest:: newton-refine2
@@ -205,7 +210,7 @@ def newton_refine(s, nodes1, t, nodes2):
     the convergence becomes linear. This means that the number of
     correct digits added each iteration is roughly constant.
 
-    .. image:: ../images/newton_refine3.png
+    .. image:: ../../images/newton_refine3.png
        :align: center
 
     .. doctest:: newton-refine3
@@ -254,7 +259,7 @@ def newton_refine(s, nodes1, t, nodes2):
 
        import numpy as np
        import bezier
-       from bezier._py_intersection_helpers import newton_refine
+       from bezier.hazmat.intersection_helpers import newton_refine
 
        nodes1 = np.asfortranarray([
            [0.0, 0.5, 1.0],
@@ -533,8 +538,8 @@ class NewtonDoubleRoot:  # pylint: disable=too-few-public-methods
        DG^T DG \left[\begin{array}{c}
            \Delta s \\ \Delta t \end{array}\right] = -DG^T G.
 
-    Forming ``DG^T DG`` squares the condition number, so it would be "better"
-    to use :func:`~numpy.linalg.lstsq` (which wraps the LAPACK routine
+    Forming :math:`DG^T DG` squares the condition number, so it would be
+    "better" to use :func:`~numpy.linalg.lstsq` (which wraps the LAPACK routine
     ``dgelsd``). However, using :func:`.solve2x2` is **much** more
     straightforward and in practice this is just as accurate.
 
@@ -628,29 +633,31 @@ class NewtonDoubleRoot:  # pylint: disable=too-few-public-methods
 
 
 def newton_iterate(evaluate_fn, s, t):
-    r"""Perform a Newton iteration.
+    """Perform a Newton iteration.
 
-    In this function, we assume that :math:`s` and :math:`t` are nonzero,
-    this makes convergence easier to detect since "relative error" at
-    ``0.0`` is not a useful measure.
+    .. warning::
+
+       In this function, we assume that :math:`s` and :math:`t` are nonzero,
+       this makes convergence easier to detect since "relative error" at
+       ``0.0`` is not a useful measure.
 
     There are several tolerance / threshold quantities used below:
 
     * :math:`10` (:attr:`MAX_NEWTON_ITERATIONS`) iterations will be done before
       "giving up". This is based on the assumption that we are already starting
       near a root, so quadratic convergence should terminate quickly.
-    * :math:`\tau = \frac{1}{4}` is used as the boundary between linear
+    * :math:`\\tau = \\frac{1}{4}` is used as the boundary between linear
       and superlinear convergence. So if the current error
-      :math:`\|p_{n + 1} - p_n\|` is not smaller than :math:`\tau` times
-      the previous error :math:`\|p_n - p_{n - 1}\|`, then convergence
+      :math:`\\|p_{n + 1} - p_n\\|` is not smaller than :math:`\\tau` times
+      the previous error :math:`\\|p_n - p_{n - 1}\\|`, then convergence
       is considered to be linear at that point.
-    * :math:`\frac{2}{3}` of all iterations must be converging linearly
+    * :math:`\\frac{2}{3}` of all iterations must be converging linearly
       for convergence to be stopped (and moved to the next regime). This
       will only be checked after 4 or more updates have occurred.
-    * :math:`\tau = 2^{-42}` (:attr:`NEWTON_ERROR_RATIO`) is used to
+    * :math:`\\tau = 2^{-36}` (:attr:`NEWTON_ERROR_RATIO`) is used to
       determine that an update is sufficiently small to stop iterating. So if
-      the error :math:`\|p_{n + 1} - p_n\|` smaller than :math:`\tau` times
-      size of the term being updated :math:`\|p_n\|`, then we
+      the error :math:`\\|p_{n + 1} - p_n\\|` smaller than :math:`\\tau` times
+      size of the term being updated :math:`\\|p_n\\|`, then we
       exit with the "correct" answer.
 
     It is assumed that ``evaluate_fn`` will use a Jacobian return value of
@@ -658,12 +665,15 @@ def newton_iterate(evaluate_fn, s, t):
     **assume** that if the function evaluates to exactly ``0.0``, then we are
     at a solution. It is possible however, that badly parameterized curves
     can evaluate to exactly ``0.0`` for inputs that are relatively far away
-    from a solution (see issue #21).
+    from a solution (see issue
+    `#21 <https://github.com/dhermes/bezier/issues/21>`__).
 
     Args:
-        evaluate_fn (Callable[Tuple[float, float], tuple]): A callable
-            which takes :math:`s` and :math:`t` and produces an evaluated
-            function value and the Jacobian matrix.
+        evaluate_fn (Callable[Tuple[float, float], \
+            Tuple[Optional[numpy.ndarray], numpy.ndarray]]): A callable
+            which takes :math:`s` and :math:`t` and produces the (optional)
+            Jacobian matrix (``2 x 2``) and an evaluated function (``2 x 1``)
+            value.
         s (float): The (first) parameter where the iteration will start.
         t (float): The (second) parameter where the iteration will start.
 
@@ -786,7 +796,7 @@ def full_newton(s, nodes1, t, nodes2):
     To avoid round-off issues near ``0.0``, this reverses the direction
     of a curve and replaces the parameter value :math:`\nu` with
     :math:`1 - \nu` whenever :math:`\nu < \tau` (here we use a threshold
-    :math:`\tau` equal to :math:`2^{-10}`, i.e. ``ZERO_THRESHOLD``).
+    :math:`\tau` equal to :math:`2^{-10}`, i.e. :attr:`ZERO_THRESHOLD`).
 
     Args:
         s (float): The parameter along the first curve where the iteration
@@ -868,8 +878,8 @@ class Intersection:  # pylint: disable=too-few-public-methods
         t (float): The parameter along the second curve where the
             intersection occurs.
         interior_curve (Optional[ \
-            ~bezier._py_intersection_helpers.IntersectionClassification]): The
-            classification of the intersection.
+            ~bezier.hazmat.intersection_helpers.IntersectionClassification]):
+            The classification of the intersection.
     """
 
     __slots__ = ("index_first", "s", "index_second", "t", "interior_curve")

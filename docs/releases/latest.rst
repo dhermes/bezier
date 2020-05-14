@@ -21,6 +21,9 @@ Breaking Changes
 -  Moved non-public ``bezier._py_triangle_helpers`` module to
    ``bezier.hazmat.triangle_helpers``
    (`#220 <https://github.com/dhermes/bezier/pull/220>`__).
+-  Moved non-public ``bezier._py_intersection_helpers`` module to
+   ``bezier.hazmat.intersection_helpers``
+   (`#222 <https://github.com/dhermes/bezier/pull/222>`__).
 
 Documentation
 --------------

@@ -698,9 +698,9 @@ class TestTriangle(utils.NumPyTestCase):
         self.assertEqual(exc_args, ("Unexpected strategy.", strategy))
 
     def test_intersect_algebraic(self):
-        from bezier import _py_intersection_helpers
+        from bezier.hazmat import intersection_helpers
 
-        strategy = _py_intersection_helpers.IntersectionStrategy.ALGEBRAIC
+        strategy = intersection_helpers.IntersectionStrategy.ALGEBRAIC
         self._basic_intersect_helper(strategy=strategy)
 
     def test_intersect_disjoint_bbox(self):
