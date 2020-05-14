@@ -22,9 +22,6 @@ See :doc:`../../algorithms/curve-curve-intersection` for examples using the
 
    import numpy as np
    import bezier
-
-.. autoclass:: IntersectionStrategy
-   :members:
 """
 
 import numpy as np
@@ -419,7 +416,8 @@ class Curve(_base.Base):
 
         Args:
             other (Curve): Other curve to intersect with.
-            strategy (Optional[~bezier.curve.IntersectionStrategy]): The
+            strategy (Optional[ \
+                ~bezier.hazmat.intersection_helpers.IntersectionStrategy]): The
                 intersection algorithm to use. Defaults to geometric.
             _verify (Optional[bool]): Indicates if extra caution should be
                 used to verify assumptions about the input and current

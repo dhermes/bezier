@@ -27,7 +27,11 @@ from bezier.hazmat import helpers as _py_helpers
 # For ``full_newton()``.
 ZERO_THRESHOLD = 0.5 ** 10  # ~1e-3
 MAX_NEWTON_ITERATIONS = 10
+"""int: The maximum number of iterations for Newton's method to converge."""
 NEWTON_ERROR_RATIO = 0.5 ** 36
+"""float: Cap on error ratio during Newton's method
+
+See :func:`.newton_iterate` for more details."""
 NEWTON_NO_CONVERGE = """\
 Unsupported multiplicity.
 
@@ -118,7 +122,7 @@ def newton_refine(s, nodes1, t, nodes2):
             -1 \\ 2 \end{array}\right].
         \end{align*}
 
-    .. image:: ../images/newton_refine1.png
+    .. image:: ../../images/newton_refine1.png
        :align: center
 
     .. testsetup:: newton-refine1, newton-refine2, newton-refine3
@@ -161,7 +165,7 @@ def newton_refine(s, nodes1, t, nodes2):
     This means that the number of correct digits doubles every
     iteration (until machine precision is reached).
 
-    .. image:: ../images/newton_refine2.png
+    .. image:: ../../images/newton_refine2.png
        :align: center
 
     .. doctest:: newton-refine2
@@ -205,7 +209,7 @@ def newton_refine(s, nodes1, t, nodes2):
     the convergence becomes linear. This means that the number of
     correct digits added each iteration is roughly constant.
 
-    .. image:: ../images/newton_refine3.png
+    .. image:: ../../images/newton_refine3.png
        :align: center
 
     .. doctest:: newton-refine3
@@ -647,7 +651,7 @@ def newton_iterate(evaluate_fn, s, t):
     * :math:`\frac{2}{3}` of all iterations must be converging linearly
       for convergence to be stopped (and moved to the next regime). This
       will only be checked after 4 or more updates have occurred.
-    * :math:`\tau = 2^{-42}` (:attr:`NEWTON_ERROR_RATIO`) is used to
+    * :math:`\tau = 2^{-36}` (:attr:`NEWTON_ERROR_RATIO`) is used to
       determine that an update is sufficiently small to stop iterating. So if
       the error :math:`\|p_{n + 1} - p_n\|` smaller than :math:`\tau` times
       size of the term being updated :math:`\|p_n\|`, then we

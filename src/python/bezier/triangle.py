@@ -1002,7 +1002,8 @@ class Triangle(_base.Base):
 
         Args:
             other (Triangle): Other triangle to intersect with.
-            strategy (Optional[~bezier.curve.IntersectionStrategy]): The
+            strategy (Optional[ \
+                ~bezier.hazmat.intersection_helpers.IntersectionStrategy]): The
                 intersection algorithm to use. Defaults to geometric.
             _verify (Optional[bool]): Indicates if extra caution should be
                 used to verify assumptions about the algorithm as it
