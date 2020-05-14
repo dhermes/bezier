@@ -490,7 +490,7 @@ class Test_newton_iterate(unittest.TestCase):
         # ``pn`` is moving significantly, so the change in ``||pn||`` tracks
         # the change in ``||p{n+1} - pn||``.
         patch = unittest.mock.patch(
-            "bezier.intersection_helpers.MAX_NEWTON_ITERATIONS", new=3
+            "bezier.hazmat.intersection_helpers.MAX_NEWTON_ITERATIONS", new=3
         )
         with patch:
             converged, current_s, current_t = self._call_function_under_test(

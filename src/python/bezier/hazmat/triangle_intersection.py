@@ -398,11 +398,11 @@ def verify_duplicates(duplicates, uniques):
        This is a helper used only by :func:`generic_intersect`.
 
     Args:
-        duplicates (List[~bezier.intersection_helpers.Intersection]): List
-            of intersections corresponding to duplicates that were filtered
-            out.
-        uniques (List[~bezier.intersection_helpers.Intersection]): List of
-            "final" intersections with duplicates filtered out.
+        duplicates (List[~bezier.hazmat.intersection_helpers.Intersection]):
+            List of intersections corresponding to duplicates that were
+            filtered out.
+        uniques (List[~bezier.hazmat.intersection_helpers.Intersection]): List
+            of "final" intersections with duplicates filtered out.
 
     Raises:
         ValueError: If the ``uniques`` are not actually all unique.
@@ -497,9 +497,9 @@ def add_edge_end_unused(intersection, duplicates, intersections):
 
     Args:
         intersection (.Intersection): An intersection to be added.
-        duplicates (List[~bezier.intersection_helpers.Intersection]): List
-            of duplicate intersections.
-        intersections (List[~bezier.intersection_helpers.Intersection]):
+        duplicates (List[~bezier.hazmat.intersection_helpers.Intersection]):
+            List of duplicate intersections.
+        intersections (List[~bezier.hazmat.intersection_helpers.Intersection]):
             List of "accepted" (i.e. non-duplicate) intersections.
     """
     found = None
@@ -533,9 +533,9 @@ def check_unused(intersection, duplicates, intersections):
 
     Args:
         intersection (.Intersection): An intersection to be added.
-        duplicates (List[~bezier.intersection_helpers.Intersection]): List
-            of duplicate intersections.
-        intersections (List[~bezier.intersection_helpers.Intersection]):
+        duplicates (List[~bezier.hazmat.intersection_helpers.Intersection]):
+            List of duplicate intersections.
+        intersections (List[~bezier.hazmat.intersection_helpers.Intersection]):
             List of "accepted" (i.e. non-duplicate) intersections.
 
     Returns:
@@ -583,16 +583,16 @@ def add_intersection(  # pylint: disable=too-many-arguments
             intersection.
         t (float): The parameter along the second curve of the intersection.
         interior_curve (Optional[ \
-            ~bezier.intersection_helpers.IntersectionClassification]): The
-            classification of the intersection, if known. If :data:`None`,
+            ~bezier.hazmat.intersection_helpers.IntersectionClassification]):
+            The classification of the intersection, if known. If :data:`None`,
             the classification will be computed.
         edge_nodes1 (Tuple[numpy.ndarray, numpy.ndarray, numpy.ndarray]): The
             nodes of the three edges of the first triangle being intersected.
         edge_nodes2 (Tuple[numpy.ndarray, numpy.ndarray, numpy.ndarray]): The
             nodes of the three edges of the second triangle being intersected.
-        duplicates (List[~bezier.intersection_helpers.Intersection]): List
-            of duplicate intersections.
-        intersections (List[~bezier.intersection_helpers.Intersection]):
+        duplicates (List[~bezier.hazmat.intersection_helpers.Intersection]):
+            List of duplicate intersections.
+        intersections (List[~bezier.hazmat.intersection_helpers.Intersection]):
             List of "accepted" (i.e. non-duplicate) intersections.
     """
     # NOTE: There is no corresponding "enable", but the disable only applies
@@ -627,7 +627,7 @@ def add_intersection(  # pylint: disable=too-many-arguments
 
 
 def classify_coincident(st_vals, coincident):
-    r"""Determine if coincident parameters are "unused".
+    """Determine if coincident parameters are "unused".
 
     .. note::
 
@@ -651,7 +651,8 @@ def classify_coincident(st_vals, coincident):
             endpoints of coincident segments of two curves.
 
     Returns:
-        Optional[~bezier.intersection_helpers.IntersectionClassification]:
+        Optional[ \
+        ~bezier.hazmat.intersection_helpers.IntersectionClassification]:
         The classification of the intersections.
     """
     if not coincident:
