@@ -762,7 +762,7 @@ def curve_specialize(curve, new_curve):
 
 
 def newton_refine_triangle(triangle, x_val, y_val, s, t, new_s, new_t):
-    """Image for :func:`._py_triangle_helpers.newton_refine` docstring."""
+    """Image for :func:`.hazmat.triangle_helpers.newton_refine` docstring."""
     if NO_IMAGES:
         return
 
@@ -847,7 +847,7 @@ def classify_help(s, curve1, triangle1, curve2, triangle2, interior, ax=None):
 
 
 def classify_intersection1(s, curve1, tangent1, curve2, tangent2):
-    """Image for :func:`._py_triangle_helpers.classify_intersection` docs."""
+    """Image for :func:`.hazmat.triangle_helpers.classify_intersection` doc."""
     if NO_IMAGES:
         return
 
@@ -889,7 +889,7 @@ def classify_intersection1(s, curve1, tangent1, curve2, tangent2):
 
 
 def classify_intersection2(s, curve1, curve2):
-    """Image for :func:`._py_triangle_helpers.classify_intersection` docs."""
+    """Image for :func:`.hazmat.triangle_helpers.classify_intersection` doc."""
     if NO_IMAGES:
         return
 
@@ -910,7 +910,7 @@ def classify_intersection2(s, curve1, curve2):
 
 
 def classify_intersection3(s, curve1, curve2):
-    """Image for :func:`._py_triangle_helpers.classify_intersection` docs."""
+    """Image for :func:`.hazmat.triangle_helpers.classify_intersection` doc."""
     if NO_IMAGES:
         return
 
@@ -937,7 +937,7 @@ def classify_intersection3(s, curve1, curve2):
 
 
 def classify_intersection4(s, curve1, curve2):
-    """Image for :func:`._py_triangle_helpers.classify_intersection` docs."""
+    """Image for :func:`.hazmat.triangle_helpers.classify_intersection` doc."""
     if NO_IMAGES:
         return
 
@@ -961,7 +961,7 @@ def classify_intersection4(s, curve1, curve2):
 
 
 def classify_intersection5(s, curve1, curve2):
-    """Image for :func:`._py_triangle_helpers.classify_intersection` docs."""
+    """Image for :func:`.hazmat.triangle_helpers.classify_intersection` doc."""
     if NO_IMAGES:
         return
 
@@ -1025,7 +1025,7 @@ def classify_intersection5(s, curve1, curve2):
 
 
 def classify_intersection6(s, curve1, curve2):
-    """Image for :func:`._py_triangle_helpers.classify_intersection` docs."""
+    """Image for :func:`.hazmat.triangle_helpers.classify_intersection` doc."""
     if NO_IMAGES:
         return
 
@@ -1052,7 +1052,7 @@ def classify_intersection6(s, curve1, curve2):
 
 
 def classify_intersection7(s, curve1a, curve1b, curve2):
-    """Image for :func:`._py_triangle_helpers.classify_intersection` docs."""
+    """Image for :func:`.hazmat.triangle_helpers.classify_intersection` doc."""
     if NO_IMAGES:
         return
 
@@ -1182,7 +1182,7 @@ def newton_refine_curve_cusp(curve, s_vals):
 
 
 def classify_intersection8(s, curve1, triangle1, curve2, triangle2):
-    """Image for :func:`._py_triangle_helpers.classify_intersection` docs."""
+    """Image for :func:`.hazmat.triangle_helpers.classify_intersection` doc."""
     if NO_IMAGES:
         return
 
@@ -1229,7 +1229,7 @@ def _edges_classify_intersection9():
 
 
 def classify_intersection9(s, curve1, curve2):
-    """Image for :func:`._py_triangle_helpers.classify_intersection` docs."""
+    """Image for :func:`.hazmat.triangle_helpers.classify_intersection` doc."""
     if NO_IMAGES:
         return
 
