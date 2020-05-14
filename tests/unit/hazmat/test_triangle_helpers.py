@@ -54,14 +54,14 @@ class Test_polynomial_sign(unittest.TestCase):
 
     def test_max_iterations(self):
         bernstein = np.asfortranarray([[1.0, 2.0, 3.0]])
-        subs = "bezier.triangle_helpers._MAX_POLY_SUBDIVISIONS"
+        subs = "bezier.hazmat.triangle_helpers._MAX_POLY_SUBDIVISIONS"
         with unittest.mock.patch(subs, new=1):
             sign = self._call_function_under_test(bernstein, 1)
             self.assertEqual(sign, 1)
 
     def test_no_conclusion(self):
         bernstein = np.asfortranarray([[-1.0, 1.0, 2.0]])
-        subs = "bezier.triangle_helpers._MAX_POLY_SUBDIVISIONS"
+        subs = "bezier.hazmat.triangle_helpers._MAX_POLY_SUBDIVISIONS"
         with unittest.mock.patch(subs, new=0):
             with self.assertRaises(ValueError):
                 self._call_function_under_test(bernstein, 1)
@@ -1215,7 +1215,7 @@ class Test_ignored_corner(utils.NumPyTestCase):
         edge_nodes2 = ()
         intersection = make_intersect(2, 0.0, None, 0.5)
         patch = unittest.mock.patch(
-            "bezier.triangle_helpers.ignored_edge_corner",
+            "bezier.hazmat.triangle_helpers.ignored_edge_corner",
             return_value=unittest.mock.sentinel.edge_result,
         )
         with patch as mocked:
@@ -1245,7 +1245,7 @@ class Test_ignored_corner(utils.NumPyTestCase):
         edge_nodes2 = tuple(edge._nodes for edge in triangle.edges)
         intersection = make_intersect(None, 0.5, 1, 0.0)
         patch = unittest.mock.patch(
-            "bezier.triangle_helpers.ignored_edge_corner",
+            "bezier.hazmat.triangle_helpers.ignored_edge_corner",
             return_value=unittest.mock.sentinel.edge_result,
         )
         with patch as mocked:
@@ -1270,7 +1270,7 @@ class Test_ignored_corner(utils.NumPyTestCase):
     def test_double_corner(self):
         intersection = make_intersect(0, 0.0, 2, 0.0)
         patch = unittest.mock.patch(
-            "bezier.triangle_helpers.ignored_double_corner",
+            "bezier.hazmat.triangle_helpers.ignored_double_corner",
             return_value=unittest.mock.sentinel.double_result,
         )
         with patch as mocked:
@@ -1654,7 +1654,7 @@ class Test_get_next(unittest.TestCase):
             2, None, 2, None, interior_curve=get_enum("FIRST")
         )
         patch = unittest.mock.patch(
-            "bezier.triangle_helpers.get_next_first",
+            "bezier.hazmat.triangle_helpers.get_next_first",
             return_value=return_value,
         )
         with patch as mocked:
@@ -1675,7 +1675,7 @@ class Test_get_next(unittest.TestCase):
             0, None, 2, None, interior_curve=get_enum("SECOND")
         )
         patch = unittest.mock.patch(
-            "bezier.triangle_helpers.get_next_second",
+            "bezier.hazmat.triangle_helpers.get_next_second",
             return_value=return_value,
         )
         with patch as mocked:
@@ -1702,7 +1702,7 @@ class Test_get_next(unittest.TestCase):
             0, None, 2, None, interior_curve=get_enum("COINCIDENT")
         )
         patch = unittest.mock.patch(
-            "bezier.triangle_helpers.get_next_coincident",
+            "bezier.hazmat.triangle_helpers.get_next_coincident",
             return_value=return_value,
         )
         with patch as mocked:
@@ -1958,22 +1958,22 @@ class Test_basic_interior_combine(utils.NumPyTestCase):
         self.assertEqual(get_next.call_count, max_edges + 1)
 
     @unittest.mock.patch(
-        "bezier.triangle_helpers.get_next",
+        "bezier.hazmat.triangle_helpers.get_next",
         return_value=unittest.mock.sentinel.next_,
     )
     @unittest.mock.patch(
-        "bezier.triangle_helpers.to_front",
+        "bezier.hazmat.triangle_helpers.to_front",
         return_value=unittest.mock.sentinel.front,
     )
     def test_too_many_edges(self, to_front, get_next):
         self._too_many_edges_helper(to_front, get_next)
 
     @unittest.mock.patch(
-        "bezier.triangle_helpers.get_next",
+        "bezier.hazmat.triangle_helpers.get_next",
         return_value=unittest.mock.sentinel.next_,
     )
     @unittest.mock.patch(
-        "bezier.triangle_helpers.to_front",
+        "bezier.hazmat.triangle_helpers.to_front",
         return_value=unittest.mock.sentinel.front,
     )
     def test_too_many_edges_explicit_max(self, to_front, get_next):
