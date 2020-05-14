@@ -22,16 +22,16 @@ import itertools
 import numpy as np
 
 from bezier import _py_geometric_intersection
-from bezier import _py_intersection_helpers
 from bezier.hazmat import algebraic_intersection
 from bezier.hazmat import helpers as _py_helpers
+from bezier.hazmat import intersection_helpers
 from bezier.hazmat import triangle_helpers
 
 
 MAX_LOCATE_SUBDIVISIONS = 20
 LOCATE_EPS = 0.5 ** 47
 INTERSECTION_T = _py_geometric_intersection.BoxIntersectionType.INTERSECTION
-CLASSIFICATION_T = _py_intersection_helpers.IntersectionClassification
+CLASSIFICATION_T = intersection_helpers.IntersectionClassification
 UNUSED_T = CLASSIFICATION_T.COINCIDENT_UNUSED
 ACCEPTABLE_CLASSIFICATIONS = (
     CLASSIFICATION_T.FIRST,
@@ -398,10 +398,10 @@ def verify_duplicates(duplicates, uniques):
        This is a helper used only by :func:`generic_intersect`.
 
     Args:
-        duplicates (List[~bezier._py_intersection_helpers.Intersection]): List
+        duplicates (List[~bezier.intersection_helpers.Intersection]): List
             of intersections corresponding to duplicates that were filtered
             out.
-        uniques (List[~bezier._py_intersection_helpers.Intersection]): List of
+        uniques (List[~bezier.intersection_helpers.Intersection]): List of
             "final" intersections with duplicates filtered out.
 
     Raises:
@@ -497,9 +497,9 @@ def add_edge_end_unused(intersection, duplicates, intersections):
 
     Args:
         intersection (.Intersection): An intersection to be added.
-        duplicates (List[~bezier._py_intersection_helpers.Intersection]): List
+        duplicates (List[~bezier.intersection_helpers.Intersection]): List
             of duplicate intersections.
-        intersections (List[~bezier._py_intersection_helpers.Intersection]):
+        intersections (List[~bezier.intersection_helpers.Intersection]):
             List of "accepted" (i.e. non-duplicate) intersections.
     """
     found = None
@@ -533,9 +533,9 @@ def check_unused(intersection, duplicates, intersections):
 
     Args:
         intersection (.Intersection): An intersection to be added.
-        duplicates (List[~bezier._py_intersection_helpers.Intersection]): List
+        duplicates (List[~bezier.intersection_helpers.Intersection]): List
             of duplicate intersections.
-        intersections (List[~bezier._py_intersection_helpers.Intersection]):
+        intersections (List[~bezier.intersection_helpers.Intersection]):
             List of "accepted" (i.e. non-duplicate) intersections.
 
     Returns:
@@ -583,16 +583,16 @@ def add_intersection(  # pylint: disable=too-many-arguments
             intersection.
         t (float): The parameter along the second curve of the intersection.
         interior_curve (Optional[ \
-            ~bezier._py_intersection_helpers.IntersectionClassification]): The
+            ~bezier.intersection_helpers.IntersectionClassification]): The
             classification of the intersection, if known. If :data:`None`,
             the classification will be computed.
         edge_nodes1 (Tuple[numpy.ndarray, numpy.ndarray, numpy.ndarray]): The
             nodes of the three edges of the first triangle being intersected.
         edge_nodes2 (Tuple[numpy.ndarray, numpy.ndarray, numpy.ndarray]): The
             nodes of the three edges of the second triangle being intersected.
-        duplicates (List[~bezier._py_intersection_helpers.Intersection]): List
+        duplicates (List[~bezier.intersection_helpers.Intersection]): List
             of duplicate intersections.
-        intersections (List[~bezier._py_intersection_helpers.Intersection]):
+        intersections (List[~bezier.intersection_helpers.Intersection]):
             List of "accepted" (i.e. non-duplicate) intersections.
     """
     # NOTE: There is no corresponding "enable", but the disable only applies
@@ -602,18 +602,14 @@ def add_intersection(  # pylint: disable=too-many-arguments
         index1, s, index2, t
     )
     if edge_end:
-        intersection = _py_intersection_helpers.Intersection(
-            *intersection_args
-        )
+        intersection = intersection_helpers.Intersection(*intersection_args)
         intersection.interior_curve = interior_curve
         if interior_curve == UNUSED_T:
             add_edge_end_unused(intersection, duplicates, intersections)
         else:
             duplicates.append(intersection)
     else:
-        intersection = _py_intersection_helpers.Intersection(
-            index1, s, index2, t
-        )
+        intersection = intersection_helpers.Intersection(index1, s, index2, t)
         if is_corner:
             is_duplicate = check_unused(
                 intersection, duplicates, intersections
@@ -655,7 +651,7 @@ def classify_coincident(st_vals, coincident):
             endpoints of coincident segments of two curves.
 
     Returns:
-        Optional[~bezier._py_intersection_helpers.IntersectionClassification]:
+        Optional[~bezier.intersection_helpers.IntersectionClassification]:
         The classification of the intersections.
     """
     if not coincident:

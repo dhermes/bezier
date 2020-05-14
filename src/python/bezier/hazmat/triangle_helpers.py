@@ -21,7 +21,7 @@ import operator
 
 import numpy as np
 
-from bezier import _py_intersection_helpers
+from bezier.hazmat import intersection_helpers
 from bezier.hazmat import curve_helpers
 from bezier.hazmat import helpers as _py_helpers
 
@@ -31,7 +31,7 @@ _SIGN = np.sign  # pylint: disable=no-member
 _FLOAT64 = np.float64  # pylint: disable=no-member
 _SAME_CURVATURE = "Tangent curves have same curvature."
 _WRONG_CURVE = "Start and end node not defined on same curve"
-CLASSIFICATION_T = _py_intersection_helpers.IntersectionClassification
+CLASSIFICATION_T = intersection_helpers.IntersectionClassification
 # NOTE: The ``SUBDIVIDE`` matrices are public since used in
 #       the ``triangle`` module.
 LINEAR_SUBDIVIDE_A = (
@@ -1634,8 +1634,8 @@ def classify_intersection(intersection, edge_nodes1, edge_nodes2):
 
        import numpy as np
        import bezier
-       from bezier._py_intersection_helpers import Intersection
        from bezier.hazmat import curve_helpers
+       from bezier.hazmat.intersection_helpers import Intersection
        from bezier.hazmat.triangle_helpers import classify_intersection
 
        def hodograph(curve, s):
@@ -2158,11 +2158,11 @@ def to_front(intersection, intersections, unused):
         some wiggle room.
 
     Args:
+        intersections (List[~bezier.hazmat.intersection_helpers.Intersection]):
         intersection (.Intersection): The current intersection.
-        intersections (List[~bezier._py_intersection_helpers.Intersection]):
             List of all detected intersections, provided as a reference for
+        unused (List[~bezier.hazmat.intersection_helpers.Intersection]): List of
             potential points to arrive at.
-        unused (List[~bezier._py_intersection_helpers.Intersection]): List of
             nodes that haven't been used yet in an intersection curved polygon
 
     Returns:
@@ -2180,7 +2180,7 @@ def to_front(intersection, intersections, unused):
 
         # If we haven't already returned, create **another** artificial
         # intersection.
-        return _py_intersection_helpers.Intersection(
+        return intersection_helpers.Intersection(
             next_index, 0.0, None, None, interior_curve=CLASSIFICATION_T.FIRST
         )
 
@@ -2197,7 +2197,7 @@ def to_front(intersection, intersections, unused):
 
         # If we haven't already returned, create **another** artificial
         # intersection.
-        return _py_intersection_helpers.Intersection(
+        return intersection_helpers.Intersection(
             None, None, next_index, 0.0, interior_curve=CLASSIFICATION_T.SECOND
         )
 
@@ -2220,16 +2220,16 @@ def get_next_first(intersection, intersections, to_end=True):
     other function works with the second.
 
     Args:
+        intersections (List[~bezier.hazmat.intersection_helpers.Intersection]):
         intersection (.Intersection): The current intersection.
-        intersections (List[~bezier._py_intersection_helpers.Intersection]):
             List of all detected intersections, provided as a reference for
             potential points to arrive at.
         to_end (Optional[bool]): Indicates if the next node should just be
             the end of the first edge or :data:`None`.
 
     Returns:
-        Optional[~bezier._py_intersection_helpers.Intersection]: The "next"
         point along a triangle of intersection. This will produce the next
+        Optional[~bezier.hazmat.intersection_helpers.Intersection]: The "next"
         intersection along the current (first) edge or the end of the same
         edge. If ``to_end`` is :data:`False` and there are no other
         intersections along the current edge, will return :data:`None` (rather
@@ -2247,7 +2247,7 @@ def get_next_first(intersection, intersections, to_end=True):
         if to_end:
             # If there is no other intersection on the edge, just return
             # the segment end.
-            return _py_intersection_helpers.Intersection(
+            return intersection_helpers.Intersection(
                 index_first,
                 1.0,
                 None,
@@ -2277,16 +2277,16 @@ def get_next_second(intersection, intersections, to_end=True):
     other function works with the first.
 
     Args:
+        intersections (List[~bezier.hazmat.intersection_helpers.Intersection]):
         intersection (.Intersection): The current intersection.
-        intersections (List[~bezier._py_intersection_helpers.Intersection]):
             List of all detected intersections, provided as a reference for
             potential points to arrive at.
         to_end (Optional[bool]): Indicates if the next node should just be
             the end of the first edge or :data:`None`.
 
     Returns:
-        Optional[~bezier._py_intersection_helpers.Intersection]: The "next"
         point along a triangle of intersection. This will produce the next
+        Optional[~bezier.hazmat.intersection_helpers.Intersection]: The "next"
         intersection along the current (second) edge or the end of the same
         edge. If ``to_end`` is :data:`False` and there are no other
         intersections along the current edge, will return :data:`None` (rather
@@ -2304,7 +2304,7 @@ def get_next_second(intersection, intersections, to_end=True):
         if to_end:
             # If there is no other intersection on the edge, just return
             # the segment end.
-            return _py_intersection_helpers.Intersection(
+            return intersection_helpers.Intersection(
                 None,
                 None,
                 index_second,
@@ -2345,8 +2345,8 @@ def get_next_coincident(intersection, intersections):
     segment won't be part of an intersection.
 
     Args:
+        intersections (List[~bezier.hazmat.intersection_helpers.Intersection]):
         intersection (.Intersection): The current intersection.
-        intersections (List[~bezier._py_intersection_helpers.Intersection]):
             List of all detected intersections, provided as a reference for
             potential points to arrive at.
 
@@ -2367,7 +2367,7 @@ def get_next_coincident(intersection, intersections):
         return along_first
 
     if along_second is None:
-        return _py_intersection_helpers.Intersection(
+        return intersection_helpers.Intersection(
             intersection.index_first,
             1.0,
             intersection.index_second,
@@ -2429,11 +2429,11 @@ def get_next(intersection, intersections, unused):
         :class:`.Intersection` to satisfy this need.
 
     Args:
+        intersections (List[~bezier.hazmat.intersection_helpers.Intersection]):
         intersection (.Intersection): The current intersection.
-        intersections (List[~bezier._py_intersection_helpers.Intersection]):
             List of all detected intersections, provided as a reference for
+        unused (List[~bezier.hazmat.intersection_helpers.Intersection]): List of
             potential points to arrive at.
-        unused (List[~bezier._py_intersection_helpers.Intersection]): List of
             nodes that haven't been used yet in an intersection curved polygon
 
     Returns:
@@ -2611,8 +2611,8 @@ def tangent_only_intersections(all_types):
 
     Args:
         all_types (Set[ \
-            ~bezier._py_intersection_helpers.IntersectionClassification]): The
             set of all intersection classifications encountered among the
+            ~bezier.hazmat.intersection_helpers.IntersectionClassification]): The
             intersections for the given triangle-triangle pair.
 
     Returns:
@@ -2668,8 +2668,8 @@ def basic_interior_combine(intersections, max_edges=10):
        enforce it.
 
     Args:
-        intersections (List[~bezier._py_intersection_helpers.Intersection]):
             Intersections from each of the 9 edge-edge pairs from a
+        intersections (List[~bezier.hazmat.intersection_helpers.Intersection]):
             triangle-triangle pairing.
         max_edges (Optional[int]): The maximum number of allowed / expected
             edges per intersection. This is to avoid infinite loops.
@@ -2746,8 +2746,8 @@ def combine_intersections(
        :attr:`~.IntersectionClassification.SECOND` were kept.
 
     Args:
-        intersections (List[~bezier._py_intersection_helpers.Intersection]):
             Intersections from each of the 9 edge-edge pairs from a
+        intersections (List[~bezier.hazmat.intersection_helpers.Intersection]):
             triangle-triangle pairing.
         nodes1 (numpy.ndarray): The nodes defining the first triangle in
             the intersection (assumed in :math:`\\mathbf{R}^2`).
@@ -2756,8 +2756,8 @@ def combine_intersections(
             the intersection (assumed in :math:`\\mathbf{R}^2`).
         degree2 (int): The degree of the triangle given by ``nodes2``.
         all_types (Set[ \
-            ~bezier._py_intersection_helpers.IntersectionClassification]): The
             set of all intersection classifications encountered among the
+            ~bezier.hazmat.intersection_helpers.IntersectionClassification]): The
             intersections for the given triangle-triangle pair.
 
     Returns:

@@ -17,7 +17,7 @@ import pytest
 
 from bezier import _geometric_intersection
 from bezier import _py_geometric_intersection
-from bezier import _py_intersection_helpers
+from bezier.hazmat import intersection_helpers
 import bezier.curve
 from bezier.hazmat import algebraic_intersection
 from tests import utils as base_utils
@@ -153,7 +153,7 @@ ULPS_ALLOWED_OVERRIDE = {
 }
 NON_SIMPLE_ERR = algebraic_intersection._NON_SIMPLE_ERR
 TOO_MANY = _py_geometric_intersection._TOO_MANY_TEMPLATE
-BAD_MULTIPLICITY = (_py_intersection_helpers.NEWTON_NO_CONVERGE,)
+BAD_MULTIPLICITY = (intersection_helpers.NEWTON_NO_CONVERGE,)
 COINCIDENT_ERR = (algebraic_intersection._COINCIDENT_ERR,)
 TANGENT_OVERRIDES = {
     GEOMETRIC: {

@@ -26,13 +26,13 @@ import numpy as np
 from bezier import _base
 from bezier import _curve_helpers
 from bezier import _plot_helpers
-from bezier import _py_intersection_helpers
 from bezier import _symbolic
 from bezier import _triangle_helpers
 from bezier import _triangle_intersection
 from bezier import curve as _curve_mod
 from bezier import curved_polygon
 from bezier.hazmat import helpers as _py_helpers
+from bezier.hazmat import intersection_helpers
 from bezier.hazmat import triangle_helpers as _py_triangle_helpers
 from bezier.hazmat import triangle_intersection as _py_triangle_intersection
 
@@ -43,7 +43,7 @@ _LOCATE_ERROR_TEMPLATE = (
     "so the point should be a {:d} x 1 NumPy array. "
     "Instead the point {} has dimensions {}."
 )
-_STRATEGY = _py_intersection_helpers.IntersectionStrategy
+_STRATEGY = intersection_helpers.IntersectionStrategy
 
 
 class Triangle(_base.Base):

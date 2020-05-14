@@ -1457,14 +1457,14 @@ class Test_all_intersections(utils.NumPyTestCase):
         self.assertTrue(coincident)
 
     def test_triple_root(self):
-        from bezier import _py_intersection_helpers
+        from bezier.hazmat import intersection_helpers
 
         # Curves intersect and are tangent with the same curvature.
         nodes1 = np.asfortranarray([[12.0, -4.0, -4.0], [4.0, -4.0, 4.0]])
         nodes2 = np.asfortranarray([[6.0, -2.0, -2.0], [1.0, -1.0, 1.0]])
         with self.assertRaises(NotImplementedError) as exc_info:
             self._call_function_under_test(nodes1, nodes2)
-        expected = (_py_intersection_helpers.NEWTON_NO_CONVERGE,)
+        expected = (intersection_helpers.NEWTON_NO_CONVERGE,)
         self.assertEqual(exc_info.exception.args, expected)
 
     def test_too_many_candidates(self):

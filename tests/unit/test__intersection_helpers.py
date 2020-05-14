@@ -10,14 +10,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from tests.unit import test__py_intersection_helpers
 from tests.unit import utils
+from tests.unit.hazmat import test_intersection_helpers
 
 
 @utils.needs_speedup
-class Test_speedup_newton_refine(
-    test__py_intersection_helpers.Test_newton_refine
-):
+class Test_speedup_newton_refine(test_intersection_helpers.Test_newton_refine):
     @staticmethod
     def _call_function_under_test(s, nodes1, t, nodes2):
         from bezier import _speedup

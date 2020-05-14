@@ -673,11 +673,9 @@ class Test_triangle_intersections(utils.NumPyTestCase):
         t_val,
         interior_curve,
     ):
-        from bezier import _py_intersection_helpers
+        from bezier.hazmat import intersection_helpers
 
-        self.assertIsInstance(
-            intersection, _py_intersection_helpers.Intersection
-        )
+        self.assertIsInstance(intersection, intersection_helpers.Intersection)
         self.assertEqual(intersection.index_first, index_first)
         self.assertEqual(intersection.s, s_val)
         self.assertEqual(intersection.index_second, index_second)
@@ -921,9 +919,9 @@ class Test_geometric_intersect(utils.NumPyTestCase):
         check_edges(self, self.NODES1, 1, self.NODES2, 2, all_edge_nodes)
 
     def _check_triple_root_err(self, exception):
-        from bezier import _py_intersection_helpers
+        from bezier.hazmat import intersection_helpers
 
-        expected = (_py_intersection_helpers.NEWTON_NO_CONVERGE,)
+        expected = (intersection_helpers.NEWTON_NO_CONVERGE,)
         self.assertEqual(exception.args, expected)
 
     def test_triple_root(self):
@@ -995,15 +993,15 @@ class Test_algebraic_intersect(Test_geometric_intersect):
 
 
 def make_intersect(*args, **kwargs):
-    from bezier import _py_intersection_helpers
+    from bezier.hazmat import intersection_helpers
 
-    return _py_intersection_helpers.Intersection(*args, **kwargs)
+    return intersection_helpers.Intersection(*args, **kwargs)
 
 
 def get_enum(str_val):
-    from bezier import _py_intersection_helpers
+    from bezier.hazmat import intersection_helpers
 
-    return _py_intersection_helpers.IntersectionClassification[str_val]
+    return intersection_helpers.IntersectionClassification[str_val]
 
 
 def check_edges(test_case, nodes1, degree1, nodes2, degree2, all_edge_nodes):
