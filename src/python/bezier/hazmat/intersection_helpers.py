@@ -672,7 +672,8 @@ def newton_iterate(evaluate_fn, s, t):
         evaluate_fn (Callable[Tuple[float, float], \
             Tuple[Optional[numpy.ndarray], numpy.ndarray]]): A callable
             which takes :math:`s` and :math:`t` and produces the (optional)
-            Jacobian matrix (``2 x 2``) and an evaluated function (``2 x 1``) value.
+            Jacobian matrix (``2 x 2``) and an evaluated function (``2 x 1``)
+            value.
         s (float): The (first) parameter where the iteration will start.
         t (float): The (second) parameter where the iteration will start.
 
