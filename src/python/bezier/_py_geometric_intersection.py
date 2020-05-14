@@ -23,9 +23,9 @@ import itertools
 
 import numpy as np
 
-from bezier.hazmat import intersection_helpers
 from bezier.hazmat import curve_helpers
 from bezier.hazmat import helpers as _py_helpers
+from bezier.hazmat import intersection_helpers
 
 
 # Set the threshold for exponent at half the bits available, this way one round

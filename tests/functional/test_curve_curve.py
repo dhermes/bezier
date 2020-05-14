@@ -17,9 +17,9 @@ import pytest
 
 from bezier import _geometric_intersection
 from bezier import _py_geometric_intersection
-from bezier.hazmat import intersection_helpers
 import bezier.curve
 from bezier.hazmat import algebraic_intersection
+from bezier.hazmat import intersection_helpers
 from tests import utils as base_utils
 from tests.functional import utils
 from tests.functional.utils import CurveIntersectionType

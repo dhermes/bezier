@@ -868,8 +868,8 @@ class Intersection:  # pylint: disable=too-few-public-methods
         t (float): The parameter along the second curve where the
             intersection occurs.
         interior_curve (Optional[ \
-            ~bezier.hazmat.intersection_helpers.IntersectionClassification]): The
-            classification of the intersection.
+            ~bezier.hazmat.intersection_helpers.IntersectionClassification]):
+            The classification of the intersection.
     """
 
     __slots__ = ("index_first", "s", "index_second", "t", "interior_curve")
