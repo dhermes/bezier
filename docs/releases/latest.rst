@@ -28,6 +28,9 @@ Documentation
 -  Removed ``algorithms/algebraic-helpers`` document since the
    ``bezier.hazmat.algebraic_intersection`` module is now fully documented
    (`#216 <https://github.com/dhermes/bezier/pull/216>`__).
+-  Updated from ``https://docs.scipy.org/doc/numpy`` to ``https://numpy.org``
+   for references to the NumPy documentation
+   (`#221 <https://github.com/dhermes/bezier/pull/221>`__).
 
 .. |pypi| image:: https://img.shields.io/pypi/v/bezier/2020.2.4.dev1.svg
    :target: https://pypi.org/project/bezier/2020.2.4.dev1/
