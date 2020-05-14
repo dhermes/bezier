@@ -1255,7 +1255,7 @@ def jacobian_both(nodes, degree, dimension):
 
     Returns:
         numpy.ndarray: Nodes of the Jacobian triangles in
-            B |eacute| zier form.
+        B |eacute| zier form.
     """
     _, num_nodes = nodes.shape
     result = np.empty((2 * dimension, num_nodes - degree - 1), order="F")
@@ -1278,7 +1278,7 @@ def jacobian_det(nodes, degree, st_vals):
 
        This relies on helpers in :mod:`bezier` for computing the
        Jacobian of the triangle. However, these helpers are not
-       part of the public triangle and may change or be removed.
+       part of the public API and may change or be removed.
 
     .. testsetup:: jacobian-det
 
@@ -1350,7 +1350,7 @@ def jacobian_det(nodes, degree, st_vals):
 def classify_tangent_intersection(
     intersection, nodes1, tangent1, nodes2, tangent2
 ):
-    """Helper for func:`classify_intersection` at tangencies.
+    """Helper for :func:`classify_intersection` at tangencies.
 
     .. note::
 
@@ -2332,7 +2332,8 @@ def get_next_coincident(intersection, intersections):
     function does the majority of the heavy lifting in :func:`get_next`.
 
     This function moves immediately to the "next" intersection along the
-    "current" edge. An intersection labeled as ``COINCIDENT`` can only occur
+    "current" edge. An intersection labeled as
+    :attr:`~.IntersectionClassification.COINCIDENT` can only occur
     at the beginning of a segment. The end will correspond to the ``s`` or
     ``t`` parameter being equal to ``1.0`` and so it will get "rotated"
     to the front of the next edge, where it will be classified according
@@ -2741,7 +2742,8 @@ def combine_intersections(
 
        This assumes that each ``intersection`` has been classified via
        :func:`classify_intersection` and only the intersections classified
-       as ``FIRST`` and ``SECOND`` were kept.
+       as :attr:`~.IntersectionClassification.FIRST` and
+       :attr:`~.IntersectionClassification.SECOND` were kept.
 
     Args:
         intersections (List[~bezier._py_intersection_helpers.Intersection]):
