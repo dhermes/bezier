@@ -707,8 +707,8 @@ def polynomial_sign(poly_triangle, degree):
 
     .. note::
 
-       This is used **only** by :meth:`Triangle._compute_valid` (which is
-       in turn used to compute / cache the :attr:`Triangle.is_valid`
+       This is used **only** by ``Triangle._compute_valid()`` (which is
+       in turn used to compute / cache the :attr:`.Triangle.is_valid`
        property).
 
     Checks if a polynomial :math:`p(s, t)` is positive, negative
@@ -802,8 +802,8 @@ def quadratic_jacobian_polynomial(nodes):
 
     .. note::
 
-       This is used **only** by :meth:`Triangle._compute_valid` (which is
-       in turn used to compute / cache the :attr:`Triangle.is_valid`
+       This is used **only** by ``Triangle._compute_valid()`` (which is
+       in turn used to compute / cache the :attr:`.Triangle.is_valid`
        property).
 
     Converts :math:`\det(J(s, t))` to a polynomial on the reference
@@ -845,8 +845,8 @@ def cubic_jacobian_polynomial(nodes):
 
     .. note::
 
-       This is used **only** by :meth:`Triangle._compute_valid` (which is
-       in turn used to compute / cache the :attr:`Triangle.is_valid`
+       This is used **only** by ``Triangle._compute_valid()`` (which is
+       in turn used to compute / cache the :attr:`.Triangle.is_valid`
        property).
 
     Converts :math:`\det(J(s, t))` to a polynomial on the reference
@@ -1064,8 +1064,8 @@ def specialize_triangle(nodes, degree, weights_a, weights_b, weights_c):
     .. note::
 
        This is used **only** as a helper for :func:`subdivide_nodes`, however
-       it may be worth adding this to :class:`Triangle` as an analogue to
-       :meth:`Curve.specialize`.
+       it may be worth adding this to :class:`.Triangle` as an analogue to
+       :meth:`.Curve.specialize`.
 
     Args:
         nodes (numpy.ndarray): Control points for a triangle.
@@ -1623,7 +1623,7 @@ def classify_intersection(intersection, edge_nodes1, edge_nodes2):
 
     The "typical" case is on the interior of both edges:
 
-    .. image:: ../images/classify_intersection1.png
+    .. image:: ../../images/classify_intersection1.png
        :align: center
 
     .. testsetup:: classify-intersection1, classify-intersection2,
@@ -1710,7 +1710,7 @@ def classify_intersection(intersection, edge_nodes1, edge_nodes2):
     When :math:`B_1'(s) \times B_2'(t) = 0`, the tangent
     vectors are parallel, i.e. the intersection is a point of tangency:
 
-    .. image:: ../images/classify_intersection2.png
+    .. image:: ../../images/classify_intersection2.png
        :align: center
 
     .. doctest:: classify-intersection2
@@ -1747,7 +1747,7 @@ def classify_intersection(intersection, edge_nodes1, edge_nodes2):
 
     .. _curvature: https://en.wikipedia.org/wiki/Curvature
 
-    .. image:: ../images/classify_intersection3.png
+    .. image:: ../../images/classify_intersection3.png
        :align: center
 
     .. doctest:: classify-intersection3
@@ -1782,7 +1782,7 @@ def classify_intersection(intersection, edge_nodes1, edge_nodes2):
     of tangency, there is no side to choose. Either the point of tangency
     is not part of any :class:`.CurvedPolygon` intersection
 
-    .. image:: ../images/classify_intersection4.png
+    .. image:: ../../images/classify_intersection4.png
        :align: center
 
     .. doctest:: classify-intersection4
@@ -1819,7 +1819,7 @@ def classify_intersection(intersection, edge_nodes1, edge_nodes2):
     :attr:`~.IntersectionClassification.FIRST` and from another as
     :attr:`~.IntersectionClassification.SECOND`.
 
-    .. image:: ../images/classify_intersection5.png
+    .. image:: ../../images/classify_intersection5.png
        :align: center
 
     .. doctest:: classify-intersection5
@@ -1854,7 +1854,7 @@ def classify_intersection(intersection, edge_nodes1, edge_nodes2):
     can also occur if the curves are "kissing" but share a zero width
     interior at the point of tangency:
 
-    .. image:: ../images/classify_intersection9.png
+    .. image:: ../../images/classify_intersection9.png
        :align: center
 
     .. doctest:: classify-intersection9
@@ -1888,7 +1888,7 @@ def classify_intersection(intersection, edge_nodes1, edge_nodes2):
     However, if the `curvature`_ of each curve is identical, we
     don't try to distinguish further:
 
-    .. image:: ../images/classify_intersection6.png
+    .. image:: ../../images/classify_intersection6.png
        :align: center
 
     .. doctest:: classify-intersection6
@@ -1934,7 +1934,7 @@ def classify_intersection(intersection, edge_nodes1, edge_nodes2):
     In addition to points of tangency, intersections that happen at
     the end of an edge need special handling:
 
-    .. image:: ../images/classify_intersection7.png
+    .. image:: ../../images/classify_intersection7.png
        :align: center
 
     .. doctest:: classify-intersection7
@@ -1985,7 +1985,7 @@ def classify_intersection(intersection, edge_nodes1, edge_nodes2):
     an actual intersection. However, some triangles may just "kiss" at a
     corner intersection:
 
-    .. image:: ../images/classify_intersection8.png
+    .. image:: ../../images/classify_intersection8.png
        :align: center
 
     .. doctest:: classify-intersection8
@@ -2159,11 +2159,11 @@ def to_front(intersection, intersections, unused):
 
     Args:
         intersection (.Intersection): The current intersection.
-        intersections (List[.Intersection]): List of all detected
-            intersections, provided as a reference for potential
-            points to arrive at.
-        unused (List[.Intersection]): List of nodes that haven't been
-            used yet in an intersection curved polygon
+        intersections (List[~bezier._py_intersection_helpers.Intersection]):
+            List of all detected intersections, provided as a reference for
+            potential points to arrive at.
+        unused (List[~bezier._py_intersection_helpers.Intersection]): List of
+            nodes that haven't been used yet in an intersection curved polygon
 
     Returns:
         .Intersection: An intersection to (maybe) move to the beginning
@@ -2221,18 +2221,19 @@ def get_next_first(intersection, intersections, to_end=True):
 
     Args:
         intersection (.Intersection): The current intersection.
-        intersections (List[.Intersection]): List of all detected
-            intersections, provided as a reference for potential
-            points to arrive at.
+        intersections (List[~bezier._py_intersection_helpers.Intersection]):
+            List of all detected intersections, provided as a reference for
+            potential points to arrive at.
         to_end (Optional[bool]): Indicates if the next node should just be
             the end of the first edge or :data:`None`.
 
     Returns:
-        Optional[.Intersection]: The "next" point along a triangle of
-        intersection. This will produce the next intersection along the
-        current (first) edge or the end of the same edge. If ``to_end`` is
-        :data:`False` and there are no other intersections along the current
-        edge, will return :data:`None` (rather than the end of the same edge).
+        Optional[~bezier._py_intersection_helpers.Intersection]: The "next"
+        point along a triangle of intersection. This will produce the next
+        intersection along the current (first) edge or the end of the same
+        edge. If ``to_end`` is :data:`False` and there are no other
+        intersections along the current edge, will return :data:`None` (rather
+        than the end of the same edge).
     """
     along_edge = None
     index_first = intersection.index_first
@@ -2277,18 +2278,19 @@ def get_next_second(intersection, intersections, to_end=True):
 
     Args:
         intersection (.Intersection): The current intersection.
-        intersections (List[.Intersection]): List of all detected
-            intersections, provided as a reference for potential
-            points to arrive at.
+        intersections (List[~bezier._py_intersection_helpers.Intersection]):
+            List of all detected intersections, provided as a reference for
+            potential points to arrive at.
         to_end (Optional[bool]): Indicates if the next node should just be
             the end of the first edge or :data:`None`.
 
     Returns:
-        Optional[.Intersection]: The "next" point along a triangle of
-        intersection. This will produce the next intersection along the
-        current (second) edge or the end of the same edge. If ``to_end`` is
-        :data:`False` and there are no other intersections along the current
-        edge, will return :data:`None` (rather than the end of the same edge).
+        Optional[~bezier._py_intersection_helpers.Intersection]: The "next"
+        point along a triangle of intersection. This will produce the next
+        intersection along the current (second) edge or the end of the same
+        edge. If ``to_end`` is :data:`False` and there are no other
+        intersections along the current edge, will return :data:`None` (rather
+        than the end of the same edge).
     """
     along_edge = None
     index_second = intersection.index_second
@@ -2343,9 +2345,9 @@ def get_next_coincident(intersection, intersections):
 
     Args:
         intersection (.Intersection): The current intersection.
-        intersections (List[.Intersection]): List of all detected
-            intersections, provided as a reference for potential
-            points to arrive at.
+        intersections (List[~bezier._py_intersection_helpers.Intersection]):
+            List of all detected intersections, provided as a reference for
+            potential points to arrive at.
 
     Returns:
         .Intersection: The "next" point along a triangle of intersection.
@@ -2427,11 +2429,11 @@ def get_next(intersection, intersections, unused):
 
     Args:
         intersection (.Intersection): The current intersection.
-        intersections (List[.Intersection]): List of all detected
-            intersections, provided as a reference for potential
-            points to arrive at.
-        unused (List[.Intersection]): List of nodes that haven't been
-            used yet in an intersection curved polygon
+        intersections (List[~bezier._py_intersection_helpers.Intersection]):
+            List of all detected intersections, provided as a reference for
+            potential points to arrive at.
+        unused (List[~bezier._py_intersection_helpers.Intersection]): List of
+            nodes that haven't been used yet in an intersection curved polygon
 
     Returns:
         .Intersection: The "next" point along a triangle of intersection.
@@ -2607,9 +2609,10 @@ def tangent_only_intersections(all_types):
     a given pairing.
 
     Args:
-        all_types (Set[.IntersectionClassification]): The set of all
-            intersection classifications encountered among the intersections
-            for the given triangle-triangle pair.
+        all_types (Set[ \
+            ~bezier._py_intersection_helpers.IntersectionClassification]): The
+            set of all intersection classifications encountered among the
+            intersections for the given triangle-triangle pair.
 
     Returns:
         Tuple[Optional[list], Optional[bool]]: Pair (2-tuple) of
