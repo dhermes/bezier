@@ -93,7 +93,7 @@ SUBDIVISION_NO_CONVERGE = (
     "Curve intersection failed to converge to approximately linear "
     "subdivisions after 20 iterations.")
 # NOTE: The ``NEWTON_NO_CONVERGE`` error message is copied from
-#       ``_py_intersection_helpers.py::NEWTON_NO_CONVERGE``.
+#       ``hazmat/intersection_helpers.py::NEWTON_NO_CONVERGE``.
 NEWTON_NO_CONVERGE = """\
 Unsupported multiplicity.
 
