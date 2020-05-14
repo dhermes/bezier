@@ -104,7 +104,7 @@ class Test_update_locate_candidates(unittest.TestCase):
         )
 
     @unittest.mock.patch(
-        "bezier._py_triangle_helpers.subdivide_nodes",
+        "bezier.hazmat.triangle_helpers.subdivide_nodes",
         return_value=(
             unittest.mock.sentinel.nodes_a,
             unittest.mock.sentinel.nodes_b,
@@ -1007,12 +1007,12 @@ def get_enum(str_val):
 
 
 def check_edges(test_case, nodes1, degree1, nodes2, degree2, all_edge_nodes):
-    from bezier import _py_triangle_helpers
+    from bezier.hazmat import triangle_helpers
 
     test_case.assertIsInstance(all_edge_nodes, tuple)
     test_case.assertEqual(len(all_edge_nodes), 6)
-    edge_nodes1 = _py_triangle_helpers.compute_edge_nodes(nodes1, degree1)
-    edge_nodes2 = _py_triangle_helpers.compute_edge_nodes(nodes2, degree2)
+    edge_nodes1 = triangle_helpers.compute_edge_nodes(nodes1, degree1)
+    edge_nodes2 = triangle_helpers.compute_edge_nodes(nodes2, degree2)
     test_case.assertEqual(edge_nodes1[0], all_edge_nodes[0])
     test_case.assertEqual(edge_nodes1[1], all_edge_nodes[1])
     test_case.assertEqual(edge_nodes1[2], all_edge_nodes[2])

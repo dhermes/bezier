@@ -17,7 +17,7 @@ exact same interface which calls out to a Fortran implementation. The speedup
 will be used if the extension can be built.
 """
 
-from bezier import _py_triangle_helpers
+from bezier.hazmat import triangle_helpers
 
 try:
     from bezier import _speedup
@@ -27,18 +27,16 @@ except ImportError:  # pragma: NO COVER
 
 # pylint: disable=invalid-name
 if _speedup is None:  # pragma: NO COVER
-    de_casteljau_one_round = _py_triangle_helpers.de_casteljau_one_round
-    specialize_triangle = _py_triangle_helpers.specialize_triangle
-    subdivide_nodes = _py_triangle_helpers.subdivide_nodes
-    jacobian_both = _py_triangle_helpers.jacobian_both
-    jacobian_det = _py_triangle_helpers.jacobian_det
-    evaluate_barycentric = _py_triangle_helpers.evaluate_barycentric
-    evaluate_barycentric_multi = (
-        _py_triangle_helpers.evaluate_barycentric_multi
-    )
-    evaluate_cartesian_multi = _py_triangle_helpers.evaluate_cartesian_multi
-    compute_edge_nodes = _py_triangle_helpers.compute_edge_nodes
-    compute_area = _py_triangle_helpers.compute_area
+    de_casteljau_one_round = triangle_helpers.de_casteljau_one_round
+    specialize_triangle = triangle_helpers.specialize_triangle
+    subdivide_nodes = triangle_helpers.subdivide_nodes
+    jacobian_both = triangle_helpers.jacobian_both
+    jacobian_det = triangle_helpers.jacobian_det
+    evaluate_barycentric = triangle_helpers.evaluate_barycentric
+    evaluate_barycentric_multi = triangle_helpers.evaluate_barycentric_multi
+    evaluate_cartesian_multi = triangle_helpers.evaluate_cartesian_multi
+    compute_edge_nodes = triangle_helpers.compute_edge_nodes
+    compute_area = triangle_helpers.compute_area
 else:
     de_casteljau_one_round = _speedup.de_casteljau_one_round
     specialize_triangle = _speedup.specialize_triangle

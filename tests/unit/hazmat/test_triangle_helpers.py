@@ -28,9 +28,9 @@ RANDOM = np.random.random  # pylint: disable=no-member
 class Test_polynomial_sign(unittest.TestCase):
     @staticmethod
     def _call_function_under_test(poly_triangle, degree):
-        from bezier import _py_triangle_helpers
+        from bezier.hazmat import triangle_helpers
 
-        return _py_triangle_helpers.polynomial_sign(poly_triangle, degree)
+        return triangle_helpers.polynomial_sign(poly_triangle, degree)
 
     def test_positive(self):
         bernstein = np.asfortranarray([[1.0, 2.0, 3.0, 4.0, 5.0, 6.0]])
@@ -54,14 +54,14 @@ class Test_polynomial_sign(unittest.TestCase):
 
     def test_max_iterations(self):
         bernstein = np.asfortranarray([[1.0, 2.0, 3.0]])
-        subs = "bezier._py_triangle_helpers._MAX_POLY_SUBDIVISIONS"
+        subs = "bezier.hazmat.triangle_helpers._MAX_POLY_SUBDIVISIONS"
         with unittest.mock.patch(subs, new=1):
             sign = self._call_function_under_test(bernstein, 1)
             self.assertEqual(sign, 1)
 
     def test_no_conclusion(self):
         bernstein = np.asfortranarray([[-1.0, 1.0, 2.0]])
-        subs = "bezier._py_triangle_helpers._MAX_POLY_SUBDIVISIONS"
+        subs = "bezier.hazmat.triangle_helpers._MAX_POLY_SUBDIVISIONS"
         with unittest.mock.patch(subs, new=0):
             with self.assertRaises(ValueError):
                 self._call_function_under_test(bernstein, 1)
@@ -78,9 +78,9 @@ class Test_polynomial_sign(unittest.TestCase):
 class Test_two_by_two_det(unittest.TestCase):
     @staticmethod
     def _call_function_under_test(mat):
-        from bezier import _py_triangle_helpers
+        from bezier.hazmat import triangle_helpers
 
-        return _py_triangle_helpers.two_by_two_det(mat)
+        return triangle_helpers.two_by_two_det(mat)
 
     def test_integers(self):
         mat = np.asfortranarray([[1.0, 2.0], [3.0, 4.0]])
@@ -102,9 +102,9 @@ class Test_two_by_two_det(unittest.TestCase):
 class Test_quadratic_jacobian_polynomial(utils.NumPyTestCase):
     @staticmethod
     def _call_function_under_test(nodes):
-        from bezier import _py_triangle_helpers
+        from bezier.hazmat import triangle_helpers
 
-        return _py_triangle_helpers.quadratic_jacobian_polynomial(nodes)
+        return triangle_helpers.quadratic_jacobian_polynomial(nodes)
 
     def test_it(self):
         # B(L1, L2, L3) = [L1^2 + L2^2, L2^2 + L3^2]
@@ -116,7 +116,7 @@ class Test_quadratic_jacobian_polynomial(utils.NumPyTestCase):
         self.assertEqual(bernstein, expected)
 
     def test_against_det(self):
-        from bezier import _py_triangle_helpers
+        from bezier.hazmat import triangle_helpers
 
         # B(L1, L2, L3) = [s (t + 2), s^2 + 4 t]
         nodes = np.asfortranarray(
@@ -132,13 +132,13 @@ class Test_quadratic_jacobian_polynomial(utils.NumPyTestCase):
                 [0.0, 1.0],
             ]
         )
-        as_det = _py_triangle_helpers.jacobian_det(nodes, 2, st_vals)
+        as_det = triangle_helpers.jacobian_det(nodes, 2, st_vals)
         as_det = as_det.reshape((1, 6), order="F")
         # B_s = [t + 2, 2*s]
         # B_t = [s, 4]
         # det(DB) = -2 (s^2 - 2t - 4)
         bernstein = self._call_function_under_test(nodes)
-        evaluated_bernstein = _py_triangle_helpers.evaluate_cartesian_multi(
+        evaluated_bernstein = triangle_helpers.evaluate_cartesian_multi(
             bernstein, 2, st_vals, 1
         )
         self.assertEqual(evaluated_bernstein, as_det)
@@ -147,9 +147,9 @@ class Test_quadratic_jacobian_polynomial(utils.NumPyTestCase):
 class Test_cubic_jacobian_polynomial(utils.NumPyTestCase):
     @staticmethod
     def _call_function_under_test(nodes):
-        from bezier import _py_triangle_helpers
+        from bezier.hazmat import triangle_helpers
 
-        return _py_triangle_helpers.cubic_jacobian_polynomial(nodes)
+        return triangle_helpers.cubic_jacobian_polynomial(nodes)
 
     def test_it(self):
         # B(L1, L2, L3) = [L1^3 + L2^3, L2^3 + L3^3]
@@ -172,9 +172,9 @@ class Test_cubic_jacobian_polynomial(utils.NumPyTestCase):
 class Test_de_casteljau_one_round(utils.NumPyTestCase):
     @staticmethod
     def _call_function_under_test(nodes, degree, lambda1, lambda2, lambda3):
-        from bezier import _py_triangle_helpers
+        from bezier.hazmat import triangle_helpers
 
-        return _py_triangle_helpers.de_casteljau_one_round(
+        return triangle_helpers.de_casteljau_one_round(
             nodes, degree, lambda1, lambda2, lambda3
         )
 
@@ -245,9 +245,9 @@ class Test_de_casteljau_one_round(utils.NumPyTestCase):
 class Test_make_transform(utils.NumPyTestCase):
     @staticmethod
     def _call_function_under_test(degree, weights_a, weights_b, weights_c):
-        from bezier import _py_triangle_helpers
+        from bezier.hazmat import triangle_helpers
 
-        return _py_triangle_helpers.make_transform(
+        return triangle_helpers.make_transform(
             degree, weights_a, weights_b, weights_c
         )
 
@@ -310,9 +310,9 @@ class Test_make_transform(utils.NumPyTestCase):
 class Test_reduced_to_matrix(utils.NumPyTestCase):
     @staticmethod
     def _call_function_under_test(shape, degree, vals_by_weight):
-        from bezier import _py_triangle_helpers
+        from bezier.hazmat import triangle_helpers
 
-        return _py_triangle_helpers.reduced_to_matrix(
+        return triangle_helpers.reduced_to_matrix(
             shape, degree, vals_by_weight
         )
 
@@ -349,9 +349,9 @@ class Test_specialize_triangle(utils.NumPyTestCase):
     def _call_function_under_test(
         nodes, degree, weights_a, weights_b, weights_c
     ):
-        from bezier import _py_triangle_helpers
+        from bezier.hazmat import triangle_helpers
 
-        return _py_triangle_helpers.specialize_triangle(
+        return triangle_helpers.specialize_triangle(
             nodes, degree, weights_a, weights_b, weights_c
         )
 
@@ -376,47 +376,47 @@ class Test_specialize_triangle(utils.NumPyTestCase):
         self.assertEqual(computed_d, expected_d)
 
     def test_known_linear(self):
-        from bezier import _py_triangle_helpers
+        from bezier.hazmat import triangle_helpers
 
         self._helper(
             1,
-            _py_triangle_helpers.LINEAR_SUBDIVIDE_A,
-            _py_triangle_helpers.LINEAR_SUBDIVIDE_B,
-            _py_triangle_helpers.LINEAR_SUBDIVIDE_C,
-            _py_triangle_helpers.LINEAR_SUBDIVIDE_D,
+            triangle_helpers.LINEAR_SUBDIVIDE_A,
+            triangle_helpers.LINEAR_SUBDIVIDE_B,
+            triangle_helpers.LINEAR_SUBDIVIDE_C,
+            triangle_helpers.LINEAR_SUBDIVIDE_D,
         )
 
     def test_known_quadratic(self):
-        from bezier import _py_triangle_helpers
+        from bezier.hazmat import triangle_helpers
 
         self._helper(
             2,
-            _py_triangle_helpers.QUADRATIC_SUBDIVIDE_A,
-            _py_triangle_helpers.QUADRATIC_SUBDIVIDE_B,
-            _py_triangle_helpers.QUADRATIC_SUBDIVIDE_C,
-            _py_triangle_helpers.QUADRATIC_SUBDIVIDE_D,
+            triangle_helpers.QUADRATIC_SUBDIVIDE_A,
+            triangle_helpers.QUADRATIC_SUBDIVIDE_B,
+            triangle_helpers.QUADRATIC_SUBDIVIDE_C,
+            triangle_helpers.QUADRATIC_SUBDIVIDE_D,
         )
 
     def test_known_cubic(self):
-        from bezier import _py_triangle_helpers
+        from bezier.hazmat import triangle_helpers
 
         self._helper(
             3,
-            _py_triangle_helpers.CUBIC_SUBDIVIDE_A,
-            _py_triangle_helpers.CUBIC_SUBDIVIDE_B,
-            _py_triangle_helpers.CUBIC_SUBDIVIDE_C,
-            _py_triangle_helpers.CUBIC_SUBDIVIDE_D,
+            triangle_helpers.CUBIC_SUBDIVIDE_A,
+            triangle_helpers.CUBIC_SUBDIVIDE_B,
+            triangle_helpers.CUBIC_SUBDIVIDE_C,
+            triangle_helpers.CUBIC_SUBDIVIDE_D,
         )
 
     def test_known_quartic(self):
-        from bezier import _py_triangle_helpers
+        from bezier.hazmat import triangle_helpers
 
         self._helper(
             4,
-            _py_triangle_helpers.QUARTIC_SUBDIVIDE_A,
-            _py_triangle_helpers.QUARTIC_SUBDIVIDE_B,
-            _py_triangle_helpers.QUARTIC_SUBDIVIDE_C,
-            _py_triangle_helpers.QUARTIC_SUBDIVIDE_D,
+            triangle_helpers.QUARTIC_SUBDIVIDE_A,
+            triangle_helpers.QUARTIC_SUBDIVIDE_B,
+            triangle_helpers.QUARTIC_SUBDIVIDE_C,
+            triangle_helpers.QUARTIC_SUBDIVIDE_D,
         )
 
 
@@ -426,15 +426,15 @@ class Test_subdivide_nodes(utils.NumPyTestCase):
 
     @staticmethod
     def _call_function_under_test(nodes, degree):
-        from bezier import _py_triangle_helpers
+        from bezier.hazmat import triangle_helpers
 
-        return _py_triangle_helpers.subdivide_nodes(nodes, degree)
+        return triangle_helpers.subdivide_nodes(nodes, degree)
 
     @staticmethod
     def _evaluate_cartesian_multi(nodes, degree, param_vals, dimension):
-        from bezier import _py_triangle_helpers
+        from bezier.hazmat import triangle_helpers
 
-        return _py_triangle_helpers.evaluate_cartesian_multi(
+        return triangle_helpers.evaluate_cartesian_multi(
             nodes, degree, param_vals, dimension
         )
 
@@ -671,9 +671,9 @@ class Test_subdivide_nodes(utils.NumPyTestCase):
 class Test_jacobian_s(utils.NumPyTestCase):
     @staticmethod
     def _call_function_under_test(nodes, degree, dimension):
-        from bezier import _py_triangle_helpers
+        from bezier.hazmat import triangle_helpers
 
-        return _py_triangle_helpers.jacobian_s(nodes, degree, dimension)
+        return triangle_helpers.jacobian_s(nodes, degree, dimension)
 
     def test_linear(self):
         nodes = np.asfortranarray([[0.0, 1.0, np.nan]])
@@ -712,9 +712,9 @@ class Test_jacobian_s(utils.NumPyTestCase):
 class Test_jacobian_t(utils.NumPyTestCase):
     @staticmethod
     def _call_function_under_test(nodes, degree, dimension):
-        from bezier import _py_triangle_helpers
+        from bezier.hazmat import triangle_helpers
 
-        return _py_triangle_helpers.jacobian_t(nodes, degree, dimension)
+        return triangle_helpers.jacobian_t(nodes, degree, dimension)
 
     def test_linear(self):
         nodes = np.asfortranarray([[0.0, np.nan, 1.0]])
@@ -755,9 +755,9 @@ class Test_jacobian_t(utils.NumPyTestCase):
 class Test_jacobian_both(utils.NumPyTestCase):
     @staticmethod
     def _call_function_under_test(nodes, degree, dimension):
-        from bezier import _py_triangle_helpers
+        from bezier.hazmat import triangle_helpers
 
-        return _py_triangle_helpers.jacobian_both(nodes, degree, dimension)
+        return triangle_helpers.jacobian_both(nodes, degree, dimension)
 
     def test_linear(self):
         # B(s, t) = -2s + 2t + 3
@@ -840,9 +840,9 @@ class Test_jacobian_both(utils.NumPyTestCase):
 class Test_jacobian_det(utils.NumPyTestCase):
     @staticmethod
     def _call_function_under_test(nodes, degree, st_vals):
-        from bezier import _py_triangle_helpers
+        from bezier.hazmat import triangle_helpers
 
-        return _py_triangle_helpers.jacobian_det(nodes, degree, st_vals)
+        return triangle_helpers.jacobian_det(nodes, degree, st_vals)
 
     def test_linear(self):
         import bezier
@@ -878,9 +878,9 @@ class Test_jacobian_det(utils.NumPyTestCase):
 class Test_classify_intersection(unittest.TestCase):
     @staticmethod
     def _call_function_under_test(intersection, edge_nodes1, edge_nodes2):
-        from bezier import _py_triangle_helpers
+        from bezier.hazmat import triangle_helpers
 
-        return _py_triangle_helpers.classify_intersection(
+        return triangle_helpers.classify_intersection(
             intersection, edge_nodes1, edge_nodes2
         )
 
@@ -974,9 +974,9 @@ class Test_classify_tangent_intersection(unittest.TestCase):
     def _call_function_under_test(
         intersection, nodes1, tangent1, nodes2, tangent2
     ):
-        from bezier import _py_triangle_helpers
+        from bezier.hazmat import triangle_helpers
 
-        return _py_triangle_helpers.classify_tangent_intersection(
+        return triangle_helpers.classify_tangent_intersection(
             intersection, nodes1, tangent1, nodes2, tangent2
         )
 
@@ -1077,9 +1077,9 @@ class Test_ignored_edge_corner(unittest.TestCase):
     def _call_function_under_test(
         edge_tangent, corner_tangent, corner_previous_edge
     ):
-        from bezier import _py_triangle_helpers
+        from bezier.hazmat import triangle_helpers
 
-        return _py_triangle_helpers.ignored_edge_corner(
+        return triangle_helpers.ignored_edge_corner(
             edge_tangent, corner_tangent, corner_previous_edge
         )
 
@@ -1114,9 +1114,9 @@ class Test_ignored_double_corner(unittest.TestCase):
     def _call_function_under_test(
         intersection, tangent_s, tangent_t, edge_nodes1, edge_nodes2
     ):
-        from bezier import _py_triangle_helpers
+        from bezier.hazmat import triangle_helpers
 
-        return _py_triangle_helpers.ignored_double_corner(
+        return triangle_helpers.ignored_double_corner(
             intersection, tangent_s, tangent_t, edge_nodes1, edge_nodes2
         )
 
@@ -1194,9 +1194,9 @@ class Test_ignored_corner(utils.NumPyTestCase):
     def _call_function_under_test(
         intersection, tangent_s, tangent_t, edge_nodes1, edge_nodes2
     ):
-        from bezier import _py_triangle_helpers
+        from bezier.hazmat import triangle_helpers
 
-        return _py_triangle_helpers.ignored_corner(
+        return triangle_helpers.ignored_corner(
             intersection, tangent_s, tangent_t, edge_nodes1, edge_nodes2
         )
 
@@ -1215,7 +1215,7 @@ class Test_ignored_corner(utils.NumPyTestCase):
         edge_nodes2 = ()
         intersection = make_intersect(2, 0.0, None, 0.5)
         patch = unittest.mock.patch(
-            "bezier._py_triangle_helpers.ignored_edge_corner",
+            "bezier.hazmat.triangle_helpers.ignored_edge_corner",
             return_value=unittest.mock.sentinel.edge_result,
         )
         with patch as mocked:
@@ -1245,7 +1245,7 @@ class Test_ignored_corner(utils.NumPyTestCase):
         edge_nodes2 = tuple(edge._nodes for edge in triangle.edges)
         intersection = make_intersect(None, 0.5, 1, 0.0)
         patch = unittest.mock.patch(
-            "bezier._py_triangle_helpers.ignored_edge_corner",
+            "bezier.hazmat.triangle_helpers.ignored_edge_corner",
             return_value=unittest.mock.sentinel.edge_result,
         )
         with patch as mocked:
@@ -1270,7 +1270,7 @@ class Test_ignored_corner(utils.NumPyTestCase):
     def test_double_corner(self):
         intersection = make_intersect(0, 0.0, 2, 0.0)
         patch = unittest.mock.patch(
-            "bezier._py_triangle_helpers.ignored_double_corner",
+            "bezier.hazmat.triangle_helpers.ignored_double_corner",
             return_value=unittest.mock.sentinel.double_result,
         )
         with patch as mocked:
@@ -1294,9 +1294,9 @@ class Test_ignored_corner(utils.NumPyTestCase):
 class Test_handle_ends(unittest.TestCase):
     @staticmethod
     def _call_function_under_test(index1, s, index2, t):
-        from bezier import _py_triangle_helpers
+        from bezier.hazmat import triangle_helpers
 
-        return _py_triangle_helpers.handle_ends(index1, s, index2, t)
+        return triangle_helpers.handle_ends(index1, s, index2, t)
 
     def test_neither(self):
         result = self._call_function_under_test(0, 0.5, 1, 0.5)
@@ -1335,11 +1335,9 @@ class Test_handle_ends(unittest.TestCase):
 class Test_to_front(unittest.TestCase):
     @staticmethod
     def _call_function_under_test(intersection, intersections, unused):
-        from bezier import _py_triangle_helpers
+        from bezier.hazmat import triangle_helpers
 
-        return _py_triangle_helpers.to_front(
-            intersection, intersections, unused
-        )
+        return triangle_helpers.to_front(intersection, intersections, unused)
 
     def test_no_change(self):
         intersection = make_intersect(
@@ -1436,9 +1434,9 @@ class Test_to_front(unittest.TestCase):
 class Test_get_next_first(unittest.TestCase):
     @staticmethod
     def _call_function_under_test(intersection, intersections, **kwargs):
-        from bezier import _py_triangle_helpers
+        from bezier.hazmat import triangle_helpers
 
-        return _py_triangle_helpers.get_next_first(
+        return triangle_helpers.get_next_first(
             intersection, intersections, **kwargs
         )
 
@@ -1490,9 +1488,9 @@ class Test_get_next_first(unittest.TestCase):
 class Test_get_next_second(unittest.TestCase):
     @staticmethod
     def _call_function_under_test(intersection, intersections, **kwargs):
-        from bezier import _py_triangle_helpers
+        from bezier.hazmat import triangle_helpers
 
-        return _py_triangle_helpers.get_next_second(
+        return triangle_helpers.get_next_second(
             intersection, intersections, **kwargs
         )
 
@@ -1544,9 +1542,9 @@ class Test_get_next_second(unittest.TestCase):
 class Test_get_next_coincident(unittest.TestCase):
     @staticmethod
     def _call_function_under_test(intersection, intersections):
-        from bezier import _py_triangle_helpers
+        from bezier.hazmat import triangle_helpers
 
-        return _py_triangle_helpers.get_next_coincident(
+        return triangle_helpers.get_next_coincident(
             intersection, intersections
         )
 
@@ -1602,9 +1600,9 @@ class Test_get_next_coincident(unittest.TestCase):
 class Test_is_first(unittest.TestCase):
     @staticmethod
     def _call_function_under_test(classification):
-        from bezier import _py_triangle_helpers
+        from bezier.hazmat import triangle_helpers
 
-        return _py_triangle_helpers.is_first(classification)
+        return triangle_helpers.is_first(classification)
 
     def _from_name(self, name):
         return self._call_function_under_test(get_enum(name))
@@ -1622,9 +1620,9 @@ class Test_is_first(unittest.TestCase):
 class Test_is_second(unittest.TestCase):
     @staticmethod
     def _call_function_under_test(classification):
-        from bezier import _py_triangle_helpers
+        from bezier.hazmat import triangle_helpers
 
-        return _py_triangle_helpers.is_second(classification)
+        return triangle_helpers.is_second(classification)
 
     def _from_name(self, name):
         return self._call_function_under_test(get_enum(name))
@@ -1642,11 +1640,9 @@ class Test_is_second(unittest.TestCase):
 class Test_get_next(unittest.TestCase):
     @staticmethod
     def _call_function_under_test(intersection, intersections, unused):
-        from bezier import _py_triangle_helpers
+        from bezier.hazmat import triangle_helpers
 
-        return _py_triangle_helpers.get_next(
-            intersection, intersections, unused
-        )
+        return triangle_helpers.get_next(intersection, intersections, unused)
 
     def test_remove_from_unused(self):
         # Also tests branch through "FIRST".
@@ -1658,7 +1654,7 @@ class Test_get_next(unittest.TestCase):
             2, None, 2, None, interior_curve=get_enum("FIRST")
         )
         patch = unittest.mock.patch(
-            "bezier._py_triangle_helpers.get_next_first",
+            "bezier.hazmat.triangle_helpers.get_next_first",
             return_value=return_value,
         )
         with patch as mocked:
@@ -1679,7 +1675,7 @@ class Test_get_next(unittest.TestCase):
             0, None, 2, None, interior_curve=get_enum("SECOND")
         )
         patch = unittest.mock.patch(
-            "bezier._py_triangle_helpers.get_next_second",
+            "bezier.hazmat.triangle_helpers.get_next_second",
             return_value=return_value,
         )
         with patch as mocked:
@@ -1706,7 +1702,7 @@ class Test_get_next(unittest.TestCase):
             0, None, 2, None, interior_curve=get_enum("COINCIDENT")
         )
         patch = unittest.mock.patch(
-            "bezier._py_triangle_helpers.get_next_coincident",
+            "bezier.hazmat.triangle_helpers.get_next_coincident",
             return_value=return_value,
         )
         with patch as mocked:
@@ -1722,9 +1718,9 @@ class Test_get_next(unittest.TestCase):
 class Test_ends_to_curve(utils.NumPyTestCase):
     @staticmethod
     def _call_function_under_test(start_node, end_node):
-        from bezier import _py_triangle_helpers
+        from bezier.hazmat import triangle_helpers
 
-        return _py_triangle_helpers.ends_to_curve(start_node, end_node)
+        return triangle_helpers.ends_to_curve(start_node, end_node)
 
     def test_bad_classification(self):
         start_node = make_intersect(0, 0.5, 0, 0.5)
@@ -1733,7 +1729,7 @@ class Test_ends_to_curve(utils.NumPyTestCase):
             self._call_function_under_test(start_node, end_node)
 
     def _on_different_curves(self, interior_curve):
-        from bezier import _py_triangle_helpers
+        from bezier.hazmat import triangle_helpers
 
         start_node = make_intersect(
             0, 0.5, 2, 0.5, interior_curve=interior_curve
@@ -1741,7 +1737,7 @@ class Test_ends_to_curve(utils.NumPyTestCase):
         end_node = make_intersect(1, 0.5, 1, 0.5)
         with self.assertRaises(ValueError) as exc_info:
             self._call_function_under_test(start_node, end_node)
-        expected_args = (_py_triangle_helpers._WRONG_CURVE,)
+        expected_args = (triangle_helpers._WRONG_CURVE,)
         self.assertEqual(exc_info.exception.args, expected_args)
 
     def test_first_on_different_curves(self):
@@ -1783,7 +1779,7 @@ class Test_ends_to_curve(utils.NumPyTestCase):
         self.assertEqual(result, (3, 0.5, 1.0))
 
     def test_coincident_failure(self):
-        from bezier import _py_triangle_helpers
+        from bezier.hazmat import triangle_helpers
 
         start_node = make_intersect(
             0, 0.0, 0, 0.0, interior_curve=get_enum("COINCIDENT")
@@ -1791,16 +1787,16 @@ class Test_ends_to_curve(utils.NumPyTestCase):
         end_node = make_intersect(1, 0.0, 1, 0.0)
         with self.assertRaises(ValueError) as exc_info:
             self._call_function_under_test(start_node, end_node)
-        expected_args = (_py_triangle_helpers._WRONG_CURVE,)
+        expected_args = (triangle_helpers._WRONG_CURVE,)
         self.assertEqual(exc_info.exception.args, expected_args)
 
 
 class Test_no_intersections(unittest.TestCase):
     @staticmethod
     def _call_function_under_test(nodes1, degree1, nodes2, degree2):
-        from bezier import _py_triangle_helpers
+        from bezier.hazmat import triangle_helpers
 
-        return _py_triangle_helpers.no_intersections(
+        return triangle_helpers.no_intersections(
             nodes1, degree1, nodes2, degree2
         )
 
@@ -1833,9 +1829,9 @@ class Test_no_intersections(unittest.TestCase):
 class Test_tangent_only_intersections(unittest.TestCase):
     @staticmethod
     def _call_function_under_test(all_types):
-        from bezier import _py_triangle_helpers
+        from bezier.hazmat import triangle_helpers
 
-        return _py_triangle_helpers.tangent_only_intersections(all_types)
+        return triangle_helpers.tangent_only_intersections(all_types)
 
     def test_too_few_types(self):
         with self.assertRaises(ValueError):
@@ -1884,11 +1880,9 @@ class Test_tangent_only_intersections(unittest.TestCase):
 class Test_basic_interior_combine(utils.NumPyTestCase):
     @staticmethod
     def _call_function_under_test(intersections, **kwargs):
-        from bezier import _py_triangle_helpers
+        from bezier.hazmat import triangle_helpers
 
-        return _py_triangle_helpers.basic_interior_combine(
-            intersections, **kwargs
-        )
+        return triangle_helpers.basic_interior_combine(intersections, **kwargs)
 
     def test_it(self):
         intersection1 = make_intersect(
@@ -1964,22 +1958,22 @@ class Test_basic_interior_combine(utils.NumPyTestCase):
         self.assertEqual(get_next.call_count, max_edges + 1)
 
     @unittest.mock.patch(
-        "bezier._py_triangle_helpers.get_next",
+        "bezier.hazmat.triangle_helpers.get_next",
         return_value=unittest.mock.sentinel.next_,
     )
     @unittest.mock.patch(
-        "bezier._py_triangle_helpers.to_front",
+        "bezier.hazmat.triangle_helpers.to_front",
         return_value=unittest.mock.sentinel.front,
     )
     def test_too_many_edges(self, to_front, get_next):
         self._too_many_edges_helper(to_front, get_next)
 
     @unittest.mock.patch(
-        "bezier._py_triangle_helpers.get_next",
+        "bezier.hazmat.triangle_helpers.get_next",
         return_value=unittest.mock.sentinel.next_,
     )
     @unittest.mock.patch(
-        "bezier._py_triangle_helpers.to_front",
+        "bezier.hazmat.triangle_helpers.to_front",
         return_value=unittest.mock.sentinel.front,
     )
     def test_too_many_edges_explicit_max(self, to_front, get_next):
@@ -1991,9 +1985,9 @@ class Test_combine_intersections(utils.NumPyTestCase):
     def _call_function_under_test(
         intersections, nodes1, degree1, nodes2, degree2, all_types
     ):
-        from bezier import _py_triangle_helpers
+        from bezier.hazmat import triangle_helpers
 
-        return _py_triangle_helpers.combine_intersections(
+        return triangle_helpers.combine_intersections(
             intersections, nodes1, degree1, nodes2, degree2, all_types
         )
 
@@ -2051,9 +2045,9 @@ class Test_combine_intersections(utils.NumPyTestCase):
 class Test_evaluate_barycentric(utils.NumPyTestCase):
     @staticmethod
     def _call_function_under_test(nodes, degree, lambda1, lambda2, lambda3):
-        from bezier import _py_triangle_helpers
+        from bezier.hazmat import triangle_helpers
 
-        return _py_triangle_helpers.evaluate_barycentric(
+        return triangle_helpers.evaluate_barycentric(
             nodes, degree, lambda1, lambda2, lambda3
         )
 
@@ -2131,9 +2125,9 @@ class Test_evaluate_barycentric(utils.NumPyTestCase):
 class Test_evaluate_barycentric_multi(utils.NumPyTestCase):
     @staticmethod
     def _call_function_under_test(nodes, degree, param_vals, dimension):
-        from bezier import _py_triangle_helpers
+        from bezier.hazmat import triangle_helpers
 
-        return _py_triangle_helpers.evaluate_barycentric_multi(
+        return triangle_helpers.evaluate_barycentric_multi(
             nodes, degree, param_vals, dimension
         )
 
@@ -2159,9 +2153,9 @@ class Test_evaluate_barycentric_multi(utils.NumPyTestCase):
 class Test_evaluate_cartesian_multi(utils.NumPyTestCase):
     @staticmethod
     def _call_function_under_test(nodes, degree, param_vals, dimension):
-        from bezier import _py_triangle_helpers
+        from bezier.hazmat import triangle_helpers
 
-        return _py_triangle_helpers.evaluate_cartesian_multi(
+        return triangle_helpers.evaluate_cartesian_multi(
             nodes, degree, param_vals, dimension
         )
 
@@ -2194,9 +2188,9 @@ class Test_evaluate_cartesian_multi(utils.NumPyTestCase):
 class Test_compute_edge_nodes(utils.NumPyTestCase):
     @staticmethod
     def _call_function_under_test(nodes, degree):
-        from bezier import _py_triangle_helpers
+        from bezier.hazmat import triangle_helpers
 
-        return _py_triangle_helpers.compute_edge_nodes(nodes, degree)
+        return triangle_helpers.compute_edge_nodes(nodes, degree)
 
     def _check(self, nodes, degree, expected1, expected2, expected3):
         nodes1, nodes2, nodes3 = self._call_function_under_test(nodes, degree)
@@ -2288,9 +2282,9 @@ class Test_compute_edge_nodes(utils.NumPyTestCase):
 class Test_shoelace_for_area(unittest.TestCase):
     @staticmethod
     def _call_function_under_test(nodes):
-        from bezier import _py_triangle_helpers
+        from bezier.hazmat import triangle_helpers
 
-        return _py_triangle_helpers.shoelace_for_area(nodes)
+        return triangle_helpers.shoelace_for_area(nodes)
 
     def test_linear(self):
         edge_nodes = np.asfortranarray([[1.0, 2.0], [1.0, 4.0]])
@@ -2331,9 +2325,9 @@ class Test_shoelace_for_area(unittest.TestCase):
 class Test_compute_area(unittest.TestCase):
     @staticmethod
     def _call_function_under_test(edges):
-        from bezier import _py_triangle_helpers
+        from bezier.hazmat import triangle_helpers
 
-        return _py_triangle_helpers.compute_area(edges)
+        return triangle_helpers.compute_area(edges)
 
     def test_mixed_degree(self):
         edge1 = np.asfortranarray([[0.0, 2.0], [0.0, 0.0]])

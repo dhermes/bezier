@@ -10,13 +10,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from tests.unit import test__py_triangle_helpers
 from tests.unit import utils
+from tests.unit.hazmat import test_triangle_helpers
 
 
 @utils.needs_speedup
 class Test_speedup_de_casteljau_one_round(
-    test__py_triangle_helpers.Test_de_casteljau_one_round
+    test_triangle_helpers.Test_de_casteljau_one_round
 ):
     @staticmethod
     def _call_function_under_test(nodes, degree, lambda1, lambda2, lambda3):
@@ -29,7 +29,7 @@ class Test_speedup_de_casteljau_one_round(
 
 @utils.needs_speedup
 class Test_speedup_specialize_triangle(
-    test__py_triangle_helpers.Test_specialize_triangle
+    test_triangle_helpers.Test_specialize_triangle
 ):
     @staticmethod
     def _call_function_under_test(
@@ -43,9 +43,7 @@ class Test_speedup_specialize_triangle(
 
 
 @utils.needs_speedup
-class Test_speedup_subdivide_nodes(
-    test__py_triangle_helpers.Test_subdivide_nodes
-):
+class Test_speedup_subdivide_nodes(test_triangle_helpers.Test_subdivide_nodes):
     @staticmethod
     def _call_function_under_test(nodes, degree):
         from bezier import _speedup
@@ -84,7 +82,7 @@ class Test_speedup_subdivide_nodes(
 
 
 @utils.needs_speedup
-class Test_speedup_jacobian_both(test__py_triangle_helpers.Test_jacobian_both):
+class Test_speedup_jacobian_both(test_triangle_helpers.Test_jacobian_both):
     @staticmethod
     def _call_function_under_test(nodes, degree, dimension):
         from bezier import _speedup
@@ -93,7 +91,7 @@ class Test_speedup_jacobian_both(test__py_triangle_helpers.Test_jacobian_both):
 
 
 @utils.needs_speedup
-class Test_speedup_jacobian_det(test__py_triangle_helpers.Test_jacobian_det):
+class Test_speedup_jacobian_det(test_triangle_helpers.Test_jacobian_det):
     @staticmethod
     def _call_function_under_test(nodes, degree, st_vals):
         from bezier import _speedup
@@ -103,7 +101,7 @@ class Test_speedup_jacobian_det(test__py_triangle_helpers.Test_jacobian_det):
 
 @utils.needs_speedup
 class Test_speedup_evaluate_barycentric(
-    test__py_triangle_helpers.Test_evaluate_barycentric
+    test_triangle_helpers.Test_evaluate_barycentric
 ):
     @staticmethod
     def _call_function_under_test(nodes, degree, lambda1, lambda2, lambda3):
@@ -116,7 +114,7 @@ class Test_speedup_evaluate_barycentric(
 
 @utils.needs_speedup
 class Test_speedup_evaluate_barycentric_multi(
-    test__py_triangle_helpers.Test_evaluate_barycentric_multi
+    test_triangle_helpers.Test_evaluate_barycentric_multi
 ):
     @staticmethod
     def _call_function_under_test(nodes, degree, param_vals, dimension):
@@ -129,7 +127,7 @@ class Test_speedup_evaluate_barycentric_multi(
 
 @utils.needs_speedup
 class Test_speedup_evaluate_cartesian_multi(
-    test__py_triangle_helpers.Test_evaluate_cartesian_multi
+    test_triangle_helpers.Test_evaluate_cartesian_multi
 ):
     @staticmethod
     def _call_function_under_test(nodes, degree, param_vals, dimension):
@@ -142,7 +140,7 @@ class Test_speedup_evaluate_cartesian_multi(
 
 @utils.needs_speedup
 class Test_speedup_compute_edge_nodes(
-    test__py_triangle_helpers.Test_compute_edge_nodes
+    test_triangle_helpers.Test_compute_edge_nodes
 ):
     @staticmethod
     def _call_function_under_test(nodes, degree):
@@ -152,7 +150,7 @@ class Test_speedup_compute_edge_nodes(
 
 
 @utils.needs_speedup
-class Test_speedup_compute_area(test__py_triangle_helpers.Test_compute_area):
+class Test_speedup_compute_area(test_triangle_helpers.Test_compute_area):
     @staticmethod
     def _call_function_under_test(edges):
         from bezier import _speedup
