@@ -72,7 +72,7 @@ def bbox_intersect(nodes1, nodes2):
             B |eacute| zier shape.
 
     Returns:
-        int: Enum from ``BoxIntersectionType`` indicating the type of
+        int: Enum from :class:`.BoxIntersectionType` indicating the type of
         bounding box intersection.
     """
     left1, right1, bottom1, top1 = _py_helpers.bbox(nodes1)
@@ -152,7 +152,7 @@ def linearization_error(nodes):
        \left.\frac{s(1 - s)}{2!} \cdot 10\right|_{s = \frac{1}{2}}
           = \frac{5}{4}.
 
-    .. image:: ../images/linearization_error.png
+    .. image:: ../../images/linearization_error.png
        :align: center
 
     .. testsetup:: linearization-error, linearization-error-fail
@@ -296,7 +296,7 @@ def segment_intersection(start0, end0, start1, end1):
     L_1\left(\frac{3}{4}\right) =
     \frac{1}{2} \left[\begin{array}{c} 1 \\ 1 \end{array}\right]`.
 
-    .. image:: ../images/segment_intersection1.png
+    .. image:: ../../images/segment_intersection1.png
        :align: center
 
     .. testsetup:: segment-intersection1, segment-intersection2
@@ -336,7 +336,7 @@ def segment_intersection(start0, end0, start1, end1):
     we should be able to determine that the lines don't intersect, but
     this function is not meant for that check:
 
-    .. image:: ../images/segment_intersection2.png
+    .. image:: ../../images/segment_intersection2.png
        :align: center
 
     .. doctest:: segment-intersection2
@@ -443,7 +443,7 @@ def parallel_lines_parameters(start0, end0, start1, end1):
     If it is not on the first line, then we are done, the
     segments don't meet:
 
-    .. image:: ../images/parallel_lines_parameters1.png
+    .. image:: ../../images/parallel_lines_parameters1.png
        :align: center
 
     .. testsetup:: parallel-different1, parallel-different2
@@ -485,7 +485,7 @@ def parallel_lines_parameters(start0, end0, start1, end1):
     :math:`E_1 = S_0 + 2 \Delta_0`) correspond to segments that
     don't meet:
 
-    .. image:: ../images/parallel_lines_parameters2.png
+    .. image:: ../../images/parallel_lines_parameters2.png
        :align: center
 
     .. doctest:: parallel-different2
@@ -508,7 +508,7 @@ def parallel_lines_parameters(start0, end0, start1, end1):
     but if the intervals overlap, like :math:`\left[0, 1\right]` and
     :math:`\left[-1, \frac{1}{2}\right]`, the segments meet:
 
-    .. image:: ../images/parallel_lines_parameters3.png
+    .. image:: ../../images/parallel_lines_parameters3.png
        :align: center
 
     .. testsetup:: parallel-different3, parallel-different4
@@ -541,7 +541,7 @@ def parallel_lines_parameters(start0, end0, start1, end1):
     Similarly, if the second interval completely contains the first,
     the segments meet:
 
-    .. image:: ../images/parallel_lines_parameters4.png
+    .. image:: ../../images/parallel_lines_parameters4.png
        :align: center
 
     .. doctest:: parallel-different4
@@ -808,7 +808,8 @@ def add_intersection(s, t, intersections):
 
     If ``s`` is below :math:`2^{-10}`, it will be replaced with ``1 - s``
     and compared against ``1 - s'`` for all ``s'`` already in
-    ``intersections``. (Similar if ``t`` is below the :attr:`.ZERO_THRESHOLD`.)
+    ``intersections``. (Similar if ``t`` is below the
+    :attr:`~bezier.hazmat.intersection_helpers.ZERO_THRESHOLD`.)
     This is perfectly "appropriate" since evaluating a B |eacute| zier curve
     requires using both ``s`` and ``1 - s``, so both values are equally
     relevant.
@@ -1142,11 +1143,11 @@ def prune_candidates(candidates):
     if those convex hulls collide.
 
     Args:
-        candidates (List): An iterable of pairs of curves (or
+        candidates (List[Any]): An iterable of pairs of curves (or
             linearized curves).
 
     Returns:
-        List: A pruned list of curve pairs.
+        List[Any]: A pruned list of curve pairs.
     """
     pruned = []
     # NOTE: In the below we replace ``isinstance(a, B)`` with
