@@ -860,9 +860,7 @@ class Test_intersect_one_round(utils.NumPyTestCase):
         from bezier.hazmat import geometric_intersection
 
         if isinstance(curve1, geometric_intersection.Linearization):
-            self.assertIsInstance(
-                curve2, geometric_intersection.Linearization
-            )
+            self.assertIsInstance(curve2, geometric_intersection.Linearization)
             # We just check identity, since we assume a ``Linearization``
             # can't be subdivided.
             self.assertIs(curve1, curve2)
