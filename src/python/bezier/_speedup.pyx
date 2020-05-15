@@ -85,7 +85,7 @@ SEGMENTS_TOO_SMALL = (
     "Did not have enough space for segments. Needed space "
     "for {:d} `CurvedPolygonSegment`-s but only had space for {:d}.")
 # NOTE: The ``SUBDIVISION_NO_CONVERGE`` error message is copied from
-#       ``_py_geometric_intersection.py::_NO_CONVERGE_TEMPLATE``. This
+#       ``hazmat/geometric_intersection.py::_NO_CONVERGE_TEMPLATE``. This
 #       assumes, but does not verify, that the Fortran subroutine
 #       ``curve_intersection.f90::all_intersections_abi()`` uses
 #       ``MAX_INTERSECT_SUBDIVISIONS = 20``.
