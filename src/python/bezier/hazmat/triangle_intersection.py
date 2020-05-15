@@ -21,8 +21,8 @@ import itertools
 
 import numpy as np
 
-from bezier import _py_geometric_intersection
 from bezier.hazmat import algebraic_intersection
+from bezier.hazmat import geometric_intersection
 from bezier.hazmat import helpers as _py_helpers
 from bezier.hazmat import intersection_helpers
 from bezier.hazmat import triangle_helpers
@@ -30,7 +30,7 @@ from bezier.hazmat import triangle_helpers
 
 MAX_LOCATE_SUBDIVISIONS = 20
 LOCATE_EPS = 0.5 ** 47
-INTERSECTION_T = _py_geometric_intersection.BoxIntersectionType.INTERSECTION
+INTERSECTION_T = geometric_intersection.BoxIntersectionType.INTERSECTION
 CLASSIFICATION_T = intersection_helpers.IntersectionClassification
 UNUSED_T = CLASSIFICATION_T.COINCIDENT_UNUSED
 ACCEPTABLE_CLASSIFICATIONS = (
@@ -786,7 +786,7 @@ def generic_intersect(
         * The nodes of three edges of the first triangle being intersected
           followed by the nodes of the three edges of the second.
     """
-    bbox_int = _py_geometric_intersection.bbox_intersect(nodes1, nodes2)
+    bbox_int = geometric_intersection.bbox_intersect(nodes1, nodes2)
     if bbox_int != INTERSECTION_T:
         return [], None, ()
 
@@ -842,7 +842,7 @@ def geometric_intersect(nodes1, degree1, nodes2, degree2, verify):
         * The nodes of three edges of the first triangle being intersected
           followed by the nodes of the three edges of the second.
     """
-    all_intersections = _py_geometric_intersection.all_intersections
+    all_intersections = geometric_intersection.all_intersections
     return generic_intersect(
         nodes1, degree1, nodes2, degree2, verify, all_intersections
     )

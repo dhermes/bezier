@@ -31,7 +31,7 @@ which is the primary usage within ``bezier``.
 import numpy as np
 
 from bezier import _helpers
-from bezier import _py_geometric_intersection
+from bezier.hazmat import geometric_intersection
 
 
 NO_PARALLEL = "Parallel lines not supported during clipping."
@@ -164,7 +164,7 @@ def _update_parameters(s_min, s_max, start0, end0, start1, end1):
         NotImplementedError: If the two line segments are parallel. (This
             case will be supported at some point, just not now.)
     """
-    s, t, success = _py_geometric_intersection.segment_intersection(
+    s, t, success = geometric_intersection.segment_intersection(
         start0, end0, start1, end1
     )
 

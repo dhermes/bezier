@@ -684,7 +684,7 @@ class Test_triangle_intersections(utils.NumPyTestCase):
 
     def test_with_unused(self):
         import bezier
-        from bezier import _py_geometric_intersection
+        from bezier.hazmat import geometric_intersection
 
         triangle1 = bezier.Triangle.from_nodes(
             np.asfortranarray([[0.0, 1.0, 0.0], [0.0, 0.0, 1.0]])
@@ -694,7 +694,7 @@ class Test_triangle_intersections(utils.NumPyTestCase):
         )
         edge_nodes1 = tuple(edge._nodes for edge in triangle1.edges)
         edge_nodes2 = tuple(edge._nodes for edge in triangle2.edges)
-        all_intersections = _py_geometric_intersection.all_intersections
+        all_intersections = geometric_intersection.all_intersections
         result = self._call_function_under_test(
             edge_nodes1, edge_nodes2, all_intersections
         )
@@ -722,11 +722,11 @@ class Test_generic_intersect(utils.NumPyTestCase):
         )
 
     def test_disjoint_bbox(self):
-        from bezier import _py_geometric_intersection
+        from bezier.hazmat import geometric_intersection
 
         nodes1 = np.asfortranarray([[0.0, 1.0, 0.0], [0.0, 0.0, 1.0]])
         nodes2 = np.asfortranarray([[10.0, 11.0, 10.0], [10.0, 10.0, 11.0]])
-        all_intersections = _py_geometric_intersection.all_intersections
+        all_intersections = geometric_intersection.all_intersections
         result = self._call_function_under_test(
             nodes1, 1, nodes2, 1, True, all_intersections
         )

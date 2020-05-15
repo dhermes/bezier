@@ -159,7 +159,7 @@ def linearization_error(nodes):
 
        import numpy as np
        import bezier
-       from bezier._py_geometric_intersection import linearization_error
+       from bezier.hazmat.geometric_intersection import linearization_error
 
     .. doctest:: linearization-error
 
@@ -302,7 +302,7 @@ def segment_intersection(start0, end0, start1, end1):
     .. testsetup:: segment-intersection1, segment-intersection2
 
        import numpy as np
-       from bezier._py_geometric_intersection import segment_intersection
+       from bezier.hazmat.geometric_intersection import segment_intersection
 
     .. doctest:: segment-intersection1
        :options: +NORMALIZE_WHITESPACE
@@ -360,7 +360,7 @@ def segment_intersection(start0, end0, start1, end1):
     .. testsetup:: segment-intersection2-continued
 
        import numpy as np
-       from bezier._py_geometric_intersection import parallel_lines_parameters
+       from bezier.hazmat.geometric_intersection import parallel_lines_parameters
 
        start0 = np.asfortranarray([1.0, 0.0])
        end0 = np.asfortranarray([0.0, 1.0])
@@ -449,7 +449,7 @@ def parallel_lines_parameters(start0, end0, start1, end1):
     .. testsetup:: parallel-different1, parallel-different2
 
        import numpy as np
-       from bezier._py_geometric_intersection import parallel_lines_parameters
+       from bezier.hazmat.geometric_intersection import parallel_lines_parameters
 
     .. doctest:: parallel-different1
 
@@ -514,7 +514,7 @@ def parallel_lines_parameters(start0, end0, start1, end1):
     .. testsetup:: parallel-different3, parallel-different4
 
        import numpy as np
-       from bezier._py_geometric_intersection import parallel_lines_parameters
+       from bezier.hazmat.geometric_intersection import parallel_lines_parameters
 
        start0 = np.asfortranarray([1.0, 0.0])
        delta0 = np.asfortranarray([2.0, -1.0])
@@ -1592,7 +1592,7 @@ class Linearization:
         """Do-nothing method to match the :class:`.Curve` interface.
 
         Returns:
-            Tuple[~bezier._py_geometric_intersection.Linearization]: List of
+            Tuple[~bezier.hazmat.geometric_intersection.Linearization]: List of
             all subdivided parts, which is just the current object.
         """
         return (self,)
@@ -1603,12 +1603,12 @@ class Linearization:
 
         Args:
             shape (Union[SubdividedCurve, \
-            ~bezier._py_geometric_intersection.Linearization]): A curve or an
+            ~bezier.hazmat.geometric_intersection.Linearization]): A curve or an
                 already linearized curve.
 
         Returns:
             Union[SubdividedCurve, \
-            ~bezier._py_geometric_intersection.Linearization]: The
+            ~bezier.hazmat.geometric_intersection.Linearization]: The
             (potentially linearized) curve.
         """
         # NOTE: In the below we replace ``isinstance(a, B)`` with

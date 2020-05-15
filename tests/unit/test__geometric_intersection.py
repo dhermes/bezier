@@ -15,13 +15,13 @@ import unittest
 
 import numpy as np
 
-from tests.unit import test__py_geometric_intersection
 from tests.unit import utils
+from tests.unit.hazmat import test_geometric_intersection
 
 
 @utils.needs_speedup
 class Test_speedup_bbox_intersect(
-    test__py_geometric_intersection.Test_bbox_intersect
+    test_geometric_intersection.Test_bbox_intersect
 ):
     @staticmethod
     def _call_function_under_test(nodes1, nodes2):
@@ -32,7 +32,7 @@ class Test_speedup_bbox_intersect(
 
 @utils.needs_speedup
 class Test_speedup_all_intersections(
-    test__py_geometric_intersection.Test_all_intersections
+    test_geometric_intersection.Test_all_intersections
 ):
     @staticmethod
     def _call_function_under_test(nodes_first, nodes_second, **kwargs):

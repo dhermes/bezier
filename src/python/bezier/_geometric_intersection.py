@@ -19,7 +19,7 @@ will be used if the extension can be built.
 
 import atexit
 
-from bezier import _py_geometric_intersection
+from bezier.hazmat import geometric_intersection
 
 try:
     from bezier import _speedup
@@ -29,8 +29,8 @@ except ImportError:  # pragma: NO COVER
 
 # pylint: disable=invalid-name
 if _speedup is None:  # pragma: NO COVER
-    bbox_intersect = _py_geometric_intersection.bbox_intersect
-    all_intersections = _py_geometric_intersection.all_intersections
+    bbox_intersect = geometric_intersection.bbox_intersect
+    all_intersections = geometric_intersection.all_intersections
 else:
     bbox_intersect = _speedup.bbox_intersect
     all_intersections = _speedup.curve_intersections

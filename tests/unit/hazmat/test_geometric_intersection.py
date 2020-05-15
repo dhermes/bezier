@@ -26,58 +26,58 @@ UNIT_SQUARE = np.asfortranarray([[0.0, 1.0, 1.0, 0.0], [0.0, 0.0, 1.0, 1.0]])
 class Test_bbox_intersect(unittest.TestCase):
     @staticmethod
     def _call_function_under_test(nodes1, nodes2):
-        from bezier import _py_geometric_intersection
+        from bezier.hazmat import geometric_intersection
 
-        return _py_geometric_intersection.bbox_intersect(nodes1, nodes2)
+        return geometric_intersection.bbox_intersect(nodes1, nodes2)
 
     def test_intersect(self):
-        from bezier import _py_geometric_intersection
+        from bezier.hazmat import geometric_intersection
 
         nodes = UNIT_SQUARE + np.asfortranarray([[0.5], [0.5]])
         result = self._call_function_under_test(UNIT_SQUARE, nodes)
-        expected = _py_geometric_intersection.BoxIntersectionType.INTERSECTION
+        expected = geometric_intersection.BoxIntersectionType.INTERSECTION
         self.assertEqual(result, expected)
 
     def test_far_apart(self):
-        from bezier import _py_geometric_intersection
+        from bezier.hazmat import geometric_intersection
 
         nodes = UNIT_SQUARE + np.asfortranarray([[100.0], [100.0]])
         result = self._call_function_under_test(UNIT_SQUARE, nodes)
-        expected = _py_geometric_intersection.BoxIntersectionType.DISJOINT
+        expected = geometric_intersection.BoxIntersectionType.DISJOINT
         self.assertEqual(result, expected)
 
     def test_disjoint_but_aligned(self):
-        from bezier import _py_geometric_intersection
+        from bezier.hazmat import geometric_intersection
 
         nodes = UNIT_SQUARE + np.asfortranarray([[1.0], [2.0]])
         result = self._call_function_under_test(UNIT_SQUARE, nodes)
-        expected = _py_geometric_intersection.BoxIntersectionType.DISJOINT
+        expected = geometric_intersection.BoxIntersectionType.DISJOINT
         self.assertEqual(result, expected)
 
     def test_tangent(self):
-        from bezier import _py_geometric_intersection
+        from bezier.hazmat import geometric_intersection
 
         nodes = UNIT_SQUARE + np.asfortranarray([[1.0], [0.0]])
         result = self._call_function_under_test(UNIT_SQUARE, nodes)
-        expected = _py_geometric_intersection.BoxIntersectionType.TANGENT
+        expected = geometric_intersection.BoxIntersectionType.TANGENT
         self.assertEqual(result, expected)
 
     def test_almost_tangent(self):
-        from bezier import _py_geometric_intersection
+        from bezier.hazmat import geometric_intersection
 
         x_val = 1.0 + SPACING(1.0)
         nodes = UNIT_SQUARE + np.asfortranarray([[x_val], [0.0]])
         result = self._call_function_under_test(UNIT_SQUARE, nodes)
-        expected = _py_geometric_intersection.BoxIntersectionType.DISJOINT
+        expected = geometric_intersection.BoxIntersectionType.DISJOINT
         self.assertEqual(result, expected)
 
 
 class Test_linearization_error(unittest.TestCase):
     @staticmethod
     def _call_function_under_test(nodes):
-        from bezier import _py_geometric_intersection
+        from bezier.hazmat import geometric_intersection
 
-        return _py_geometric_intersection.linearization_error(nodes)
+        return geometric_intersection.linearization_error(nodes)
 
     def test_linear(self):
         nodes = np.asfortranarray([[0.0, 1.0], [0.0, 2.0]])
@@ -187,9 +187,9 @@ class Test_linearization_error(unittest.TestCase):
 class Test_segment_intersection(unittest.TestCase):
     @staticmethod
     def _call_function_under_test(start0, end0, start1, end1):
-        from bezier import _py_geometric_intersection
+        from bezier.hazmat import geometric_intersection
 
-        return _py_geometric_intersection.segment_intersection(
+        return geometric_intersection.segment_intersection(
             start0, end0, start1, end1
         )
 
@@ -235,9 +235,9 @@ class Test_segment_intersection(unittest.TestCase):
 class Test_parallel_lines_parameters(utils.NumPyTestCase):
     @staticmethod
     def _call_function_under_test(start0, end0, start1, end1):
-        from bezier import _py_geometric_intersection
+        from bezier.hazmat import geometric_intersection
 
-        return _py_geometric_intersection.parallel_lines_parameters(
+        return geometric_intersection.parallel_lines_parameters(
             start0, end0, start1, end1
         )
 
@@ -365,9 +365,9 @@ class Test_line_line_collide(unittest.TestCase):
 
     @staticmethod
     def _call_function_under_test(line1, line2):
-        from bezier import _py_geometric_intersection
+        from bezier.hazmat import geometric_intersection
 
-        return _py_geometric_intersection.line_line_collide(line1, line2)
+        return geometric_intersection.line_line_collide(line1, line2)
 
     def test_general_position_collide(self):
         # I.e. not parallel.
@@ -400,9 +400,9 @@ class Test_line_line_collide(unittest.TestCase):
 class Test_convex_hull_collide(unittest.TestCase):
     @staticmethod
     def _call_function_under_test(nodes1, nodes2):
-        from bezier import _py_geometric_intersection
+        from bezier.hazmat import geometric_intersection
 
-        return _py_geometric_intersection.convex_hull_collide(nodes1, nodes2)
+        return geometric_intersection.convex_hull_collide(nodes1, nodes2)
 
     def test_line_line(self):
         nodes1 = np.asfortranarray([[0.0, 1.0, 2.0], [0.0, 1.0, 2.0]])
@@ -420,9 +420,9 @@ class Test_convex_hull_collide(unittest.TestCase):
 class Test_from_linearized(utils.NumPyTestCase):
     @staticmethod
     def _call_function_under_test(first, second, intersections):
-        from bezier import _py_geometric_intersection
+        from bezier.hazmat import geometric_intersection
 
-        return _py_geometric_intersection.from_linearized(
+        return geometric_intersection.from_linearized(
             first, second, intersections
         )
 
@@ -471,7 +471,7 @@ class Test_from_linearized(utils.NumPyTestCase):
         self.assertEqual(intersections, [])
 
     def test_unhandled_parallel_lines(self):
-        from bezier import _py_geometric_intersection
+        from bezier.hazmat import geometric_intersection
 
         nodes1 = np.asfortranarray([[0.0, 1.0], [0.0, 1.0]])
         curve1 = subdivided_curve(nodes1)
@@ -482,7 +482,7 @@ class Test_from_linearized(utils.NumPyTestCase):
         intersections = []
         with self.assertRaises(ValueError) as exc_info:
             self._call_function_under_test(lin1, lin2, intersections)
-        expected_args = (_py_geometric_intersection._UNHANDLED_LINES,)
+        expected_args = (geometric_intersection._UNHANDLED_LINES,)
         self.assertEqual(exc_info.exception.args, expected_args)
         self.assertEqual(intersections, [])
 
@@ -628,9 +628,9 @@ class Test_from_linearized(utils.NumPyTestCase):
 class Test_add_intersection(unittest.TestCase):
     @staticmethod
     def _call_function_under_test(s, t, intersections):
-        from bezier import _py_geometric_intersection
+        from bezier.hazmat import geometric_intersection
 
-        return _py_geometric_intersection.add_intersection(s, t, intersections)
+        return geometric_intersection.add_intersection(s, t, intersections)
 
     def test_new(self):
         intersections = [(0.5, 0.5)]
@@ -669,9 +669,9 @@ class Test_endpoint_check(utils.NumPyTestCase):
     def _call_function_under_test(
         first, node_first, s, second, node_second, t, intersections
     ):
-        from bezier import _py_geometric_intersection
+        from bezier.hazmat import geometric_intersection
 
-        return _py_geometric_intersection.endpoint_check(
+        return geometric_intersection.endpoint_check(
             first, node_first, s, second, node_second, t, intersections
         )
 
@@ -720,9 +720,9 @@ class Test_endpoint_check(utils.NumPyTestCase):
 class Test_tangent_bbox_intersection(utils.NumPyTestCase):
     @staticmethod
     def _call_function_under_test(first, second, intersections):
-        from bezier import _py_geometric_intersection
+        from bezier.hazmat import geometric_intersection
 
-        return _py_geometric_intersection.tangent_bbox_intersection(
+        return geometric_intersection.tangent_bbox_intersection(
             first, second, intersections
         )
 
@@ -765,76 +765,76 @@ class Test_tangent_bbox_intersection(utils.NumPyTestCase):
 class Test_bbox_line_intersect(utils.NumPyTestCase):
     @staticmethod
     def _call_function_under_test(nodes, line_start, line_end):
-        from bezier import _py_geometric_intersection
+        from bezier.hazmat import geometric_intersection
 
-        return _py_geometric_intersection.bbox_line_intersect(
+        return geometric_intersection.bbox_line_intersect(
             nodes, line_start, line_end
         )
 
     def test_start_in_bbox(self):
-        from bezier import _py_geometric_intersection
+        from bezier.hazmat import geometric_intersection
 
         line_start = np.asfortranarray([0.5, 0.5])
         line_end = np.asfortranarray([0.5, 1.5])
         result = self._call_function_under_test(
             UNIT_SQUARE, line_start, line_end
         )
-        expected = _py_geometric_intersection.BoxIntersectionType.INTERSECTION
+        expected = geometric_intersection.BoxIntersectionType.INTERSECTION
         self.assertEqual(result, expected)
 
     def test_end_in_bbox(self):
-        from bezier import _py_geometric_intersection
+        from bezier.hazmat import geometric_intersection
 
         line_start = np.asfortranarray([-1.0, 0.5])
         line_end = np.asfortranarray([0.5, 0.5])
         result = self._call_function_under_test(
             UNIT_SQUARE, line_start, line_end
         )
-        expected = _py_geometric_intersection.BoxIntersectionType.INTERSECTION
+        expected = geometric_intersection.BoxIntersectionType.INTERSECTION
         self.assertEqual(result, expected)
 
     def test_segment_intersect_bbox_bottom(self):
-        from bezier import _py_geometric_intersection
+        from bezier.hazmat import geometric_intersection
 
         line_start = np.asfortranarray([0.5, -0.5])
         line_end = np.asfortranarray([0.5, 1.5])
         result = self._call_function_under_test(
             UNIT_SQUARE, line_start, line_end
         )
-        expected = _py_geometric_intersection.BoxIntersectionType.INTERSECTION
+        expected = geometric_intersection.BoxIntersectionType.INTERSECTION
         self.assertEqual(result, expected)
 
     def test_segment_intersect_bbox_right(self):
-        from bezier import _py_geometric_intersection
+        from bezier.hazmat import geometric_intersection
 
         line_start = np.asfortranarray([-0.5, 0.5])
         line_end = np.asfortranarray([1.5, 0.5])
         result = self._call_function_under_test(
             UNIT_SQUARE, line_start, line_end
         )
-        expected = _py_geometric_intersection.BoxIntersectionType.INTERSECTION
+        expected = geometric_intersection.BoxIntersectionType.INTERSECTION
         self.assertEqual(result, expected)
 
     def test_segment_intersect_bbox_top(self):
-        from bezier import _py_geometric_intersection
+        from bezier.hazmat import geometric_intersection
 
         line_start = np.asfortranarray([-0.25, 0.5])
         line_end = np.asfortranarray([0.5, 1.25])
         result = self._call_function_under_test(
             UNIT_SQUARE, line_start, line_end
         )
-        expected = _py_geometric_intersection.BoxIntersectionType.INTERSECTION
+        expected = geometric_intersection.BoxIntersectionType.INTERSECTION
         self.assertEqual(result, expected)
 
     def test_disjoint(self):
-        from bezier import _py_geometric_intersection
+        from bezier.hazmat import geometric_intersection
 
         line_start = np.asfortranarray([2.0, 2.0])
         line_end = np.asfortranarray([2.0, 5.0])
         result = self._call_function_under_test(
             UNIT_SQUARE, line_start, line_end
         )
-        expected = _py_geometric_intersection.BoxIntersectionType.DISJOINT
+        expected = geometric_intersection.BoxIntersectionType.DISJOINT
         self.assertEqual(result, expected)
 
 
@@ -850,28 +850,28 @@ class Test_intersect_one_round(utils.NumPyTestCase):
 
     @staticmethod
     def _call_function_under_test(candidates, intersections):
-        from bezier import _py_geometric_intersection
+        from bezier.hazmat import geometric_intersection
 
-        return _py_geometric_intersection.intersect_one_round(
+        return geometric_intersection.intersect_one_round(
             candidates, intersections
         )
 
     def _curves_compare(self, curve1, curve2):
-        from bezier import _py_geometric_intersection
+        from bezier.hazmat import geometric_intersection
 
-        if isinstance(curve1, _py_geometric_intersection.Linearization):
+        if isinstance(curve1, geometric_intersection.Linearization):
             self.assertIsInstance(
-                curve2, _py_geometric_intersection.Linearization
+                curve2, geometric_intersection.Linearization
             )
             # We just check identity, since we assume a ``Linearization``
             # can't be subdivided.
             self.assertIs(curve1, curve2)
         else:
             self.assertIsInstance(
-                curve1, _py_geometric_intersection.SubdividedCurve
+                curve1, geometric_intersection.SubdividedCurve
             )
             self.assertIsInstance(
-                curve2, _py_geometric_intersection.SubdividedCurve
+                curve2, geometric_intersection.SubdividedCurve
             )
             self.assertIs(curve1.original_nodes, curve2.original_nodes)
             self.assertEqual(curve1.start, curve2.start)
@@ -940,7 +940,7 @@ class Test_intersect_one_round(utils.NumPyTestCase):
         self.assertEqual(intersections, [(0.5, 0.5)])
 
     def test_failure_due_to_unhandled_lines(self):
-        from bezier import _py_geometric_intersection
+        from bezier.hazmat import geometric_intersection
 
         curve1 = subdivided_curve(self.LINE1)
         lin1 = make_linearization(curve1, error=0.0)
@@ -950,7 +950,7 @@ class Test_intersect_one_round(utils.NumPyTestCase):
         intersections = []
         with self.assertRaises(ValueError) as exc_info:
             self._call_function_under_test([(lin1, lin2)], intersections)
-        expected_args = (_py_geometric_intersection._UNHANDLED_LINES,)
+        expected_args = (geometric_intersection._UNHANDLED_LINES,)
         self.assertEqual(exc_info.exception.args, expected_args)
         self.assertEqual(intersections, [])
 
@@ -982,9 +982,9 @@ class Test_intersect_one_round(utils.NumPyTestCase):
 class Test_prune_candidates(unittest.TestCase):
     @staticmethod
     def _call_function_under_test(candidates):
-        from bezier import _py_geometric_intersection
+        from bezier.hazmat import geometric_intersection
 
-        return _py_geometric_intersection.prune_candidates(candidates)
+        return geometric_intersection.prune_candidates(candidates)
 
     def test_curved(self):
         nodes1 = np.asfortranarray([[0.0, 2.0, 2.0], [0.0, 0.0, 2.0]])
@@ -1010,9 +1010,9 @@ class Test_prune_candidates(unittest.TestCase):
 class Test_make_same_degree(utils.NumPyTestCase):
     @staticmethod
     def _call_function_under_test(nodes1, nodes2):
-        from bezier import _py_geometric_intersection
+        from bezier.hazmat import geometric_intersection
 
-        return _py_geometric_intersection.make_same_degree(nodes1, nodes2)
+        return geometric_intersection.make_same_degree(nodes1, nodes2)
 
     def test_same_degree(self):
         nodes1 = np.asfortranarray([[0.0, 1.0, 2.0], [1.0, 2.0, 1.0]])
@@ -1055,9 +1055,9 @@ class Test_make_same_degree(utils.NumPyTestCase):
 class Test_coincident_parameters(unittest.TestCase):
     @staticmethod
     def _call_function_under_test(nodes1, nodes2):
-        from bezier import _py_geometric_intersection
+        from bezier.hazmat import geometric_intersection
 
-        return _py_geometric_intersection.coincident_parameters(nodes1, nodes2)
+        return geometric_intersection.coincident_parameters(nodes1, nodes2)
 
     def test_different_degree(self):
         nodes1 = np.asfortranarray([[0.0, 1.0], [0.0, 1.0]])
@@ -1220,9 +1220,9 @@ class Test_coincident_parameters(unittest.TestCase):
 class Test_check_lines(utils.NumPyTestCase):
     @staticmethod
     def _call_function_under_test(first, second):
-        from bezier import _py_geometric_intersection
+        from bezier.hazmat import geometric_intersection
 
-        return _py_geometric_intersection.check_lines(first, second)
+        return geometric_intersection.check_lines(first, second)
 
     def test_not_linearized(self):
         nodes1 = np.asfortranarray([[0.0, 1.0, 2.0], [0.0, 1.0, 0.0]])
@@ -1304,9 +1304,9 @@ class Test_check_lines(utils.NumPyTestCase):
 class Test_all_intersections(utils.NumPyTestCase):
     @staticmethod
     def _call_function_under_test(nodes_first, nodes_second, **kwargs):
-        from bezier import _py_geometric_intersection
+        from bezier.hazmat import geometric_intersection
 
-        return _py_geometric_intersection.all_intersections(
+        return geometric_intersection.all_intersections(
             nodes_first, nodes_second, **kwargs
         )
 
@@ -1373,7 +1373,7 @@ class Test_all_intersections(utils.NumPyTestCase):
         self.assertFalse(coincident)
 
     def test_non_convergence(self):
-        from bezier import _py_geometric_intersection
+        from bezier.hazmat import geometric_intersection
 
         multiplier = 16384.0
         nodes1 = multiplier * np.asfortranarray(
@@ -1383,8 +1383,8 @@ class Test_all_intersections(utils.NumPyTestCase):
         with self.assertRaises(ValueError) as exc_info:
             self._call_function_under_test(nodes1, nodes2)
         exc_args = exc_info.exception.args
-        expected = _py_geometric_intersection._NO_CONVERGE_TEMPLATE.format(
-            _py_geometric_intersection._MAX_INTERSECT_SUBDIVISIONS
+        expected = geometric_intersection._NO_CONVERGE_TEMPLATE.format(
+            geometric_intersection._MAX_INTERSECT_SUBDIVISIONS
         )
         self.assertEqual(exc_args, (expected,))
 
@@ -1468,22 +1468,22 @@ class Test_all_intersections(utils.NumPyTestCase):
         self.assertEqual(exc_info.exception.args, expected)
 
     def test_too_many_candidates(self):
-        from bezier import _py_geometric_intersection
+        from bezier.hazmat import geometric_intersection
 
         nodes1 = np.asfortranarray([[12.0, -12.0, 0.0], [4.0, -8.0, 16.0]])
         nodes2 = np.asfortranarray([[6.0, -6.0, 0.0], [1.0, -2.0, 4.0]])
         with self.assertRaises(NotImplementedError) as exc_info:
             self._call_function_under_test(nodes1, nodes2)
-        expected = (_py_geometric_intersection._TOO_MANY_TEMPLATE.format(74),)
+        expected = (geometric_intersection._TOO_MANY_TEMPLATE.format(74),)
         self.assertEqual(exc_info.exception.args, expected)
 
 
 class TestSubdividedCurve(utils.NumPyTestCase):
     @staticmethod
     def _get_target_class():
-        from bezier import _py_geometric_intersection
+        from bezier.hazmat import geometric_intersection
 
-        return _py_geometric_intersection.SubdividedCurve
+        return geometric_intersection.SubdividedCurve
 
     def _make_one(self, *args, **kwargs):
         klass = self._get_target_class()
@@ -1557,9 +1557,9 @@ class TestLinearization(utils.NumPyTestCase):
 
     @staticmethod
     def _get_target_class():
-        from bezier import _py_geometric_intersection
+        from bezier.hazmat import geometric_intersection
 
-        return _py_geometric_intersection.Linearization
+        return geometric_intersection.Linearization
 
     def _make_one(self, *args, **kwargs):
         klass = self._get_target_class()
@@ -1653,16 +1653,16 @@ class TestLinearization(utils.NumPyTestCase):
 
 
 def subdivided_curve(nodes, **kwargs):
-    from bezier import _py_geometric_intersection
+    from bezier.hazmat import geometric_intersection
 
     if "original_nodes" not in kwargs:
         kwargs["original_nodes"] = nodes
-    return _py_geometric_intersection.SubdividedCurve(nodes, **kwargs)
+    return geometric_intersection.SubdividedCurve(nodes, **kwargs)
 
 
 def make_linearization(curve, error=None):
-    from bezier import _py_geometric_intersection
+    from bezier.hazmat import geometric_intersection
 
     if error is None:
-        error = _py_geometric_intersection.linearization_error(curve.nodes)
-    return _py_geometric_intersection.Linearization(curve, error)
+        error = geometric_intersection.linearization_error(curve.nodes)
+    return geometric_intersection.Linearization(curve, error)

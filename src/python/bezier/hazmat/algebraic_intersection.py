@@ -47,7 +47,7 @@ from bezier import _curve_helpers
 from bezier import _geometric_intersection
 from bezier import _helpers
 from bezier import _intersection_helpers
-from bezier import _py_geometric_intersection
+from bezier.hazmat import geometric_intersection
 from bezier.hazmat import helpers as _py_helpers
 
 
@@ -112,8 +112,8 @@ _POWER_BASIS_ERR = (
     "Currently only supporting degree pairs "
     "1-1, 1-2, 1-3, 1-4, 2-2, 2-3, 2-4 and 3-3."
 )
-_LINEARIZATION = _py_geometric_intersection.Linearization
-_DISJOINT = _py_geometric_intersection.BoxIntersectionType.DISJOINT
+_LINEARIZATION = geometric_intersection.Linearization
+_DISJOINT = geometric_intersection.BoxIntersectionType.DISJOINT
 
 
 def _evaluate3(nodes, x_val, y_val):
