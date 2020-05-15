@@ -72,7 +72,7 @@ def bbox_intersect(nodes1, nodes2):
             B |eacute| zier shape.
 
     Returns:
-        int: Enum from ``BoxIntersectionType`` indicating the type of
+        int: Enum from :class:`.BoxIntersectionType` indicating the type of
         bounding box intersection.
     """
     left1, right1, bottom1, top1 = _py_helpers.bbox(nodes1)
@@ -152,14 +152,14 @@ def linearization_error(nodes):
        \left.\frac{s(1 - s)}{2!} \cdot 10\right|_{s = \frac{1}{2}}
           = \frac{5}{4}.
 
-    .. image:: ../images/linearization_error.png
+    .. image:: ../../images/linearization_error.png
        :align: center
 
     .. testsetup:: linearization-error, linearization-error-fail
 
        import numpy as np
        import bezier
-       from bezier._py_geometric_intersection import linearization_error
+       from bezier.hazmat.geometric_intersection import linearization_error
 
     .. doctest:: linearization-error
 
@@ -296,13 +296,13 @@ def segment_intersection(start0, end0, start1, end1):
     L_1\left(\frac{3}{4}\right) =
     \frac{1}{2} \left[\begin{array}{c} 1 \\ 1 \end{array}\right]`.
 
-    .. image:: ../images/segment_intersection1.png
+    .. image:: ../../images/segment_intersection1.png
        :align: center
 
     .. testsetup:: segment-intersection1, segment-intersection2
 
        import numpy as np
-       from bezier._py_geometric_intersection import segment_intersection
+       from bezier.hazmat.geometric_intersection import segment_intersection
 
     .. doctest:: segment-intersection1
        :options: +NORMALIZE_WHITESPACE
@@ -336,7 +336,7 @@ def segment_intersection(start0, end0, start1, end1):
     we should be able to determine that the lines don't intersect, but
     this function is not meant for that check:
 
-    .. image:: ../images/segment_intersection2.png
+    .. image:: ../../images/segment_intersection2.png
        :align: center
 
     .. doctest:: segment-intersection2
@@ -360,7 +360,9 @@ def segment_intersection(start0, end0, start1, end1):
     .. testsetup:: segment-intersection2-continued
 
        import numpy as np
-       from bezier._py_geometric_intersection import parallel_lines_parameters
+       from bezier.hazmat.geometric_intersection import (
+           parallel_lines_parameters
+       )
 
        start0 = np.asfortranarray([1.0, 0.0])
        end0 = np.asfortranarray([0.0, 1.0])
@@ -443,13 +445,15 @@ def parallel_lines_parameters(start0, end0, start1, end1):
     If it is not on the first line, then we are done, the
     segments don't meet:
 
-    .. image:: ../images/parallel_lines_parameters1.png
+    .. image:: ../../images/parallel_lines_parameters1.png
        :align: center
 
     .. testsetup:: parallel-different1, parallel-different2
 
        import numpy as np
-       from bezier._py_geometric_intersection import parallel_lines_parameters
+       from bezier.hazmat.geometric_intersection import (
+           parallel_lines_parameters
+       )
 
     .. doctest:: parallel-different1
 
@@ -485,7 +489,7 @@ def parallel_lines_parameters(start0, end0, start1, end1):
     :math:`E_1 = S_0 + 2 \Delta_0`) correspond to segments that
     don't meet:
 
-    .. image:: ../images/parallel_lines_parameters2.png
+    .. image:: ../../images/parallel_lines_parameters2.png
        :align: center
 
     .. doctest:: parallel-different2
@@ -508,13 +512,15 @@ def parallel_lines_parameters(start0, end0, start1, end1):
     but if the intervals overlap, like :math:`\left[0, 1\right]` and
     :math:`\left[-1, \frac{1}{2}\right]`, the segments meet:
 
-    .. image:: ../images/parallel_lines_parameters3.png
+    .. image:: ../../images/parallel_lines_parameters3.png
        :align: center
 
     .. testsetup:: parallel-different3, parallel-different4
 
        import numpy as np
-       from bezier._py_geometric_intersection import parallel_lines_parameters
+       from bezier.hazmat.geometric_intersection import (
+           parallel_lines_parameters
+       )
 
        start0 = np.asfortranarray([1.0, 0.0])
        delta0 = np.asfortranarray([2.0, -1.0])
@@ -541,7 +547,7 @@ def parallel_lines_parameters(start0, end0, start1, end1):
     Similarly, if the second interval completely contains the first,
     the segments meet:
 
-    .. image:: ../images/parallel_lines_parameters4.png
+    .. image:: ../../images/parallel_lines_parameters4.png
        :align: center
 
     .. doctest:: parallel-different4
@@ -808,7 +814,8 @@ def add_intersection(s, t, intersections):
 
     If ``s`` is below :math:`2^{-10}`, it will be replaced with ``1 - s``
     and compared against ``1 - s'`` for all ``s'`` already in
-    ``intersections``. (Similar if ``t`` is below the :attr:`.ZERO_THRESHOLD`.)
+    ``intersections``. (Similar if ``t`` is below the
+    :attr:`~bezier.hazmat.intersection_helpers.ZERO_THRESHOLD`.)
     This is perfectly "appropriate" since evaluating a B |eacute| zier curve
     requires using both ``s`` and ``1 - s``, so both values are equally
     relevant.
@@ -816,9 +823,9 @@ def add_intersection(s, t, intersections):
     Compares :math:`\|p - q\|` to :math:`\|p\|` where :math:`p = (s, t)` is
     current candidate intersection (or the "normalized" version, such as
     :math:`p = (1 - s, t)`) and :math:`q` is one of the already added
-    intersections. If the difference is below :math:`2^{-42}` (i.e.
-    :attr`.NEWTON_ERROR_RATIO`) then the intersection is considered to be
-    duplicate.
+    intersections. If the difference is below :math:`2^{-36}` (i.e.
+    :attr:`~bezier.hazmat.intersection_helpers.NEWTON_ERROR_RATIO`)
+    then the intersection is considered to be duplicate.
 
     Args:
         s (float): The first parameter in an intersection.
@@ -870,13 +877,13 @@ def endpoint_check(
 
     Args:
         first (SubdividedCurve): First curve being intersected (assumed in
-            :math:\mathbf{R}^2`).
+            :math:`\mathbf{R}^2`).
         node_first (numpy.ndarray): 1D ``2``-array, one of the endpoints
             of ``first``.
         s (float): The parameter corresponding to ``node_first``, so
              expected to be one of ``0.0`` or ``1.0``.
         second (SubdividedCurve): Second curve being intersected (assumed in
-            :math:\mathbf{R}^2`).
+            :math:`\mathbf{R}^2`).
         node_second (numpy.ndarray): 1D ``2``-array, one of the endpoints
             of ``second``.
         t (float): The parameter corresponding to ``node_second``, so
@@ -933,9 +940,9 @@ def tangent_bbox_intersection(first, second, intersections):
 
     Args:
         first (SubdividedCurve): First curve being intersected (assumed in
-            :math:\mathbf{R}^2`).
+            :math:`\mathbf{R}^2`).
         second (SubdividedCurve): Second curve being intersected (assumed in
-            :math:\mathbf{R}^2`).
+            :math:`\mathbf{R}^2`).
         intersections (list): A list of already encountered
             intersections. If these curves intersect at their tangency,
             then those intersections will be added to this list.
@@ -981,7 +988,7 @@ def bbox_line_intersect(nodes, line_start, line_end):
         line_end (numpy.ndarray): End of a line segment (1D ``2``-array).
 
     Returns:
-        int: Enum from ``BoxIntersectionType`` indicating the type of
+        int: Enum from :class:`.BoxIntersectionType` indicating the type of
         bounding box intersection.
     """
     left, right, bottom, top = _py_helpers.bbox(nodes)
@@ -1142,11 +1149,12 @@ def prune_candidates(candidates):
     if those convex hulls collide.
 
     Args:
-        candidates (List): An iterable of pairs of curves (or
-            linearized curves).
+        candidates (List[Union[SubdividedCurve, Linearization]]): An iterable
+            of pairs of curves (or linearized curves).
 
     Returns:
-        List: A pruned list of curve pairs.
+        List[Union[SubdividedCurve, Linearization]]: A pruned list of curve
+        pairs.
     """
     pruned = []
     # NOTE: In the below we replace ``isinstance(a, B)`` with
@@ -1194,9 +1202,9 @@ def coincident_parameters(nodes1, nodes2):
 
     .. math::
 
-       B_1(s_0) = B_2(0)
-       B_1(s_m) = B_2(1)
-       B_1(0) = B_2(t_0)
+       B_1(s_0) = B_2(0) \\
+       B_1(s_m) = B_2(1) \\
+       B_1(0) = B_2(t_0) \\
        B_1(1) = B_2(t_n)
 
     and then finding the "shared interval" where both curves are defined.
@@ -1473,8 +1481,8 @@ class BoxIntersectionType:  # pylint: disable=too-few-public-methods
 
     .. note::
 
-       This class would be more "correct" as an ``enum.Enum``, but it we keep
-       the values integers to make interfacing with Fortran easier.
+       This class would be more "correct" as an :class:`enum.Enum`, but it we
+       keep the values integers to make interfacing with Fortran easier.
     """
 
     INTERSECTION = 0
@@ -1497,7 +1505,7 @@ class SubdividedCurve:  # pylint: disable=too-few-public-methods
         original_nodes (numpy.ndarray): The control points of the original
             curve used to define the current one (before subdivision began).
         start (Optional[float]): The start parameter after subdivision.
-        end (Optional[float]): The start parameter after subdivision.
+        end (Optional[float]): The end parameter after subdivision.
     """
 
     __slots__ = ("nodes", "original_nodes", "start", "end")
@@ -1592,7 +1600,7 @@ class Linearization:
         """Do-nothing method to match the :class:`.Curve` interface.
 
         Returns:
-            Tuple[~bezier._py_geometric_intersection.Linearization]: List of
+            Tuple[~bezier.hazmat.geometric_intersection.Linearization]: List of
             all subdivided parts, which is just the current object.
         """
         return (self,)
@@ -1603,12 +1611,12 @@ class Linearization:
 
         Args:
             shape (Union[SubdividedCurve, \
-            ~bezier._py_geometric_intersection.Linearization]): A curve or an
-                already linearized curve.
+            ~bezier.hazmat.geometric_intersection.Linearization]): A curve or
+                an already linearized curve.
 
         Returns:
             Union[SubdividedCurve, \
-            ~bezier._py_geometric_intersection.Linearization]: The
+            ~bezier.hazmat.geometric_intersection.Linearization]: The
             (potentially linearized) curve.
         """
         # NOTE: In the below we replace ``isinstance(a, B)`` with

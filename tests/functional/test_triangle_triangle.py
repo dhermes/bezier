@@ -17,9 +17,9 @@ import numpy as np
 import pytest
 
 import bezier
-from bezier import _py_geometric_intersection
 from bezier import curve
 from bezier.hazmat import algebraic_intersection
+from bezier.hazmat import geometric_intersection
 from bezier.hazmat import triangle_helpers
 from bezier.hazmat import triangle_intersection
 from tests import utils as base_utils
@@ -29,7 +29,7 @@ ALGEBRAIC = curve.IntersectionStrategy.ALGEBRAIC
 GEOMETRIC = curve.IntersectionStrategy.GEOMETRIC
 _, INTERSECTIONS = utils.triangle_intersections_info()
 SAME_CURVATURE = (triangle_helpers._SAME_CURVATURE,)
-TOO_MANY = _py_geometric_intersection._TOO_MANY_TEMPLATE
+TOO_MANY = geometric_intersection._TOO_MANY_TEMPLATE
 WIGGLES = {
     GEOMETRIC: {
         1: 48,  # Established on CentOS 5 (i686 Docker image)

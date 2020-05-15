@@ -32,7 +32,8 @@ MAX_NEWTON_ITERATIONS = 10
 NEWTON_ERROR_RATIO = 0.5 ** 36
 """float: Cap on error ratio during Newton's method
 
-See :func:`.newton_iterate` for more details."""
+Equal to :math:`2^{-36}`. See :func:`.newton_iterate` for more details.
+"""
 NEWTON_NO_CONVERGE = """\
 Unsupported multiplicity.
 

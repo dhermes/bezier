@@ -19,4 +19,3 @@ This is to help with the exposition of the computation and
    :titlesonly:
 
    curve-curve-intersection
-   geometric-helpers

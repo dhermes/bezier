@@ -24,6 +24,9 @@ Breaking Changes
 -  Moved non-public ``bezier._py_intersection_helpers`` module to
    ``bezier.hazmat.intersection_helpers``
    (`#222 <https://github.com/dhermes/bezier/pull/222>`__).
+-  Moved non-public ``bezier._py_geometric_intersection`` module to
+   ``bezier.hazmat.geometric_intersection``
+   (`#223 <https://github.com/dhermes/bezier/pull/223>`__).
 
 Documentation
 --------------
@@ -34,6 +37,9 @@ Documentation
 -  Updated from ``https://docs.scipy.org/doc/numpy`` to ``https://numpy.org``
    for references to the NumPy documentation
    (`#221 <https://github.com/dhermes/bezier/pull/221>`__).
+-  Removed ``algorithms/geometric-helpers`` document since the functions and
+   classes there are now fully documented in ``bezier.hazmat``
+   (`#223 <https://github.com/dhermes/bezier/pull/223>`__).
 
 .. |pypi| image:: https://img.shields.io/pypi/v/bezier/2020.2.4.dev1.svg
    :target: https://pypi.org/project/bezier/2020.2.4.dev1/
