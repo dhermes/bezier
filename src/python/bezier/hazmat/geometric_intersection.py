@@ -817,9 +817,9 @@ def add_intersection(s, t, intersections):
     Compares :math:`\|p - q\|` to :math:`\|p\|` where :math:`p = (s, t)` is
     current candidate intersection (or the "normalized" version, such as
     :math:`p = (1 - s, t)`) and :math:`q` is one of the already added
-    intersections. If the difference is below :math:`2^{-42}` (i.e.
-    :attr`.NEWTON_ERROR_RATIO`) then the intersection is considered to be
-    duplicate.
+    intersections. If the difference is below :math:`2^{-36}` (i.e.
+    :attr:`~bezier.hazmat.intersection_helpers.NEWTON_ERROR_RATIO`)
+    then the intersection is considered to be duplicate.
 
     Args:
         s (float): The first parameter in an intersection.
@@ -871,13 +871,13 @@ def endpoint_check(
 
     Args:
         first (SubdividedCurve): First curve being intersected (assumed in
-            :math:\mathbf{R}^2`).
+            :math:`\mathbf{R}^2`).
         node_first (numpy.ndarray): 1D ``2``-array, one of the endpoints
             of ``first``.
         s (float): The parameter corresponding to ``node_first``, so
              expected to be one of ``0.0`` or ``1.0``.
         second (SubdividedCurve): Second curve being intersected (assumed in
-            :math:\mathbf{R}^2`).
+            :math:`\mathbf{R}^2`).
         node_second (numpy.ndarray): 1D ``2``-array, one of the endpoints
             of ``second``.
         t (float): The parameter corresponding to ``node_second``, so
@@ -934,9 +934,9 @@ def tangent_bbox_intersection(first, second, intersections):
 
     Args:
         first (SubdividedCurve): First curve being intersected (assumed in
-            :math:\mathbf{R}^2`).
+            :math:`\mathbf{R}^2`).
         second (SubdividedCurve): Second curve being intersected (assumed in
-            :math:\mathbf{R}^2`).
+            :math:`\mathbf{R}^2`).
         intersections (list): A list of already encountered
             intersections. If these curves intersect at their tangency,
             then those intersections will be added to this list.
@@ -982,7 +982,7 @@ def bbox_line_intersect(nodes, line_start, line_end):
         line_end (numpy.ndarray): End of a line segment (1D ``2``-array).
 
     Returns:
-        int: Enum from ``BoxIntersectionType`` indicating the type of
+        int: Enum from :class:`.BoxIntersectionType` indicating the type of
         bounding box intersection.
     """
     left, right, bottom, top = _py_helpers.bbox(nodes)
@@ -1143,11 +1143,12 @@ def prune_candidates(candidates):
     if those convex hulls collide.
 
     Args:
-        candidates (List[Any]): An iterable of pairs of curves (or
-            linearized curves).
+        candidates (List[Union[SubdividedCurve, Linearization]]): An iterable
+            of pairs of curves (or linearized curves).
 
     Returns:
-        List[Any]: A pruned list of curve pairs.
+        List[Union[SubdividedCurve, Linearization]]: A pruned list of curve
+        pairs.
     """
     pruned = []
     # NOTE: In the below we replace ``isinstance(a, B)`` with
@@ -1195,9 +1196,9 @@ def coincident_parameters(nodes1, nodes2):
 
     .. math::
 
-       B_1(s_0) = B_2(0)
-       B_1(s_m) = B_2(1)
-       B_1(0) = B_2(t_0)
+       B_1(s_0) = B_2(0) \\
+       B_1(s_m) = B_2(1) \\
+       B_1(0) = B_2(t_0) \\
        B_1(1) = B_2(t_n)
 
     and then finding the "shared interval" where both curves are defined.
@@ -1474,8 +1475,8 @@ class BoxIntersectionType:  # pylint: disable=too-few-public-methods
 
     .. note::
 
-       This class would be more "correct" as an ``enum.Enum``, but it we keep
-       the values integers to make interfacing with Fortran easier.
+       This class would be more "correct" as an :class:`enum.Enum`, but it we
+       keep the values integers to make interfacing with Fortran easier.
     """
 
     INTERSECTION = 0
@@ -1498,7 +1499,7 @@ class SubdividedCurve:  # pylint: disable=too-few-public-methods
         original_nodes (numpy.ndarray): The control points of the original
             curve used to define the current one (before subdivision began).
         start (Optional[float]): The start parameter after subdivision.
-        end (Optional[float]): The start parameter after subdivision.
+        end (Optional[float]): The end parameter after subdivision.
     """
 
     __slots__ = ("nodes", "original_nodes", "start", "end")
