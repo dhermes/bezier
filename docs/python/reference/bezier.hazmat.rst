@@ -14,6 +14,7 @@ Submodules
 
    bezier.hazmat.algebraic_intersection
    bezier.hazmat.curve_helpers
+   bezier.hazmat.geometric_intersection
    bezier.hazmat.helpers
    bezier.hazmat.intersection_helpers
    bezier.hazmat.triangle_helpers
