@@ -4,7 +4,7 @@ Binary Extension
 
 .. note::
 
-   This content was last updated April 7, 2020. Much of the content is tested
+   This content was last updated May 19, 2020. Much of the content is tested
    automatically to keep from getting stale, but some of the console code
    blocks are not. As a result, this material may be out of date. If anything
    does not seem correct --- or even if the explanation is insufficient ---

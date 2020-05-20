@@ -6,31 +6,51 @@ Latest Release (``2020.2.4.dev1``)
 Python Changes
 --------------
 
+Bug Fixes
+~~~~~~~~~
+
+-  Using ``importlib.metadata`` to locate ``extra-dll`` on Windows, caused by
+   the behavior of the ``conda``-supplied ``setuptools`` in Python 3.8
+   (`#208 <https://github.com/dhermes/bezier/pull/208>`__, fixed
+   `#206 <https://github.com/dhermes/bezier/issues/206>`__).
+
 Breaking Changes
 ~~~~~~~~~~~~~~~~
 
--  Moved non-public ``bezier._algebraic_intersection`` module to
-   ``bezier.hazmat.algebraic_intersection``
-   (`#216 <https://github.com/dhermes/bezier/pull/216>`__).
--  Moved non-public ``bezier._py_curve_helpers`` module to
-   ``bezier.hazmat.curve_helpers``
-   (`#218 <https://github.com/dhermes/bezier/pull/218>`__).
--  Moved non-public ``bezier._py_triangle_intersection`` module to
-   ``bezier.hazmat.triangle_intersection``
-   (`#219 <https://github.com/dhermes/bezier/pull/219>`__).
--  Moved non-public ``bezier._py_triangle_helpers`` module to
-   ``bezier.hazmat.triangle_helpers``
-   (`#220 <https://github.com/dhermes/bezier/pull/220>`__).
--  Moved non-public ``bezier._py_intersection_helpers`` module to
-   ``bezier.hazmat.intersection_helpers``
-   (`#222 <https://github.com/dhermes/bezier/pull/222>`__).
--  Moved non-public ``bezier._py_geometric_intersection`` module to
-   ``bezier.hazmat.geometric_intersection``
-   (`#223 <https://github.com/dhermes/bezier/pull/223>`__).
+-  Created ``bezier.hazmat`` subpackage (fixed
+   `#170 <https://github.com/dhermes/bezier/issues/170>`__).
+
+   -  Moved non-public ``bezier._py_helpers`` module to
+      ``bezier.hazmat.helpers``
+      (`#201 <https://github.com/dhermes/bezier/pull/201>`__).
+   -  Moved non-public ``bezier._algebraic_intersection`` module to
+      ``bezier.hazmat.algebraic_intersection``
+      (`#216 <https://github.com/dhermes/bezier/pull/216>`__).
+   -  Moved non-public ``bezier._py_curve_helpers`` module to
+      ``bezier.hazmat.curve_helpers``
+      (`#218 <https://github.com/dhermes/bezier/pull/218>`__).
+   -  Moved non-public ``bezier._py_triangle_intersection`` module to
+      ``bezier.hazmat.triangle_intersection``
+      (`#219 <https://github.com/dhermes/bezier/pull/219>`__).
+   -  Moved non-public ``bezier._py_triangle_helpers`` module to
+      ``bezier.hazmat.triangle_helpers``
+      (`#220 <https://github.com/dhermes/bezier/pull/220>`__).
+   -  Moved non-public ``bezier._py_intersection_helpers`` module to
+      ``bezier.hazmat.intersection_helpers``
+      (`#222 <https://github.com/dhermes/bezier/pull/222>`__).
+   -  Moved non-public ``bezier._py_geometric_intersection`` module to
+      ``bezier.hazmat.geometric_intersection``
+      (`#223 <https://github.com/dhermes/bezier/pull/223>`__).
 
 Documentation
 --------------
 
+-  Updated ``binary-extension``
+   `doc <https://bezier.readthedocs.io/en/2020.2.4.dev1/python/binary-extension.html>`__
+   to refer to ``bezier.libs``
+   (`#211 <https://github.com/dhermes/bezier/pull/211>`__). This is based on
+   a change to ``auditwheel`` from the
+   `3.1.0 release <https://github.com/pypa/auditwheel/releases/tag/3.1.0>`__.
 -  Removed ``algorithms/algebraic-helpers`` document since the
    ``bezier.hazmat.algebraic_intersection`` module is now fully documented
    (`#216 <https://github.com/dhermes/bezier/pull/216>`__).
