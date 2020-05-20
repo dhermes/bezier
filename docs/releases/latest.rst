@@ -1,5 +1,5 @@
-Latest Release (``2020.2.4.dev1``)
-==================================
+Latest Release (``2020.5.19``)
+==============================
 
 |pypi| |docs|
 
@@ -46,7 +46,7 @@ Documentation
 --------------
 
 -  Updated ``binary-extension``
-   `doc <https://bezier.readthedocs.io/en/2020.2.4.dev1/python/binary-extension.html>`__
+   `doc <https://bezier.readthedocs.io/en/2020.5.19/python/binary-extension.html>`__
    to refer to ``bezier.libs``
    (`#211 <https://github.com/dhermes/bezier/pull/211>`__). This is based on
    a change to ``auditwheel`` from the
@@ -61,9 +61,9 @@ Documentation
    classes there are now fully documented in ``bezier.hazmat``
    (`#223 <https://github.com/dhermes/bezier/pull/223>`__).
 
-.. |pypi| image:: https://img.shields.io/pypi/v/bezier/2020.2.4.dev1.svg
-   :target: https://pypi.org/project/bezier/2020.2.4.dev1/
-   :alt: PyPI link to release 2020.2.4.dev1
-.. |docs| image:: https://readthedocs.org/projects/bezier/badge/?version=2020.2.4.dev1
-   :target: https://bezier.readthedocs.io/en/2020.2.4.dev1/
-   :alt: Documentation for release 2020.2.4.dev1
+.. |pypi| image:: https://img.shields.io/pypi/v/bezier/2020.5.19.svg
+   :target: https://pypi.org/project/bezier/2020.5.19/
+   :alt: PyPI link to release 2020.5.19
+.. |docs| image:: https://readthedocs.org/projects/bezier/badge/?version=2020.5.19
+   :target: https://bezier.readthedocs.io/en/2020.5.19/
+   :alt: Documentation for release 2020.5.19
