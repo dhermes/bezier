@@ -2,8 +2,8 @@
 Development
 ###########
 
-
-.. contents:: Here are some pointers for hacking on ``bezier``.
+.. contents::
+   :local:
 
 ***************
 Adding Features

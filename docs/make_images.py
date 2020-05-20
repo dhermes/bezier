@@ -36,7 +36,10 @@ try:
 except ImportError:
     seaborn = None
 import bezier
+from bezier import _geometric_intersection
+from bezier import _helpers
 from bezier import _plot_helpers
+from bezier.hazmat import geometric_intersection as _py_geometric_intersection
 
 
 BLUE = "blue"
@@ -1360,3 +1363,351 @@ def curve_reduce_approx(curve, reduced):
     ax.axis("scaled")
     _plot_helpers.add_plot_boundary(ax)
     save_image(ax.figure, "curve_reduce_approx.png")
+
+
+def simple_axis(ax):
+    ax.axis("scaled")
+    ax.set_xticklabels([])
+    ax.set_yticklabels([])
+
+
+def plot_with_bbox(curve, ax, color, with_nodes=False):
+    curve.plot(256, color=color, ax=ax)
+    left, right, bottom, top = _helpers.bbox(curve._nodes)
+    bbox_nodes = np.asfortranarray(
+        [[left, right, right, left], [bottom, bottom, top, top]]
+    )
+    add_patch(ax, bbox_nodes, color, with_nodes=False)
+    if with_nodes:
+        ax.plot(
+            curve._nodes[0, :],
+            curve._nodes[1, :],
+            color=color,
+            linestyle="None",
+            marker="o",
+            markersize=4,
+        )
+
+
+def plot_with_convex_hull(curve, ax, color, with_nodes=False):
+    curve.plot(256, color=color, ax=ax)
+    convex_hull = _helpers.simple_convex_hull(curve._nodes)
+    add_patch(ax, convex_hull, color, with_nodes=False)
+    if with_nodes:
+        ax.plot(
+            curve._nodes[0, :],
+            curve._nodes[1, :],
+            color=color,
+            linestyle="None",
+            marker="o",
+            markersize=4,
+        )
+
+
+def _curve_boundary_predicate(filename, curve_boundary_plot, headers):
+    header1, header2, header3 = headers
+
+    figure, (ax1, ax2, ax3) = plt.subplots(1, 3)
+
+    control_pts1a = np.asfortranarray([[0.0, 0.375, 1.0], [0.0, 0.5, 0.125]])
+    curve1a = bezier.Curve(control_pts1a, degree=2)
+    control_pts1b = np.asfortranarray(
+        [[0.25, -0.125, 0.5], [-0.125, 0.375, 1.0]]
+    )
+    curve1b = bezier.Curve(control_pts1b, degree=2)
+    curve_boundary_plot(curve1a, ax1, BLUE)
+    curve_boundary_plot(curve1b, ax1, GREEN)
+
+    control_pts2a = np.asfortranarray([[0.0, 0.75, 1.0], [1.0, 0.75, 0.0]])
+    curve2a = bezier.Curve(control_pts2a, degree=2)
+    control_pts2b = np.asfortranarray(
+        [[0.625, 0.875, 1.625], [1.625, 0.875, 0.625]]
+    )
+    curve2b = bezier.Curve(control_pts2b, degree=2)
+    curve_boundary_plot(curve2a, ax2, BLUE)
+    curve_boundary_plot(curve2b, ax2, GREEN)
+
+    control_pts3a = np.asfortranarray([[0.0, 0.25, 1.0], [-0.25, 0.25, -0.75]])
+    curve3a = bezier.Curve(control_pts3a, degree=2)
+    control_pts3b = np.asfortranarray([[1.0, 1.5, 2.0], [-1.0, -1.5, -1.0]])
+    curve3b = bezier.Curve(control_pts3b, degree=2)
+    curve_boundary_plot(curve3a, ax3, BLUE)
+    curve_boundary_plot(curve3b, ax3, GREEN)
+
+    for ax in (ax1, ax2, ax3):
+        simple_axis(ax)
+
+    text_size = 10
+    ax1.set_xlim(-0.2, 1.1)
+    ax1.set_ylim(-0.2, 1.1)
+    ax1.set_title(header1, fontsize=text_size)
+    ax2.set_xlim(-0.1, 1.75)
+    ax2.set_ylim(-0.1, 1.75)
+    ax2.set_title(header2, fontsize=text_size)
+    ax3.set_xlim(-0.1, 2.1)
+    ax3.set_ylim(-1.7, 0.5)
+    ax3.set_title(header3, fontsize=text_size)
+
+    figure.set_size_inches(6.0, 2.2)
+    figure.subplots_adjust(
+        left=0.01, bottom=0.01, right=0.99, top=0.9, wspace=0.04, hspace=0.2
+    )
+    save_image(figure, filename)
+
+
+def bounding_box_predicate():
+    headers = ("MAYBE", "MAYBE", "NO")
+    _curve_boundary_predicate(
+        "bounding_box_predicate.png", plot_with_bbox, headers
+    )
+
+
+def convex_hull_predicate():
+    headers = ("MAYBE", "NO", "NO")
+    _curve_boundary_predicate(
+        "convex_hull_predicate.png", plot_with_convex_hull, headers
+    )
+
+
+def subdivide_curve():
+    figure, (ax1, ax2, ax3) = plt.subplots(1, 3, sharex=True, sharey=True)
+    nodes = np.asfortranarray([[0.0, 1.0, 2.0, 4.0], [0.0, 4.0, 0.0, 3.0]])
+    curve = bezier.Curve.from_nodes(nodes)
+    left, right = curve.subdivide()
+    curve.plot(256, ax=ax1, alpha=0.25, color="black")
+    left.plot(256, ax=ax1)
+    curve.plot(256, ax=ax2)
+    curve.plot(256, ax=ax3, alpha=0.25, color="black")
+    right.plot(256, ax=ax3)
+    text_size = 10
+    ax1.text(
+        2.5,
+        0.25,
+        r"$\left[0, \frac{1}{2}\right]$",
+        horizontalalignment="center",
+        verticalalignment="center",
+        fontsize=text_size,
+    )
+    ax2.text(
+        2.5,
+        0.25,
+        r"$\left[0, 1\right]$",
+        horizontalalignment="center",
+        verticalalignment="center",
+        fontsize=text_size,
+    )
+    ax3.text(
+        2.5,
+        0.25,
+        r"$\left[\frac{1}{2}, 1\right]$",
+        horizontalalignment="center",
+        verticalalignment="center",
+        fontsize=text_size,
+    )
+
+    for ax in (ax1, ax2, ax3):
+        simple_axis(ax)
+
+    figure.set_size_inches(6.0, 1.5)
+    figure.subplots_adjust(
+        left=0.01, bottom=0.01, right=0.99, top=0.99, wspace=0.04, hspace=0.2
+    )
+    save_image(figure, "subdivide_curve.png")
+
+
+def bbox_intersect(curve1, curve2):
+    enum_val = _geometric_intersection.bbox_intersect(
+        curve1.nodes, curve2.nodes
+    )
+    return enum_val != _py_geometric_intersection.BoxIntersectionType.DISJOINT
+
+
+# def refine_candidates_pairs(pairs):
+#     new_left = []
+#     new_right = []
+#     for left, right in pairs:
+#         new_left.extend(left.subdivide())
+#         new_right.extend(right.subdivide())
+#
+#     keep_pairs = []
+#     for curve1 in new_left:
+#         for curve2 in new_right:
+#             if bbox_intersect(curve1, curve2):
+#                 keep_pairs.append((curve1, curve2))
+#
+#     return keep_pairs
+
+
+def refine_candidates(left, right):
+    new_left = []
+    for curve in left:
+        new_left.extend(curve.subdivide())
+
+    new_right = []
+    for curve in right:
+        new_right.extend(curve.subdivide())
+
+    keep_left = []
+    keep_right = []
+    for curve1 in new_left:
+        for curve2 in new_right:
+            if bbox_intersect(curve1, curve2):
+                keep_left.append(curve1)
+                if curve2 not in keep_right:
+                    keep_right.append(curve2)
+
+    return keep_left, keep_right
+
+
+def unique_curves(pairs):
+    left_tuples = set()
+    right_tuples = set()
+
+    left_curves = []
+    right_curves = []
+    for left, right in pairs:
+        as_tuple = tuple(left._nodes.flatten(order="F"))
+        if as_tuple not in left_tuples:
+            left_tuples.add(as_tuple)
+            left_curves.append(left)
+
+        as_tuple = tuple(right._nodes.flatten(order="F"))
+        if as_tuple not in right_tuples:
+            right_tuples.add(as_tuple)
+            right_curves.append(right)
+
+    return left_curves, right_curves
+
+
+def subdivision_process():
+    nodes15 = np.asfortranarray([[0.25, 0.625, 1.0], [0.625, 0.25, 1.0]])
+    curve15 = bezier.Curve(nodes15, degree=2)
+    nodes25 = np.asfortranarray([[0.0, 0.25, 0.75, 1.0], [0.5, 1.0, 1.5, 0.5]])
+    curve25 = bezier.Curve(nodes25, degree=3)
+
+    figure, all_axes = plt.subplots(2, 3, sharex=True, sharey=True)
+    ax1, ax2, ax3, ax4, ax5, ax6 = all_axes.flatten()
+
+    color1 = BLUE
+    color2 = GREEN
+    plot_with_bbox(curve15, ax1, color1)
+    plot_with_bbox(curve25, ax1, color2)
+
+    left, right = refine_candidates([curve15], [curve25])
+    for curve in left:
+        plot_with_bbox(curve, ax2, color1)
+    for curve in right:
+        plot_with_bbox(curve, ax2, color2)
+
+    for ax in (ax3, ax4, ax5, ax6):
+        left, right = refine_candidates(left, right)
+        curve15.plot(256, color=color1, alpha=0.5, ax=ax)
+        for curve in left:
+            plot_with_bbox(curve, ax, color=color1)
+        curve25.plot(256, color=color2, alpha=0.5, ax=ax)
+        for curve in right:
+            plot_with_bbox(curve, ax, color2)
+
+    for ax in (ax1, ax2, ax3, ax4, ax5, ax6):
+        simple_axis(ax)
+        ax.set_xlim(-0.05, 1.05)
+        ax.set_ylim(0.4, 1.15)
+
+    figure.set_size_inches(6.0, 2.8)
+    figure.subplots_adjust(
+        left=0.01, bottom=0.01, right=0.99, top=0.99, wspace=0.04, hspace=0.04
+    )
+    save_image(figure, "subdivision_process.png")
+
+
+def _subdivision_pruning_zoom(all_axes, column):
+    half_width = 0.5 ** (column + 2)
+    min_x = 0.75 - half_width
+    max_x = 0.75 + half_width
+    min_y = 0.25 - half_width
+    max_y = 0.25 + half_width
+
+    for row in (0, 1, 2):
+        all_axes[row, column].plot(
+            [min_x, max_x, max_x, min_x, min_x],
+            [min_y, min_y, max_y, max_y, min_y],
+            color="black",
+        )
+
+    buffer = 0.5 ** (column + 6)
+    for row in (1, 2):
+        all_axes[row, column].set_xlim(min_x - buffer, max_x + buffer)
+        all_axes[row, column].set_ylim(min_y - buffer, max_y + buffer)
+
+
+def subdivision_pruning():
+    figure, all_axes = plt.subplots(3, 4)
+
+    nodes69 = np.asfortranarray([[0.0, 1.0, 1.0], [0.0, 0.0, 1.0]])
+    curve69 = bezier.Curve(nodes69, degree=2)
+    delta = np.asfortranarray([[1.0, 1.0, -1.0], [-1.0, -1.0, 1.0]]) / 32.0
+    nodes_other = nodes69 + delta
+    curve_other = bezier.Curve(nodes_other, degree=2)
+
+    color1 = BLUE
+    color2 = GREEN
+    for ax in all_axes.flatten():
+        curve69.plot(256, color=color1, ax=ax)
+        curve_other.plot(256, color=color2, ax=ax)
+
+    candidates = {0: [(curve69, curve_other)]}
+    intersections = []
+    for i in range(5):
+        candidates[i + 1] = _py_geometric_intersection.intersect_one_round(
+            candidates[i], intersections
+        )
+
+    for column in (0, 1, 2, 3):
+        left_curves, right_curves = unique_curves(candidates[column + 2])
+        for curve in left_curves:
+            plot_with_bbox(curve, all_axes[0, column], color1)
+            plot_with_bbox(curve, all_axes[1, column], color1, with_nodes=True)
+            plot_with_convex_hull(
+                curve, all_axes[2, column], color1, with_nodes=True
+            )
+        for curve in right_curves:
+            plot_with_bbox(curve, all_axes[0, column], color2)
+            plot_with_bbox(curve, all_axes[1, column], color2, with_nodes=True)
+            plot_with_convex_hull(
+                curve, all_axes[2, column], color2, with_nodes=True
+            )
+
+    for ax in all_axes.flatten():
+        simple_axis(ax)
+
+    _subdivision_pruning_zoom(all_axes, 0)
+    _subdivision_pruning_zoom(all_axes, 1)
+    _subdivision_pruning_zoom(all_axes, 2)
+    _subdivision_pruning_zoom(all_axes, 3)
+
+    intersection_params = curve69.intersect(curve_other)
+    s_vals = intersection_params[0, :]
+    intersections = curve69.evaluate_multi(s_vals)
+    for column in (0, 1, 2, 3):
+        all_axes[0, column].plot(
+            intersections[0, :],
+            intersections[1, :],
+            color="black",
+            linestyle="None",
+            marker="o",
+            markersize=4,
+        )
+
+    save_image(figure, "subdivision_pruning.png")
+
+
+def main():
+    bounding_box_predicate()
+    convex_hull_predicate()
+    subdivide_curve()
+    subdivision_process()
+    subdivision_pruning()
+
+
+if __name__ == "__main__":
+    main()

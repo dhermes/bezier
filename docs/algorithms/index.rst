@@ -18,4 +18,5 @@ This is to help with the exposition of the computation and
 .. toctree::
    :titlesonly:
 
+   geometric-curve-intersection
    curve-curve-intersection

@@ -273,7 +273,7 @@ def docs_images(session):
     # Install all dependencies.
     local_deps = DOCS_DEPS
     local_deps += (
-        DOCS["importlib-metadata"],
+        DEPS["importlib-metadata"],
         DEPS["matplotlib"],
         DEPS["pytest"],
         DEPS["seaborn"],
@@ -292,6 +292,8 @@ def docs_images(session):
     # Run the script for generating images for docs.
     run_args = get_doctest_args(session)
     session.run(*run_args, env=env)
+    make_images = get_path("docs", "make_images.py")
+    session.run("python", make_images, env=env)
     # Run the functional tests with --save-plot.
     fnl_tests_glob = get_path("tests", "functional", "test_*.py")
     modules_to_run = glob.glob(fnl_tests_glob)
