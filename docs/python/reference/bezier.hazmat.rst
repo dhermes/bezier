@@ -13,6 +13,7 @@ Submodules
 .. toctree::
 
    bezier.hazmat.algebraic_intersection
+   bezier.hazmat.clipping
    bezier.hazmat.curve_helpers
    bezier.hazmat.geometric_intersection
    bezier.hazmat.helpers
