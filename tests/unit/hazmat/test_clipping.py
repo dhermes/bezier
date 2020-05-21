@@ -21,9 +21,9 @@ SPACING = np.spacing  # pylint: disable=no-member
 class Test_compute_implicit_line(unittest.TestCase):
     @staticmethod
     def _call_function_under_test(nodes):
-        from bezier import _clipping
+        from bezier.hazmat import clipping
 
-        return _clipping.compute_implicit_line(nodes)
+        return clipping.compute_implicit_line(nodes)
 
     def test_no_rounding(self):
         nodes = np.asfortranarray([[1.0, 5.0], [2.0, 2.0]])
@@ -52,9 +52,9 @@ class Test_compute_implicit_line(unittest.TestCase):
 class Test_compute_fat_line(unittest.TestCase):
     @staticmethod
     def _call_function_under_test(nodes):
-        from bezier import _clipping
+        from bezier.hazmat import clipping
 
-        return _clipping.compute_fat_line(nodes)
+        return clipping.compute_fat_line(nodes)
 
     def test_line(self):
         nodes = np.asfortranarray([[1.0, 5.0], [2.0, 2.0]])
@@ -92,14 +92,14 @@ class Test_compute_fat_line(unittest.TestCase):
 class Test__update_parameters(unittest.TestCase):
     @staticmethod
     def _call_function_under_test(s_min, s_max, start0, end0, start1, end1):
-        from bezier import _clipping
+        from bezier.hazmat import clipping
 
-        return _clipping._update_parameters(
+        return clipping._update_parameters(
             s_min, s_max, start0, end0, start1, end1
         )
 
     def test_parallel(self):
-        from bezier import _clipping
+        from bezier.hazmat import clipping
 
         start0 = np.asfortranarray([0.0, 0.0])
         end0 = np.asfortranarray([1.0, 0.0])
@@ -109,7 +109,7 @@ class Test__update_parameters(unittest.TestCase):
             self._call_function_under_test(
                 None, None, start0, end0, start1, end1
             )
-        expected_args = (_clipping.NO_PARALLEL,)
+        expected_args = (clipping.NO_PARALLEL,)
         self.assertEqual(exc_info.exception.args, expected_args)
 
     def test_t_outside(self):
@@ -151,24 +151,24 @@ class Test__update_parameters(unittest.TestCase):
 class Test__check_parameter_range(unittest.TestCase):
     @staticmethod
     def _call_function_under_test(s_min, s_max):
-        from bezier import _clipping
+        from bezier.hazmat import clipping
 
-        return _clipping._check_parameter_range(s_min, s_max)
+        return clipping._check_parameter_range(s_min, s_max)
 
     def test_default_both(self):
-        from bezier import _clipping
+        from bezier.hazmat import clipping
 
         s_min, s_max = self._call_function_under_test(
-            _clipping.DEFAULT_S_MIN, _clipping.DEFAULT_S_MAX
+            clipping.DEFAULT_S_MIN, clipping.DEFAULT_S_MAX
         )
         self.assertEqual(s_min, 0.0)
         self.assertEqual(s_max, 1.0)
 
     def test_default_max(self):
-        from bezier import _clipping
+        from bezier.hazmat import clipping
 
         s_min, s_max = self._call_function_under_test(
-            0.25, _clipping.DEFAULT_S_MAX
+            0.25, clipping.DEFAULT_S_MAX
         )
         self.assertEqual(s_min, 0.25)
         self.assertEqual(s_max, 0.25)
@@ -182,9 +182,9 @@ class Test__check_parameter_range(unittest.TestCase):
 class Test_clip_range(unittest.TestCase):
     @staticmethod
     def _call_function_under_test(nodes1, nodes2):
-        from bezier import _clipping
+        from bezier.hazmat import clipping
 
-        return _clipping.clip_range(nodes1, nodes2)
+        return clipping.clip_range(nodes1, nodes2)
 
     def test_it(self):
         nodes1 = np.asfortranarray([[0.0, 1.0, 2.0], [0.0, 2.0, 0.0]])
@@ -194,7 +194,7 @@ class Test_clip_range(unittest.TestCase):
         self.assertEqual(end_s, 0.75)
 
     def test_parallel(self):
-        from bezier import _clipping
+        from bezier.hazmat import clipping
 
         nodes1 = np.asfortranarray([[0.0, 1.0, 2.0], [1.0, 3.0, 1.0]])
         nodes2 = np.asfortranarray(
@@ -202,5 +202,5 @@ class Test_clip_range(unittest.TestCase):
         )
         with self.assertRaises(NotImplementedError) as exc_info:
             self._call_function_under_test(nodes1, nodes2)
-        expected_args = (_clipping.NO_PARALLEL,)
+        expected_args = (clipping.NO_PARALLEL,)
         self.assertEqual(exc_info.exception.args, expected_args)
