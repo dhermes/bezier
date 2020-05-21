@@ -45,7 +45,7 @@ def compute_implicit_line(nodes):
 
     .. note::
 
-       This assumes, but does not check, that the first and last nodes
+       This assumes, but does not check, that the first and last node
        in ``nodes`` are different.
 
     Computes :math:`a, b` and :math:`c` in the normalized implicit equation
