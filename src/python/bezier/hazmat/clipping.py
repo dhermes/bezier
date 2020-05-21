@@ -13,6 +13,7 @@
 r"""Proof-of-concept for B |eacute| zier clipping.
 
 .. _algorithm: https://dx.doi.org/10.1016/0010-4485(90)90039-F
+.. _quadratic convergence: https://doi.org/10.1016/j.cagd.2007.12.006
 
 The B |eacute| zier clipping `algorithm`_ is used to intersect
 two planar B |eacute| zier curves. It proceeds by using "fat lines"
@@ -21,7 +22,7 @@ the ranges converge to points. (A "fat line" is a rectangular region of a
 bounded distance from the line connecting the start and end points of a
 B |eacute| zier curve.)
 
-It has quadratic convergence. It can be used to find tangent intersections,
+It has `quadratic convergence`_. It can be used to find tangent intersections,
 which is the primary usage within ``bezier``.
 
 .. |eacute| unicode:: U+000E9 .. LATIN SMALL LETTER E WITH ACUTE
