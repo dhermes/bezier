@@ -1,0 +1,69 @@
+``2020.5.19``
+=============
+
+|pypi| |docs|
+
+Python Changes
+--------------
+
+Bug Fixes
+~~~~~~~~~
+
+-  Using ``importlib.metadata`` to locate ``extra-dll`` on Windows, caused by
+   the behavior of the ``conda``-supplied ``setuptools`` in Python 3.8
+   (`#208 <https://github.com/dhermes/bezier/pull/208>`__, fixed
+   `#206 <https://github.com/dhermes/bezier/issues/206>`__).
+
+Breaking Changes
+~~~~~~~~~~~~~~~~
+
+-  Created ``bezier.hazmat`` subpackage (fixed
+   `#170 <https://github.com/dhermes/bezier/issues/170>`__).
+
+   -  Moved non-public ``bezier._py_helpers`` module to
+      ``bezier.hazmat.helpers``
+      (`#201 <https://github.com/dhermes/bezier/pull/201>`__).
+   -  Moved non-public ``bezier._algebraic_intersection`` module to
+      ``bezier.hazmat.algebraic_intersection``
+      (`#216 <https://github.com/dhermes/bezier/pull/216>`__).
+   -  Moved non-public ``bezier._py_curve_helpers`` module to
+      ``bezier.hazmat.curve_helpers``
+      (`#218 <https://github.com/dhermes/bezier/pull/218>`__).
+   -  Moved non-public ``bezier._py_triangle_intersection`` module to
+      ``bezier.hazmat.triangle_intersection``
+      (`#219 <https://github.com/dhermes/bezier/pull/219>`__).
+   -  Moved non-public ``bezier._py_triangle_helpers`` module to
+      ``bezier.hazmat.triangle_helpers``
+      (`#220 <https://github.com/dhermes/bezier/pull/220>`__).
+   -  Moved non-public ``bezier._py_intersection_helpers`` module to
+      ``bezier.hazmat.intersection_helpers``
+      (`#222 <https://github.com/dhermes/bezier/pull/222>`__).
+   -  Moved non-public ``bezier._py_geometric_intersection`` module to
+      ``bezier.hazmat.geometric_intersection``
+      (`#223 <https://github.com/dhermes/bezier/pull/223>`__).
+
+Documentation
+--------------
+
+-  Updated ``binary-extension``
+   `doc <https://bezier.readthedocs.io/en/2020.5.19/python/binary-extension.html>`__
+   to refer to ``bezier.libs``
+   (`#211 <https://github.com/dhermes/bezier/pull/211>`__). This is based on
+   a change to ``auditwheel`` from the
+   `3.1.0 release <https://github.com/pypa/auditwheel/releases/tag/3.1.0>`__.
+-  Removed ``algorithms/algebraic-helpers`` document since the
+   ``bezier.hazmat.algebraic_intersection`` module is now fully documented
+   (`#216 <https://github.com/dhermes/bezier/pull/216>`__).
+-  Updated from ``https://docs.scipy.org/doc/numpy`` to ``https://numpy.org``
+   for references to the NumPy documentation
+   (`#221 <https://github.com/dhermes/bezier/pull/221>`__).
+-  Removed ``algorithms/geometric-helpers`` document since the functions and
+   classes there are now fully documented in ``bezier.hazmat``
+   (`#223 <https://github.com/dhermes/bezier/pull/223>`__).
+
+.. |pypi| image:: https://img.shields.io/pypi/v/bezier/2020.5.19.svg
+   :target: https://pypi.org/project/bezier/2020.5.19/
+   :alt: PyPI link to release 2020.5.19
+.. |docs| image:: https://readthedocs.org/projects/bezier/badge/?version=2020.5.19
+   :target: https://bezier.readthedocs.io/en/2020.5.19/
+   :alt: Documentation for release 2020.5.19
