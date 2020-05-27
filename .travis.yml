@@ -18,17 +18,14 @@ matrix:
       language: generic
       env:
         - PY_VERSION=3.6
-        - VIRTUALENV_NO_DOWNLOAD=true
     - os: osx
       language: generic
       env:
         - PY_VERSION=3.7
-        - VIRTUALENV_NO_DOWNLOAD=true
     - os: osx
       language: generic
       env:
         - PY_VERSION=3.8
-        - VIRTUALENV_NO_DOWNLOAD=true
 
 install:
   - source scripts/macos/travis-setup.sh
