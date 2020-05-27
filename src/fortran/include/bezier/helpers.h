@@ -49,6 +49,28 @@ double cross_product(
     BEZ_cross_product(vec0.data(), vec1.data(), &result);
     return result;
 }
+
+// TODO: bbox
+
+double wiggle_interval(const double& value)
+{
+    double result;
+    bool success;
+    BEZ_wiggle_interval(&value, &result, &success);
+    // TODO: Return `success` as well (don't use an exception for flow control).
+    return result;
+}
+
+// TODO: contains_nd
+// TODO: vector_close
+
+bool in_interval(const double& value, const double& start, const double& end)
+{
+    return BEZ_in_interval(&value, &start, &end);
+}
+
+// TODO: simple_convex_hull
+// TODO: polygon_collide
 }
 #endif
 
