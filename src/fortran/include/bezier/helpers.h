@@ -38,4 +38,18 @@ void BEZ_polygon_collide(const int* polygon_size1, const double* polygon1,
 }
 #endif
 
+#if defined(__cplusplus)
+#include <vector>
+
+namespace bezier {
+double cross_product(
+    const std::vector<double>& vec0, const std::vector<double>& vec1)
+{
+    double result;
+    BEZ_cross_product(vec0.data(), vec1.data(), &result);
+    return result;
+}
+}
+#endif
+
 #endif /* BEZIER_HELPERS_H */
