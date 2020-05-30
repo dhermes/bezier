@@ -38,43 +38,4 @@ void BEZ_polygon_collide(const int* polygon_size1, const double* polygon1,
 }
 #endif
 
-#if defined(__cplusplus)
-#include <tuple>
-#include <vector>
-
-namespace bezier {
-
-double cross_product(
-    const std::vector<double>& vec0, const std::vector<double>& vec1)
-{
-    double result;
-    BEZ_cross_product(vec0.data(), vec1.data(), &result);
-    return result;
-}
-
-// TODO: bbox
-
-double wiggle_interval(const double& value)
-{
-    double result;
-    bool success;
-    BEZ_wiggle_interval(&value, &result, &success);
-    // TODO: Return `success` as well (don't use an exception for flow
-    //       control).
-    return result;
-}
-
-// TODO: contains_nd
-// TODO: vector_close
-
-bool in_interval(const double& value, const double& start, const double& end)
-{
-    return BEZ_in_interval(&value, &start, &end);
-}
-
-// TODO: simple_convex_hull
-// TODO: polygon_collide
-}
-#endif
-
 #endif /* BEZIER_HELPERS_H */
