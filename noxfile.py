@@ -388,13 +388,17 @@ def lint(session):
         get_path("src", "fortran", "CMakeLists.txt"),
         get_path("src", "fortran", "quadpack", "CMakeLists.txt"),
     )
-    # (Maybe) run ``clang-format`` for uniform formatting of ``.c`` and ``.h``
-    # files
+    # (Maybe) run ``clang-format`` for uniform formatting of ``.c``, ``.h``
+    # and ``.hpp`` files
     if py.path.local.sysfind("clang-format") is not None:
         filenames = glob.glob(get_path("docs", "abi", "*.c"))
         filenames.append(get_path("src", "fortran", "include", "bezier.h"))
+        filenames.append(get_path("src", "fortran", "include", "bezier.hpp"))
         filenames.extend(
             glob.glob(get_path("src", "fortran", "include", "bezier", "*.h"))
+        )
+        filenames.extend(
+            glob.glob(get_path("src", "fortran", "include", "bezier", "*.hpp"))
         )
         session.run(
             "clang-format", "-i", "-style=file", *filenames, external=True

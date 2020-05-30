@@ -18,6 +18,8 @@
 #include <tuple>
 #include <vector>
 
+// TODO: Support 2D arrays with ``xarray``.
+
 namespace bezier {
 
 double cross_product(
@@ -35,7 +37,7 @@ double wiggle_interval(const double& value)
     double result;
     bool success;
     BEZ_wiggle_interval(&value, &result, &success);
-    // TODO: Return `success` as well (don't use an exception for flow
+    // TODO: Return ``success`` as well (don't use an exception for flow
     //       control).
     return result;
 }
