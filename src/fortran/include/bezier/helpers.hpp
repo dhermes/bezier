@@ -13,12 +13,12 @@
 #ifndef BEZIER_HELPERS_HPP
 #define BEZIER_HELPERS_HPP
 
-#include "bezier/helpers.h"
-#include "xtensor/xtensor.hpp"
-
 #include <array>
 #include <tuple>
 #include <vector>
+
+#include "bezier/helpers.h"
+#include "xtensor/xtensor.hpp"
 
 namespace bezier {
 

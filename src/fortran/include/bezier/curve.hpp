@@ -13,6 +13,8 @@
 #ifndef BEZIER_CURVE_HPP
 #define BEZIER_CURVE_HPP
 
+#include <tuple>
+
 #include "bezier/curve.h"
 #include "xtensor/xtensor.hpp"
 
@@ -162,7 +164,22 @@ bool reduce_pseudo_inverse(const xt::xtensor_fixed<double, xt::xshape<D, N>,
     return not_implemented;
 }
 
-// TODO: full_reduce
+template <size_t N, size_t D>
+std::tuple<int, bool> full_reduce(
+    const xt::xtensor_fixed<double, xt::xshape<D, N>,
+        xt::layout_type::column_major>& nodes,
+    xt::xtensor_fixed<double, xt::xshape<D, N>, xt::layout_type::column_major>&
+        reduced)
+{
+    int num_nodes = N;
+    int dimension = D;
+    int num_reduced_nodes;
+    bool not_implemented;
+    BEZ_full_reduce(&num_nodes, &dimension, nodes.data(), &num_reduced_nodes,
+        reduced.data(), &not_implemented);
+    return std::make_tuple(num_reduced_nodes, not_implemented);
+}
+
 // TODO: compute_length
 
 }
