@@ -79,7 +79,21 @@ bool in_interval(const double& value, const double& start, const double& end)
 }
 
 // TODO: simple_convex_hull
-// TODO: polygon_collide
+
+template <size_t N1, size_t N2>
+bool polygon_collide(const xt::xtensor_fixed<double, xt::xshape<2, N1>,
+                         xt::layout_type::column_major>& polygon1,
+    const xt::xtensor_fixed<double, xt::xshape<2, N2>,
+        xt::layout_type::column_major>& polygon2)
+{
+    int polygon_size1 = N1;
+    int polygon_size2 = N2;
+    bool collision;
+    BEZ_polygon_collide(&polygon_size1, polygon1.data(), &polygon_size2,
+        polygon2.data(), &collision);
+    return collision;
+}
+
 }
 
 #endif /* BEZIER_HELPERS_HPP */
