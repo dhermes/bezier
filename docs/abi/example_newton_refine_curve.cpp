@@ -14,7 +14,6 @@
 
 #include "bezier.hpp"
 #include "xtensor/xfixed.hpp"
-#include "xtensor/xio.hpp"
 
 int main(int argc, char* argv[])
 {
@@ -24,8 +23,7 @@ int main(int argc, char* argv[])
             { 0.0, 1.0, 3.0 },
             { 0.0, 2.0, 1.0 },
         };
-    xt::xtensor_fixed<double, xt::xshape<2>, xt::layout_type::column_major>
-        point { 0.5625, 0.8125 };
+    std::array<double, 2> point { 0.5625, 0.8125 };
     double s = 0.75;
 
     // Outputs.

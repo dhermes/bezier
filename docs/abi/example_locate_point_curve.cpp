@@ -14,7 +14,6 @@
 
 #include "bezier.hpp"
 #include "xtensor/xfixed.hpp"
-#include "xtensor/xio.hpp"
 
 int main(int argc, char* argv[])
 {
@@ -24,22 +23,22 @@ int main(int argc, char* argv[])
             { 0.0, -1.0, 1.0, -0.75 },
             { 2.0, 0.0, 1.0, 1.625 },
         };
-    xt::xtensor_fixed<double, xt::xshape<2>, xt::layout_type::column_major>
-        point1 { -0.09375, 0.828125 };
-    xt::xtensor_fixed<double, xt::xshape<2>, xt::layout_type::column_major>
-        point2 { 0.0, 1.5 };
-    xt::xtensor_fixed<double, xt::xshape<2>, xt::layout_type::column_major>
-        point3 { -0.25, 1.375 };
+    std::array<double, 2> point1 { -0.09375, 0.828125 };
+    std::array<double, 2> point2 { 0.0, 1.5 };
+    std::array<double, 2> point3 { -0.25, 1.375 };
 
     // Outputs.
     double s_approx;
 
     s_approx = bezier::locate_point_curve(nodes, point1);
-    std::cout << "When B(s) = " << point1 << "; s = " << s_approx << std::endl;
+    std::cout << "When B(s) = [" << point1[0] << ", " << point1[1]
+              << "]; s = " << s_approx << std::endl;
     s_approx = bezier::locate_point_curve(nodes, point2);
-    std::cout << "When B(s) = " << point2 << "; s = " << s_approx << std::endl;
+    std::cout << "When B(s) = [" << point2[0] << ", " << point2[1]
+              << "]; s = " << s_approx << std::endl;
     s_approx = bezier::locate_point_curve(nodes, point3);
-    std::cout << "When B(s) = " << point3 << "; s = " << s_approx << std::endl;
+    std::cout << "When B(s) = [" << point3[0] << ", " << point3[1]
+              << "]; s = " << s_approx << std::endl;
 
     return 0;
 }

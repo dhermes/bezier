@@ -24,8 +24,7 @@ int main(int argc, char* argv[])
             { 1.0, 1.0, 2.0, 2.0 },
             { 0.0, 1.0, 0.0, 1.0 },
         };
-    xt::xtensor_fixed<double, xt::xshape<3>, xt::layout_type::column_major>
-        s_vals { 0.0, 0.5, 1.0 };
+    std::array<double, 3> s_vals { 0.0, 0.5, 1.0 };
 
     // Outputs.
     auto evaluated = bezier::evaluate_multi(nodes, s_vals);

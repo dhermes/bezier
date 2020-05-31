@@ -24,10 +24,8 @@ int main(int argc, char* argv[])
             { 0.0, 2.0, 3.0 },
             { 1.0, 1.0, 3.0 },
         };
-    xt::xtensor_fixed<double, xt::xshape<4>, xt::layout_type::column_major>
-        lambda1 { 0.25, 0.5, 0.0, 1.0 };
-    xt::xtensor_fixed<double, xt::xshape<4>, xt::layout_type::column_major>
-        lambda2 { 0.75, 0.25, 0.5, 0.25 };
+    std::array<double, 4> lambda1 { 0.25, 0.5, 0.0, 1.0 };
+    std::array<double, 4> lambda2 { 0.75, 0.25, 0.5, 0.25 };
 
     // Outputs.
     auto evaluated

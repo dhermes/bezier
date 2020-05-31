@@ -51,8 +51,7 @@ std::tuple<double, bool> wiggle_interval(const double& value)
 template <size_t D, size_t N>
 bool contains_nd(const xt::xtensor_fixed<double, xt::xshape<D, N>,
                      xt::layout_type::column_major>& nodes,
-    const xt::xtensor_fixed<double, xt::xshape<D>,
-        xt::layout_type::column_major>& point)
+    const std::array<double, D>& point)
 {
     int dimension = D;
     int num_nodes = N;
@@ -63,11 +62,8 @@ bool contains_nd(const xt::xtensor_fixed<double, xt::xshape<D, N>,
 }
 
 template <size_t D>
-bool vector_close(const xt::xtensor_fixed<double, xt::xshape<D>,
-                      xt::layout_type::column_major>& vec1,
-    const xt::xtensor_fixed<double, xt::xshape<D>,
-        xt::layout_type::column_major>& vec2,
-    const double& eps)
+bool vector_close(const std::array<double, D>& vec1,
+    const std::array<double, D>& vec2, const double& eps)
 {
     int num_values = D;
     return BEZ_vector_close(&num_values, vec1.data(), vec2.data(), &eps);

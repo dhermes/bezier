@@ -14,7 +14,6 @@
 
 #include "bezier.hpp"
 #include "xtensor/xfixed.hpp"
-#include "xtensor/xio.hpp"
 
 int main(int argc, char* argv[])
 {
@@ -27,10 +26,11 @@ int main(int argc, char* argv[])
         };
 
     // Outputs.
-    auto hodograph = bezier::evaluate_hodograph(s, nodes);
+    std::array<double, 2> hodograph = bezier::evaluate_hodograph(s, nodes);
 
     std::cout << "Hodograph:" << std::endl;
-    std::cout << hodograph << std::endl;
+    std::cout << hodograph[0] << std::endl;
+    std::cout << hodograph[1] << std::endl;
 
     return 0;
 }

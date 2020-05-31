@@ -22,10 +22,7 @@ template <size_t N, size_t D, size_t k>
 xt::xtensor_fixed<double, xt::xshape<D, k>, xt::layout_type::column_major>
 evaluate_curve_barycentric(const xt::xtensor_fixed<double, xt::xshape<D, N>,
                                xt::layout_type::column_major>& nodes,
-    const xt::xtensor_fixed<double, xt::xshape<k>,
-        xt::layout_type::column_major>& lambda1,
-    const xt::xtensor_fixed<double, xt::xshape<k>,
-        xt::layout_type::column_major>& lambda2)
+    const std::array<double, k>& lambda1, const std::array<double, k>& lambda2)
 {
     xt::xtensor_fixed<double, xt::xshape<D, k>, xt::layout_type::column_major>
         evaluated;
@@ -41,8 +38,7 @@ template <size_t N, size_t D, size_t k>
 xt::xtensor_fixed<double, xt::xshape<D, k>, xt::layout_type::column_major>
 evaluate_multi(const xt::xtensor_fixed<double, xt::xshape<D, N>,
                    xt::layout_type::column_major>& nodes,
-    const xt::xtensor_fixed<double, xt::xshape<k>,
-        xt::layout_type::column_major>& s_vals)
+    const std::array<double, k>& s_vals)
 {
     xt::xtensor_fixed<double, xt::xshape<D, k>, xt::layout_type::column_major>
         evaluated;
@@ -70,13 +66,12 @@ specialize_curve(const xt::xtensor_fixed<double, xt::xshape<D, N>,
 }
 
 template <size_t N, size_t D>
-xt::xtensor_fixed<double, xt::xshape<D>, xt::layout_type::column_major>
-evaluate_hodograph(const double& s,
+std::array<double, D> evaluate_hodograph(const double& s,
     const xt::xtensor_fixed<double, xt::xshape<D, N>,
         xt::layout_type::column_major>& nodes)
 {
-    xt::xtensor_fixed<double, xt::xshape<D>, xt::layout_type::column_major>
-        hodograph;
+    std::array<double, D> hodograph;
+
     int num_nodes = N;
     int dimension = D;
     BEZ_evaluate_hodograph(
@@ -101,9 +96,7 @@ void subdivide_nodes_curve(const xt::xtensor_fixed<double, xt::xshape<D, N>,
 template <size_t N, size_t D>
 double newton_refine_curve(const xt::xtensor_fixed<double, xt::xshape<D, N>,
                                xt::layout_type::column_major>& nodes,
-    const xt::xtensor_fixed<double, xt::xshape<D>,
-        xt::layout_type::column_major>& point,
-    const double& s)
+    const std::array<double, D>& point, const double& s)
 {
     int num_nodes = N;
     int dimension = D;
@@ -116,8 +109,7 @@ double newton_refine_curve(const xt::xtensor_fixed<double, xt::xshape<D, N>,
 template <size_t N, size_t D>
 double locate_point_curve(const xt::xtensor_fixed<double, xt::xshape<D, N>,
                               xt::layout_type::column_major>& nodes,
-    const xt::xtensor_fixed<double, xt::xshape<D>,
-        xt::layout_type::column_major>& point)
+    const std::array<double, D>& point)
 {
     int num_nodes = N;
     int dimension = D;
