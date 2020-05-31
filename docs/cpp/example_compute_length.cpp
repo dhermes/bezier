@@ -17,22 +17,14 @@
 
 int main(int argc, char* argv[])
 {
-    // Inputs.
     bezier::Matrix<2, 2> nodes {
         { 0.0, 3.0 },
         { 0.0, 4.0 },
     };
-
-    // Outputs.
-    double length;
-    int error_val;
-
     std::tuple<int, bool> status_pair = bezier::compute_length(nodes);
-    length = std::get<0>(status_pair);
-    error_val = std::get<1>(status_pair);
 
-    std::cout << "Length: " << length << std::endl;
-    std::cout << "Error value: " << error_val << std::endl;
+    std::cout << "Length: " << std::get<0>(status_pair) << std::endl;
+    std::cout << "Error value: " << std::get<1>(status_pair) << std::endl;
 
     return 0;
 }
