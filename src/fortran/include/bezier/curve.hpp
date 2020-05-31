@@ -37,6 +37,34 @@ evaluate_curve_barycentric(const xt::xtensor_fixed<double, xt::xshape<D, N>,
     return evaluated;
 }
 
+template <size_t N, size_t D, size_t k>
+xt::xtensor_fixed<double, xt::xshape<D, k>, xt::layout_type::column_major>
+evaluate_multi(const xt::xtensor_fixed<double, xt::xshape<D, N>,
+                   xt::layout_type::column_major>& nodes,
+    const xt::xtensor_fixed<double, xt::xshape<k>,
+        xt::layout_type::column_major>& s_vals)
+{
+    xt::xtensor_fixed<double, xt::xshape<D, k>, xt::layout_type::column_major>
+        evaluated;
+    int num_nodes = N;
+    int dimension = D;
+    int num_vals = k;
+    BEZ_evaluate_multi(&num_nodes, &dimension, nodes.data(), &num_vals,
+        s_vals.data(), evaluated.data());
+    return evaluated;
+}
+
+// TODO: specialize_curve
+// TODO: evaluate_hodograph
+// TODO: subdivide_nodes_curve
+// TODO: newton_refine_curve
+// TODO: locate_point_curve
+// TODO: elevate_nodes_curve
+// TODO: get_curvature
+// TODO: reduce_pseudo_inverse
+// TODO: full_reduce
+// TODO: compute_length
+
 }
 
 #endif /* BEZIER_CURVE_HPP */
