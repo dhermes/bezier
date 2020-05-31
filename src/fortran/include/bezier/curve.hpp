@@ -143,7 +143,18 @@ elevate_nodes_curve(const xt::xtensor_fixed<double, xt::xshape<D, N>,
     return elevated;
 }
 
-// TODO: get_curvature
+template <size_t N>
+double get_curvature(const xt::xtensor_fixed<double, xt::xshape<2, N>,
+                         xt::layout_type::column_major>& nodes,
+    const std::array<double, 2>& tangent_vec, const double& s)
+{
+    int num_nodes = N;
+    double curvature;
+    BEZ_get_curvature(
+        &num_nodes, nodes.data(), tangent_vec.data(), &s, &curvature);
+    return curvature;
+}
+
 // TODO: reduce_pseudo_inverse
 // TODO: full_reduce
 // TODO: compute_length
