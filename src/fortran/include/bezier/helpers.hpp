@@ -14,11 +14,11 @@
 #define BEZIER_HELPERS_HPP
 
 #include "bezier/helpers.h"
+#include "xtensor/xtensor.hpp"
 
+#include <array>
 #include <tuple>
 #include <vector>
-
-// TODO: Support 2D arrays with ``xarray``.
 
 namespace bezier {
 
@@ -30,16 +30,22 @@ double cross_product(
     return result;
 }
 
-// TODO: bbox
+template <size_t N>
+std::array<double, 4> bbox(const xt::xtensor_fixed<double, xt::xshape<2, N>,
+    xt::layout_type::column_major>& nodes)
+{
+    double left, right, bottom, top;
+    int num_nodes = nodes.shape(1) BEZ_bbox(
+        &num_nodes, nodes.data(), &left, &right, &bottom, &top);
+    return { left, right, bottom, top };
+}
 
-double wiggle_interval(const double& value)
+std::tuple<double, bool> wiggle_interval(const double& value)
 {
     double result;
     bool success;
     BEZ_wiggle_interval(&value, &result, &success);
-    // TODO: Return ``success`` as well (don't use an exception for flow
-    //       control).
-    return result;
+    return std::make_tuple(result, success);
 }
 
 // TODO: contains_nd
