@@ -57,6 +57,7 @@ Linux
      include/
        bezier/
          curve.h
+         curve.hpp
          curve_intersection.h
          helpers.h
          helpers.hpp
@@ -87,6 +88,7 @@ macOS
      include/
        bezier/
          curve.h
+         curve.hpp
          curve_intersection.h
          helpers.h
          helpers.hpp
@@ -119,6 +121,7 @@ Windows
      include\
        bezier\
          curve.h
+         curve.hpp
          curve_intersection.h
          helpers.h
          helpers.hpp
