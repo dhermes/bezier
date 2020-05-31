@@ -180,7 +180,18 @@ std::tuple<int, bool> full_reduce(
     return std::make_tuple(num_reduced_nodes, not_implemented);
 }
 
-// TODO: compute_length
+template <size_t N, size_t D>
+std::tuple<double, int> compute_length(const xt::xtensor_fixed<double,
+    xt::xshape<D, N>, xt::layout_type::column_major>& nodes)
+{
+    int num_nodes = N;
+    int dimension = D;
+    double length;
+    int error_val;
+    BEZ_compute_length(
+        &num_nodes, &dimension, nodes.data(), &length, &error_val);
+    return std::make_tuple(length, error_val);
+}
 
 }
 

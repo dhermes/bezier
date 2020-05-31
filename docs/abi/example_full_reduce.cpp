@@ -27,12 +27,14 @@ int main(int argc, char* argv[])
         };
 
     // Outputs.
+    int num_reduced_nodes;
     xt::xtensor_fixed<double, xt::xshape<2, 5>, xt::layout_type::column_major>
         reduced;
+    bool not_implemented;
 
     std::tuple<int, bool> status_pair = bezier::full_reduce(nodes, reduced);
-    int num_reduced_nodes = std::get<0>(status_pair);
-    bool not_implemented = std::get<1>(status_pair);
+    num_reduced_nodes = std::get<0>(status_pair);
+    not_implemented = std::get<1>(status_pair);
     auto reduced_view
         = xt::view(reduced, xt::all(), xt::range(0, num_reduced_nodes));
 
