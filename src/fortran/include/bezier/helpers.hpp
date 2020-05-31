@@ -78,7 +78,18 @@ bool in_interval(const double& value, const double& start, const double& end)
     return BEZ_in_interval(&value, &start, &end);
 }
 
-// TODO: simple_convex_hull
+template <size_t N>
+int simple_convex_hull(const xt::xtensor_fixed<double, xt::xshape<2, N>,
+                           xt::layout_type::column_major>& points,
+    xt::xtensor_fixed<double, xt::xshape<2, N>, xt::layout_type::column_major>&
+        polygon)
+{
+    int num_points = N;
+    int polygon_size;
+    BEZ_simple_convex_hull(
+        &num_points, points.data(), &polygon_size, polygon.data());
+    return polygon_size;
+}
 
 template <size_t N1, size_t N2>
 bool polygon_collide(const xt::xtensor_fixed<double, xt::xshape<2, N1>,
