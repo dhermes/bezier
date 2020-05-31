@@ -58,6 +58,7 @@ specialize_curve(const xt::xtensor_fixed<double, xt::xshape<D, N>,
 {
     xt::xtensor_fixed<double, xt::xshape<D, N>, xt::layout_type::column_major>
         new_nodes;
+
     int num_nodes = N;
     int dimension = D;
     BEZ_specialize_curve(
@@ -147,7 +148,20 @@ double get_curvature(const xt::xtensor_fixed<double, xt::xshape<2, N>,
     return curvature;
 }
 
-// TODO: reduce_pseudo_inverse
+template <size_t N, size_t D>
+bool reduce_pseudo_inverse(const xt::xtensor_fixed<double, xt::xshape<D, N>,
+                               xt::layout_type::column_major>& nodes,
+    xt::xtensor_fixed<double, xt::xshape<D, N - 1>,
+        xt::layout_type::column_major>& reduced)
+{
+    int num_nodes = N;
+    int dimension = D;
+    bool not_implemented;
+    BEZ_reduce_pseudo_inverse(&num_nodes, &dimension, nodes.data(),
+        reduced.data(), &not_implemented);
+    return not_implemented;
+}
+
 // TODO: full_reduce
 // TODO: compute_length
 
