@@ -13,6 +13,7 @@
 #ifndef BEZIER_HPP
 #define BEZIER_HPP
 
+#include "bezier/curve.hpp"
 #include "bezier/helpers.hpp"
 
 #endif /* BEZIER_HPP */
