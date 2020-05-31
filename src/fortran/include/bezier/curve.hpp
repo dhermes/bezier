@@ -84,7 +84,20 @@ evaluate_hodograph(const double& s,
     return hodograph;
 }
 
-// TODO: subdivide_nodes_curve
+template <size_t N, size_t D>
+void subdivide_nodes_curve(const xt::xtensor_fixed<double, xt::xshape<D, N>,
+                               xt::layout_type::column_major>& nodes,
+    xt::xtensor_fixed<double, xt::xshape<D, N>, xt::layout_type::column_major>&
+        left_nodes,
+    xt::xtensor_fixed<double, xt::xshape<D, N>, xt::layout_type::column_major>&
+        right_nodes)
+{
+    int num_nodes = N;
+    int dimension = D;
+    BEZ_subdivide_nodes_curve(&num_nodes, &dimension, nodes.data(),
+        left_nodes.data(), right_nodes.data());
+}
+
 // TODO: newton_refine_curve
 // TODO: locate_point_curve
 // TODO: elevate_nodes_curve
