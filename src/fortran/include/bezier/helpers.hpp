@@ -62,7 +62,16 @@ bool contains_nd(const xt::xtensor_fixed<double, xt::xshape<D, N>,
     return predicate;
 }
 
-// TODO: vector_close
+template <size_t D>
+bool vector_close(const xt::xtensor_fixed<double, xt::xshape<D>,
+                      xt::layout_type::column_major>& vec1,
+    const xt::xtensor_fixed<double, xt::xshape<D>,
+        xt::layout_type::column_major>& vec2,
+    const double& eps)
+{
+    int num_values = D;
+    return BEZ_vector_close(&num_values, vec1.data(), vec2.data(), &eps);
+}
 
 bool in_interval(const double& value, const double& start, const double& end)
 {
