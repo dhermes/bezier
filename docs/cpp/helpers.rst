@@ -16,5 +16,5 @@ Types
 
    .. code-block:: cpp
 
-      template <size_t M, size_t N>
+      template <std::size_t M, std::size_t N>
       using Matrix = xt::xtensor_fixed<double, xt::xshape<M, N>, xt::layout_type::column_major>;

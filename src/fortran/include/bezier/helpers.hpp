@@ -22,10 +22,10 @@
 
 namespace bezier {
 
-template <size_t M, size_t N>
+template <std::size_t M, std::size_t N>
 using Matrix = xt::xtensor_fixed<double, xt::xshape<M, N>,
     xt::layout_type::column_major>;
-template <size_t N> using Vector = std::array<double, N>;
+template <std::size_t N> using Vector = std::array<double, N>;
 
 double cross_product(
     const std::vector<double>& vec0, const std::vector<double>& vec1)
@@ -35,7 +35,7 @@ double cross_product(
     return result;
 }
 
-template <size_t N>
+template <std::size_t N>
 Vector<4> bbox(const xt::xtensor_fixed<double, xt::xshape<2, N>,
     xt::layout_type::column_major>& nodes)
 {
@@ -53,7 +53,7 @@ std::tuple<double, bool> wiggle_interval(const double& value)
     return std::make_tuple(result, success);
 }
 
-template <size_t D, size_t N>
+template <std::size_t D, std::size_t N>
 bool contains_nd(const xt::xtensor_fixed<double, xt::xshape<D, N>,
                      xt::layout_type::column_major>& nodes,
     const Vector<D>& point)
@@ -66,7 +66,7 @@ bool contains_nd(const xt::xtensor_fixed<double, xt::xshape<D, N>,
     return predicate;
 }
 
-template <size_t D>
+template <std::size_t D>
 bool vector_close(
     const Vector<D>& vec1, const Vector<D>& vec2, const double& eps)
 {
@@ -79,7 +79,7 @@ bool in_interval(const double& value, const double& start, const double& end)
     return BEZ_in_interval(&value, &start, &end);
 }
 
-template <size_t N>
+template <std::size_t N>
 int simple_convex_hull(const xt::xtensor_fixed<double, xt::xshape<2, N>,
                            xt::layout_type::column_major>& points,
     xt::xtensor_fixed<double, xt::xshape<2, N>, xt::layout_type::column_major>&
@@ -92,7 +92,7 @@ int simple_convex_hull(const xt::xtensor_fixed<double, xt::xshape<2, N>,
     return polygon_size;
 }
 
-template <size_t N1, size_t N2>
+template <std::size_t N1, std::size_t N2>
 bool polygon_collide(const xt::xtensor_fixed<double, xt::xshape<2, N1>,
                          xt::layout_type::column_major>& polygon1,
     const xt::xtensor_fixed<double, xt::xshape<2, N2>,

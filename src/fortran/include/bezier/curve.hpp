@@ -21,7 +21,7 @@
 
 namespace bezier {
 
-template <size_t N, size_t D, size_t k>
+template <std::size_t N, std::size_t D, std::size_t k>
 Matrix<D, k> evaluate_curve_barycentric(const Matrix<D, N>& nodes,
     const Vector<k>& lambda1, const Vector<k>& lambda2)
 {
@@ -35,7 +35,7 @@ Matrix<D, k> evaluate_curve_barycentric(const Matrix<D, N>& nodes,
     return evaluated;
 }
 
-template <size_t N, size_t D, size_t k>
+template <std::size_t N, std::size_t D, std::size_t k>
 Matrix<D, k> evaluate_multi(const Matrix<D, N>& nodes, const Vector<k>& s_vals)
 {
     Matrix<D, k> evaluated;
@@ -48,7 +48,7 @@ Matrix<D, k> evaluate_multi(const Matrix<D, N>& nodes, const Vector<k>& s_vals)
     return evaluated;
 }
 
-template <size_t N, size_t D>
+template <std::size_t N, std::size_t D>
 Matrix<D, N> specialize_curve(
     const Matrix<D, N>& nodes, const double& start, const double& end)
 {
@@ -61,7 +61,7 @@ Matrix<D, N> specialize_curve(
     return new_nodes;
 }
 
-template <size_t N, size_t D>
+template <std::size_t N, std::size_t D>
 Vector<D> evaluate_hodograph(const double& s, const Matrix<D, N>& nodes)
 {
     Vector<D> hodograph;
@@ -73,7 +73,7 @@ Vector<D> evaluate_hodograph(const double& s, const Matrix<D, N>& nodes)
     return hodograph;
 }
 
-template <size_t N, size_t D>
+template <std::size_t N, std::size_t D>
 void subdivide_nodes_curve(const Matrix<D, N>& nodes, Matrix<D, N>& left_nodes,
     Matrix<D, N>& right_nodes)
 {
@@ -83,7 +83,7 @@ void subdivide_nodes_curve(const Matrix<D, N>& nodes, Matrix<D, N>& left_nodes,
         left_nodes.data(), right_nodes.data());
 }
 
-template <size_t N, size_t D>
+template <std::size_t N, std::size_t D>
 double newton_refine_curve(
     const Matrix<D, N>& nodes, const Vector<D>& point, const double& s)
 {
@@ -95,7 +95,7 @@ double newton_refine_curve(
     return updated_s;
 }
 
-template <size_t N, size_t D>
+template <std::size_t N, std::size_t D>
 double locate_point_curve(const Matrix<D, N>& nodes, const Vector<D>& point)
 {
     int num_nodes = N;
@@ -106,7 +106,7 @@ double locate_point_curve(const Matrix<D, N>& nodes, const Vector<D>& point)
     return s_approx;
 }
 
-template <size_t N, size_t D>
+template <std::size_t N, std::size_t D>
 Matrix<D, N + 1> elevate_nodes_curve(const Matrix<D, N>& nodes)
 {
     Matrix<D, N + 1> elevated;
@@ -118,7 +118,7 @@ Matrix<D, N + 1> elevate_nodes_curve(const Matrix<D, N>& nodes)
     return elevated;
 }
 
-template <size_t N>
+template <std::size_t N>
 double get_curvature(
     const Matrix<2, N>& nodes, const Vector<2>& tangent_vec, const double& s)
 {
@@ -129,7 +129,7 @@ double get_curvature(
     return curvature;
 }
 
-template <size_t N, size_t D>
+template <std::size_t N, std::size_t D>
 bool reduce_pseudo_inverse(
     const Matrix<D, N>& nodes, Matrix<D, N - 1>& reduced)
 {
@@ -141,7 +141,7 @@ bool reduce_pseudo_inverse(
     return not_implemented;
 }
 
-template <size_t N, size_t D>
+template <std::size_t N, std::size_t D>
 std::tuple<int, bool> full_reduce(
     const Matrix<D, N>& nodes, Matrix<D, N>& reduced)
 {
@@ -154,7 +154,7 @@ std::tuple<int, bool> full_reduce(
     return std::make_tuple(num_reduced_nodes, not_implemented);
 }
 
-template <size_t N, size_t D>
+template <std::size_t N, std::size_t D>
 std::tuple<double, int> compute_length(const Matrix<D, N>& nodes)
 {
     int num_nodes = N;

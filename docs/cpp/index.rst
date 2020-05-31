@@ -9,9 +9,9 @@ part of the API. This library (currently) relies on the ``xtensor`` `library`_
 to define a ``bezier::Matrix`` type that is contiguous, in Fortran order and
 with shape defined at compile time:
 
-.. code-block:: c++
+.. code-block:: cpp
 
-   template <size_t M, size_t N>
+   template <std::size_t M, std::size_t N>
    using Matrix = xt::xtensor_fixed<double, xt::xshape<M, N>, xt::layout_type::column_major>;
 
 .. _library: https://xtensor.readthedocs.io/en/latest/
