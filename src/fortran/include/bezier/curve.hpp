@@ -127,7 +127,22 @@ double locate_point_curve(const xt::xtensor_fixed<double, xt::xshape<D, N>,
     return s_approx;
 }
 
-// TODO: elevate_nodes_curve
+template <size_t N, size_t D>
+xt::xtensor_fixed<double, xt::xshape<D, N + 1>, xt::layout_type::column_major>
+elevate_nodes_curve(const xt::xtensor_fixed<double, xt::xshape<D, N>,
+    xt::layout_type::column_major>& nodes)
+{
+    xt::xtensor_fixed<double, xt::xshape<D, N + 1>,
+        xt::layout_type::column_major>
+        elevated;
+
+    int num_nodes = N;
+    int dimension = D;
+    BEZ_elevate_nodes_curve(
+        &num_nodes, &dimension, nodes.data(), elevated.data());
+    return elevated;
+}
+
 // TODO: get_curvature
 // TODO: reduce_pseudo_inverse
 // TODO: full_reduce
