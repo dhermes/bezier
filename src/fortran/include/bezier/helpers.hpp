@@ -35,8 +35,8 @@ std::array<double, 4> bbox(const xt::xtensor_fixed<double, xt::xshape<2, N>,
     xt::layout_type::column_major>& nodes)
 {
     double left, right, bottom, top;
-    int num_nodes = nodes.shape(1) BEZ_bbox(
-        &num_nodes, nodes.data(), &left, &right, &bottom, &top);
+    int num_nodes = N;
+    BEZ_bbox(&num_nodes, nodes.data(), &left, &right, &bottom, &top);
     return { left, right, bottom, top };
 }
 
@@ -48,7 +48,20 @@ std::tuple<double, bool> wiggle_interval(const double& value)
     return std::make_tuple(result, success);
 }
 
-// TODO: contains_nd
+template <size_t D, size_t N>
+bool contains_nd(const xt::xtensor_fixed<double, xt::xshape<D, N>,
+                     xt::layout_type::column_major>& nodes,
+    const xt::xtensor_fixed<double, xt::xshape<D>,
+        xt::layout_type::column_major>& point)
+{
+    int dimension = D;
+    int num_nodes = N;
+    bool predicate;
+    BEZ_contains_nd(
+        &num_nodes, &dimension, nodes.data(), point.data(), &predicate);
+    return predicate;
+}
+
 // TODO: vector_close
 
 bool in_interval(const double& value, const double& start, const double& end)
