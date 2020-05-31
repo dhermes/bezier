@@ -98,7 +98,21 @@ void subdivide_nodes_curve(const xt::xtensor_fixed<double, xt::xshape<D, N>,
         left_nodes.data(), right_nodes.data());
 }
 
-// TODO: newton_refine_curve
+template <size_t N, size_t D>
+double newton_refine_curve(const xt::xtensor_fixed<double, xt::xshape<D, N>,
+                               xt::layout_type::column_major>& nodes,
+    const xt::xtensor_fixed<double, xt::xshape<D>,
+        xt::layout_type::column_major>& point,
+    const double& s)
+{
+    int num_nodes = N;
+    int dimension = D;
+    double updated_s;
+    BEZ_newton_refine_curve(
+        &num_nodes, &dimension, nodes.data(), point.data(), &s, &updated_s);
+    return updated_s;
+}
+
 // TODO: locate_point_curve
 // TODO: elevate_nodes_curve
 // TODO: get_curvature
