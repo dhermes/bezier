@@ -392,6 +392,7 @@ def lint(session):
     # and ``.hpp`` files
     if py.path.local.sysfind("clang-format") is not None:
         filenames = glob.glob(get_path("docs", "abi", "*.c"))
+        filenames.extend(glob.glob(get_path("docs", "abi", "*.cpp")))
         filenames.append(get_path("src", "fortran", "include", "bezier.h"))
         filenames.append(get_path("src", "fortran", "include", "bezier.hpp"))
         filenames.extend(
