@@ -19,15 +19,13 @@
 int main(int argc, char* argv[])
 {
     // Inputs.
-    xt::xtensor_fixed<double, xt::xshape<2, 4>, xt::layout_type::column_major>
-        nodes {
-            { -3.0, 0.0, 1.0, 0.0 },
-            { 3.0, 2.0, 3.0, 6.0 },
-        };
+    bezier::Matrix<2, 4> nodes {
+        { -3.0, 0.0, 1.0, 0.0 },
+        { 3.0, 2.0, 3.0, 6.0 },
+    };
 
     // Outputs.
-    xt::xtensor_fixed<double, xt::xshape<2, 3>, xt::layout_type::column_major>
-        reduced;
+    bezier::Matrix<2, 3> reduced;
     bool not_implemented;
 
     not_implemented = bezier::reduce_pseudo_inverse(nodes, reduced);

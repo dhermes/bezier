@@ -19,16 +19,16 @@
 int main(int argc, char* argv[])
 {
     // Inputs.
-    xt::xtensor_fixed<double, xt::xshape<2, 3>, xt::layout_type::column_major>
-        nodes {
-            { 0.0, 0.5, 1.0 },
-            { 0.0, 1.0, 0.0 },
-        };
+    bezier::Matrix<2, 3> nodes {
+        { 0.0, 0.5, 1.0 },
+        { 0.0, 1.0, 0.0 },
+    };
     double start = -0.25;
     double end = 0.75;
 
     // Outputs.
-    auto new_nodes = bezier::specialize_curve(nodes, start, end);
+    bezier::Matrix<2, 3> new_nodes
+        = bezier::specialize_curve(nodes, start, end);
 
     std::cout << "New Nodes:" << std::endl;
     std::cout << new_nodes << std::endl;

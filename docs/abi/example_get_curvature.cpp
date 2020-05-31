@@ -18,12 +18,11 @@
 int main(int argc, char* argv[])
 {
     // Inputs.
-    xt::xtensor_fixed<double, xt::xshape<2, 5>, xt::layout_type::column_major>
-        nodes {
-            { 1.0, 0.75, 0.5, 0.25, 0.0 },
-            { 0.0, 2.0, -2.0, 2.0, 0.0 },
-        };
-    std::array<double, 2> tangent_vec { -1.0, 0.0 };
+    bezier::Matrix<2, 5> nodes {
+        { 1.0, 0.75, 0.5, 0.25, 0.0 },
+        { 0.0, 2.0, -2.0, 2.0, 0.0 },
+    };
+    bezier::Vector<2> tangent_vec { -1.0, 0.0 };
     double s = 0.5;
 
     // Outputs.

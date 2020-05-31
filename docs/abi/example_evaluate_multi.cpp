@@ -19,15 +19,14 @@
 int main(int argc, char* argv[])
 {
     // Inputs.
-    xt::xtensor_fixed<double, xt::xshape<2, 4>, xt::layout_type::column_major>
-        nodes {
-            { 1.0, 1.0, 2.0, 2.0 },
-            { 0.0, 1.0, 0.0, 1.0 },
-        };
-    std::array<double, 3> s_vals { 0.0, 0.5, 1.0 };
+    bezier::Matrix<2, 4> nodes {
+        { 1.0, 1.0, 2.0, 2.0 },
+        { 0.0, 1.0, 0.0, 1.0 },
+    };
+    bezier::Vector<3> s_vals { 0.0, 0.5, 1.0 };
 
     // Outputs.
-    auto evaluated = bezier::evaluate_multi(nodes, s_vals);
+    bezier::Matrix<2, 3> evaluated = bezier::evaluate_multi(nodes, s_vals);
 
     std::cout << "Evaluated:" << std::endl;
     std::cout << evaluated << std::endl;

@@ -19,17 +19,14 @@
 int main(int argc, char* argv[])
 {
     // Inputs.
-    xt::xtensor_fixed<double, xt::xshape<2, 3>, xt::layout_type::column_major>
-        nodes {
-            { 0.0, 1.25, 2.0 },
-            { 0.0, 3.0, 1.0 },
-        };
+    bezier::Matrix<2, 3> nodes {
+        { 0.0, 1.25, 2.0 },
+        { 0.0, 3.0, 1.0 },
+    };
 
     // Outputs.
-    xt::xtensor_fixed<double, xt::xshape<2, 3>, xt::layout_type::column_major>
-        left_nodes;
-    xt::xtensor_fixed<double, xt::xshape<2, 3>, xt::layout_type::column_major>
-        right_nodes;
+    bezier::Matrix<2, 3> left_nodes;
+    bezier::Matrix<2, 3> right_nodes;
 
     bezier::subdivide_nodes_curve(nodes, left_nodes, right_nodes);
 

@@ -18,14 +18,13 @@
 int main(int argc, char* argv[])
 {
     // Inputs.
-    xt::xtensor_fixed<double, xt::xshape<2, 4>, xt::layout_type::column_major>
-        nodes {
-            { 0.0, -1.0, 1.0, -0.75 },
-            { 2.0, 0.0, 1.0, 1.625 },
-        };
-    std::array<double, 2> point1 { -0.09375, 0.828125 };
-    std::array<double, 2> point2 { 0.0, 1.5 };
-    std::array<double, 2> point3 { -0.25, 1.375 };
+    bezier::Matrix<2, 4> nodes {
+        { 0.0, -1.0, 1.0, -0.75 },
+        { 2.0, 0.0, 1.0, 1.625 },
+    };
+    bezier::Vector<2> point1 { -0.09375, 0.828125 };
+    bezier::Vector<2> point2 { 0.0, 1.5 };
+    bezier::Vector<2> point3 { -0.25, 1.375 };
 
     // Outputs.
     double s_approx;

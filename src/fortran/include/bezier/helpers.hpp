@@ -22,6 +22,11 @@
 
 namespace bezier {
 
+template <size_t M, size_t N>
+using Matrix = xt::xtensor_fixed<double, xt::xshape<M, N>,
+    xt::layout_type::column_major>;
+template <size_t N> using Vector = std::array<double, N>;
+
 double cross_product(
     const std::vector<double>& vec0, const std::vector<double>& vec1)
 {
@@ -31,7 +36,7 @@ double cross_product(
 }
 
 template <size_t N>
-std::array<double, 4> bbox(const xt::xtensor_fixed<double, xt::xshape<2, N>,
+Vector<4> bbox(const xt::xtensor_fixed<double, xt::xshape<2, N>,
     xt::layout_type::column_major>& nodes)
 {
     double left, right, bottom, top;
@@ -51,7 +56,7 @@ std::tuple<double, bool> wiggle_interval(const double& value)
 template <size_t D, size_t N>
 bool contains_nd(const xt::xtensor_fixed<double, xt::xshape<D, N>,
                      xt::layout_type::column_major>& nodes,
-    const std::array<double, D>& point)
+    const Vector<D>& point)
 {
     int dimension = D;
     int num_nodes = N;
@@ -62,8 +67,8 @@ bool contains_nd(const xt::xtensor_fixed<double, xt::xshape<D, N>,
 }
 
 template <size_t D>
-bool vector_close(const std::array<double, D>& vec1,
-    const std::array<double, D>& vec2, const double& eps)
+bool vector_close(
+    const Vector<D>& vec1, const Vector<D>& vec2, const double& eps)
 {
     int num_values = D;
     return BEZ_vector_close(&num_values, vec1.data(), vec2.data(), &eps);

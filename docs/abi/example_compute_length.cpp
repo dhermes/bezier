@@ -18,11 +18,10 @@
 int main(int argc, char* argv[])
 {
     // Inputs.
-    xt::xtensor_fixed<double, xt::xshape<2, 2>, xt::layout_type::column_major>
-        nodes {
-            { 0.0, 3.0 },
-            { 0.0, 4.0 },
-        };
+    bezier::Matrix<2, 2> nodes {
+        { 0.0, 3.0 },
+        { 0.0, 4.0 },
+    };
 
     // Outputs.
     double length;

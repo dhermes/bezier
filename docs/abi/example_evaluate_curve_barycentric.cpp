@@ -19,16 +19,15 @@
 int main(int argc, char* argv[])
 {
     // Inputs.
-    xt::xtensor_fixed<double, xt::xshape<2, 3>, xt::layout_type::column_major>
-        nodes {
-            { 0.0, 2.0, 3.0 },
-            { 1.0, 1.0, 3.0 },
-        };
-    std::array<double, 4> lambda1 { 0.25, 0.5, 0.0, 1.0 };
-    std::array<double, 4> lambda2 { 0.75, 0.25, 0.5, 0.25 };
+    bezier::Matrix<2, 3> nodes {
+        { 0.0, 2.0, 3.0 },
+        { 1.0, 1.0, 3.0 },
+    };
+    bezier::Vector<4> lambda1 { 0.25, 0.5, 0.0, 1.0 };
+    bezier::Vector<4> lambda2 { 0.75, 0.25, 0.5, 0.25 };
 
     // Outputs.
-    auto evaluated
+    bezier::Matrix<2, 4> evaluated
         = bezier::evaluate_curve_barycentric(nodes, lambda1, lambda2);
 
     std::cout << "Evaluated:" << std::endl;

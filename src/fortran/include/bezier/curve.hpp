@@ -16,18 +16,17 @@
 #include <tuple>
 
 #include "bezier/curve.h"
+#include "bezier/helpers.hpp"
 #include "xtensor/xtensor.hpp"
 
 namespace bezier {
 
 template <size_t N, size_t D, size_t k>
-xt::xtensor_fixed<double, xt::xshape<D, k>, xt::layout_type::column_major>
-evaluate_curve_barycentric(const xt::xtensor_fixed<double, xt::xshape<D, N>,
-                               xt::layout_type::column_major>& nodes,
-    const std::array<double, k>& lambda1, const std::array<double, k>& lambda2)
+Matrix<D, k> evaluate_curve_barycentric(const Matrix<D, N>& nodes,
+    const Vector<k>& lambda1, const Vector<k>& lambda2)
 {
-    xt::xtensor_fixed<double, xt::xshape<D, k>, xt::layout_type::column_major>
-        evaluated;
+    Matrix<D, k> evaluated;
+
     int num_nodes = N;
     int dimension = D;
     int num_vals = k;
@@ -37,13 +36,10 @@ evaluate_curve_barycentric(const xt::xtensor_fixed<double, xt::xshape<D, N>,
 }
 
 template <size_t N, size_t D, size_t k>
-xt::xtensor_fixed<double, xt::xshape<D, k>, xt::layout_type::column_major>
-evaluate_multi(const xt::xtensor_fixed<double, xt::xshape<D, N>,
-                   xt::layout_type::column_major>& nodes,
-    const std::array<double, k>& s_vals)
+Matrix<D, k> evaluate_multi(const Matrix<D, N>& nodes, const Vector<k>& s_vals)
 {
-    xt::xtensor_fixed<double, xt::xshape<D, k>, xt::layout_type::column_major>
-        evaluated;
+    Matrix<D, k> evaluated;
+
     int num_nodes = N;
     int dimension = D;
     int num_vals = k;
@@ -53,13 +49,10 @@ evaluate_multi(const xt::xtensor_fixed<double, xt::xshape<D, N>,
 }
 
 template <size_t N, size_t D>
-xt::xtensor_fixed<double, xt::xshape<D, N>, xt::layout_type::column_major>
-specialize_curve(const xt::xtensor_fixed<double, xt::xshape<D, N>,
-                     xt::layout_type::column_major>& nodes,
-    const double& start, const double& end)
+Matrix<D, N> specialize_curve(
+    const Matrix<D, N>& nodes, const double& start, const double& end)
 {
-    xt::xtensor_fixed<double, xt::xshape<D, N>, xt::layout_type::column_major>
-        new_nodes;
+    Matrix<D, N> new_nodes;
 
     int num_nodes = N;
     int dimension = D;
@@ -69,11 +62,9 @@ specialize_curve(const xt::xtensor_fixed<double, xt::xshape<D, N>,
 }
 
 template <size_t N, size_t D>
-std::array<double, D> evaluate_hodograph(const double& s,
-    const xt::xtensor_fixed<double, xt::xshape<D, N>,
-        xt::layout_type::column_major>& nodes)
+Vector<D> evaluate_hodograph(const double& s, const Matrix<D, N>& nodes)
 {
-    std::array<double, D> hodograph;
+    Vector<D> hodograph;
 
     int num_nodes = N;
     int dimension = D;
@@ -83,12 +74,8 @@ std::array<double, D> evaluate_hodograph(const double& s,
 }
 
 template <size_t N, size_t D>
-void subdivide_nodes_curve(const xt::xtensor_fixed<double, xt::xshape<D, N>,
-                               xt::layout_type::column_major>& nodes,
-    xt::xtensor_fixed<double, xt::xshape<D, N>, xt::layout_type::column_major>&
-        left_nodes,
-    xt::xtensor_fixed<double, xt::xshape<D, N>, xt::layout_type::column_major>&
-        right_nodes)
+void subdivide_nodes_curve(const Matrix<D, N>& nodes, Matrix<D, N>& left_nodes,
+    Matrix<D, N>& right_nodes)
 {
     int num_nodes = N;
     int dimension = D;
@@ -97,9 +84,8 @@ void subdivide_nodes_curve(const xt::xtensor_fixed<double, xt::xshape<D, N>,
 }
 
 template <size_t N, size_t D>
-double newton_refine_curve(const xt::xtensor_fixed<double, xt::xshape<D, N>,
-                               xt::layout_type::column_major>& nodes,
-    const std::array<double, D>& point, const double& s)
+double newton_refine_curve(
+    const Matrix<D, N>& nodes, const Vector<D>& point, const double& s)
 {
     int num_nodes = N;
     int dimension = D;
@@ -110,9 +96,7 @@ double newton_refine_curve(const xt::xtensor_fixed<double, xt::xshape<D, N>,
 }
 
 template <size_t N, size_t D>
-double locate_point_curve(const xt::xtensor_fixed<double, xt::xshape<D, N>,
-                              xt::layout_type::column_major>& nodes,
-    const std::array<double, D>& point)
+double locate_point_curve(const Matrix<D, N>& nodes, const Vector<D>& point)
 {
     int num_nodes = N;
     int dimension = D;
@@ -123,13 +107,9 @@ double locate_point_curve(const xt::xtensor_fixed<double, xt::xshape<D, N>,
 }
 
 template <size_t N, size_t D>
-xt::xtensor_fixed<double, xt::xshape<D, N + 1>, xt::layout_type::column_major>
-elevate_nodes_curve(const xt::xtensor_fixed<double, xt::xshape<D, N>,
-    xt::layout_type::column_major>& nodes)
+Matrix<D, N + 1> elevate_nodes_curve(const Matrix<D, N>& nodes)
 {
-    xt::xtensor_fixed<double, xt::xshape<D, N + 1>,
-        xt::layout_type::column_major>
-        elevated;
+    Matrix<D, N + 1> elevated;
 
     int num_nodes = N;
     int dimension = D;
@@ -139,9 +119,8 @@ elevate_nodes_curve(const xt::xtensor_fixed<double, xt::xshape<D, N>,
 }
 
 template <size_t N>
-double get_curvature(const xt::xtensor_fixed<double, xt::xshape<2, N>,
-                         xt::layout_type::column_major>& nodes,
-    const std::array<double, 2>& tangent_vec, const double& s)
+double get_curvature(
+    const Matrix<2, N>& nodes, const Vector<2>& tangent_vec, const double& s)
 {
     int num_nodes = N;
     double curvature;
@@ -151,10 +130,8 @@ double get_curvature(const xt::xtensor_fixed<double, xt::xshape<2, N>,
 }
 
 template <size_t N, size_t D>
-bool reduce_pseudo_inverse(const xt::xtensor_fixed<double, xt::xshape<D, N>,
-                               xt::layout_type::column_major>& nodes,
-    xt::xtensor_fixed<double, xt::xshape<D, N - 1>,
-        xt::layout_type::column_major>& reduced)
+bool reduce_pseudo_inverse(
+    const Matrix<D, N>& nodes, Matrix<D, N - 1>& reduced)
 {
     int num_nodes = N;
     int dimension = D;
@@ -166,10 +143,7 @@ bool reduce_pseudo_inverse(const xt::xtensor_fixed<double, xt::xshape<D, N>,
 
 template <size_t N, size_t D>
 std::tuple<int, bool> full_reduce(
-    const xt::xtensor_fixed<double, xt::xshape<D, N>,
-        xt::layout_type::column_major>& nodes,
-    xt::xtensor_fixed<double, xt::xshape<D, N>, xt::layout_type::column_major>&
-        reduced)
+    const Matrix<D, N>& nodes, Matrix<D, N>& reduced)
 {
     int num_nodes = N;
     int dimension = D;
@@ -181,8 +155,7 @@ std::tuple<int, bool> full_reduce(
 }
 
 template <size_t N, size_t D>
-std::tuple<double, int> compute_length(const xt::xtensor_fixed<double,
-    xt::xshape<D, N>, xt::layout_type::column_major>& nodes)
+std::tuple<double, int> compute_length(const Matrix<D, N>& nodes)
 {
     int num_nodes = N;
     int dimension = D;

@@ -19,14 +19,13 @@ int main(int argc, char* argv[])
 {
     // Inputs.
     double s = 0.125;
-    xt::xtensor_fixed<double, xt::xshape<2, 4>, xt::layout_type::column_major>
-        nodes {
-            { 1.0, 1.0, 2.0, 2.0 },
-            { 0.0, 1.0, 0.0, 1.0 },
-        };
+    bezier::Matrix<2, 4> nodes {
+        { 1.0, 1.0, 2.0, 2.0 },
+        { 0.0, 1.0, 0.0, 1.0 },
+    };
 
     // Outputs.
-    std::array<double, 2> hodograph = bezier::evaluate_hodograph(s, nodes);
+    bezier::Vector<2> hodograph = bezier::evaluate_hodograph(s, nodes);
 
     std::cout << "Hodograph:" << std::endl;
     std::cout << hodograph[0] << std::endl;
