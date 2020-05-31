@@ -113,7 +113,20 @@ double newton_refine_curve(const xt::xtensor_fixed<double, xt::xshape<D, N>,
     return updated_s;
 }
 
-// TODO: locate_point_curve
+template <size_t N, size_t D>
+double locate_point_curve(const xt::xtensor_fixed<double, xt::xshape<D, N>,
+                              xt::layout_type::column_major>& nodes,
+    const xt::xtensor_fixed<double, xt::xshape<D>,
+        xt::layout_type::column_major>& point)
+{
+    int num_nodes = N;
+    int dimension = D;
+    double s_approx;
+    BEZ_locate_point_curve(
+        &num_nodes, &dimension, nodes.data(), point.data(), &s_approx);
+    return s_approx;
+}
+
 // TODO: elevate_nodes_curve
 // TODO: get_curvature
 // TODO: reduce_pseudo_inverse
