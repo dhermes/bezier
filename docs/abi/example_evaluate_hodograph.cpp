@@ -19,19 +19,18 @@
 int main(int argc, char* argv[])
 {
     // Inputs.
-    xt::xtensor_fixed<double, xt::xshape<2, 3>, xt::layout_type::column_major>
+    double s = 0.125;
+    xt::xtensor_fixed<double, xt::xshape<2, 4>, xt::layout_type::column_major>
         nodes {
-            { 0.0, 0.5, 1.0 },
-            { 0.0, 1.0, 0.0 },
+            { 1.0, 1.0, 2.0, 2.0 },
+            { 0.0, 1.0, 0.0, 1.0 },
         };
-    double start = -0.25;
-    double end = 0.75;
 
     // Outputs.
-    auto new_nodes = bezier::specialize_curve(nodes, start, end);
+    auto hodograph = bezier::evaluate_hodograph(s, nodes);
 
-    std::cout << "New Nodes:" << std::endl;
-    std::cout << new_nodes << std::endl;
+    std::cout << "Hodograph:" << std::endl;
+    std::cout << hodograph << std::endl;
 
     return 0;
 }

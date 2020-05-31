@@ -16,7 +16,7 @@
 #include "xtensor/xfixed.hpp"
 #include "xtensor/xio.hpp"
 
-int main(void)
+int main(int argc, char* argv[])
 {
     // Inputs.
     xt::xtensor_fixed<double, xt::xshape<2, 4>, xt::layout_type::column_major>

@@ -30,7 +30,7 @@ cdef extern from "bezier/curve.h":
         const double* nodes, const double* start, const double* end,
         double* new_nodes)
     void evaluate_hodograph "BEZ_evaluate_hodograph" (
-        double* s, const int* num_nodes,
+        const double* s, const int* num_nodes,
         const int* dimension, const double* nodes, double* hodograph)
     void subdivide_nodes_curve "BEZ_subdivide_nodes_curve" (
         const int* num_nodes, const int* dimension,

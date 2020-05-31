@@ -28,7 +28,7 @@ void BEZ_evaluate_multi(const int* num_nodes, const int* dimension,
 void BEZ_specialize_curve(const int* num_nodes, const int* dimension,
     const double* nodes, const double* start, const double* end,
     double* new_nodes);
-void BEZ_evaluate_hodograph(double* s, const int* num_nodes,
+void BEZ_evaluate_hodograph(const double* s, const int* num_nodes,
     const int* dimension, const double* nodes, double* hodograph);
 void BEZ_subdivide_nodes_curve(const int* num_nodes, const int* dimension,
     const double* nodes, double* left_nodes, double* right_nodes);

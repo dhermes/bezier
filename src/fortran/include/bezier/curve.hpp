@@ -69,7 +69,21 @@ specialize_curve(const xt::xtensor_fixed<double, xt::xshape<D, N>,
     return new_nodes;
 }
 
-// TODO: evaluate_hodograph
+template <size_t N, size_t D>
+xt::xtensor_fixed<double, xt::xshape<D>, xt::layout_type::column_major>
+evaluate_hodograph(const double& s,
+    const xt::xtensor_fixed<double, xt::xshape<D, N>,
+        xt::layout_type::column_major>& nodes)
+{
+    xt::xtensor_fixed<double, xt::xshape<D>, xt::layout_type::column_major>
+        hodograph;
+    int num_nodes = N;
+    int dimension = D;
+    BEZ_evaluate_hodograph(
+        &s, &num_nodes, &dimension, nodes.data(), hodograph.data());
+    return hodograph;
+}
+
 // TODO: subdivide_nodes_curve
 // TODO: newton_refine_curve
 // TODO: locate_point_curve
