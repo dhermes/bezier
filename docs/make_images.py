@@ -39,6 +39,7 @@ import bezier
 from bezier import _geometric_intersection
 from bezier import _helpers
 from bezier import _plot_helpers
+from bezier.hazmat import clipping
 from bezier.hazmat import geometric_intersection as _py_geometric_intersection
 
 
@@ -1522,22 +1523,6 @@ def bbox_intersect(curve1, curve2):
     return enum_val != _py_geometric_intersection.BoxIntersectionType.DISJOINT
 
 
-# def refine_candidates_pairs(pairs):
-#     new_left = []
-#     new_right = []
-#     for left, right in pairs:
-#         new_left.extend(left.subdivide())
-#         new_right.extend(right.subdivide())
-#
-#     keep_pairs = []
-#     for curve1 in new_left:
-#         for curve2 in new_right:
-#             if bbox_intersect(curve1, curve2):
-#                 keep_pairs.append((curve1, curve2))
-#
-#     return keep_pairs
-
-
 def refine_candidates(left, right):
     new_left = []
     for curve in left:
@@ -1699,6 +1684,213 @@ def subdivision_pruning():
         )
 
     save_image(figure, "subdivision_pruning.png")
+
+
+def _plot_endpoints_line(ax, fat_line_coeffs, **plot_kwargs):
+    # NOTE: This assumes the x-limits have already been set for the axis.
+    coeff_a, coeff_b, coeff_c, _, _ = fat_line_coeffs
+    if coeff_b == 0.0:
+        raise NotImplementedError("Vertical lines not supported")
+
+    min_x, max_x = ax.get_xlim()
+    # ax + by + c = 0 ==> y = -(ax + c)/b
+    min_y = -(coeff_a * min_x + coeff_c) / coeff_b
+    max_y = -(coeff_a * max_x + coeff_c) / coeff_b
+
+    ax.plot(
+        [min_x, max_x], [min_y, max_y], **plot_kwargs,
+    )
+    ax.set_xlim(min_x, max_x)
+
+
+def compute_implicit_line(nodes):
+    """Image for :func:`.hazmat.clipping.compute_implicit_line` docstring."""
+    if NO_IMAGES:
+        return
+
+    curve = bezier.Curve.from_nodes(nodes)
+    ax = curve.plot(256, color=BLUE)
+
+    min_x, max_x = nodes[0, (0, -1)]
+    min_y, max_y = nodes[1, (0, -1)]
+    ax.plot(
+        [min_x, max_x, max_x],
+        [min_y, min_y, max_y],
+        color="black",
+        linestyle="dashed",
+    )
+
+    ax.axis("scaled")
+
+    info = clipping.compute_fat_line(nodes)
+    _plot_endpoints_line(ax, info, color="black")
+    save_image(ax.figure, "compute_implicit_line.png")
+
+
+def _plot_fat_lines(ax, fat_line_coeffs, **fill_between_kwargs):
+    # NOTE: This assumes the x-limits have already been set for the axis.
+    coeff_a, coeff_b, coeff_c, d_low, d_high = fat_line_coeffs
+    if coeff_b == 0.0:
+        raise NotImplementedError("Vertical lines not supported")
+
+    min_x, max_x = ax.get_xlim()
+    coeff_c_low = coeff_c - d_low
+    coeff_c_high = coeff_c - d_high
+    # ax + by + c = 0 ==> y = -(ax + c)/b
+    min_y_low = -(coeff_a * min_x + coeff_c_low) / coeff_b
+    min_y_high = -(coeff_a * min_x + coeff_c_high) / coeff_b
+    max_y_low = -(coeff_a * max_x + coeff_c_low) / coeff_b
+    max_y_high = -(coeff_a * max_x + coeff_c_high) / coeff_b
+
+    ax.fill_between(
+        [min_x, max_x],
+        [min_y_low, max_y_low],
+        [min_y_high, max_y_high],
+        **fill_between_kwargs,
+    )
+    ax.set_xlim(min_x, max_x)
+
+
+def _add_perpendicular_segments(ax, nodes, fat_line_coeffs, color):
+    coeff_a, coeff_b, coeff_c, _, _ = fat_line_coeffs
+
+    _, num_nodes = nodes.shape
+    for index in range(num_nodes):
+        # ax + by + c = 0 is perpendicular to lines of the form
+        # bx - ay = c'
+        curr_x, curr_y = nodes[:, index]
+        c_prime = coeff_b * curr_x - coeff_a * curr_y
+        # bx - ay = c' intersects ax + by + c = 0 at
+        # [x0, y0] = [b c' - a c, -a c' - b c] (assuming a^2 + b^2 == 1)
+        x_intersect = coeff_b * c_prime - coeff_a * coeff_c
+        y_intersect = -coeff_a * c_prime - coeff_b * coeff_c
+        ax.plot(
+            [curr_x, x_intersect],
+            [curr_y, y_intersect],
+            color=color,
+            linestyle="dashed",
+        )
+
+
+def compute_fat_line(nodes, fat_line_coeffs):
+    """Image for :func:`.hazmat.clipping.compute_fat_line` docstring."""
+    if NO_IMAGES:
+        return
+
+    curve = bezier.Curve.from_nodes(nodes)
+    ax = curve.plot(256, color=BLUE)
+    ax.plot(
+        nodes[0, :], nodes[1, :], marker="o", color=BLUE, linestyle="none",
+    )
+    _add_perpendicular_segments(ax, nodes, fat_line_coeffs, BLUE)
+
+    ax.axis("scaled")
+    _plot_endpoints_line(ax, fat_line_coeffs, color=BLUE, linestyle="dashed")
+    _plot_fat_lines(ax, fat_line_coeffs, color=BLUE, alpha=0.5)
+    save_image(ax.figure, "compute_fat_line.png")
+
+
+def clip_range(nodes1, nodes2):
+    """Image for :func:`.hazmat.clipping.clip_range` docstring."""
+    if NO_IMAGES:
+        return
+
+    curve1 = bezier.Curve.from_nodes(nodes1)
+    curve2 = bezier.Curve.from_nodes(nodes2)
+
+    # Plot both curves as well as the nodes.
+    ax = curve1.plot(256, color=BLUE)
+    curve2.plot(256, ax=ax, color=GREEN)
+    ax.plot(
+        nodes1[0, :], nodes1[1, :], marker="o", color=BLUE, linestyle="none",
+    )
+    ax.plot(
+        nodes2[0, :], nodes2[1, :], marker="o", color=GREEN, linestyle="none",
+    )
+
+    fat_line_coeffs = clipping.compute_fat_line(nodes1)
+    # Add perpendicular lines to the "implicit" line.
+    _add_perpendicular_segments(ax, nodes2, fat_line_coeffs, GREEN)
+
+    # Establish boundary **assuming** contents of ``nodes1`` and ``nodes2``.
+    ax.axis("scaled")
+    ax.set_xlim(-0.625, 7.375)
+    ax.set_ylim(-0.25, 4.625)
+
+    _plot_endpoints_line(ax, fat_line_coeffs, color=BLUE, linestyle="dashed")
+    _plot_fat_lines(ax, fat_line_coeffs, color=BLUE, alpha=0.5)
+
+    save_image(ax.figure, "clip_range.png")
+
+
+def clip_range_distances(nodes1, nodes2):
+    """Image for :func:`.hazmat.clipping.clip_range` docstring."""
+
+    figure = plt.figure()
+    ax = figure.gca()
+
+    coeff_a, coeff_b, coeff_c, d_min, d_max = clipping.compute_fat_line(nodes1)
+    polynomial = clipping._clip_range_polynomial(
+        nodes2, coeff_a, coeff_b, coeff_c
+    )
+    ax.fill_between([0.0, 1.0], d_min, d_max, color=BLUE, alpha=0.25)
+    s_min, s_max = clipping.clip_range(nodes1, nodes2)
+
+    convex_hull = _helpers.simple_convex_hull(polynomial)
+    add_patch(
+        ax, convex_hull, GREEN, with_nodes=True, alpha=0.625, node_color=GREEN,
+    )
+
+    _, num_nodes2 = nodes2.shape
+    for index in range(num_nodes2):
+        x_val, y_val = polynomial[:, index]
+        ax.plot([x_val, x_val], [0.0, y_val], color=GREEN, linestyle="dashed")
+
+    aspect_max = max(d_max, np.max(polynomial[1, :]))
+    aspect_min = min(d_min, np.min(polynomial[1, :]))
+    ax.set_aspect(1.0 / (aspect_max - aspect_min))
+    # NOTE: This "cheats" and uses the fact that it knows that ``s_min``
+    #       corresponds to ``d_max`` and ``s_max`` corresponds to ``d_min``.
+    ax.plot(
+        [s_min, s_max],
+        [d_max, d_min],
+        color="black",
+        marker="o",
+        linestyle="none",
+    )
+
+    # Use minor xticks **above** for showing s_min and s_max.
+    ax.set_xticks([0.25, 0.875], minor=True)
+    ax.set_xticklabels(["0.25", "0.875"], minor=True)
+    ax.tick_params(
+        axis="x",
+        which="minor",
+        direction="out",
+        top=1,
+        bottom=0,
+        labelbottom=0,
+        labeltop=1,
+    )
+    # Add line up to minor xticks. Similar to the dots on ``s_min`` and
+    # ``s_max`` this "cheats" with the correspondence to ``d_min`` / ``d_max``.
+    min_y, max_y = ax.get_ylim()
+    ax.plot(
+        [s_min, s_min],
+        [d_max, max_y],
+        color="black",
+        alpha=0.125,
+        linestyle="dashed",
+    )
+    ax.plot(
+        [s_max, s_max],
+        [d_min, max_y],
+        color="black",
+        alpha=0.125,
+        linestyle="dashed",
+    )
+    ax.set_ylim(min_y, max_y)
+
+    save_image(figure, "clip_range_distances.png")
 
 
 def main():

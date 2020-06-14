@@ -281,7 +281,13 @@ def docs_images(session):
     )
     session.install(*local_deps)
     # Install this package.
-    install_prefix = install_bezier(session)
+    if IS_MACOS:
+        install_prefix = _cmake(session, BUILD_TYPE_RELEASE)
+        command = get_path("scripts", "macos", "nox-install-for-doctest.sh")
+        env = {INSTALL_PREFIX_ENV: install_prefix}
+        session.run(command, external=True, env=env)
+    else:
+        install_prefix = install_bezier(session)
     # Use custom RC-file for matplotlib.
     env = {
         INSTALL_PREFIX_ENV: install_prefix,
