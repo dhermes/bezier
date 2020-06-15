@@ -57,6 +57,30 @@ def compute_implicit_line(nodes):
 
     where :math:`a^2 + b^2 = 1` (only unique up to sign).
 
+    .. image:: ../../images/compute_implicit_line.png
+       :align: center
+
+    .. testsetup:: compute-implicit-line
+
+       import numpy as np
+       import bezier
+       from bezier.hazmat.clipping import compute_implicit_line
+
+    .. doctest:: compute-implicit-line
+       :options: +NORMALIZE_WHITESPACE
+
+       >>> nodes = np.asfortranarray([
+       ...     [0.0, 1.0, 3.0, 4.0],
+       ...     [0.0, 2.5, 0.5, 3.0],
+       ... ])
+       >>> compute_implicit_line(nodes)
+       (-0.6, 0.8, 0.0)
+
+    .. testcleanup:: compute-implicit-line
+
+       import make_images
+       make_images.compute_implicit_line(nodes)
+
     Args:
         nodes (numpy.ndarray): ``2 x N`` array of nodes in a curve.
             The line will be (directed) from the first to last
@@ -91,7 +115,34 @@ def compute_fat_line(nodes):
 
     for the line connecting the first and last node in ``nodes``.
     Also computes the maximum and minimum distances to that line
-    from each control point.
+    from each control point where distance :math:`d` is computed as
+    :math:`d_i = a x_i + b y_i + c`. (This is made possible by the fact that
+    :math:`a^2 + b^2 = 1`.)
+
+    .. image:: ../../images/compute_fat_line.png
+       :align: center
+
+    .. testsetup:: compute-fat-line
+
+       import numpy as np
+       import bezier
+       from bezier.hazmat.clipping import compute_fat_line
+
+    .. doctest:: compute-fat-line
+       :options: +NORMALIZE_WHITESPACE
+
+       >>> nodes = np.asfortranarray([
+       ...     [0.0, 1.0, 3.0, 4.0],
+       ...     [2.0, 4.5, 2.5, 5.0],
+       ... ])
+       >>> info = compute_fat_line(nodes)
+       >>> info
+       (-0.6, 0.8, -1.6, -1.4, 1.4)
+
+    .. testcleanup:: compute-fat-line
+
+       import make_images
+       make_images.compute_fat_line(nodes, info)
 
     Args:
         nodes (numpy.ndarray): ``2 x N`` array of nodes in a curve.
@@ -220,11 +271,39 @@ def _check_parameter_range(s_min, s_max):
     return s_min, s_max
 
 
+def _clip_range_polynomial(nodes, coeff_a, coeff_b, coeff_c):
+    """Compute control points for a polynomial used to clip range.
+
+    Args:
+        nodes (numpy.ndarray): ``2 x N`` array of nodes in a curve.
+            The line will be (directed) from the first to last
+            node in ``nodes``.
+        coeff_a (float): The :math:`a` coefficient in a line
+            :math:`ax + by + c = 0`.
+        coeff_b (float): The :math:`b` coefficient in a line
+            :math:`ax + by + c = 0`.
+        coeff_c (float): The :math:`c` coefficient in a line
+            :math:`ax + by + c = 0`.
+
+    Returns:
+        numpy.ndarray: ``2 x N`` array of polynomial curve with distances
+        :math:`d_i = a x_i + b y_i + c` as the control points (and the
+        ``x``-coordinates evenly spaced).
+    """
+    _, num_nodes = nodes.shape
+    polynomial = np.empty((2, num_nodes), order="F")
+    denominator = float(num_nodes - 1)
+    for index in range(num_nodes):
+        polynomial[0, index] = index / denominator
+        polynomial[1, index] = (
+            coeff_a * nodes[0, index] + coeff_b * nodes[1, index] + coeff_c
+        )
+
+    return polynomial
+
+
 def clip_range(nodes1, nodes2):
     r"""Reduce the parameter range where two curves can intersect.
-
-    Does so by using the "fat line" for ``nodes1`` and computing the
-    distance polynomial against ``nodes2``.
 
     .. note::
 
@@ -234,6 +313,76 @@ def clip_range(nodes1, nodes2):
        This assumption is based on the fact that B |eacute| zier clipping
        is meant to be used to find tangent intersections for already
        subdivided (i.e. sufficiently zoomed in) curve segments.
+
+    Two B |eacute| zier curves :math:`B_1(s)` and :math:`B_2(t)` are defined by
+    ``nodes1`` and ``nodes2``. The "fat line" (see :func:`compute_fat_line`)
+    for :math:`B_1(s)` is used to narrow the range of possible :math:`t`-values
+    in an intersection by considering the distance polynomial for
+    :math:`B_2(t)`:
+
+    .. math::
+
+       d(t) = \sum_{j = 0}^m \binom{n}{j} t^j (1 - t)^{n - j} \cdot d_j
+
+    Here :math:`d_j = a x_j + b y_j + c` are the distances of each control
+    point :math:`(x_j, y_j)` of :math:`B_2(t)` to the implicit line for
+    :math:`B_1(s)`.
+
+    Consider the following pair of B |eacute| zier curves and the distances
+    from **all** of the control points to the implicit line for :math:`B_1(s)`:
+
+    .. testsetup:: clip-range-start, clip-range
+
+       import numpy as np
+       import bezier
+       from bezier.hazmat.clipping import clip_range
+
+       nodes1 = np.asfortranarray([
+           [2.0, 4.5, 2.5, 5.0],
+           [0.0, 1.0, 3.0, 4.0],
+       ])
+       nodes2 = np.asfortranarray([
+           [-0.25 , 3.75 , 7.0  ],
+           [ 3.125, 0.875, 3.125],
+       ])
+
+    .. doctest:: clip-range-start
+       :options: +NORMALIZE_WHITESPACE
+
+       >>> nodes1
+       array([[2. , 4.5, 2.5, 5. ],
+              [0. , 1. , 3. , 4. ]])
+       >>> nodes2
+       array([[-0.25 ,  3.75 ,  7.   ],
+              [ 3.125,  0.875,  3.125]])
+
+    .. image:: ../../images/clip_range.png
+       :align: center
+
+    The distances from the control points of :math:`B_2(t)` define the
+    distance polynomial :math:`d(t)`. By writing this polynomial as a
+    B |eacute| zier curve, a convex hull can be formed. The intersection of
+    this convex hull with the "fat line" of :math:`B_1(s)` determines the
+    extreme :math:`t` values possible and allows clipping the range of
+    :math:`B_2(t)`:
+
+    .. image:: ../../images/clip_range_distances.png
+       :align: center
+
+    .. doctest:: clip-range
+       :options: +NORMALIZE_WHITESPACE
+
+       >>> s_min, s_max = clip_range(nodes1, nodes2)
+       >>> s_min
+       0.25
+       >>> np.allclose(s_max, 0.875, rtol=0.5 ** 52, atol=0.0)
+       True
+
+    .. testcleanup:: clip-range
+
+       import make_images
+       make_images.clip_range(nodes1, nodes2)
+       make_images.clip_range_distances(nodes1, nodes2)
 
     Args:
         nodes1 (numpy.ndarray): ``2 x N1`` array of nodes in a curve which
@@ -251,15 +400,7 @@ def clip_range(nodes1, nodes2):
     #       in this lexical scope.
     # pylint: disable=too-many-locals
     coeff_a, coeff_b, coeff_c, d_min, d_max = compute_fat_line(nodes1)
-    # NOTE: This assumes, but does not check, that there are two rows.
-    _, num_nodes2 = nodes2.shape
-    polynomial = np.empty((2, num_nodes2), order="F")
-    denominator = float(num_nodes2 - 1)
-    for index in range(num_nodes2):
-        polynomial[0, index] = index / denominator
-        polynomial[1, index] = (
-            coeff_a * nodes2[0, index] + coeff_b * nodes2[1, index] + coeff_c
-        )
+    polynomial = _clip_range_polynomial(nodes2, coeff_a, coeff_b, coeff_c)
     # Define segments for the top and the bottom of the region
     # bounded by the fat line.
     start_bottom = np.asfortranarray([0.0, d_min])
@@ -271,6 +412,7 @@ def clip_range(nodes1, nodes2):
     # NOTE: We avoid computing the convex hull and just compute where
     #       all segments connecting two control points intersect the
     #       fat lines.
+    _, num_nodes2 = nodes2.shape
     for start_index in range(num_nodes2 - 1):
         for end_index in range(start_index + 1, num_nodes2):
             s_min, s_max = _update_parameters(
