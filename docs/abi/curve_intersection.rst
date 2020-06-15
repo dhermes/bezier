@@ -107,7 +107,7 @@ Procedures
    :param intersections_size:
       **[Input]** The size :math:`S` of ``intersections``, which must be
       pre-allocated by the caller. By B |eacute| zout's theorem, a hard upper
-      bound is :math:`S \leq (N_1 - 1)(N_2 - 2)` (since the degree of each
+      bound is :math:`S \leq (N_1 - 1)(N_2 - 1)` (since the degree of each
       curve is one less than the number of control points).
    :type intersections_size: const int*
    :param int* intersections:
