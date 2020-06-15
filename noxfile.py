@@ -32,7 +32,7 @@ DEPS = {
     "cmake-format": "cmake-format >= 0.6.5",
     "cmake": "cmake >= 3.15.3",
     "coverage": "coverage",
-    "Cython": "Cython >= 0.29.19",
+    "Cython": "Cython >= 0.29.20",
     "docutils": "docutils",
     "flake8": "flake8",
     "flake8-import-order": "flake8-import-order",
