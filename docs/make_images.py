@@ -1825,6 +1825,8 @@ def clip_range(nodes1, nodes2):
 
 def clip_range_distances(nodes1, nodes2):
     """Image for :func:`.hazmat.clipping.clip_range` docstring."""
+    if NO_IMAGES:
+        return
 
     figure = plt.figure()
     ax = figure.gca()
