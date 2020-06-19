@@ -331,8 +331,9 @@ def clip_range(nodes1, nodes2):
        d(t) = \sum_{j = 0}^m \binom{m}{j} t^j (1 - t)^{m - j} \cdot d_j
 
     Here :math:`d_j = a x_j + b y_j + c` are the (non-normalized) distances of
-    each control point :math:`(x_j, y_j)` of :math:`B_2(t)` to the implicit
-    line for :math:`B_1(s)`.
+    each control point
+    :math:`\left[\begin{array}{c} x_j \\ y_j \end{array}\right]`
+    of :math:`B_2(t)` to the implicit line for :math:`B_1(s)`.
 
     Consider the following pair of B |eacute| zier curves and the distances
     from **all** of the control points to the implicit line for :math:`B_1(s)`:
