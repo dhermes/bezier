@@ -10,7 +10,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""This implements a lemma from Sederberg.
+"""This implements a test for closed loops.
+
+.. _clipping: https://dx.doi.org/10.1016/0010-4485(90)90039-F
+.. _note: https://doi.org/10.1016/0010-4485(89)90058-4
+
+The collinear normal theorem from the B |eacute| zier `clipping`_ paper
+(from Sederberg and Nishita) refers to a short `note`_ from
+Sederberg, Christiansen, Katz.
 
 .. |eacute| unicode:: U+000E9 .. LATIN SMALL LETTER E WITH ACUTE
    :trim:
