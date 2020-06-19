@@ -17,7 +17,6 @@
 """
 
 import numpy as np
-import numpy.linalg
 
 from bezier import _curve_helpers
 from bezier import _helpers
