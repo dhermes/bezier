@@ -41,21 +41,24 @@ DEFAULT_S_MAX = 0.0
 
 
 def compute_implicit_line(nodes):
-    """Compute the implicit form of the line connecting curve endpoints.
+    r"""Compute the implicit form of the line connecting curve endpoints.
 
     .. note::
 
        This assumes, but does not check, that the first and last node
        in ``nodes`` are different.
 
-    Computes :math:`a, b` and :math:`c` in the normalized implicit equation
+    Computes :math:`a, b` and :math:`c` in the implicit equation
     for the line
 
     .. math::
 
        ax + by + c = 0
 
-    where :math:`a^2 + b^2 = 1` (only unique up to sign).
+    In cases where the line is normalized (:math:`a^2 + b^2 = 1`, only unique
+    up to sign), the function :math:`d(x, y) = ax + by + c` can be used to
+    determine the point-line distance from a point
+    :math:`\left[\begin{array}{c} x \\ y \end{array}\right]` to the line.
 
     .. image:: ../../images/compute_implicit_line.png
        :align: center
@@ -74,7 +77,7 @@ def compute_implicit_line(nodes):
        ...     [0.0, 2.5, 0.5, 3.0],
        ... ])
        >>> compute_implicit_line(nodes)
-       (-0.6, 0.8, 0.0)
+       (-3.0, 4.0, 0.0)
 
     .. testcleanup:: compute-implicit-line
 
@@ -94,29 +97,28 @@ def compute_implicit_line(nodes):
         * The constant :math:`c`
     """
     delta = nodes[:, -1] - nodes[:, 0]
-    length = np.linalg.norm(delta, ord=2)
-    # Normalize and rotate 90 degrees to the "left".
-    coeff_a = -delta[1] / length
-    coeff_b = delta[0] / length
-    # c = - ax - by = (delta[1] x - delta[0] y) / L
-    # NOTE: We divide by ``length`` at the end to "put off" rounding.
-    coeff_c = (delta[1] * nodes[0, 0] - delta[0] * nodes[1, 0]) / length
+    # Rotate 90 degrees to the "left".
+    coeff_a = -delta[1]
+    coeff_b = delta[0]
+    # c = - ax - by = delta[1] x - delta[0] y
+    coeff_c = delta[1] * nodes[0, 0] - delta[0] * nodes[1, 0]
     return coeff_a, coeff_b, coeff_c
 
 
 def compute_fat_line(nodes):
     """Compute the "fat line" around a B |eacute| zier curve.
 
-    Both computes the implicit (normalized) form
+    Both computes the implicit form
 
     .. math::
 
        ax + by + c = 0
 
     for the line connecting the first and last node in ``nodes``.
-    Also computes the maximum and minimum distances to that line
-    from each control point where distance :math:`d` is computed as
-    :math:`d_i = a x_i + b y_i + c`. (This is made possible by the fact that
+    Also computes the maximum and minimum (non-normalized) distances to that
+    line from each control point where (non-normalized) distance :math:`d` is
+    computed as :math:`d_i = a x_i + b y_i + c`. (To make :math:`d` a true
+    measure of Euclidean distance the line would need to be normalized so that
     :math:`a^2 + b^2 = 1`.)
 
     .. image:: ../../images/compute_fat_line.png
@@ -137,7 +139,7 @@ def compute_fat_line(nodes):
        ... ])
        >>> info = compute_fat_line(nodes)
        >>> info
-       (-0.6, 0.8, -1.6, -1.4, 1.4)
+       (-3.0, 4.0, -8.0, -7.0, 7.0)
 
     .. testcleanup:: compute-fat-line
 
@@ -153,8 +155,10 @@ def compute_fat_line(nodes):
         * The :math:`x` coefficient :math:`a`
         * The :math:`y` coefficient :math:`b`
         * The constant :math:`c`
-        * The "minimum" distance to the fat line among the control points.
-        * The "maximum" distance to the fat line among the control points.
+        * The "minimum" (non-normalized)  distance to the fat line among the
+          control points.
+        * The "maximum" (non-normalized)  distance to the fat line among the
+          control points.
     """
     coeff_a, coeff_b, coeff_c = compute_implicit_line(nodes)
     # NOTE: This assumes, but does not check, that there are two rows.
@@ -189,8 +193,7 @@ def _update_parameters(s_min, s_max, start0, end0, start1, end1):
     ``s_min`` will be updated.
 
     In cases where a given parameter :math:`s` would be a valid update
-    for both ``s_min`` and ``s_max``
-    This function **only** updates ``s_min``
+    for both ``s_min`` and ``s_max``, this function **only** updates ``s_min``.
 
     Args:
         s_min (float): Current start of clipped interval. If "unset", this
@@ -272,7 +275,7 @@ def _check_parameter_range(s_min, s_max):
 
 
 def _clip_range_polynomial(nodes, coeff_a, coeff_b, coeff_c):
-    """Compute control points for a polynomial used to clip range.
+    r"""Compute control points for a polynomial used to clip range.
 
     Args:
         nodes (numpy.ndarray): ``2 x N`` array of nodes in a curve.
@@ -286,20 +289,23 @@ def _clip_range_polynomial(nodes, coeff_a, coeff_b, coeff_c):
             :math:`ax + by + c = 0`.
 
     Returns:
-        numpy.ndarray: ``2 x N`` array of polynomial curve with distances
-        :math:`d_i = a x_i + b y_i + c` as the control points (and the
-        ``x``-coordinates evenly spaced).
+        numpy.ndarray: Pair of
+
+        * The degree :math:`d` of ``nodes`` (also the width of the
+          ``x``-interval :math:`\left[0, d\right]`)
+        * ``2 x N`` array of polynomial curve with distances
+          :math:`d_i = a x_i + b y_i + c` as the control points (and the
+          ``x``-coordinates evenly spaced).
     """
     _, num_nodes = nodes.shape
     polynomial = np.empty((2, num_nodes), order="F")
-    denominator = float(num_nodes - 1)
     for index in range(num_nodes):
-        polynomial[0, index] = index / denominator
+        polynomial[0, index] = index
         polynomial[1, index] = (
             coeff_a * nodes[0, index] + coeff_b * nodes[1, index] + coeff_c
         )
 
-    return polynomial
+    return num_nodes - 1, polynomial
 
 
 def clip_range(nodes1, nodes2):
@@ -317,16 +323,17 @@ def clip_range(nodes1, nodes2):
     Two B |eacute| zier curves :math:`B_1(s)` and :math:`B_2(t)` are defined by
     ``nodes1`` and ``nodes2``. The "fat line" (see :func:`compute_fat_line`)
     for :math:`B_1(s)` is used to narrow the range of possible :math:`t`-values
-    in an intersection by considering the distance polynomial for
-    :math:`B_2(t)`:
+    in an intersection by considering the (non-normalized) distance polynomial
+    for :math:`B_2(t)`:
 
     .. math::
 
        d(t) = \sum_{j = 0}^m \binom{m}{j} t^j (1 - t)^{m - j} \cdot d_j
 
-    Here :math:`d_j = a x_j + b y_j + c` are the distances of each control
-    point :math:`(x_j, y_j)` of :math:`B_2(t)` to the implicit line for
-    :math:`B_1(s)`.
+    Here :math:`d_j = a x_j + b y_j + c` are the (non-normalized) distances of
+    each control point
+    :math:`\left[\begin{array}{c} x_j \\ y_j \end{array}\right]`
+    of :math:`B_2(t)` to the implicit line for :math:`B_1(s)`.
 
     Consider the following pair of B |eacute| zier curves and the distances
     from **all** of the control points to the implicit line for :math:`B_1(s)`:
@@ -359,9 +366,9 @@ def clip_range(nodes1, nodes2):
     .. image:: ../../images/clip_range.png
        :align: center
 
-    The distances from the control points of :math:`B_2(t)` define the
-    distance polynomial :math:`d(t)`. By writing this polynomial as a
-    B |eacute| zier curve, a convex hull can be formed. The intersection of
+    The (non-normalized) distances from the control points of :math:`B_2(t)`
+    define the distance polynomial :math:`d(t)`. By writing this polynomial as
+    a B |eacute| zier curve, a convex hull can be formed. The intersection of
     this convex hull with the "fat line" of :math:`B_1(s)` determines the
     extreme :math:`t` values possible and allows clipping the range of
     :math:`B_2(t)`:
@@ -372,11 +379,8 @@ def clip_range(nodes1, nodes2):
     .. doctest:: clip-range
        :options: +NORMALIZE_WHITESPACE
 
-       >>> s_min, s_max = clip_range(nodes1, nodes2)
-       >>> s_min
-       0.25
-       >>> np.allclose(s_max, 0.875, rtol=0.5 ** 52, atol=0.0)
-       True
+       >>> clip_range(nodes1, nodes2)
+       (0.25, 0.875)
 
     .. testcleanup:: clip-range
 
@@ -396,25 +400,26 @@ def clip_range(nodes1, nodes2):
         * The start parameter of the clipped range.
         * The end parameter of the clipped range.
     """
-    # NOTE: There is no corresponding "enable", but the disable only applies
-    #       in this lexical scope.
+    # NOTE: There is no corresponding "pylint: enable", but the disable only
+    #       applies in this lexical scope.
     # pylint: disable=too-many-locals
     coeff_a, coeff_b, coeff_c, d_min, d_max = compute_fat_line(nodes1)
-    polynomial = _clip_range_polynomial(nodes2, coeff_a, coeff_b, coeff_c)
+    degree2, polynomial = _clip_range_polynomial(
+        nodes2, coeff_a, coeff_b, coeff_c
+    )
     # Define segments for the top and the bottom of the region
     # bounded by the fat line.
     start_bottom = np.asfortranarray([0.0, d_min])
-    end_bottom = np.asfortranarray([1.0, d_min])
+    end_bottom = np.asfortranarray([degree2, d_min])
     start_top = np.asfortranarray([0.0, d_max])
-    end_top = np.asfortranarray([1.0, d_max])
+    end_top = np.asfortranarray([degree2, d_max])
     s_min = DEFAULT_S_MIN
     s_max = DEFAULT_S_MAX
     # NOTE: We avoid computing the convex hull and just compute where
     #       all segments connecting two control points intersect the
     #       fat lines.
-    _, num_nodes2 = nodes2.shape
-    for start_index in range(num_nodes2 - 1):
-        for end_index in range(start_index + 1, num_nodes2):
+    for start_index in range(degree2):
+        for end_index in range(start_index + 1, degree2 + 1):
             s_min, s_max = _update_parameters(
                 s_min,
                 s_max,

@@ -15,9 +15,6 @@ import unittest
 import numpy as np
 
 
-SPACING = np.spacing  # pylint: disable=no-member
-
-
 class Test_compute_implicit_line(unittest.TestCase):
     @staticmethod
     def _call_function_under_test(nodes):
@@ -29,24 +26,22 @@ class Test_compute_implicit_line(unittest.TestCase):
         nodes = np.asfortranarray([[1.0, 5.0], [2.0, 2.0]])
         coeff_a, coeff_b, coeff_c = self._call_function_under_test(nodes)
         self.assertEqual(coeff_a, 0.0)
-        self.assertEqual(coeff_b, 1.0)
-        self.assertEqual(coeff_c, -2.0)
+        self.assertEqual(coeff_b, 4.0)
+        self.assertEqual(coeff_c, -8.0)
 
     def test_rational_length(self):
         nodes = np.asfortranarray([[3.0, 7.0], [2.0, 5.0]])
         coeff_a, coeff_b, coeff_c = self._call_function_under_test(nodes)
-        self.assertEqual(coeff_a, -3.0 / 5.0)
-        self.assertEqual(coeff_b, 4.0 / 5.0)
-        self.assertEqual(coeff_c, 1.0 / 5.0)
+        self.assertEqual(coeff_a, -3.0)
+        self.assertEqual(coeff_b, 4.0)
+        self.assertEqual(coeff_c, 1.0)
 
     def test_irrational_length(self):
         nodes = np.asfortranarray([[4.0, 5.0], [7.0, 8.0]])
         coeff_a, coeff_b, coeff_c = self._call_function_under_test(nodes)
-        sqrt_half = np.sqrt(0.5)
-        delta = SPACING(sqrt_half)  # pylint: disable=assignment-from-no-return
-        self.assertAlmostEqual(coeff_a, -sqrt_half, delta=delta)
-        self.assertAlmostEqual(coeff_b, sqrt_half, delta=delta)
-        self.assertAlmostEqual(coeff_c, -3 * sqrt_half, delta=4 * delta)
+        self.assertEqual(coeff_a, -1.0)
+        self.assertEqual(coeff_b, 1.0)
+        self.assertEqual(coeff_c, -3.0)
 
 
 class Test_compute_fat_line(unittest.TestCase):
@@ -61,8 +56,8 @@ class Test_compute_fat_line(unittest.TestCase):
         result = self._call_function_under_test(nodes)
         coeff_a, coeff_b, coeff_c, d_min, d_max = result
         self.assertEqual(coeff_a, 0.0)
-        self.assertEqual(coeff_b, 1.0)
-        self.assertEqual(coeff_c, -2.0)
+        self.assertEqual(coeff_b, 4.0)
+        self.assertEqual(coeff_c, -8.0)
         self.assertEqual(d_min, 0.0)
         self.assertEqual(d_max, 0.0)
 
@@ -70,10 +65,10 @@ class Test_compute_fat_line(unittest.TestCase):
         nodes = np.asfortranarray([[0.0, 1.0, 0.0], [0.0, 1.0, 2.0]])
         result = self._call_function_under_test(nodes)
         coeff_a, coeff_b, coeff_c, d_min, d_max = result
-        self.assertEqual(coeff_a, -1.0)
+        self.assertEqual(coeff_a, -2.0)
         self.assertEqual(coeff_b, 0.0)
         self.assertEqual(coeff_c, 0.0)
-        self.assertEqual(d_min, -1.0)
+        self.assertEqual(d_min, -2.0)
         self.assertEqual(d_max, 0.0)
 
     def test_many_interior(self):
@@ -83,10 +78,10 @@ class Test_compute_fat_line(unittest.TestCase):
         result = self._call_function_under_test(nodes)
         coeff_a, coeff_b, coeff_c, d_min, d_max = result
         self.assertEqual(coeff_a, 0.0)
-        self.assertEqual(coeff_b, 1.0)
+        self.assertEqual(coeff_b, 4.0)
         self.assertEqual(coeff_c, 0.0)
-        self.assertEqual(d_min, -4.0)
-        self.assertEqual(d_max, 4.0)
+        self.assertEqual(d_min, -16.0)
+        self.assertEqual(d_max, 16.0)
 
 
 class Test__update_parameters(unittest.TestCase):

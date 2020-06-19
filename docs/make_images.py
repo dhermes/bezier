@@ -1703,6 +1703,11 @@ def _plot_endpoints_line(ax, fat_line_coeffs, **plot_kwargs):
     ax.set_xlim(min_x, max_x)
 
 
+def _normalize_implicit_line_tuple(info):
+    length = np.linalg.norm(info[:2], ord=2)
+    return tuple(np.array(info) / length)
+
+
 def compute_implicit_line(nodes):
     """Image for :func:`.hazmat.clipping.compute_implicit_line` docstring."""
     if NO_IMAGES:
@@ -1721,8 +1726,12 @@ def compute_implicit_line(nodes):
     )
 
     ax.axis("scaled")
+    # NOTE: This "cheats" and assumes knowledge of what's actually in ``nodes``.
+    ax.set_xticks([0.0, 1.0, 2.0, 3.0, 4.0])
+    ax.set_yticks([0.0, 1.0, 2.0, 3.0])
 
     info = clipping.compute_fat_line(nodes)
+    info = _normalize_implicit_line_tuple(info)
     _plot_endpoints_line(ax, info, color="black")
     save_image(ax.figure, "compute_implicit_line.png")
 
@@ -1777,6 +1786,7 @@ def compute_fat_line(nodes, fat_line_coeffs):
     if NO_IMAGES:
         return
 
+    fat_line_coeffs = _normalize_implicit_line_tuple(fat_line_coeffs)
     curve = bezier.Curve.from_nodes(nodes)
     ax = curve.plot(256, color=BLUE)
     ax.plot(
@@ -1809,6 +1819,7 @@ def clip_range(nodes1, nodes2):
     )
 
     fat_line_coeffs = clipping.compute_fat_line(nodes1)
+    fat_line_coeffs = _normalize_implicit_line_tuple(fat_line_coeffs)
     # Add perpendicular lines to the "implicit" line.
     _add_perpendicular_segments(ax, nodes2, fat_line_coeffs, GREEN)
 
@@ -1831,11 +1842,12 @@ def clip_range_distances(nodes1, nodes2):
     figure = plt.figure()
     ax = figure.gca()
 
-    coeff_a, coeff_b, coeff_c, d_min, d_max = clipping.compute_fat_line(nodes1)
-    polynomial = clipping._clip_range_polynomial(
+    fat_line_coeffs = clipping.compute_fat_line(nodes1)
+    coeff_a, coeff_b, coeff_c, d_min, d_max = fat_line_coeffs
+    degree2, polynomial = clipping._clip_range_polynomial(
         nodes2, coeff_a, coeff_b, coeff_c
     )
-    ax.fill_between([0.0, 1.0], d_min, d_max, color=BLUE, alpha=0.25)
+    ax.fill_between([0.0, degree2], d_min, d_max, color=BLUE, alpha=0.25)
     s_min, s_max = clipping.clip_range(nodes1, nodes2)
 
     convex_hull = _helpers.simple_convex_hull(polynomial)
@@ -1843,18 +1855,14 @@ def clip_range_distances(nodes1, nodes2):
         ax, convex_hull, GREEN, with_nodes=True, alpha=0.625, node_color=GREEN,
     )
 
-    _, num_nodes2 = nodes2.shape
-    for index in range(num_nodes2):
+    for index in range(degree2 + 1):
         x_val, y_val = polynomial[:, index]
         ax.plot([x_val, x_val], [0.0, y_val], color=GREEN, linestyle="dashed")
 
-    aspect_max = max(d_max, np.max(polynomial[1, :]))
-    aspect_min = min(d_min, np.min(polynomial[1, :]))
-    ax.set_aspect(1.0 / (aspect_max - aspect_min))
     # NOTE: This "cheats" and uses the fact that it knows that ``s_min``
     #       corresponds to ``d_max`` and ``s_max`` corresponds to ``d_min``.
     ax.plot(
-        [s_min, s_max],
+        [degree2 * s_min, degree2 * s_max],
         [d_max, d_min],
         color="black",
         marker="o",
@@ -1862,29 +1870,36 @@ def clip_range_distances(nodes1, nodes2):
     )
 
     # Use minor xticks **above** for showing s_min and s_max.
-    ax.set_xticks([0.25, 0.875], minor=True)
-    ax.set_xticklabels(["0.25", "0.875"], minor=True)
+    jitter = 0.5 ** 5
+    # NOTE: We introduce ``jitter`` to avoid using the same value for a minor
+    #       xtick that is used for a major one. When ``matplotlib`` sees a
+    #       minor xtick at the exact same value used by a major xtick, it
+    #       ignores the tick.
+    ax.set_xticks(
+        [degree2 * s_min + jitter, degree2 * s_max - jitter], minor=True
+    )
+    ax.set_xticklabels([f"$t = {s_min}$", f"$t = {s_max}$"], minor=True)
     ax.tick_params(
         axis="x",
         which="minor",
-        direction="out",
-        top=1,
-        bottom=0,
-        labelbottom=0,
-        labeltop=1,
+        direction="in",
+        top=False,
+        bottom=False,
+        labelbottom=False,
+        labeltop=True,
     )
     # Add line up to minor xticks. Similar to the dots on ``s_min`` and
     # ``s_max`` this "cheats" with the correspondence to ``d_min`` / ``d_max``.
     min_y, max_y = ax.get_ylim()
     ax.plot(
-        [s_min, s_min],
+        [degree2 * s_min, degree2 * s_min],
         [d_max, max_y],
         color="black",
         alpha=0.125,
         linestyle="dashed",
     )
     ax.plot(
-        [s_max, s_max],
+        [degree2 * s_max, degree2 * s_max],
         [d_min, max_y],
         color="black",
         alpha=0.125,
@@ -1892,6 +1907,7 @@ def clip_range_distances(nodes1, nodes2):
     )
     ax.set_ylim(min_y, max_y)
 
+    ax.set_ylabel("$d(t)$", rotation=0)
     save_image(figure, "clip_range_distances.png")
 
 
