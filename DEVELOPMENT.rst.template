@@ -366,7 +366,7 @@ Documentation
 *************
 
 The documentation is built with `Sphinx`_ and automatically
-updated on `RTD`_ every time a commit is pushed to ``master``.
+updated on `RTD`_ every time a commit is pushed to ``main``.
 
 .. _Sphinx: http://www.sphinx-doc.org
 .. _RTD: https://readthedocs.org/
@@ -470,7 +470,7 @@ reasons:
 
 * The documentation and README (which acts as the landing page text on
   PyPI) will be updated with links scoped to the versioned tag (rather
-  than ``master``). This update occurs via the ``doc_template_release.py``
+  than ``main``). This update occurs via the ``doc_template_release.py``
   script.
 * Several badges on the documentation landing page (``index.rst``) are
   irrelevant to a fixed version (such as the "latest" version of the

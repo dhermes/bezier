@@ -250,15 +250,15 @@ License
 ``bezier`` is made available under the Apache 2.0 License. For more
 details, see `the LICENSE`_.
 
-.. _the LICENSE: https://github.com/dhermes/bezier/blob/master/LICENSE
+.. _the LICENSE: https://github.com/dhermes/bezier/blob/main/LICENSE
 
-.. |circle-build| image:: https://img.shields.io/circleci/project/github/dhermes/bezier/master.svg?maxAge=3600&logo=circleci&label=Linux
+.. |circle-build| image:: https://img.shields.io/circleci/project/github/dhermes/bezier/main.svg?maxAge=3600&logo=circleci&label=Linux
    :target: https://circleci.com/gh/dhermes/bezier
    :alt: CircleCI Build
-.. |travis-build| image:: https://img.shields.io/travis/dhermes/bezier/master.svg?maxAge=3600&logo=travis&label=macOS
+.. |travis-build| image:: https://img.shields.io/travis/dhermes/bezier/main.svg?maxAge=3600&logo=travis&label=macOS
    :target: https://travis-ci.org/dhermes/bezier
    :alt: Travis Build
-.. |appveyor-build| image:: https://img.shields.io/appveyor/ci/dhermes/bezier/master.svg?maxAge=3600&logo=appveyor&label=Windows
+.. |appveyor-build| image:: https://img.shields.io/appveyor/ci/dhermes/bezier/main.svg?maxAge=3600&logo=appveyor&label=Windows
    :target: https://ci.appveyor.com/project/dhermes/bezier
    :alt: AppVeyor CI Build
 .. |pypi| image:: https://img.shields.io/pypi/v/bezier.svg

@@ -19,7 +19,7 @@ This library provides:
 
 Dive in and take a look!
 
-.. image:: https://raw.githubusercontent.com/dhermes/bezier/master/docs/images/triangles6Q_and_7Q.png
+.. image:: https://raw.githubusercontent.com/dhermes/bezier/main/docs/images/triangles6Q_and_7Q.png
    :align: center
 
 Why B |eacute| zier?
@@ -28,17 +28,17 @@ Why B |eacute| zier?
 A B |eacute| zier curve (and triangle, etc.) is a parametric curve
 that uses the `Bernstein basis`_:
 
-.. image:: https://raw.githubusercontent.com/dhermes/bezier/master/docs/images/bernstein_basis.png
+.. image:: https://raw.githubusercontent.com/dhermes/bezier/main/docs/images/bernstein_basis.png
    :align: center
 
 to define a curve as a linear combination:
 
-.. image:: https://raw.githubusercontent.com/dhermes/bezier/master/docs/images/bezier_defn.png
+.. image:: https://raw.githubusercontent.com/dhermes/bezier/main/docs/images/bezier_defn.png
    :align: center
 
 This comes from the fact that the weights sum to one:
 
-.. image:: https://raw.githubusercontent.com/dhermes/bezier/master/docs/images/sum_to_unity.png
+.. image:: https://raw.githubusercontent.com/dhermes/bezier/main/docs/images/sum_to_unity.png
    :align: center
 
 This can be generalized to higher order by considering three, four, etc.
@@ -146,7 +146,7 @@ intersections):
    >>> _ = ax.set_xlim(-0.125, 1.125)
    >>> _ = ax.set_ylim(-0.0625, 0.625)
 
-.. image:: https://raw.githubusercontent.com/dhermes/bezier/master/docs/images/curves1_and_13.png
+.. image:: https://raw.githubusercontent.com/dhermes/bezier/main/docs/images/curves1_and_13.png
    :align: center
 
 For API-level documentation, check out the B |eacute| zier Python
@@ -196,19 +196,19 @@ details, see `the LICENSE`_.
 .. _Curves: https://bezier.readthedocs.io/en/latest/python/reference/bezier.curve.html
 .. _Triangles: https://bezier.readthedocs.io/en/latest/python/reference/bezier.triangle.html
 .. _package: https://bezier.readthedocs.io/en/latest/python/reference/bezier.html
-.. _DEVELOPMENT doc: https://github.com/dhermes/bezier/blob/master/DEVELOPMENT.rst
-.. _the LICENSE: https://github.com/dhermes/bezier/blob/master/LICENSE
+.. _DEVELOPMENT doc: https://github.com/dhermes/bezier/blob/main/DEVELOPMENT.rst
+.. _the LICENSE: https://github.com/dhermes/bezier/blob/main/LICENSE
 
 .. |docs| image:: https://readthedocs.org/projects/bezier/badge/?version=latest
    :target: https://bezier.readthedocs.io/en/latest/
    :alt: Documentation Status
-.. |circle-build| image:: https://img.shields.io/circleci/project/github/dhermes/bezier/master.svg?maxAge=3600&logo=circleci&label=Linux
+.. |circle-build| image:: https://img.shields.io/circleci/project/github/dhermes/bezier/main.svg?maxAge=3600&logo=circleci&label=Linux
    :target: https://circleci.com/gh/dhermes/bezier
    :alt: CircleCI Build
-.. |travis-build| image:: https://img.shields.io/travis/dhermes/bezier/master.svg?maxAge=3600&logo=travis&label=macOS
+.. |travis-build| image:: https://img.shields.io/travis/dhermes/bezier/main.svg?maxAge=3600&logo=travis&label=macOS
    :target: https://travis-ci.org/dhermes/bezier
    :alt: Travis Build
-.. |appveyor-build| image:: https://img.shields.io/appveyor/ci/dhermes/bezier/master.svg?maxAge=3600&logo=appveyor&label=Windows
+.. |appveyor-build| image:: https://img.shields.io/appveyor/ci/dhermes/bezier/main.svg?maxAge=3600&logo=appveyor&label=Windows
    :target: https://ci.appveyor.com/project/dhermes/bezier
    :alt: AppVeyor CI Build
 .. |pypi| image:: https://img.shields.io/pypi/v/bezier.svg

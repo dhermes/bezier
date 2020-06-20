@@ -39,7 +39,7 @@ RELEASE_INDEX_FILE = os.path.join(
 DEVELOPMENT_TEMPLATE = os.path.join(_ROOT_DIR, "DEVELOPMENT.rst.template")
 DEVELOPMENT_FILE = os.path.join(_ROOT_DIR, "DEVELOPMENT.rst")
 RTD_VERSION = "latest"
-REVISION = "master"
+REVISION = "main"
 PLAIN_CODE_BLOCK = ".. code-block:: python"
 SPHINX_CODE_BLOCK1 = """\
 .. testsetup:: getting-started
@@ -143,7 +143,7 @@ DOCS_IMG = """\
    :alt: Documentation Status
 """
 CIRCLECI_BADGE = (
-    "https://img.shields.io/circleci/project/github/dhermes/bezier/master.svg?"
+    "https://img.shields.io/circleci/project/github/dhermes/bezier/main.svg?"
     "maxAge=3600&logo=circleci&label=Linux"
 )
 CIRCLECI_BADGE_RELEASE = (
@@ -151,7 +151,7 @@ CIRCLECI_BADGE_RELEASE = (
     "docs/circleci-passing.svg?sanitize=true"
 )
 TRAVIS_BADGE = (
-    "https://img.shields.io/travis/dhermes/bezier/master.svg?"
+    "https://img.shields.io/travis/dhermes/bezier/main.svg?"
     "maxAge=3600&logo=travis&label=macOS"
 )
 TRAVIS_BADGE_RELEASE = (
@@ -159,7 +159,7 @@ TRAVIS_BADGE_RELEASE = (
     "docs/travis-passing.svg?sanitize=true"
 )
 APPVEYOR_BADGE = (
-    "https://img.shields.io/appveyor/ci/dhermes/bezier/master.svg?"
+    "https://img.shields.io/appveyor/ci/dhermes/bezier/main.svg?"
     "maxAge=3600&logo=appveyor&label=Windows"
 )
 APPVEYOR_BADGE_RELEASE = (
@@ -273,7 +273,7 @@ def populate_readme(revision, rtd_version, **extra_kwargs):
 
     Args:
         revision (str): The branch, commit, etc. being referred to (e.g.
-            ``master``).
+            ``main``).
         rtd_version (str): The version to use for RTD (Read the Docs) links
             (e.g. ``latest``).
         extra_kwargs (Dict[str, str]): Over-ride for template arguments.

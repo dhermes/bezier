@@ -5,7 +5,7 @@ osx_image: xcode11.4 # This is latest as of May 19, 2020
 
 branches:
   only:
-    - master
+    - main
 
 addons:
   homebrew:

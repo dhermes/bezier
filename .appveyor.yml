@@ -5,7 +5,7 @@ build: false
 
 branches:
   only:
-    - master
+    - main
 
 matrix:
   fast_finish: true

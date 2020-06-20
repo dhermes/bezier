@@ -19,7 +19,7 @@ This will introduce one-off changes in
 * ``docs/python/binary-extension.rst``
 * ``DEVELOPMENT.rst``
 
-that are not intended to be checked into ``master`` (except maybe
+that are not intended to be checked into ``main`` (except maybe
 to be reverted after a release).
 
 This changes will cause ``nox -s lint`` to fail because it will make

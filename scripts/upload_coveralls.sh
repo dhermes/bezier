@@ -21,8 +21,8 @@ if [[ -z "${CIRCLE_BRANCH}" ]]; then
     exit 1
 fi
 
-if [[ "${CIRCLE_BRANCH}" != "master" ]]; then
-    echo "Coverage upload only happens on master"
+if [[ "${CIRCLE_BRANCH}" != "main" ]]; then
+    echo "Coverage upload only happens on main"
     echo "Currently on ${CIRCLE_BRANCH}, doing nothing"
     exit
 fi
