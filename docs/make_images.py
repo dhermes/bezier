@@ -1855,6 +1855,15 @@ def clip_range_distances(nodes1, nodes2):
         ax, convex_hull, GREEN, with_nodes=True, alpha=0.625, node_color=GREEN,
     )
 
+    # Plot the true distance function ``d(t)``.
+    t_values = np.linspace(0.0, 1.0, 257)
+    curve2 = bezier.Curve.from_nodes(nodes2)
+    evaluated = curve2.evaluate_multi(t_values)
+    x_values = degree2 * t_values
+    d_values = coeff_a * evaluated[0, :] + coeff_b * evaluated[1, :] + coeff_c
+    ax.plot(x_values, d_values, color=GREEN)
+
+    # Add dashed lines to each control point in the convex hull.
     for index in range(degree2 + 1):
         x_val, y_val = polynomial[:, index]
         ax.plot([x_val, x_val], [0.0, y_val], color=GREEN, linestyle="dashed")
