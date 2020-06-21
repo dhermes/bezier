@@ -455,7 +455,7 @@ On AppVeyor, the binary extension is built and tested with both 32-bit and
 .. _CircleCI config: https://github.com/dhermes/bezier/blob/{revision}/.circleci/config.yml
 .. _Travis config: https://github.com/dhermes/bezier/blob/{revision}/.travis.yml
 .. _AppVeyor config: https://github.com/dhermes/bezier/blob/{revision}/.appveyor.yml
-.. _python-multi Dockerfile: https://github.com/dhermes/python-multi/blob/{revision}/src/Dockerfile
+.. _python-multi Dockerfile: https://github.com/dhermes/python-multi/blob/master/src/Dockerfile
 .. _bezier Dockerfile: https://github.com/dhermes/bezier/blob/{revision}/scripts/docker/bezier.Dockerfile
 .. _multibuild: https://github.com/matthew-brett/multibuild
 .. _discontinued: https://github.com/numpy/numpy/issues/11625
