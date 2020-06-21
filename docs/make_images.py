@@ -1916,6 +1916,7 @@ def clip_range_distances(nodes1, nodes2):
     )
     ax.set_ylim(min_y, max_y)
 
+    ax.set_xlabel("$2t$")
     ax.set_ylabel("$d(t)$", rotation=0)
     save_image(figure, "clip_range_distances.png")
 
