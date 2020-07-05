@@ -17,8 +17,8 @@ exit with status code 0 if all files have 100% coverage.
 """
 
 import argparse
-import io
 import sys
+import tempfile
 
 import pycobertura
 import lcov_cobertura
@@ -32,8 +32,13 @@ def report_coverage(lcov_filename):
         contents = file_obj.read()
     converter = lcov_cobertura.LcovCobertura(contents)
     cobertura_xml = converter.convert()
-    report = io.StringIO(cobertura_xml)
-    cobertura = pycobertura.Cobertura(report)
+
+    with tempfile.NamedTemporaryFile(mode="w+") as file_obj:
+        file_obj.write(cobertura_xml)
+        file_obj.seek(0)
+        report = file_obj.name
+        cobertura = pycobertura.Cobertura(report)
+
     reporter = pycobertura.TextReporter(cobertura)
     print(reporter.generate())
     # The status code will be the number of files under the
