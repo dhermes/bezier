@@ -535,6 +535,9 @@ This project uses environment variables for building the
   current build is intended for a wheel. On Windows, this will involve
   renaming ``bezier.dll`` to a unique name (to avoid name collision) and
   updating ``_speedup*.pyd`` to refer to the new name.
+- ``BEZIER_DLL_HASH``: If set, this will indicate to ``setup.py`` that the
+  built ``bezier.dll`` should be renamed to ``bezier-${BEZIER_DLL_HASH}.dll``
+  in situations such as tests where this filename should be deterministic.
 
 for interacting with the system at import time:
 
