@@ -1698,7 +1698,9 @@ def _plot_endpoints_line(ax, fat_line_coeffs, **plot_kwargs):
     max_y = -(coeff_a * max_x + coeff_c) / coeff_b
 
     ax.plot(
-        [min_x, max_x], [min_y, max_y], **plot_kwargs,
+        [min_x, max_x],
+        [min_y, max_y],
+        **plot_kwargs,
     )
     ax.set_xlim(min_x, max_x)
 
@@ -1790,7 +1792,11 @@ def compute_fat_line(nodes, fat_line_coeffs):
     curve = bezier.Curve.from_nodes(nodes)
     ax = curve.plot(256, color=BLUE)
     ax.plot(
-        nodes[0, :], nodes[1, :], marker="o", color=BLUE, linestyle="none",
+        nodes[0, :],
+        nodes[1, :],
+        marker="o",
+        color=BLUE,
+        linestyle="none",
     )
     _add_perpendicular_segments(ax, nodes, fat_line_coeffs, BLUE)
 
@@ -1812,10 +1818,18 @@ def clip_range(nodes1, nodes2):
     ax = curve1.plot(256, color=BLUE)
     curve2.plot(256, ax=ax, color=GREEN)
     ax.plot(
-        nodes1[0, :], nodes1[1, :], marker="o", color=BLUE, linestyle="none",
+        nodes1[0, :],
+        nodes1[1, :],
+        marker="o",
+        color=BLUE,
+        linestyle="none",
     )
     ax.plot(
-        nodes2[0, :], nodes2[1, :], marker="o", color=GREEN, linestyle="none",
+        nodes2[0, :],
+        nodes2[1, :],
+        marker="o",
+        color=GREEN,
+        linestyle="none",
     )
 
     fat_line_coeffs = clipping.compute_fat_line(nodes1)
@@ -1852,7 +1866,12 @@ def clip_range_distances(nodes1, nodes2):
 
     convex_hull = _helpers.simple_convex_hull(polynomial)
     add_patch(
-        ax, convex_hull, GREEN, with_nodes=True, alpha=0.625, node_color=GREEN,
+        ax,
+        convex_hull,
+        GREEN,
+        with_nodes=True,
+        alpha=0.625,
+        node_color=GREEN,
     )
 
     # Plot the true distance function ``d(t)``.
