@@ -28,9 +28,9 @@ IS_LINUX = sys.platform in ("linux", "linux2")
 IS_MACOS = sys.platform == "darwin"
 IS_WINDOWS = os.name == "nt"
 DEPS = {
-    "black": "black >= 19.10b0",
+    "black": "black >= 20.8b1",
     "cmake-format": "cmake-format >= 0.6.5",
-    "cmake": "cmake >= 3.15.3",
+    "cmake": "cmake >= 3.18.2",
     "coverage": "coverage",
     "Cython": "Cython >= 0.29.21",
     "docutils": "docutils",
@@ -44,12 +44,12 @@ DEPS = {
     "numpy": "numpy >= 1.18.1",
     "pycobertura": "pycobertura >= 1.0.0",
     "Pygments": "Pygments",
-    "pylint": "pylint >= 2.4.4",
-    "pytest": "pytest >= 5.3.2",
+    "pylint": "pylint >= 2.6.0",
+    "pytest": "pytest >= 6.1.1",
     "pytest-cov": "pytest-cov",
-    "scipy": "scipy >= 1.4.1",
-    "sympy": "sympy >= 1.5.1",
-    "seaborn": "seaborn >= 0.9.0",
+    "scipy": "scipy >= 1.5.2",
+    "sympy": "sympy >= 1.6.2",
+    "seaborn": "seaborn >= 0.11.0",
 }
 BASE_DEPS = (DEPS["numpy"], DEPS["pytest"], DEPS["importlib-metadata"])
 NOX_DIR = os.path.abspath(os.path.dirname(__file__))
