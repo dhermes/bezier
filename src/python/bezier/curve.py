@@ -96,7 +96,7 @@ class Curve(_base.Base):
     )
 
     def __init__(self, nodes, degree, *, copy=True, verify=True):
-        super(Curve, self).__init__(nodes, copy=copy)
+        super().__init__(nodes, copy=copy)
         self._degree = degree
         self._verify_degree(verify)
 

@@ -549,7 +549,7 @@ class UnsupportedDegree(NotImplementedError):
     """
 
     def __init__(self, degree, supported=()):
-        super(UnsupportedDegree, self).__init__()
+        super().__init__()
         self.degree = degree
         """int: The degree that the caller attempted to use."""
         self.supported = supported

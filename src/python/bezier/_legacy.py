@@ -31,4 +31,4 @@ class Surface(triangle.Triangle):
 
     def __init__(self, *args, **kwargs):
         warnings.warn(DEPRECATION_MSG, DeprecationWarning)
-        super(Surface, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)

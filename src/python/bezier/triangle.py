@@ -193,7 +193,7 @@ class Triangle(_base.Base):
     )
 
     def __init__(self, nodes, degree, *, copy=True, verify=True):
-        super(Triangle, self).__init__(nodes, copy=copy)
+        super().__init__(nodes, copy=copy)
         self._degree = degree
         self._edges = None
         self._verify_degree(verify)

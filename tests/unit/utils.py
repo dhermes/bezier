@@ -136,7 +136,7 @@ class NumPyTestCase(unittest.TestCase):
     def __init__(self, *args, **kwargs):
         import numpy as np
 
-        super(NumPyTestCase, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.addTypeEqualityFunc(np.ndarray, self.assertArrayEqual)
 
     def assertArrayEqual(self, arr1, arr2, msg=None):
