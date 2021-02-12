@@ -29,7 +29,7 @@ IS_MACOS = sys.platform == "darwin"
 IS_WINDOWS = os.name == "nt"
 DEPS = {
     "black": "black >= 20.8b1",
-    "cmake-format": "cmake-format >= 0.6.5",
+    "cmake-format": "cmake-format >= 0.6.13",
     "cmake": "cmake >= 3.18.4.post1",
     "coverage": "coverage",
     "Cython": "Cython >= 0.29.21",
@@ -40,16 +40,16 @@ DEPS = {
     "jsonschema": "jsonschema >= 3.2.0",
     "lcov_cobertura": "lcov_cobertura >= 1.6",
     "machomachomangler": "machomachomangler == 0.0.1",
-    "matplotlib": "matplotlib >= 3.1.2",
-    "numpy": "numpy >= 1.18.1",
-    "pycobertura": "pycobertura >= 1.0.0",
+    "matplotlib": "matplotlib >= 3.3.4",
+    "numpy": "numpy >= 1.20.1",
+    "pycobertura": "pycobertura >= 2.0.1",
     "Pygments": "Pygments",
     "pylint": "pylint >= 2.6.0",
-    "pytest": "pytest >= 6.1.1",
+    "pytest": "pytest >= 6.2.2",
     "pytest-cov": "pytest-cov",
-    "scipy": "scipy >= 1.5.2",
-    "sympy": "sympy >= 1.6.2",
-    "seaborn": "seaborn >= 0.11.0",
+    "scipy": "scipy >= 1.6.0",
+    "sympy": "sympy >= 1.7.1",
+    "seaborn": "seaborn >= 0.11.1",
 }
 BASE_DEPS = (DEPS["numpy"], DEPS["pytest"], DEPS["importlib-metadata"])
 NOX_DIR = os.path.abspath(os.path.dirname(__file__))

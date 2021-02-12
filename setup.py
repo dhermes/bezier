@@ -61,11 +61,11 @@ will be modified.
 # NOTE: This is a workaround, put in place for "deterministic" hashing of the
 #       DLL in cases where that matters (i.e. ``doctest``.)
 DLL_HASH_ENV = "BEZIER_DLL_HASH"
-REQUIREMENTS = ("numpy >= 1.18.1",)
+REQUIREMENTS = ("numpy >= 1.20.1",)
 # See: https://www.python.org/dev/peps/pep-0508/
 #      Dependency specification for Python Software Packages
 EXTRAS_REQUIRE = {
-    "full": ["matplotlib >= 3.0.0", "scipy >= 1.4.1", "sympy >= 1.5.1"],
+    "full": ["matplotlib >= 3.3.4", "scipy >= 1.6.0", "sympy >= 1.7.1"],
     ':python_version<"3.8" and platform_system=="Windows"': [
         "importlib-metadata"
     ],
