@@ -256,7 +256,7 @@ details, see `the LICENSE`_.
    :target: https://circleci.com/gh/dhermes/bezier
    :alt: CircleCI Build
 .. |travis-build| image:: https://img.shields.io/travis/dhermes/bezier/main.svg?maxAge=3600&logo=travis&label=macOS
-   :target: https://travis-ci.org/dhermes/bezier
+   :target: https://travis-ci.com/github/dhermes/bezier
    :alt: Travis Build
 .. |appveyor-build| image:: https://img.shields.io/appveyor/ci/dhermes/bezier/main.svg?maxAge=3600&logo=appveyor&label=Windows
    :target: https://ci.appveyor.com/project/dhermes/bezier

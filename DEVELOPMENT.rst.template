@@ -450,7 +450,7 @@ On AppVeyor, the binary extension is built and tested with both 32-bit and
 64-bit Python binaries.
 
 .. _CircleCI: https://circleci.com/gh/dhermes/bezier
-.. _Travis CI: https://travis-ci.org/dhermes/bezier
+.. _Travis CI: https://travis-ci.com/github/dhermes/bezier
 .. _AppVeyor: https://ci.appveyor.com/project/dhermes/bezier
 .. _CircleCI config: https://github.com/dhermes/bezier/blob/{revision}/.circleci/config.yml
 .. _Travis config: https://github.com/dhermes/bezier/blob/{revision}/.travis.yml

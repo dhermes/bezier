@@ -254,7 +254,7 @@ details, see `the LICENSE`_.
    :target: https://circleci.com/gh/dhermes/bezier/{circleci_build}
    :alt: CircleCI Build
 .. |travis-build| image:: https://raw.githubusercontent.com/dhermes/bezier/{version}/docs/travis-passing.svg?sanitize=true
-   :target: https://travis-ci.org/dhermes/bezier/builds/{travis_build}
+   :target: https://travis-ci.com/github/dhermes/bezier/builds/{travis_build}
    :alt: Travis Build
 .. |appveyor-build| image:: https://raw.githubusercontent.com/dhermes/bezier/{version}/docs/appveyor-passing.svg?sanitize=true
    :target: https://ci.appveyor.com/project/dhermes/bezier/build/{appveyor_build}

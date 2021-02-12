@@ -180,7 +180,7 @@ details, see `the LICENSE`_.
    :target: https://circleci.com/gh/dhermes/bezier{circleci_path}
    :alt: CircleCI Build
 .. |travis-build| image:: {travis_badge}
-   :target: https://travis-ci.org/dhermes/bezier{travis_path}
+   :target: https://travis-ci.com/github/dhermes/bezier{travis_path}
    :alt: Travis Build
 .. |appveyor-build| image:: {appveyor_badge}
    :target: https://ci.appveyor.com/project/dhermes/bezier{appveyor_path}
