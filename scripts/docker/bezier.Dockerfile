@@ -1,7 +1,7 @@
-FROM dhermes/python-multi
+FROM dhermes/python-multi:latest
 
 # Install the current versions of nox and NumPy.
-RUN python3.8 -m pip install --no-cache-dir \
+RUN python3.9 -m pip install --no-cache-dir \
   "cmake == 3.15.3" \
   "colorlog == 4.1.0" \
   "nox == 2019.11.9" \

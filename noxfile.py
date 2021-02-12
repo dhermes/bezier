@@ -57,7 +57,7 @@ DOCS_DEPS = (
     "--requirement",
     os.path.join(NOX_DIR, "docs", "requirements.txt"),
 )
-DEFAULT_INTERPRETER = "3.8"
+DEFAULT_INTERPRETER = "3.9"
 PYPY = "pypy3"
 ALL_INTERPRETERS = ("3.7", "3.7-32", "3.8", "3.8-32", "3.9", "3.9-32", PYPY)
 BUILD_TYPE_DEBUG = "Debug"
@@ -516,7 +516,7 @@ def _cmake(session, build_type):
     The ``session`` may be one of ``libbezier-debug`` / ``libbezier-release``
     in which case we directly build as instructed. Additionally, it may
     correspond to a session that seeks to build ``libbezier`` as a dependency,
-    e.g. ``nox -s unit-3.8``.
+    e.g. ``nox -s unit-3.9``.
 
     Returns:
         str: The install prefix that was created / re-used.

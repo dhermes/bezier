@@ -190,7 +190,7 @@ These slow tests have been identified via:
 .. code-block:: console
 
    $ ...
-   $ nox -s "unit-3.8" -- --durations=10
+   $ nox -s "unit-3.9" -- --durations=10
 
 and then marked with ``pytest.mark.skipif``.
 

@@ -25,27 +25,27 @@ set -e -x
 #       `yum install gcc-gfortran` installs an **older** `/usr/bin/gfortran`
 #       so we don't do that.
 
-# Install (new) CMake into Python 3.8 environment.
-/opt/python/cp38-cp38/bin/python -m pip install --upgrade pip
-/opt/python/cp38-cp38/bin/python -m pip install "cmake >= 3.15.3"
+# Install (new) CMake into Python 3.9 environment.
+/opt/python/cp39-cp39/bin/python -m pip install --upgrade pip
+/opt/python/cp39-cp39/bin/python -m pip install "cmake >= 3.15.3"
 
 # Build and install ``libbezier`` into a custom location.
 SRC_DIR="/io/src/fortran/"
 BUILD_DIR="${HOME}/libbezier-release/build"
 INSTALL_PREFIX="${HOME}/libbezier-release/usr"
 mkdir -p "${BUILD_DIR}"
-/opt/python/cp38-cp38/bin/cmake \
+/opt/python/cp39-cp39/bin/cmake \
     -DCMAKE_BUILD_TYPE=Release \
     -DCMAKE_INSTALL_PREFIX:PATH="${INSTALL_PREFIX}" \
     -DCMAKE_VERBOSE_MAKEFILE:BOOL=ON \
     -DTARGET_NATIVE_ARCH:BOOL=OFF \
     -S "${SRC_DIR}" \
     -B "${BUILD_DIR}"
-/opt/python/cp38-cp38/bin/cmake \
+/opt/python/cp39-cp39/bin/cmake \
     --build "${BUILD_DIR}" \
     --config Release \
     --target install
-/opt/python/cp38-cp38/bin/cmake -L "${BUILD_DIR}"
+/opt/python/cp39-cp39/bin/cmake -L "${BUILD_DIR}"
 
 VERSION_WHITELIST=""
 for PYBIN in /opt/python/*/bin; do
