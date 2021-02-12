@@ -59,7 +59,7 @@ fi
 
 # Make sure the "official" installed CPython is set up for testing.
 ${PY_BIN_DIR}/python -m pip install --upgrade virtualenv pip
-${PY_BIN_DIR}/python -m pip install --upgrade "nox >= 2019.11.9" numpy
+${PY_BIN_DIR}/python -m pip install --upgrade "nox >= 2020.12.31" numpy
 
 # Make sure the current Python is at the front of `PATH`.
 export PATH="${PY_BIN_DIR}:${PATH}"

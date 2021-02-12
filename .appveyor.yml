@@ -1,4 +1,5 @@
 ---
+image: Visual Studio 2019
 version: 1.0.{build}.{branch}
 
 build: false
@@ -18,7 +19,7 @@ environment:
 
   global:
 
-    MINGW_32: C:\mingw-w64\i686-6.3.0-posix-dwarf-rt_v5-rev1\mingw32\bin
+    MINGW_32: C:\mingw-w64\i686-8.1.0-posix-dwarf-rt_v6-rev0\mingw32\bin
     MINGW_64: C:\mingw-w64\x86_64-8.1.0-posix-seh-rt_v6-rev0\mingw64\bin
     DEFAULT_PYTHON: "C:\\Python39-x64"
     VIRTUALENV_NO_DOWNLOAD: "true"
@@ -66,7 +67,7 @@ install:
   - python -m pip install --upgrade wheel
 
   # Install the build dependencies of the project.
-  - python -m pip install --upgrade "nox >= 2019.11.9"
+  - python -m pip install --upgrade "nox >= 2020.12.31"
 
 test_script:
   - python -m nox -s %NOX_SESSION%

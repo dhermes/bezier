@@ -27,7 +27,7 @@ set -e -x
 
 # Install (new) CMake into Python 3.9 environment.
 /opt/python/cp39-cp39/bin/python -m pip install --upgrade pip
-/opt/python/cp39-cp39/bin/python -m pip install "cmake >= 3.15.3"
+/opt/python/cp39-cp39/bin/python -m pip install "cmake >= 3.18.4.post1"
 
 # Build and install ``libbezier`` into a custom location.
 SRC_DIR="/io/src/fortran/"
