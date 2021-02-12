@@ -31,7 +31,7 @@ fi
 
 # 0. Install the Python dependencies
 "${PY_ROOT}/bin/python" -m pip install --upgrade pip
-"${PY_ROOT}/bin/python" -m pip install --upgrade auditwheel "cmake >= 3.15.3" numpy
+"${PY_ROOT}/bin/python" -m pip install --upgrade auditwheel "cmake >= 3.18.4.post1" numpy
 
 # 1. Build and install ``libbezier`` into a custom location.
 BUILD_DIR=$(mktemp -d)

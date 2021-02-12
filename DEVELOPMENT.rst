@@ -15,8 +15,8 @@ In order to add a feature to ``bezier``:
    proposed changes (i.e. just sending a large PR with a finished
    feature may catch maintainer(s) off guard).
 
-#. **Add tests**: The feature must work fully on CPython versions 3.6, 3.7 and
-   3.8 and on PyPy 3; on Linux, macOS and Windows. In addition, the feature
+#. **Add tests**: The feature must work fully on CPython versions 3.7, 3.8 and
+   3.9 and on PyPy 3; on Linux, macOS and Windows. In addition, the feature
    should have 100% line coverage.
 
 #. **Documentation**: The feature must (should) be documented with
@@ -112,9 +112,9 @@ We recommend using `Nox`_ to run unit tests:
 
 .. code-block:: console
 
-   $ nox -s "unit-3.6"
    $ nox -s "unit-3.7"
    $ nox -s "unit-3.8"
+   $ nox -s "unit-3.9"
    $ nox -s "unit-pypy3"
    $ nox -s  unit  # Run all versions
 
@@ -123,9 +123,9 @@ manage dependencies or build the binary extension):
 
 .. code-block:: console
 
-   $ PYTHONPATH=src/python/ python3.6 -m pytest tests/unit/
    $ PYTHONPATH=src/python/ python3.7 -m pytest tests/unit/
    $ PYTHONPATH=src/python/ python3.8 -m pytest tests/unit/
+   $ PYTHONPATH=src/python/ python3.9 -m pytest tests/unit/
    $ PYTHONPATH=src/python/ pypy3     -m pytest tests/unit/
 
 .. _Nox: https://nox.readthedocs.io
@@ -180,9 +180,9 @@ marked slow, use the ``--ignore-slow`` flag:
 
 .. code-block:: console
 
-   $ nox -s "unit-3.6" -- --ignore-slow
    $ nox -s "unit-3.7" -- --ignore-slow
    $ nox -s "unit-3.8" -- --ignore-slow
+   $ nox -s "unit-3.9" -- --ignore-slow
    $ nox -s  unit      -- --ignore-slow
 
 These slow tests have been identified via:
@@ -190,7 +190,7 @@ These slow tests have been identified via:
 .. code-block:: console
 
    $ ...
-   $ nox -s "unit-3.8" -- --durations=10
+   $ nox -s "unit-3.9" -- --durations=10
 
 and then marked with ``pytest.mark.skipif``.
 
@@ -250,15 +250,15 @@ To run the functional tests:
 
 .. code-block:: console
 
-   $ nox -s "functional-3.6"
    $ nox -s "functional-3.7"
    $ nox -s "functional-3.8"
+   $ nox -s "functional-3.9"
    $ nox -s "functional-pypy3"
    $ nox -s  functional  # Run all versions
    $ # OR
-   $ PYTHONPATH=src/python/ python3.6 -m pytest tests/functional/
    $ PYTHONPATH=src/python/ python3.7 -m pytest tests/functional/
    $ PYTHONPATH=src/python/ python3.8 -m pytest tests/functional/
+   $ PYTHONPATH=src/python/ python3.9 -m pytest tests/functional/
    $ PYTHONPATH=src/python/ pypy3     -m pytest tests/functional/
 
 .. _functional tests: https://github.com/dhermes/bezier/tree/main/tests/functional
@@ -376,7 +376,7 @@ To build the documentation locally:
 .. code-block:: console
 
    $ nox -s docs
-   $ # OR (from a Python 3.6 or later environment)
+   $ # OR (from a Python 3.7 or later environment)
    $ PYTHONPATH=src/python/ ./scripts/build_docs.sh
 
 Documentation Snippets
@@ -392,7 +392,7 @@ To run the documentation tests:
 .. code-block:: console
 
    $ nox -s doctest
-   $ # OR (from a Python 3.6 or later environment)
+   $ # OR (from a Python 3.7 or later environment)
    $ PYTHONPATH=src/python/:. sphinx-build -W \
    >     -b doctest \
    >     -d docs/build/doctrees \
@@ -415,7 +415,7 @@ To regenerate all the images:
 .. code-block:: console
 
    $ nox -s docs_images
-   $ # OR (from a Python 3.6 or later environment)
+   $ # OR (from a Python 3.7 or later environment)
    $ export MATPLOTLIBRC=docs/ GENERATE_IMAGES=True PYTHONPATH=src/python/
    $ sphinx-build -W \
    >     -b doctest \
@@ -497,14 +497,14 @@ Supported Python Versions
 
 ``bezier`` explicitly supports:
 
--  `Python 3.6`_
 -  `Python 3.7`_
 -  `Python 3.8`_
+-  `Python 3.9`_
 -  `PyPy 3`_
 
-.. _Python 3.6: https://docs.python.org/3.6/
 .. _Python 3.7: https://docs.python.org/3.7/
 .. _Python 3.8: https://docs.python.org/3.8/
+.. _Python 3.9: https://docs.python.org/3.9/
 .. _PyPy 3: https://pypy.org/
 
 Supported versions can be found in the ``noxfile.py`` `config`_.

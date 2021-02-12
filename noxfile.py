@@ -29,8 +29,8 @@ IS_MACOS = sys.platform == "darwin"
 IS_WINDOWS = os.name == "nt"
 DEPS = {
     "black": "black >= 20.8b1",
-    "cmake-format": "cmake-format >= 0.6.5",
-    "cmake": "cmake >= 3.18.2",
+    "cmake-format": "cmake-format >= 0.6.13",
+    "cmake": "cmake >= 3.18.4.post1",
     "coverage": "coverage",
     "Cython": "Cython >= 0.29.21",
     "docutils": "docutils",
@@ -40,16 +40,16 @@ DEPS = {
     "jsonschema": "jsonschema >= 3.2.0",
     "lcov_cobertura": "lcov_cobertura >= 1.6",
     "machomachomangler": "machomachomangler == 0.0.1",
-    "matplotlib": "matplotlib >= 3.1.2",
-    "numpy": "numpy >= 1.18.1",
-    "pycobertura": "pycobertura >= 1.0.0",
+    "matplotlib": "matplotlib >= 3.3.4",
+    "numpy": "numpy >= 1.20.1",
+    "pycobertura": "pycobertura >= 2.0.1",
     "Pygments": "Pygments",
     "pylint": "pylint >= 2.6.0",
-    "pytest": "pytest >= 6.1.1",
+    "pytest": "pytest >= 6.2.2",
     "pytest-cov": "pytest-cov",
-    "scipy": "scipy >= 1.5.2",
-    "sympy": "sympy >= 1.6.2",
-    "seaborn": "seaborn >= 0.11.0",
+    "scipy": "scipy >= 1.6.0",
+    "sympy": "sympy >= 1.7.1",
+    "seaborn": "seaborn >= 0.11.1",
 }
 BASE_DEPS = (DEPS["numpy"], DEPS["pytest"], DEPS["importlib-metadata"])
 NOX_DIR = os.path.abspath(os.path.dirname(__file__))
@@ -57,9 +57,9 @@ DOCS_DEPS = (
     "--requirement",
     os.path.join(NOX_DIR, "docs", "requirements.txt"),
 )
-DEFAULT_INTERPRETER = "3.8"
+DEFAULT_INTERPRETER = "3.9"
 PYPY = "pypy3"
-ALL_INTERPRETERS = ("3.6", "3.6-32", "3.7", "3.7-32", "3.8", "3.8-32", PYPY)
+ALL_INTERPRETERS = ("3.7", "3.7-32", "3.8", "3.8-32", "3.9", "3.9-32", PYPY)
 BUILD_TYPE_DEBUG = "Debug"
 BUILD_TYPE_RELEASE = "Release"
 DEBUG_SESSION_NAME = "libbezier-debug"
@@ -516,7 +516,7 @@ def _cmake(session, build_type):
     The ``session`` may be one of ``libbezier-debug`` / ``libbezier-release``
     in which case we directly build as instructed. Additionally, it may
     correspond to a session that seeks to build ``libbezier`` as a dependency,
-    e.g. ``nox -s unit-3.8``.
+    e.g. ``nox -s unit-3.9``.
 
     Returns:
         str: The install prefix that was created / re-used.
