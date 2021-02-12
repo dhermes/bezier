@@ -50,13 +50,13 @@ mkdir -p "${BUILD_DIR}"
 VERSION_WHITELIST=""
 for PYBIN in /opt/python/*/bin; do
     # H/T: https://stackoverflow.com/a/229606/1068170
-    if [[ "${PYBIN}" == *"36"* ]]; then
-        VERSION_WHITELIST="${VERSION_WHITELIST} ${PYBIN}"
-        continue
-    elif [[ "${PYBIN}" == *"37"* ]]; then
+    if [[ "${PYBIN}" == *"37"* ]]; then
         VERSION_WHITELIST="${VERSION_WHITELIST} ${PYBIN}"
         continue
     elif [[ "${PYBIN}" == *"38"* ]]; then
+        VERSION_WHITELIST="${VERSION_WHITELIST} ${PYBIN}"
+        continue
+    elif [[ "${PYBIN}" == *"39"* ]]; then
         VERSION_WHITELIST="${VERSION_WHITELIST} ${PYBIN}"
         continue
     else
