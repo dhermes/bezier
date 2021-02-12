@@ -67,6 +67,7 @@ if(CMAKE_Fortran_COMPILER_ID MATCHES "GNU")
             -Wall
             -Wextra
             -Wno-compare-reals
+            -Wno-conversion
             -Wimplicit-interface
             -fmax-errors=1
             -std=f2008)
