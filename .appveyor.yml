@@ -41,9 +41,6 @@ install:
   - echo "Filesystem root:"
   - dir C:\
 
-  - echo "Installed SDKs:"
-  - dir "C:/Program Files/Microsoft SDKs/Windows"
-
   # Make 64-bit Python 3.9 the "default" Python.
   - "SET PATH=%DEFAULT_PYTHON%;%DEFAULT_PYTHON%\\Scripts;%PATH%"
 
