@@ -10,6 +10,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import functools
 import os
 import pathlib
 import shlex
@@ -71,17 +72,54 @@ def _strip_shell(cmd):
     return " ".join(parts)
 
 
+def _gcc_homebrew_version(gcc_root, gcc_bin):
+    """Determine a semver version for a Homebrew installed ``gcc``.
+
+    This includes **four** parts: major, minor, patch and revision. For
+    example, ``/usr/local/Cellar/gcc/10.2.0/bin/gcc-10`` or
+    ``/usr/local/Cellar/gcc/10.2.0_3/bin/gcc-10`` are examples without and with
+    a ``_N`` revision.
+
+    This function does no error handling; the expectation is that the caller
+    wraps any error with helpful information e.g. the arguments.
+    """
+    relative_path = gcc_bin.relative_to(gcc_root)
+    version_dir = relative_path.parts[0]
+
+    revision = 0
+    if "_" in version_dir:
+        # This also asserts length 2.
+        version_dir, revision_str = version_dir.split("_")
+        revision = int(revision_str)
+
+    major_str, minor_str, patch_str = version_dir.split(".")
+    return int(major_str), int(minor_str), int(patch_str), revision
+
+
 def _find_gcc_homebrew():
     gcc_root_bytes = subprocess.check_output(("brew", "--cellar", "gcc"))
     gcc_root = gcc_root_bytes.decode("utf-8").rstrip()
     matches = list(pathlib.Path(gcc_root).glob("*/bin/gcc-[0-9]*"))
-    if len(matches) != 1:
+
+    if len(matches) == 0:
         raise ValueError(
-            "Could not find unique Homebrew-installed ``gcc``",
+            "Could not find Homebrew-installed ``gcc``",
             gcc_root,
-            matches,
         )
-    return str(matches[0])
+
+    if len(matches) == 1:
+        return str(matches[0])
+
+    sort_func = functools.partial(_gcc_homebrew_version, gcc_root)
+    matches.sort(key=sort_func)
+    chosen = str(matches[-1])
+
+    matches_str = ", ".join(str(match) for match in matches)
+    print(
+        f"Found multiple matches ({matches_str}) for Homebrew-installed "
+        f"``gcc``, using the newest one: {chosen}."
+    )
+    return chosen
 
 
 def _find_gcc():
