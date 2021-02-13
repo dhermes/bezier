@@ -117,7 +117,8 @@ def _find_gcc_homebrew():
     matches_str = ", ".join(str(match) for match in matches)
     print(
         f"Found multiple matches ({matches_str}) for Homebrew-installed "
-        f"``gcc``, using the newest one: {chosen}."
+        f"``gcc``, using the newest one: {chosen}.",
+        file=sys.stderr,
     )
     return chosen
 
