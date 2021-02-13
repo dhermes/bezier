@@ -8,6 +8,21 @@ set(AUTHOR "Danny Hermes")
 set(AUTHOR_DETAILS "daniel.j.hermes@gmail.com")
 set(DESCRIPTION "Library for Bezier curves and triangles.")
 
+if(WIN32)
+  set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake)
+  include(generate_product_version)
+  generate_product_version(
+    VersionFilesOutputVariable
+    NAME
+    "bezier"
+    VERSION_MAJOR
+    2020
+    VERSION_MINOR
+    1
+    VERSION_PATCH
+    14)
+endif()
+
 option(BUILD_SHARED_LIBS "Build shared libraries" ON)
 option(TARGET_NATIVE_ARCH "Optimize build for host (native) architecture" ON)
 
@@ -47,7 +62,12 @@ set(CMAKE_Fortran_FLAGS_RELEASE "")
 add_subdirectory(quadpack)
 
 file(GLOB SOURCES *.f90)
-add_library(bezier ${SOURCES} $<TARGET_OBJECTS:quadpack>)
+if(WIN32)
+  add_library(bezier ${SOURCES} ${VersionFilesOutputVariable}
+                     $<TARGET_OBJECTS:quadpack>)
+else()
+  add_library(bezier ${SOURCES} $<TARGET_OBJECTS:quadpack>)
+endif()
 unset(SOURCES)
 
 if(${BUILD_SHARED_LIBS})

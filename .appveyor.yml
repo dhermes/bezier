@@ -72,3 +72,9 @@ test_script:
 cache:
   # Use the appveyor cache to avoid re-downloading large archives.
   - '%LOCALAPPDATA%\pip\Cache'
+
+# BEGIN: Temporary hack so DLL can be inspected.
+artifacts:
+  - path: '.nox\libbezier-debug\usr\bin\bezier.dll'
+  - path: '.nox\libbezier-release\usr\bin\bezier.dll'
+#   END: Temporary hack so DLL can be inspected.
