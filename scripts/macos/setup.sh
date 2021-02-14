@@ -35,7 +35,7 @@ get_macpython_environment ${PY_VERSION}
 echo "PYTHON_EXE=${PYTHON_EXE}"
 # NOTE: This assumes that ``multibuild`` uses ``sudo .../bin/python/pipX.Y``
 #       as the command (i.e. it's missing the ``-H`` flag).
-export PIP_CMD=${PIP_CMD/sudo/sudo -H}
+PIP_CMD=${PIP_CMD/sudo/sudo -H}
 echo "PIP_CMD=${PIP_CMD}"
 
 # Make sure our installed CPython is set up for testing.
@@ -45,5 +45,5 @@ ${PIP_CMD} install --upgrade "nox >= 2020.12.31" numpy
 ${PIP_CMD} install --upgrade "cmake >= 3.18.4.post1"
 command -v cmake
 
-export PY_BIN_DIR=$(dirname "${PYTHON_EXE}")
+PY_BIN_DIR=$(dirname "${PYTHON_EXE}")
 echo "PY_BIN_DIR=${PY_BIN_DIR}"
