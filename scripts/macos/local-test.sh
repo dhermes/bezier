@@ -12,8 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# This is a script to run tests the same way Travis does, but on a local
-# development Apple laptop. This handles
+# This is a script to run tests the same way GitHub Actions does, but on a
+# local development Apple laptop. This handles
 # - checking that the "official" CPython is installed where expected
 # - checking that ``gfortran`` is installed
 # - setting of relevant environment variables

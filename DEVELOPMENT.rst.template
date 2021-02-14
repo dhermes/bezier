@@ -432,9 +432,10 @@ To regenerate all the images:
 Continuous Integration
 **********************
 
-Tests are run on `CircleCI`_ (Linux), `Travis CI`_ (macOS) and
+Tests are run on `CircleCI`_ (Linux), `GitHub Actions`_ (macOS) and
 `AppVeyor`_ (Windows) after every commit. To see which tests are run, see
-the `CircleCI config`_, the `Travis config`_ and the `AppVeyor config`_.
+the `CircleCI config`_, the `GitHub Actions config`_ and the
+`AppVeyor config`_.
 
 On CircleCI, a `Docker`_ image is used to provide fine-grained control over
 the environment. There is a base `python-multi Dockerfile`_ that just has the
@@ -442,7 +443,7 @@ Python versions we test in. The image used in our CircleCI builds (from
 `bezier Dockerfile`_) installs dependencies needed for testing (such as
 ``nox`` and NumPy).
 
-On Travis CI, Matthew Brett's `multibuild`_ is used to install "official"
+On GitHub Actions, Matthew Brett's `multibuild`_ is used to install "official"
 python.org CPython binaries for macOS. Then tests are run in 64-bit
 mode (NumPy has `discontinued`_ 32-bit support).
 
@@ -450,10 +451,10 @@ On AppVeyor, the binary extension is built and tested with both 32-bit and
 64-bit Python binaries.
 
 .. _CircleCI: https://circleci.com/gh/dhermes/bezier
-.. _Travis CI: https://travis-ci.com/github/dhermes/bezier
+.. _GitHub Actions: https://github.com/dhermes/bezier/actions
 .. _AppVeyor: https://ci.appveyor.com/project/dhermes/bezier
 .. _CircleCI config: https://github.com/dhermes/bezier/blob/{revision}/.circleci/config.yml
-.. _Travis config: https://github.com/dhermes/bezier/blob/{revision}/.travis.yml
+.. _GitHub Actions config: https://github.com/dhermes/bezier/blob/{revision}/.github/workflows/macos.yml
 .. _AppVeyor config: https://github.com/dhermes/bezier/blob/{revision}/.appveyor.yml
 .. _python-multi Dockerfile: https://github.com/dhermes/python-multi/blob/master/src/Dockerfile
 .. _bezier Dockerfile: https://github.com/dhermes/bezier/blob/{revision}/scripts/docker/bezier.Dockerfile

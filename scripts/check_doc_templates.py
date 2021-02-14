@@ -150,13 +150,13 @@ CIRCLECI_BADGE_RELEASE = (
     "https://raw.githubusercontent.com/dhermes/bezier/{version}/"
     "docs/circleci-passing.svg?sanitize=true"
 )
-TRAVIS_BADGE = (
-    "https://img.shields.io/travis/dhermes/bezier/main.svg?"
-    "maxAge=3600&logo=travis&label=macOS"
+GITHUB_ACTIONS_BADGE = (
+    "https://github.com/dhermes/bezier/workflows/macos/badge.svg?"
+    "branch=main&event=push"
 )
-TRAVIS_BADGE_RELEASE = (
+GITHUB_ACTIONS_BADGE_RELEASE = (
     "https://raw.githubusercontent.com/dhermes/bezier/{version}/"
-    "docs/travis-passing.svg?sanitize=true"
+    "docs/macos-passing.svg?sanitize=true"
 )
 APPVEYOR_BADGE = (
     "https://img.shields.io/appveyor/ci/dhermes/bezier/main.svg?"
@@ -316,8 +316,8 @@ def populate_readme(revision, rtd_version, **extra_kwargs):
         "revision": revision,
         "circleci_badge": CIRCLECI_BADGE,
         "circleci_path": "",
-        "travis_badge": TRAVIS_BADGE,
-        "travis_path": "",
+        "github_actions_badge": GITHUB_ACTIONS_BADGE,
+        "github_actions_path": "?query=workflow%3Amacos",
         "appveyor_badge": APPVEYOR_BADGE,
         "appveyor_path": "",
         "coveralls_badge": COVERALLS_BADGE,
@@ -387,8 +387,8 @@ def release_readme_verify():
         versions_img="",
         circleci_badge=CIRCLECI_BADGE_RELEASE,
         circleci_path="/{circleci_build}",
-        travis_badge=TRAVIS_BADGE_RELEASE,
-        travis_path="/builds/{travis_build}",
+        github_actions_badge=GITHUB_ACTIONS_BADGE_RELEASE,
+        github_actions_path="/runs/{github_actions_run}",
         appveyor_badge=APPVEYOR_BADGE_RELEASE,
         appveyor_path="/build/{appveyor_build}",
         coveralls_badge=COVERALLS_BADGE_RELEASE,
@@ -449,8 +449,8 @@ def _index_verify(index_file, **extra_kwargs):
         "revision": REVISION,
         "circleci_badge": CIRCLECI_BADGE,
         "circleci_path": "",
-        "travis_badge": TRAVIS_BADGE,
-        "travis_path": "",
+        "github_actions_badge": GITHUB_ACTIONS_BADGE,
+        "github_actions_path": "?query=workflow%3Amacos",
         "appveyor_badge": APPVEYOR_BADGE,
         "appveyor_path": "",
         "coveralls_badge": COVERALLS_BADGE,
@@ -506,7 +506,7 @@ def release_docs_side_effect(content):
     # Then reset the actual template arguments.
     result = result.replace("{{version}}", "{version}")
     result = result.replace("{{circleci_build}}", "{circleci_build}")
-    result = result.replace("{{travis_build}}", "{travis_build}")
+    result = result.replace("{{github_actions_run}}", "{github_actions_run}")
     result = result.replace("{{appveyor_build}}", "{appveyor_build}")
     result = result.replace("{{coveralls_build}}", "{coveralls_build}")
     return result
@@ -531,8 +531,8 @@ def release_docs_index_verify():
         revision=version,
         circleci_badge=CIRCLECI_BADGE_RELEASE,
         circleci_path="/{circleci_build}",
-        travis_badge=TRAVIS_BADGE_RELEASE,
-        travis_path="/builds/{travis_build}",
+        github_actions_badge=GITHUB_ACTIONS_BADGE_RELEASE,
+        github_actions_path="/runs/{github_actions_run}",
         appveyor_badge=APPVEYOR_BADGE_RELEASE,
         appveyor_path="/build/{appveyor_build}",
         coveralls_badge=COVERALLS_BADGE_RELEASE,

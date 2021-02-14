@@ -3,7 +3,7 @@
 
     Helper for B |eacute| zier Curves, Triangles, and Higher Order Objects
 
-|circle-build| |travis-build| |appveyor-build| |coverage|{pypi}{versions}{docs}{zenodo}{joss}
+|circle-build| |github-actions-build| |appveyor-build| |coverage|{pypi}{versions}{docs}{zenodo}{joss}
 
 .. |eacute| unicode:: U+000E9 .. LATIN SMALL LETTER E WITH ACUTE
    :trim:
@@ -179,9 +179,9 @@ details, see `the LICENSE`_.
 {docs_img}.. |circle-build| image:: {circleci_badge}
    :target: https://circleci.com/gh/dhermes/bezier{circleci_path}
    :alt: CircleCI Build
-.. |travis-build| image:: {travis_badge}
-   :target: https://travis-ci.com/github/dhermes/bezier{travis_path}
-   :alt: Travis Build
+.. |github-actions-build| image:: {github_actions_badge}
+   :target: https://github.com/dhermes/bezier/actions{github_actions_path}
+   :alt: GitHub Actions Build
 .. |appveyor-build| image:: {appveyor_badge}
    :target: https://ci.appveyor.com/project/dhermes/bezier{appveyor_path}
    :alt: AppVeyor CI Build{pypi_img}{versions_img}

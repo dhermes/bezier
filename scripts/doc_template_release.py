@@ -59,7 +59,11 @@ def get_version():
 
 
 def populate_readme(
-    version, circleci_build, appveyor_build, coveralls_build, travis_build
+    version,
+    circleci_build,
+    appveyor_build,
+    coveralls_build,
+    github_actions_run,
 ):
     """Populates ``README.rst`` with release-specific data.
 
@@ -73,7 +77,7 @@ def populate_readme(
             release.
         coveralls_build (Union[str, int]): The Coveralls.io build ID
             corresponding to the release.
-        travis_build (int): The Travis CI build ID corresponding to
+        github_actions_run (int): The GitHub Actions run ID corresponding to
             the release.
     """
     with open(RELEASE_README_FILE, "r") as file_obj:
@@ -83,14 +87,18 @@ def populate_readme(
         circleci_build=circleci_build,
         appveyor_build=appveyor_build,
         coveralls_build=coveralls_build,
-        travis_build=travis_build,
+        github_actions_run=github_actions_run,
     )
     with open(README_FILE, "w") as file_obj:
         file_obj.write(contents)
 
 
 def populate_index(
-    version, circleci_build, appveyor_build, coveralls_build, travis_build
+    version,
+    circleci_build,
+    appveyor_build,
+    coveralls_build,
+    github_actions_run,
 ):
     """Populates ``docs/index.rst`` with release-specific data.
 
@@ -102,7 +110,7 @@ def populate_index(
             release.
         coveralls_build (Union[str, int]): The Coveralls.io build ID
             corresponding to the release.
-        travis_build (int): The Travis CI build ID corresponding to
+        github_actions_run (int): The GitHub Actions run ID corresponding to
             the release.
     """
     with open(RELEASE_INDEX_FILE, "r") as file_obj:
@@ -112,7 +120,7 @@ def populate_index(
         circleci_build=circleci_build,
         appveyor_build=appveyor_build,
         coveralls_build=coveralls_build,
-        travis_build=travis_build,
+        github_actions_run=github_actions_run,
     )
     with open(INDEX_FILE, "w") as file_obj:
         file_obj.write(contents)
@@ -136,19 +144,27 @@ def populate_development(version):
 def main():
     """Populate the templates with release-specific fields.
 
-    Requires user input for the CircleCI, AppVeyor, Coveralls.io and Travis
-    build IDs.
+    Requires user input for the CircleCI, AppVeyor, Coveralls.io and GitHub
+    Actions build IDs.
     """
     version = get_version()
     circleci_build = input("CircleCI Build ID: ")
     appveyor_build = input("AppVeyor Build ID: ")
     coveralls_build = input("Coveralls Build ID: ")
-    travis_build = input("Travis Build ID: ")
+    github_actions_run = input("GitHub Actions Run ID: ")
     populate_readme(
-        version, circleci_build, appveyor_build, coveralls_build, travis_build
+        version,
+        circleci_build,
+        appveyor_build,
+        coveralls_build,
+        github_actions_run,
     )
     populate_index(
-        version, circleci_build, appveyor_build, coveralls_build, travis_build
+        version,
+        circleci_build,
+        appveyor_build,
+        coveralls_build,
+        github_actions_run,
     )
     populate_development(version)
 

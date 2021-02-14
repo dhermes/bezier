@@ -1,4 +1,6 @@
 ---
+name: macos
+
 on:
   push:
     branches:
