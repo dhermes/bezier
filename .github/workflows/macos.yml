@@ -13,7 +13,6 @@ jobs:
     env:
       VIRTUALENV_NO_DOWNLOAD: 'true'
       PY_VERSION: '${{ matrix.python-version }}'
-      PIP_CMD: '/Library/Frameworks/Python.framework/Versions/${{ matrix.python-version }}/bin/python${{ matrix.python-version }} -m pip'
       PY_BIN_DIR: '/Library/Frameworks/Python.framework/Versions/${{ matrix.python-version }}/bin'
     strategy:
       matrix:
@@ -26,7 +25,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Install `gcc`
-      run: brew install gcc
+      run: brew install gcc && brew unlink gcc && brew link gcc
     - name: Run "install" to setup Python environment and tooling
       run: scripts/macos/setup.sh
     - name: Run tests
