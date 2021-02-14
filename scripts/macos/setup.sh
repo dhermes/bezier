@@ -39,7 +39,7 @@ PIP_CMD=${PIP_CMD/sudo/sudo -H}
 echo "PIP_CMD=${PIP_CMD}"
 
 # Make sure our installed CPython is set up for testing.
-${PIP_CMD} install --ignore-installed virtualenv "pip !=20.0,!=20.0.1"
+${PIP_CMD} install --ignore-installed virtualenv pip
 ${PIP_CMD} install --upgrade "nox >= 2020.12.31" numpy
 # Make sure there is a working ``cmake`` on the ``${PATH}``.
 ${PIP_CMD} install --upgrade "cmake >= 3.18.4.post1"

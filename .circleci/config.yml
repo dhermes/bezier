@@ -7,7 +7,6 @@ jobs:
       - image: dhermes/bezier:latest
     environment:
       MATPLOTLIBRC: tests
-      VIRTUALENV_NO_DOWNLOAD: "true"
     steps:
       - checkout
       - setup_remote_docker
