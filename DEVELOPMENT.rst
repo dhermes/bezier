@@ -58,7 +58,7 @@ Binary Extension
 Many low-level computations have alternate implementations in Fortran.
 See the `Python Binary Extension`_ page for a more detailed description.
 
-.. _Python Binary Extension: https://bezier.readthedocs.io/en/latest/python/binary-extension.html
+.. _Python Binary Extension: https://bezier.readthedocs.io/en/2021.2.12/python/binary-extension.html
 
 Building / Compiling
 ====================
@@ -101,7 +101,7 @@ QUADPACK subroutines depend on).
 QUADPACK is used to perform numerical quadrature to compute the length
 of a curve segment.
 
-.. _directory: https://github.com/dhermes/bezier/tree/main/src/fortran/quadpack
+.. _directory: https://github.com/dhermes/bezier/tree/2021.2.12/src/fortran/quadpack
 .. _QUADPACK: https://en.wikipedia.org/wiki/QUADPACK
 
 ******************
@@ -261,32 +261,32 @@ To run the functional tests:
    $ PYTHONPATH=src/python/ python3.9 -m pytest tests/functional/
    $ PYTHONPATH=src/python/ pypy3     -m pytest tests/functional/
 
-.. _functional tests: https://github.com/dhermes/bezier/tree/main/tests/functional
+.. _functional tests: https://github.com/dhermes/bezier/tree/2021.2.12/tests/functional
 
 For example, the following curve-curve intersection is a
 functional test case:
 
-.. image:: https://raw.githubusercontent.com/dhermes/bezier/main/docs/images/curves11_and_26.png
+.. image:: https://raw.githubusercontent.com/dhermes/bezier/2021.2.12/docs/images/curves11_and_26.png
    :align: center
 
 and there is a `Curve-Curve Intersection`_ document which captures many of
 the cases in the functional tests.
 
-.. _Curve-Curve Intersection: https://bezier.readthedocs.io/en/latest/algorithms/curve-curve-intersection.html
+.. _Curve-Curve Intersection: https://bezier.readthedocs.io/en/2021.2.12/algorithms/curve-curve-intersection.html
 
 A triangle-triangle intersection functional test case:
 
-.. image:: https://raw.githubusercontent.com/dhermes/bezier/main/docs/images/triangles1Q_and_2Q.png
+.. image:: https://raw.githubusercontent.com/dhermes/bezier/2021.2.12/docs/images/triangles1Q_and_2Q.png
    :align: center
 
 a segment-box functional test case:
 
-.. image:: https://raw.githubusercontent.com/dhermes/bezier/main/docs/images/test_goes_through_box08.png
+.. image:: https://raw.githubusercontent.com/dhermes/bezier/2021.2.12/docs/images/test_goes_through_box08.png
    :align: center
 
 and a "locate point on triangle" functional test case:
 
-.. image:: https://raw.githubusercontent.com/dhermes/bezier/main/docs/images/test_triangle3_and_point1.png
+.. image:: https://raw.githubusercontent.com/dhermes/bezier/2021.2.12/docs/images/test_triangle3_and_point1.png
    :align: center
 
 Functional Test Data
@@ -304,10 +304,10 @@ This way, the test cases are programming language agnostic and can be
 repurposed. The `JSON schema`_ for these files are stored in the
 ``tests/functional/schema`` directory.
 
-.. _curves.json: https://github.com/dhermes/bezier/blob/main/tests/functional/curves.json
-.. _curve_intersections.json: https://github.com/dhermes/bezier/blob/main/tests/functional/curve_intersections.json
-.. _triangles.json: https://github.com/dhermes/bezier/blob/main/tests/functional/triangles.json
-.. _triangle_intersections.json: https://github.com/dhermes/bezier/blob/main/tests/functional/triangle_intersections.json
+.. _curves.json: https://github.com/dhermes/bezier/blob/2021.2.12/tests/functional/curves.json
+.. _curve_intersections.json: https://github.com/dhermes/bezier/blob/2021.2.12/tests/functional/curve_intersections.json
+.. _triangles.json: https://github.com/dhermes/bezier/blob/2021.2.12/tests/functional/triangles.json
+.. _triangle_intersections.json: https://github.com/dhermes/bezier/blob/2021.2.12/tests/functional/triangle_intersections.json
 .. _JSON schema: http://json-schema.org/
 
 ************
@@ -330,7 +330,7 @@ To check compliance:
 A few extensions and overrides have been specified in the `pylintrc`_
 configuration for ``bezier``.
 
-.. _pylintrc: https://github.com/dhermes/bezier/blob/main/pylintrc
+.. _pylintrc: https://github.com/dhermes/bezier/blob/2021.2.12/pylintrc
 
 Docstring Style
 ===============
@@ -432,9 +432,10 @@ To regenerate all the images:
 Continuous Integration
 **********************
 
-Tests are run on `CircleCI`_ (Linux), `Travis CI`_ (macOS) and
+Tests are run on `CircleCI`_ (Linux), `GitHub Actions`_ (macOS) and
 `AppVeyor`_ (Windows) after every commit. To see which tests are run, see
-the `CircleCI config`_, the `Travis config`_ and the `AppVeyor config`_.
+the `CircleCI config`_, the `GitHub Actions config`_ and the
+`AppVeyor config`_.
 
 On CircleCI, a `Docker`_ image is used to provide fine-grained control over
 the environment. There is a base `python-multi Dockerfile`_ that just has the
@@ -442,7 +443,7 @@ Python versions we test in. The image used in our CircleCI builds (from
 `bezier Dockerfile`_) installs dependencies needed for testing (such as
 ``nox`` and NumPy).
 
-On Travis CI, Matthew Brett's `multibuild`_ is used to install "official"
+On GitHub Actions, Matthew Brett's `multibuild`_ is used to install "official"
 python.org CPython binaries for macOS. Then tests are run in 64-bit
 mode (NumPy has `discontinued`_ 32-bit support).
 
@@ -450,13 +451,13 @@ On AppVeyor, the binary extension is built and tested with both 32-bit and
 64-bit Python binaries.
 
 .. _CircleCI: https://circleci.com/gh/dhermes/bezier
-.. _Travis CI: https://travis-ci.com/github/dhermes/bezier
+.. _GitHub Actions: https://github.com/dhermes/bezier/actions
 .. _AppVeyor: https://ci.appveyor.com/project/dhermes/bezier
-.. _CircleCI config: https://github.com/dhermes/bezier/blob/main/.circleci/config.yml
-.. _Travis config: https://github.com/dhermes/bezier/blob/main/.travis.yml
-.. _AppVeyor config: https://github.com/dhermes/bezier/blob/main/.appveyor.yml
+.. _CircleCI config: https://github.com/dhermes/bezier/blob/2021.2.12/.circleci/config.yml
+.. _GitHub Actions config: https://github.com/dhermes/bezier/blob/2021.2.12/.github/workflows/macos.yml
+.. _AppVeyor config: https://github.com/dhermes/bezier/blob/2021.2.12/.appveyor.yml
 .. _python-multi Dockerfile: https://github.com/dhermes/python-multi/blob/master/src/Dockerfile
-.. _bezier Dockerfile: https://github.com/dhermes/bezier/blob/main/scripts/docker/bezier.Dockerfile
+.. _bezier Dockerfile: https://github.com/dhermes/bezier/blob/2021.2.12/scripts/docker/bezier.Dockerfile
 .. _multibuild: https://github.com/matthew-brett/multibuild
 .. _discontinued: https://github.com/numpy/numpy/issues/11625
 
@@ -509,7 +510,7 @@ Supported Python Versions
 
 Supported versions can be found in the ``noxfile.py`` `config`_.
 
-.. _config: https://github.com/dhermes/bezier/blob/main/noxfile.py
+.. _config: https://github.com/dhermes/bezier/blob/2021.2.12/noxfile.py
 
 Versioning
 ==========

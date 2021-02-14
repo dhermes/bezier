@@ -25,7 +25,10 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Install `gcc`
-      run: brew install gcc && brew unlink gcc && brew link gcc
+      run: |
+        brew install gcc
+        brew unlink gcc
+        brew link gcc
     - name: Run "install" to setup Python environment and tooling
       run: scripts/macos/setup.sh
     - name: Run tests
