@@ -155,9 +155,9 @@ def compute_fat_line(nodes):
         * The :math:`x` coefficient :math:`a`
         * The :math:`y` coefficient :math:`b`
         * The constant :math:`c`
-        * The "minimum" (non-normalized)  distance to the fat line among the
+        * The "minimum" (non-normalized) distance to the fat line among the
           control points.
-        * The "maximum" (non-normalized)  distance to the fat line among the
+        * The "maximum" (non-normalized) distance to the fat line among the
           control points.
     """
     coeff_a, coeff_b, coeff_c = compute_implicit_line(nodes)
@@ -289,7 +289,7 @@ def _clip_range_polynomial(nodes, coeff_a, coeff_b, coeff_c):
             :math:`ax + by + c = 0`.
 
     Returns:
-        numpy.ndarray: Pair of
+        Tuple[int, numpy.ndarray]: Pair of
 
         * The degree :math:`d` of ``nodes`` (also the width of the
           ``x``-interval :math:`\left[0, d\right]`)
