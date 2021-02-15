@@ -155,11 +155,11 @@ Test Coverage
 ``bezier`` has 100% `line coverage`_. The coverage is checked
 on every build and uploaded to `coveralls.io`_ via the
 ``COVERALLS_REPO_TOKEN`` environment variable set in
-the `CircleCI environment`_.
+the `GitHub Actions secrets`_.
 
 .. _line coverage: https://coveralls.io/github/dhermes/bezier
 .. _coveralls.io: https://coveralls.io/
-.. _CircleCI environment: https://circleci.com/gh/dhermes/bezier/edit#env-vars
+.. _GitHub Actions secrets: https://github.com/dhermes/bezier/settings/secrets/actions
 
 To run the coverage report locally:
 
@@ -225,9 +225,9 @@ Alternatively, wheels can be downloaded from `pypy-wheels`_, however
 the SciPy wheel will still require ``libatlas-dev``, ``libblas-dev`` and
 ``liblapack-dev``.
 
-The `Docker`_ image for the CircleCI test environment has already
+The `Docker`_ image for the Linux test environment has already
 pre-built these wheels and stored them in the ``/wheelhouse`` directory.
-So, in the `CircleCI environment`_, the ``WHEELHOUSE`` environment
+So, in the container, the ``WHEELHOUSE`` environment
 variable is set to ``/wheelhouse``.
 
 .. _Docker: https://www.docker.com/
@@ -432,29 +432,29 @@ To regenerate all the images:
 Continuous Integration
 **********************
 
-Tests are run on `CircleCI`_ (Linux), `GitHub Actions`_ (macOS) and
+Tests are run on `GitHub Actions`_ (Linux and macOS) and
 `AppVeyor`_ (Windows) after every commit. To see which tests are run, see
-the `CircleCI config`_, the `GitHub Actions config`_ and the
+the `Linux config`_ and the `macOS config`_ for GitHub Actions and the
 `AppVeyor config`_.
 
-On CircleCI, a `Docker`_ image is used to provide fine-grained control over
-the environment. There is a base `python-multi Dockerfile`_ that just has the
-Python versions we test in. The image used in our CircleCI builds (from
+For Linux (on GitHub Actions), a `Docker`_ image is used to provide
+fine-grained control over the environment. There is a base
+`python-multi Dockerfile`_ that just has the
+Python versions we test in. The image used in our Linux builds (from
 `bezier Dockerfile`_) installs dependencies needed for testing (such as
 ``nox`` and NumPy).
 
-On GitHub Actions, Matthew Brett's `multibuild`_ is used to install "official"
-python.org CPython binaries for macOS. Then tests are run in 64-bit
-mode (NumPy has `discontinued`_ 32-bit support).
+For macOS (on GitHub Actions), Matthew Brett's `multibuild`_ is used to
+install "official" python.org CPython binaries for macOS. Then tests are run
+in 64-bit mode (NumPy has `discontinued`_ 32-bit support).
 
 On AppVeyor, the binary extension is built and tested with both 32-bit and
 64-bit Python binaries.
 
-.. _CircleCI: https://circleci.com/gh/dhermes/bezier
 .. _GitHub Actions: https://github.com/dhermes/bezier/actions
 .. _AppVeyor: https://ci.appveyor.com/project/dhermes/bezier
-.. _CircleCI config: https://github.com/dhermes/bezier/blob/{revision}/.circleci/config.yml
-.. _GitHub Actions config: https://github.com/dhermes/bezier/blob/{revision}/.github/workflows/macos.yml
+.. _Linux config: https://github.com/dhermes/bezier/blob/{revision}/.github/workflows/linux.yml
+.. _macOS config: https://github.com/dhermes/bezier/blob/{revision}/.github/workflows/macos.yml
 .. _AppVeyor config: https://github.com/dhermes/bezier/blob/{revision}/.appveyor.yml
 .. _python-multi Dockerfile: https://github.com/dhermes/python-multi/blob/master/src/Dockerfile
 .. _bezier Dockerfile: https://github.com/dhermes/bezier/blob/{revision}/scripts/docker/bezier.Dockerfile

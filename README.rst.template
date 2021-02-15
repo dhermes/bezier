@@ -3,7 +3,7 @@
 
     Helper for B |eacute| zier Curves, Triangles, and Higher Order Objects
 
-|circle-build| |github-actions-build| |appveyor-build| |coverage|{pypi}{versions}{docs}{zenodo}{joss}
+|linux-build| |macos-build| |appveyor-build| |coverage|{pypi}{versions}{docs}{zenodo}{joss}
 
 .. |eacute| unicode:: U+000E9 .. LATIN SMALL LETTER E WITH ACUTE
    :trim:
@@ -176,12 +176,12 @@ details, see `the LICENSE`_.
 
 {extra_links}.. _the LICENSE: https://github.com/dhermes/bezier/blob/{revision}/LICENSE
 
-{docs_img}.. |circle-build| image:: {circleci_badge}
-   :target: https://circleci.com/gh/dhermes/bezier{circleci_path}
-   :alt: CircleCI Build
-.. |github-actions-build| image:: {github_actions_badge}
-   :target: https://github.com/dhermes/bezier/actions{github_actions_path}
-   :alt: GitHub Actions Build
+{docs_img}.. |linux-build| image:: {linux_badge}
+   :target: https://github.com/dhermes/bezier/actions{linux_path}
+   :alt: Linux Build (GitHub Actions)
+.. |macos-build| image:: {macos_badge}
+   :target: https://github.com/dhermes/bezier/actions{macos_path}
+   :alt: macOS Build (GitHub Actions)
 .. |appveyor-build| image:: {appveyor_badge}
    :target: https://ci.appveyor.com/project/dhermes/bezier{appveyor_path}
    :alt: AppVeyor CI Build{pypi_img}{versions_img}

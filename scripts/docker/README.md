@@ -36,6 +36,7 @@ $ docker run \
 >     --interactive \
 >     --volume /var/run/docker.sock:/var/run/docker.sock \
 >     --volume $(git rev-parse --show-toplevel):/var/code/bezier/ \
+>     --env MATPLOTLIBRC=tests \
 >     --workdir /var/code/bezier/ \
 >     dhermes/bezier:latest \
 >     /bin/bash

@@ -60,10 +60,10 @@ def get_version():
 
 def populate_readme(
     version,
-    circleci_build,
+    linux_run,
     appveyor_build,
     coveralls_build,
-    github_actions_run,
+    macos_run,
 ):
     """Populates ``README.rst`` with release-specific data.
 
@@ -71,23 +71,23 @@ def populate_readme(
 
     Args:
         version (str): The current version.
-        circleci_build (Union[str, int]): The CircleCI build ID corresponding
-            to the release.
+        linux_run (int): The GitHub Actions run ID (for Linux) corresponding to
+            the release.
         appveyor_build (str): The AppVeyor build ID corresponding to the
             release.
         coveralls_build (Union[str, int]): The Coveralls.io build ID
             corresponding to the release.
-        github_actions_run (int): The GitHub Actions run ID corresponding to
+        macos_run (int): The GitHub Actions run ID (for macOS) corresponding to
             the release.
     """
     with open(RELEASE_README_FILE, "r") as file_obj:
         template = file_obj.read()
     contents = template.format(
         version=version,
-        circleci_build=circleci_build,
+        linux_run=linux_run,
         appveyor_build=appveyor_build,
         coveralls_build=coveralls_build,
-        github_actions_run=github_actions_run,
+        macos_run=macos_run,
     )
     with open(README_FILE, "w") as file_obj:
         file_obj.write(contents)
@@ -95,32 +95,32 @@ def populate_readme(
 
 def populate_index(
     version,
-    circleci_build,
+    linux_run,
     appveyor_build,
     coveralls_build,
-    github_actions_run,
+    macos_run,
 ):
     """Populates ``docs/index.rst`` with release-specific data.
 
     Args:
         version (str): The current version.
-        circleci_build (Union[str, int]): The CircleCI build ID corresponding
-            to the release.
+        linux_run (int): The GitHub Actions run ID (for Linux) corresponding to
+            the release.
         appveyor_build (str): The AppVeyor build ID corresponding to the
             release.
         coveralls_build (Union[str, int]): The Coveralls.io build ID
             corresponding to the release.
-        github_actions_run (int): The GitHub Actions run ID corresponding to
+        macos_run (int): The GitHub Actions run ID (for macOS) corresponding to
             the release.
     """
     with open(RELEASE_INDEX_FILE, "r") as file_obj:
         template = file_obj.read()
     contents = template.format(
         version=version,
-        circleci_build=circleci_build,
+        linux_run=linux_run,
         appveyor_build=appveyor_build,
         coveralls_build=coveralls_build,
-        github_actions_run=github_actions_run,
+        macos_run=macos_run,
     )
     with open(INDEX_FILE, "w") as file_obj:
         file_obj.write(contents)
@@ -144,27 +144,27 @@ def populate_development(version):
 def main():
     """Populate the templates with release-specific fields.
 
-    Requires user input for the CircleCI, AppVeyor, Coveralls.io and GitHub
-    Actions build IDs.
+    Requires user input for the GitHub Actions (Linux and macOS), AppVeyor
+    and Coveralls.io build IDs.
     """
     version = get_version()
-    circleci_build = input("CircleCI Build ID: ")
+    linux_run = input("Linux GitHub Actions Run ID: ")
     appveyor_build = input("AppVeyor Build ID: ")
     coveralls_build = input("Coveralls Build ID: ")
-    github_actions_run = input("GitHub Actions Run ID: ")
+    macos_run = input("macOS GitHub Actions Run ID: ")
     populate_readme(
         version,
-        circleci_build,
+        linux_run,
         appveyor_build,
         coveralls_build,
-        github_actions_run,
+        macos_run,
     )
     populate_index(
         version,
-        circleci_build,
+        linux_run,
         appveyor_build,
         coveralls_build,
-        github_actions_run,
+        macos_run,
     )
     populate_development(version)
 

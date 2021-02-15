@@ -12,18 +12,23 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-# Build the bezier docs.
+# Upload coverage report to coveralls.io.
 
 set -e -x
 
-if [[ -z "${CIRCLE_BRANCH}" ]]; then
-    echo "CIRCLE_BRANCH environment variable should be set by the caller."
+if [[ -z "${GITHUB_REF}" ]]; then
+    echo "GITHUB_REF environment variable should be set by the caller." >&2
     exit 1
 fi
 
-if [[ "${CIRCLE_BRANCH}" != "main" ]]; then
+if [[ -z "${COVERALLS_REPO_TOKEN}" ]]; then
+    echo "COVERALLS_REPO_TOKEN environment variable should be set by the caller." >&2
+    exit 1
+fi
+
+if [[ "${GITHUB_REF}" != "refs/heads/main" ]]; then
     echo "Coverage upload only happens on main"
-    echo "Currently on ${CIRCLE_BRANCH}, doing nothing"
+    echo "Currently on ${GITHUB_REF}, doing nothing"
     exit
 fi
 

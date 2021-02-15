@@ -142,19 +142,19 @@ DOCS_IMG = """\
    :target: https://bezier.readthedocs.io/en/{rtd_version}/
    :alt: Documentation Status
 """
-CIRCLECI_BADGE = (
-    "https://img.shields.io/circleci/project/github/dhermes/bezier/main.svg?"
-    "maxAge=3600&logo=circleci&label=Linux"
+LINUX_BADGE = (
+    "https://github.com/dhermes/bezier/workflows/Linux/badge.svg?"
+    "branch=main&event=push"
 )
-CIRCLECI_BADGE_RELEASE = (
+LINUX_BADGE_RELEASE = (
     "https://raw.githubusercontent.com/dhermes/bezier/{version}/"
-    "docs/circleci-passing.svg?sanitize=true"
+    "docs/linux-passing.svg?sanitize=true"
 )
-GITHUB_ACTIONS_BADGE = (
+MACOS_BADGE = (
     "https://github.com/dhermes/bezier/workflows/macOS/badge.svg?"
     "branch=main&event=push"
 )
-GITHUB_ACTIONS_BADGE_RELEASE = (
+MACOS_BADGE_RELEASE = (
     "https://raw.githubusercontent.com/dhermes/bezier/{version}/"
     "docs/macos-passing.svg?sanitize=true"
 )
@@ -314,10 +314,10 @@ def populate_readme(revision, rtd_version, **extra_kwargs):
         "versions_img": VERSIONS_IMG,
         "rtd_version": rtd_version,
         "revision": revision,
-        "circleci_badge": CIRCLECI_BADGE,
-        "circleci_path": "",
-        "github_actions_badge": GITHUB_ACTIONS_BADGE,
-        "github_actions_path": "?query=workflow%3AmacOS",
+        "linux_badge": LINUX_BADGE,
+        "linux_path": "?query=workflow%3ALinux",
+        "macos_badge": MACOS_BADGE,
+        "macos_path": "?query=workflow%3AmacOS",
         "appveyor_badge": APPVEYOR_BADGE,
         "appveyor_path": "",
         "coveralls_badge": COVERALLS_BADGE,
@@ -385,10 +385,10 @@ def release_readme_verify():
         pypi_img="",
         versions="\n\n",
         versions_img="",
-        circleci_badge=CIRCLECI_BADGE_RELEASE,
-        circleci_path="/{circleci_build}",
-        github_actions_badge=GITHUB_ACTIONS_BADGE_RELEASE,
-        github_actions_path="/runs/{github_actions_run}",
+        linux_badge=LINUX_BADGE_RELEASE,
+        linux_path="/runs/{linux_run}",
+        macos_badge=MACOS_BADGE_RELEASE,
+        macos_path="/runs/{macos_run}",
         appveyor_badge=APPVEYOR_BADGE_RELEASE,
         appveyor_path="/build/{appveyor_build}",
         coveralls_badge=COVERALLS_BADGE_RELEASE,
@@ -447,10 +447,10 @@ def _index_verify(index_file, **extra_kwargs):
         "versions_img": VERSIONS_IMG,
         "rtd_version": RTD_VERSION,
         "revision": REVISION,
-        "circleci_badge": CIRCLECI_BADGE,
-        "circleci_path": "",
-        "github_actions_badge": GITHUB_ACTIONS_BADGE,
-        "github_actions_path": "?query=workflow%3AmacOS",
+        "linux_badge": LINUX_BADGE,
+        "linux_path": "?query=workflow%3ALinux",
+        "macos_badge": MACOS_BADGE,
+        "macos_path": "?query=workflow%3AmacOS",
         "appveyor_badge": APPVEYOR_BADGE,
         "appveyor_path": "",
         "coveralls_badge": COVERALLS_BADGE,
@@ -505,8 +505,8 @@ def release_docs_side_effect(content):
     result = content.replace("{", "{{").replace("}", "}}")
     # Then reset the actual template arguments.
     result = result.replace("{{version}}", "{version}")
-    result = result.replace("{{circleci_build}}", "{circleci_build}")
-    result = result.replace("{{github_actions_run}}", "{github_actions_run}")
+    result = result.replace("{{linux_run}}", "{linux_run}")
+    result = result.replace("{{macos_run}}", "{macos_run}")
     result = result.replace("{{appveyor_build}}", "{appveyor_build}")
     result = result.replace("{{coveralls_build}}", "{coveralls_build}")
     return result
@@ -529,10 +529,10 @@ def release_docs_index_verify():
         versions_img="",
         rtd_version=version,
         revision=version,
-        circleci_badge=CIRCLECI_BADGE_RELEASE,
-        circleci_path="/{circleci_build}",
-        github_actions_badge=GITHUB_ACTIONS_BADGE_RELEASE,
-        github_actions_path="/runs/{github_actions_run}",
+        linux_badge=LINUX_BADGE_RELEASE,
+        linux_path="/runs/{linux_run}",
+        macos_badge=MACOS_BADGE_RELEASE,
+        macos_path="/runs/{macos_run}",
         appveyor_badge=APPVEYOR_BADGE_RELEASE,
         appveyor_path="/build/{appveyor_build}",
         coveralls_badge=COVERALLS_BADGE_RELEASE,

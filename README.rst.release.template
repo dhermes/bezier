@@ -3,7 +3,7 @@
 
     Helper for B |eacute| zier Curves, Triangles, and Higher Order Objects
 
-|circle-build| |github-actions-build| |appveyor-build| |coverage|
+|linux-build| |macos-build| |appveyor-build| |coverage|
 
 |docs| |zenodo| |JOSS|
 
@@ -200,12 +200,12 @@ details, see `the LICENSE`_.
 .. |docs| image:: https://readthedocs.org/projects/bezier/badge/?version={version}
    :target: https://bezier.readthedocs.io/en/{version}/
    :alt: Documentation Status
-.. |circle-build| image:: https://raw.githubusercontent.com/dhermes/bezier/{version}/docs/circleci-passing.svg?sanitize=true
-   :target: https://circleci.com/gh/dhermes/bezier/{circleci_build}
-   :alt: CircleCI Build
-.. |github-actions-build| image:: https://raw.githubusercontent.com/dhermes/bezier/{version}/docs/macos-passing.svg?sanitize=true
-   :target: https://github.com/dhermes/bezier/actions/runs/{github_actions_run}
-   :alt: GitHub Actions Build
+.. |linux-build| image:: https://raw.githubusercontent.com/dhermes/bezier/{version}/docs/linux-passing.svg?sanitize=true
+   :target: https://github.com/dhermes/bezier/actions/runs/{linux_run}
+   :alt: Linux Build (GitHub Actions)
+.. |macos-build| image:: https://raw.githubusercontent.com/dhermes/bezier/{version}/docs/macos-passing.svg?sanitize=true
+   :target: https://github.com/dhermes/bezier/actions/runs/{macos_run}
+   :alt: macOS Build (GitHub Actions)
 .. |appveyor-build| image:: https://raw.githubusercontent.com/dhermes/bezier/{version}/docs/appveyor-passing.svg?sanitize=true
    :target: https://ci.appveyor.com/project/dhermes/bezier/build/{appveyor_build}
    :alt: AppVeyor CI Build

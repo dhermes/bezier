@@ -40,7 +40,7 @@ WIGGLES = {
         22: 37,  # Established on Ubuntu 16.04
         32: 1013,  # Established on Ubuntu 16.04
         33: 1013,  # Established on Ubuntu 16.04
-        34: 19,  # Established on Ubuntu 16.04 on CircleCI
+        34: 19,  # Established on Ubuntu 16.04 in Linux CI
         49: 86670,  # Established on Ubuntu 16.04
         50: 15222,  # Established on Ubuntu 16.04
         51: 285086,  # Established on CentOS 5 (i686 Docker image)
@@ -51,7 +51,7 @@ WIGGLES = {
         22: 14,  # Established on Ubuntu 16.04
         32: 18,  # Established on Ubuntu 16.04
         33: 18,  # Established on Ubuntu 16.04
-        36: 9,  # Established on Ubuntu 16.04 on CircleCI and macOS.
+        36: 9,  # Established on Ubuntu 16.04 on Linux and macOS.
         49: 120841,  # Established on CentOS 5 (i686 Docker image)
         50: 86670,  # Established on Ubuntu 16.04
     },

@@ -36,7 +36,6 @@ WHEELHOUSE="/var/code/wheelhouse"  # Under same path as `${BEZIER_ROOT}`
 # 0. Build the `manylinux` wheel (repaired with `auditwheel`).
 CURRENT_CONTAINER_ID=$(docker ps --no-trunc --filter "id=$(hostname)" --format '{{ .ID }}')
 if [[ "${CI}" == "true" || "$(echo "${CURRENT_CONTAINER_ID}" | wc -w)" == "1" ]]; then
-    # See: https://circleci.com/docs/2.0/building-docker-images/#mounting-folders
     # Create a dummy container which will hold a volume.
     docker create \
         --volume "$(dirname "${BEZIER_ROOT}")" \

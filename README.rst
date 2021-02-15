@@ -3,7 +3,7 @@
 
     Helper for B |eacute| zier Curves, Triangles, and Higher Order Objects
 
-|circle-build| |github-actions-build| |appveyor-build| |coverage|
+|linux-build| |macos-build| |appveyor-build| |coverage|
 
 |pypi| |versions|
 
@@ -202,12 +202,12 @@ details, see `the LICENSE`_.
 .. |docs| image:: https://readthedocs.org/projects/bezier/badge/?version=latest
    :target: https://bezier.readthedocs.io/en/latest/
    :alt: Documentation Status
-.. |circle-build| image:: https://img.shields.io/circleci/project/github/dhermes/bezier/main.svg?maxAge=3600&logo=circleci&label=Linux
-   :target: https://circleci.com/gh/dhermes/bezier
-   :alt: CircleCI Build
-.. |github-actions-build| image:: https://github.com/dhermes/bezier/workflows/macOS/badge.svg?branch=main&event=push
+.. |linux-build| image:: https://github.com/dhermes/bezier/workflows/Linux/badge.svg?branch=main&event=push
+   :target: https://github.com/dhermes/bezier/actions?query=workflow%3ALinux
+   :alt: Linux Build (GitHub Actions)
+.. |macos-build| image:: https://github.com/dhermes/bezier/workflows/macOS/badge.svg?branch=main&event=push
    :target: https://github.com/dhermes/bezier/actions?query=workflow%3AmacOS
-   :alt: GitHub Actions Build
+   :alt: macOS Build (GitHub Actions)
 .. |appveyor-build| image:: https://img.shields.io/appveyor/ci/dhermes/bezier/main.svg?maxAge=3600&logo=appveyor&label=Windows
    :target: https://ci.appveyor.com/project/dhermes/bezier
    :alt: AppVeyor CI Build

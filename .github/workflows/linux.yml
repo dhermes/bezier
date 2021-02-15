@@ -1,0 +1,84 @@
+---
+name: Linux
+
+on:
+  schedule:
+  # Scheduled workflows run on the latest commit on the default or base branch
+  - cron: '0 0 1 * *'
+  push:
+    branches:
+    - main
+    - linux-actions
+  pull_request:
+    branches:
+    - main
+    - linux-actions
+
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+    steps:
+    - uses: actions/checkout@v2
+    - name: Pull Docker image used for CI
+      run: docker pull dhermes/bezier:latest
+    - name: Start and detach a Docker container (max lifetime 1 hour)
+      run: |
+        docker run \
+          --name dhermes-bezier \
+          --rm \
+          --detach \
+          --volume /var/run/docker.sock:/var/run/docker.sock \
+          --volume "${GITHUB_WORKSPACE}:/var/code/bezier/" \
+          --env MATPLOTLIBRC=tests \
+          --env "GITHUB_REF=${GITHUB_REF}" \
+          --workdir /var/code/bezier/ \
+          dhermes/bezier:latest \
+          sleep 3600
+    - name: Check that all Cython generated files have been updated
+      run: |
+        docker exec dhermes-bezier \
+          nox -s "update_generated(check=True)"
+    - name: Unit tests in Python 3.7
+      run: |
+        docker exec dhermes-bezier \
+          nox -s "unit-3.7"
+    - name: Unit tests in Python 3.8
+      run: |
+        docker exec dhermes-bezier \
+          nox -s "unit-3.8"
+    - name: Unit tests in pypy3
+      run: |
+        docker exec dhermes-bezier \
+          nox -s "unit-pypy3"
+    - name: Unit tests AND line coverage in Python 3.9
+      run: |
+        docker exec dhermes-bezier \
+          nox -s cover
+    - name: Functional tests in Python 3.9
+      run: |
+        docker exec dhermes-bezier \
+          nox -s "functional-3.9"
+    - name: Run all doctests
+      run: |
+        docker exec dhermes-bezier \
+          nox -s doctest
+    - name: Build docs
+      run: |
+        docker exec dhermes-bezier \
+          nox -s docs
+    - name: Lint code for style issues
+      run: |
+        docker exec dhermes-bezier \
+          nox -s lint
+    - name: Check that test case examples are valid for JSON schema
+      run: |
+        docker exec dhermes-bezier \
+          nox -s validate_functional_test_cases
+    - name: Upload coverage to coveralls
+      env:
+        COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
+      run: |
+        docker exec \
+          --env "COVERALLS_REPO_TOKEN=${COVERALLS_REPO_TOKEN}" \
+          dhermes-bezier \
+          ./scripts/upload_coveralls.sh
