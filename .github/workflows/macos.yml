@@ -10,15 +10,13 @@ on:
     - main
 
 jobs:
-  build:
-    runs-on: ${{ matrix.os }}
+  ci:
+    runs-on: macos-latest
     env:
       PY_VERSION: '${{ matrix.python-version }}'
       PY_BIN_DIR: '/Library/Frameworks/Python.framework/Versions/${{ matrix.python-version }}/bin'
     strategy:
       matrix:
-        os:
-        - macos-latest
         python-version:
         - '3.7'
         - '3.8'
