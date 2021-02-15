@@ -151,7 +151,7 @@ CIRCLECI_BADGE_RELEASE = (
     "docs/circleci-passing.svg?sanitize=true"
 )
 GITHUB_ACTIONS_BADGE = (
-    "https://github.com/dhermes/bezier/workflows/macos/badge.svg?"
+    "https://github.com/dhermes/bezier/workflows/macOS/badge.svg?"
     "branch=main&event=push"
 )
 GITHUB_ACTIONS_BADGE_RELEASE = (
@@ -317,7 +317,7 @@ def populate_readme(revision, rtd_version, **extra_kwargs):
         "circleci_badge": CIRCLECI_BADGE,
         "circleci_path": "",
         "github_actions_badge": GITHUB_ACTIONS_BADGE,
-        "github_actions_path": "?query=workflow%3Amacos",
+        "github_actions_path": "?query=workflow%3AmacOS",
         "appveyor_badge": APPVEYOR_BADGE,
         "appveyor_path": "",
         "coveralls_badge": COVERALLS_BADGE,
@@ -450,7 +450,7 @@ def _index_verify(index_file, **extra_kwargs):
         "circleci_badge": CIRCLECI_BADGE,
         "circleci_path": "",
         "github_actions_badge": GITHUB_ACTIONS_BADGE,
-        "github_actions_path": "?query=workflow%3Amacos",
+        "github_actions_path": "?query=workflow%3AmacOS",
         "appveyor_badge": APPVEYOR_BADGE,
         "appveyor_path": "",
         "coveralls_badge": COVERALLS_BADGE,

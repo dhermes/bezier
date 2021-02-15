@@ -205,8 +205,8 @@ details, see `the LICENSE`_.
 .. |circle-build| image:: https://img.shields.io/circleci/project/github/dhermes/bezier/main.svg?maxAge=3600&logo=circleci&label=Linux
    :target: https://circleci.com/gh/dhermes/bezier
    :alt: CircleCI Build
-.. |github-actions-build| image:: https://github.com/dhermes/bezier/workflows/macos/badge.svg?branch=main&event=push
-   :target: https://github.com/dhermes/bezier/actions?query=workflow%3Amacos
+.. |github-actions-build| image:: https://github.com/dhermes/bezier/workflows/macOS/badge.svg?branch=main&event=push
+   :target: https://github.com/dhermes/bezier/actions?query=workflow%3AmacOS
    :alt: GitHub Actions Build
 .. |appveyor-build| image:: https://img.shields.io/appveyor/ci/dhermes/bezier/main.svg?maxAge=3600&logo=appveyor&label=Windows
    :target: https://ci.appveyor.com/project/dhermes/bezier
