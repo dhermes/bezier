@@ -20,11 +20,7 @@ if(NOT CMAKE_BUILD_TYPE)
 endif()
 
 if(WIN32 AND CMAKE_Fortran_COMPILER_ID MATCHES "GNU")
-  # See:
-  # - https://github.com/msys2/MINGW-packages/issues/6986
-  # - https://github.com/msys2/MINGW-packages/issues/7023
-  # for discussion of `--disable-dynamicbase`
-  set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -static -Wl,--disable-dynamicbase")
+  set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -static")
   if(NOT CMAKE_IMPORT_LIBRARY_SUFFIX_Fortran)
     set(CMAKE_IMPORT_LIBRARY_SUFFIX_Fortran ".lib")
   endif()
