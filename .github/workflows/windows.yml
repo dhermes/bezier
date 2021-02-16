@@ -36,6 +36,10 @@ jobs:
         - functional-3.9
         - doctest
     steps:
+    - uses: actions/cache@v2
+      with:
+        path: ~\AppData\Local\pip\Cache
+        key: windows-pip
     - uses: actions/checkout@v2
     - name: Update host Python packaging
       shell: cmd
@@ -64,7 +68,3 @@ jobs:
         }
         $env:Path = "$MINGW;" + $env:Path
         nox --session $env:NOX_SESSION
-    - uses: actions/cache@v2
-      with:
-        path: ~\AppData\Local\pip\Cache
-        key: windows-pip
