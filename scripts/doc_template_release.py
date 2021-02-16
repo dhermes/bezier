@@ -61,7 +61,7 @@ def get_version():
 def populate_readme(
     version,
     linux_run,
-    appveyor_build,
+    windows_run,
     coveralls_build,
     macos_run,
 ):
@@ -73,8 +73,8 @@ def populate_readme(
         version (str): The current version.
         linux_run (int): The GitHub Actions run ID (for Linux) corresponding to
             the release.
-        appveyor_build (str): The AppVeyor build ID corresponding to the
-            release.
+        windows_run (int): The GitHub Actions run ID (for Windows)
+            corresponding to the release.
         coveralls_build (Union[str, int]): The Coveralls.io build ID
             corresponding to the release.
         macos_run (int): The GitHub Actions run ID (for macOS) corresponding to
@@ -85,7 +85,7 @@ def populate_readme(
     contents = template.format(
         version=version,
         linux_run=linux_run,
-        appveyor_build=appveyor_build,
+        windows_run=windows_run,
         coveralls_build=coveralls_build,
         macos_run=macos_run,
     )
@@ -96,7 +96,7 @@ def populate_readme(
 def populate_index(
     version,
     linux_run,
-    appveyor_build,
+    windows_run,
     coveralls_build,
     macos_run,
 ):
@@ -106,8 +106,8 @@ def populate_index(
         version (str): The current version.
         linux_run (int): The GitHub Actions run ID (for Linux) corresponding to
             the release.
-        appveyor_build (str): The AppVeyor build ID corresponding to the
-            release.
+        windows_run (int): The GitHub Actions run ID (for Windows)
+            corresponding to the release.
         coveralls_build (Union[str, int]): The Coveralls.io build ID
             corresponding to the release.
         macos_run (int): The GitHub Actions run ID (for macOS) corresponding to
@@ -118,7 +118,7 @@ def populate_index(
     contents = template.format(
         version=version,
         linux_run=linux_run,
-        appveyor_build=appveyor_build,
+        windows_run=windows_run,
         coveralls_build=coveralls_build,
         macos_run=macos_run,
     )
@@ -144,25 +144,25 @@ def populate_development(version):
 def main():
     """Populate the templates with release-specific fields.
 
-    Requires user input for the GitHub Actions (Linux and macOS), AppVeyor
+    Requires user input for the GitHub Actions (Linux, macOS and Windows)
     and Coveralls.io build IDs.
     """
     version = get_version()
     linux_run = input("Linux GitHub Actions Run ID: ")
-    appveyor_build = input("AppVeyor Build ID: ")
+    windows_run = input("Windows GitHub Actions Run ID: ")
     coveralls_build = input("Coveralls Build ID: ")
     macos_run = input("macOS GitHub Actions Run ID: ")
     populate_readme(
         version,
         linux_run,
-        appveyor_build,
+        windows_run,
         coveralls_build,
         macos_run,
     )
     populate_index(
         version,
         linux_run,
-        appveyor_build,
+        windows_run,
         coveralls_build,
         macos_run,
     )

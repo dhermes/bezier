@@ -3,7 +3,7 @@
 
     Helper for B |eacute| zier Curves, Triangles, and Higher Order Objects
 
-|linux-build| |macos-build| |appveyor-build| |coverage|{pypi}{versions}{docs}{zenodo}{joss}
+|linux-build| |macos-build| |windows-build| |coverage|{pypi}{versions}{docs}{zenodo}{joss}
 
 .. |eacute| unicode:: U+000E9 .. LATIN SMALL LETTER E WITH ACUTE
    :trim:
@@ -182,9 +182,9 @@ details, see `the LICENSE`_.
 .. |macos-build| image:: {macos_badge}
    :target: https://github.com/dhermes/bezier/actions{macos_path}
    :alt: macOS Build (GitHub Actions)
-.. |appveyor-build| image:: {appveyor_badge}
-   :target: https://ci.appveyor.com/project/dhermes/bezier{appveyor_path}
-   :alt: AppVeyor CI Build{pypi_img}{versions_img}
+.. |windows-build| image:: {windows_badge}
+   :target: https://github.com/dhermes/bezier/actions{windows_path}
+   :alt: Windows Build (GitHub Actions){pypi_img}{versions_img}
 .. |coverage| image:: {coveralls_badge}
    :target: https://coveralls.io/{coveralls_path}
    :alt: Code Coverage{zenodo_img}{joss_img}

@@ -158,13 +158,13 @@ MACOS_BADGE_RELEASE = (
     "https://raw.githubusercontent.com/dhermes/bezier/{version}/"
     "docs/macos-passing.svg?sanitize=true"
 )
-APPVEYOR_BADGE = (
-    "https://img.shields.io/appveyor/ci/dhermes/bezier/main.svg?"
-    "maxAge=3600&logo=appveyor&label=Windows"
+WINDOWS_BADGE = (
+    "https://github.com/dhermes/bezier/workflows/Windows/badge.svg?"
+    "branch=main&event=push"
 )
-APPVEYOR_BADGE_RELEASE = (
+WINDOWS_BADGE_RELEASE = (
     "https://raw.githubusercontent.com/dhermes/bezier/{version}/"
-    "docs/appveyor-passing.svg?sanitize=true"
+    "docs/windows-passing.svg?sanitize=true"
 )
 COVERALLS_BADGE = "https://coveralls.io/repos/github/dhermes/bezier/badge.svg"
 COVERALLS_BADGE_RELEASE = (
@@ -318,8 +318,8 @@ def populate_readme(revision, rtd_version, **extra_kwargs):
         "linux_path": "?query=workflow%3ALinux",
         "macos_badge": MACOS_BADGE,
         "macos_path": "?query=workflow%3AmacOS",
-        "appveyor_badge": APPVEYOR_BADGE,
-        "appveyor_path": "",
+        "windows_badge": WINDOWS_BADGE,
+        "windows_path": "?query=workflow%3AWindows",
         "coveralls_badge": COVERALLS_BADGE,
         "coveralls_path": COVERALLS_PATH,
         "zenodo": "|zenodo|",
@@ -389,8 +389,8 @@ def release_readme_verify():
         linux_path="/runs/{linux_run}",
         macos_badge=MACOS_BADGE_RELEASE,
         macos_path="/runs/{macos_run}",
-        appveyor_badge=APPVEYOR_BADGE_RELEASE,
-        appveyor_path="/build/{appveyor_build}",
+        windows_badge=WINDOWS_BADGE_RELEASE,
+        windows_path="/run/{windows_run}",
         coveralls_badge=COVERALLS_BADGE_RELEASE,
         coveralls_path="builds/{coveralls_build}",
         citation=CITATION.replace("{", "{{").replace("}", "}}"),
@@ -451,8 +451,8 @@ def _index_verify(index_file, **extra_kwargs):
         "linux_path": "?query=workflow%3ALinux",
         "macos_badge": MACOS_BADGE,
         "macos_path": "?query=workflow%3AmacOS",
-        "appveyor_badge": APPVEYOR_BADGE,
-        "appveyor_path": "",
+        "windows_badge": WINDOWS_BADGE,
+        "windows_path": "?query=workflow%3AWindows",
         "coveralls_badge": COVERALLS_BADGE,
         "coveralls_path": COVERALLS_PATH,
         "zenodo": "|zenodo|",
@@ -507,7 +507,7 @@ def release_docs_side_effect(content):
     result = result.replace("{{version}}", "{version}")
     result = result.replace("{{linux_run}}", "{linux_run}")
     result = result.replace("{{macos_run}}", "{macos_run}")
-    result = result.replace("{{appveyor_build}}", "{appveyor_build}")
+    result = result.replace("{{windows_run}}", "{windows_run}")
     result = result.replace("{{coveralls_build}}", "{coveralls_build}")
     return result
 
@@ -533,8 +533,8 @@ def release_docs_index_verify():
         linux_path="/runs/{linux_run}",
         macos_badge=MACOS_BADGE_RELEASE,
         macos_path="/runs/{macos_run}",
-        appveyor_badge=APPVEYOR_BADGE_RELEASE,
-        appveyor_path="/build/{appveyor_build}",
+        windows_badge=WINDOWS_BADGE_RELEASE,
+        windows_path="/runs/{windows_run}",
         coveralls_badge=COVERALLS_BADGE_RELEASE,
         coveralls_path="builds/{coveralls_build}",
     )

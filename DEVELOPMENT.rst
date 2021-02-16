@@ -432,30 +432,28 @@ To regenerate all the images:
 Continuous Integration
 **********************
 
-Tests are run on `GitHub Actions`_ (Linux and macOS) and
-`AppVeyor`_ (Windows) after every commit. To see which tests are run, see
-the `Linux config`_ and the `macOS config`_ for GitHub Actions and the
-`AppVeyor config`_.
+Tests are run on `GitHub Actions`_ (Linux, macOS and Windows)
+after every commit. To see which tests are run, see
+the `Linux config`_, the `macOS config`_ and the `Windows config`_.
 
-For Linux (on GitHub Actions), a `Docker`_ image is used to provide
+For Linux, a `Docker`_ image is used to provide
 fine-grained control over the environment. There is a base
 `python-multi Dockerfile`_ that just has the
 Python versions we test in. The image used in our Linux builds (from
 `bezier Dockerfile`_) installs dependencies needed for testing (such as
 ``nox`` and NumPy).
 
-For macOS (on GitHub Actions), Matthew Brett's `multibuild`_ is used to
+For macOS, Matthew Brett's `multibuild`_ is used to
 install "official" python.org CPython binaries for macOS. Then tests are run
 in 64-bit mode (NumPy has `discontinued`_ 32-bit support).
 
-On AppVeyor, the binary extension is built and tested with both 32-bit and
+For Windows, the binary extension is built and tested with both 32-bit and
 64-bit Python binaries.
 
 .. _GitHub Actions: https://github.com/dhermes/bezier/actions
-.. _AppVeyor: https://ci.appveyor.com/project/dhermes/bezier
 .. _Linux config: https://github.com/dhermes/bezier/blob/main/.github/workflows/linux.yml
 .. _macOS config: https://github.com/dhermes/bezier/blob/main/.github/workflows/macos.yml
-.. _AppVeyor config: https://github.com/dhermes/bezier/blob/main/.appveyor.yml
+.. _Windows config: https://github.com/dhermes/bezier/blob/main/.github/workflows/windows.yml
 .. _python-multi Dockerfile: https://github.com/dhermes/python-multi/blob/master/src/Dockerfile
 .. _bezier Dockerfile: https://github.com/dhermes/bezier/blob/main/scripts/docker/bezier.Dockerfile
 .. _multibuild: https://github.com/matthew-brett/multibuild

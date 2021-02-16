@@ -3,7 +3,7 @@
 
     Helper for B |eacute| zier Curves, Triangles, and Higher Order Objects
 
-|linux-build| |macos-build| |appveyor-build| |coverage|
+|linux-build| |macos-build| |windows-build| |coverage|
 
 |zenodo| |JOSS|
 
@@ -256,9 +256,9 @@ details, see `the LICENSE`_.
 .. |macos-build| image:: https://raw.githubusercontent.com/dhermes/bezier/{version}/docs/macos-passing.svg?sanitize=true
    :target: https://github.com/dhermes/bezier/actions/runs/{macos_run}
    :alt: macOS Build (GitHub Actions)
-.. |appveyor-build| image:: https://raw.githubusercontent.com/dhermes/bezier/{version}/docs/appveyor-passing.svg?sanitize=true
-   :target: https://ci.appveyor.com/project/dhermes/bezier/build/{appveyor_build}
-   :alt: AppVeyor CI Build
+.. |windows-build| image:: https://raw.githubusercontent.com/dhermes/bezier/{version}/docs/windows-passing.svg?sanitize=true
+   :target: https://github.com/dhermes/bezier/actions/runs/{windows_run}
+   :alt: Windows Build (GitHub Actions)
 .. |coverage| image:: https://s3.amazonaws.com/assets.coveralls.io/badges/coveralls_100.svg
    :target: https://coveralls.io/builds/{coveralls_build}
    :alt: Code Coverage

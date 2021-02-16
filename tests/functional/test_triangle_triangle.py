@@ -33,7 +33,7 @@ TOO_MANY = geometric_intersection._TOO_MANY_TEMPLATE
 WIGGLES = {
     GEOMETRIC: {
         1: 48,  # Established on CentOS 5 (i686 Docker image)
-        3: 10,  # Established on AppVeyor (64-bit Python 2.7)
+        3: 10,  # Established on Windows (64-bit Python 2.7)
         8: 18,  # Established on CentOS 5 (i686 Docker image)
         13: 19,  # Established on Ubuntu 16.04
         21: 15,  # Established on Ubuntu 16.04

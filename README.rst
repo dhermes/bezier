@@ -3,7 +3,7 @@
 
     Helper for B |eacute| zier Curves, Triangles, and Higher Order Objects
 
-|linux-build| |macos-build| |appveyor-build| |coverage|
+|linux-build| |macos-build| |windows-build| |coverage|
 
 |pypi| |versions|
 
@@ -208,9 +208,9 @@ details, see `the LICENSE`_.
 .. |macos-build| image:: https://github.com/dhermes/bezier/workflows/macOS/badge.svg?branch=main&event=push
    :target: https://github.com/dhermes/bezier/actions?query=workflow%3AmacOS
    :alt: macOS Build (GitHub Actions)
-.. |appveyor-build| image:: https://img.shields.io/appveyor/ci/dhermes/bezier/main.svg?maxAge=3600&logo=appveyor&label=Windows
-   :target: https://ci.appveyor.com/project/dhermes/bezier
-   :alt: AppVeyor CI Build
+.. |windows-build| image:: https://github.com/dhermes/bezier/workflows/Windows/badge.svg?branch=main&event=push
+   :target: https://github.com/dhermes/bezier/actions?query=workflow%3AWindows
+   :alt: Windows Build (GitHub Actions)
 .. |pypi| image:: https://img.shields.io/pypi/v/bezier.svg
    :target: https://pypi.org/project/bezier/
    :alt: PyPI Latest

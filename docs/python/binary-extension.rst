@@ -356,9 +356,9 @@ each of the Fortran submodules:
 
 .. note::
 
-   Invoking ``gfortran`` **can** be done from the Windows command prompt (e.g.
-   it works just fine on AppVeyor), but it is easier to do from a shell that
-   explicitly supports MinGW, such as MSYS2.
+   Invoking ``gfortran`` **can** be done from the Windows command prompt, but
+   it is easier to do from a shell that explicitly supports MinGW, such as
+   MSYS2.
 
 By default, the created shared library will depend on ``gcc`` libraries
 provided by MinGW:
@@ -414,7 +414,8 @@ on MinGW:
 
        KERNEL32.dll
        msvcrt.dll
-       USER32.dll
+
+   Summary
    ...
 
 .. note::
