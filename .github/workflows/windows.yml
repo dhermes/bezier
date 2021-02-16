@@ -2,6 +2,9 @@
 name: Windows
 
 on:
+  schedule:
+  # Scheduled workflows run on the latest commit on the default or base branch
+  - cron: '0 0 1 * *'
   push:
     branches:
     - main
