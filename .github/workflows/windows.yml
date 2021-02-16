@@ -59,3 +59,7 @@ jobs:
         }
         $env:Path = "$MINGW;" + $env:Path
         nox --session $env:NOX_SESSION
+    - uses: actions/cache@v2
+      with:
+        path: ~\AppData\Local\pip\Cache
+        key: windows-pip

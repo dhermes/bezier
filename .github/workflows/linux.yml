@@ -60,6 +60,10 @@ jobs:
           --env "COVERALLS_REPO_TOKEN=${COVERALLS_REPO_TOKEN}" \
           dhermes-bezier \
           ./scripts/upload_coveralls.sh
+    - uses: actions/cache@v2
+      with:
+        path: ~/.cache/pip
+        key: ubuntu-tests-pip
   lint:
     runs-on: ubuntu-20.04
     steps:
@@ -91,6 +95,10 @@ jobs:
       run: |
         docker exec dhermes-bezier \
           nox -s validate_functional_test_cases
+    - uses: actions/cache@v2
+      with:
+        path: ~/.cache/pip
+        key: ubuntu-lint-pip
   docs:
     runs-on: ubuntu-20.04
     steps:
@@ -118,3 +126,7 @@ jobs:
       run: |
         docker exec dhermes-bezier \
           nox -s docs
+    - uses: actions/cache@v2
+      with:
+        path: ~/.cache/pip
+        key: ubuntu-docs-pip

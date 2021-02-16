@@ -35,3 +35,7 @@ jobs:
       run: scripts/macos/setup.sh
     - name: Run tests
       run: scripts/macos/test.sh
+    - uses: actions/cache@v2
+      with:
+        path: ~/Library/Caches/pip
+        key: macos-pip
