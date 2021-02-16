@@ -61,7 +61,7 @@ jobs:
       # See: https://github.com/actions/virtual-environments/issues/2721
       # The `IMAGEVERSION=20210202.1` version is suspected to be bad.
       shell: powershell
-      run: Write-Host "IMAGEOS=" + $env:IMAGEOS + "  ||  IMAGEVERSION="  + $env:IMAGEVERSION
+      run: Write-Host "IMAGEOS=$env:IMAGEOS||IMAGEVERSION=$env:IMAGEVERSION"
     - name: Invoke nox
       shell: powershell
       run: |
