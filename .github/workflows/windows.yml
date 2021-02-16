@@ -2,15 +2,20 @@
 name: Windows
 
 on:
-  schedule:
-  # Scheduled workflows run on the latest commit on the default or base branch
-  - cron: '0 0 1 * *'
   push:
     branches:
     - main
   pull_request:
     branches:
     - main
+  schedule:
+  # Scheduled workflows run on the latest commit on the default or base branch
+  - cron: '0 0 1 * *'
+  workflow_dispatch:
+    inputs:
+      reason:
+        description: 'Reason for manually triggering workflow'
+        required: true
 
 jobs:
   ci:
