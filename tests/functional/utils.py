@@ -247,7 +247,7 @@ class IncorrectCount(ValueError):
 
 
 class Config:
-    """Run-time configuration.
+    """Runtime configuration.
 
     This is a mutable stand-in to allow test set-up to modify
     global state.

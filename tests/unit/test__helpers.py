@@ -71,7 +71,7 @@ class Test_speedup_wiggle_interval(test_helpers.Test_wiggle_interval):
         # Fortran implementation doesn't support optional wiggle. This
         # isn't because Fortran **can't** (just use "optional"), it's just
         # to allow the compiler to pre-compute 1 + wiggle / 1 - wiggle
-        # rather than having to deal with it at run-time.
+        # rather than having to deal with it at runtime.
         pass
 
 

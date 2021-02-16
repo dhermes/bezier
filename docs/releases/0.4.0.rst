@@ -107,7 +107,7 @@ Miscellany
    (`ref <https://github.com/dhermes/bezier/commit/828f4238971b12a9d494ce38387cec855d063c91>`__)
 -  `Moving <https://github.com/dhermes/bezier/commit/dc4d33cfcf7f9ac6e794b856dc6d76635d362922>`__
    most plotting into a dedicated module. More importantly, importing
-   plotting helpers at **run-time** rather at **import time**. So if
+   plotting helpers at **runtime** rather at **import time**. So if
    computational code never plots, it won't eat the import cost of
    ``matplotlib``.
    `Removing <https://github.com/dhermes/bezier/commit/064e2c5efe7fa6498d74a33798a363e2c8e0b83e>`__
