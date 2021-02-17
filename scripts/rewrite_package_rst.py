@@ -40,6 +40,7 @@ Subpackages
 -----------
 
 .. toctree::
+   :maxdepth: 4
 
    bezier.hazmat
 
@@ -47,6 +48,7 @@ Submodules
 ----------
 
 .. toctree::
+   :maxdepth: 4
 
    bezier.curve
    bezier.curved_polygon

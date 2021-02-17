@@ -43,28 +43,30 @@ Procedures
    :param num_nodes:
       **[Input]** The number of nodes :math:`N` in the control net of the
       B |eacute| zier triangle.
-   :type num_nodes: const int*
+   :type num_nodes: :c:expr:`const int*`
    :param nodes:
       **[Input]** The actual control net of the B |eacute| zier triangle as a
       :math:`2 \times N` array. This should be laid out in Fortran order, with
       :math:`2 N` total values.
-   :type nodes: const double*
+   :type nodes: :c:expr:`const double*`
    :param degree:
       **[Input]** The degree :math:`d` of the B |eacute| zier triangle.
-   :type degree: const int*
+   :type degree: :c:expr:`const int*`
    :param x_val:
       **[Input]** The :math:`x`\-value of the point being located.
-   :type x_val: const double*
+   :type x_val: :c:expr:`const double*`
    :param y_val:
       **[Input]** The :math:`y`\-value of the point being located.
-   :type y_val: const double*
-   :param double* s_val:
+   :type y_val: :c:expr:`const double*`
+   :param s_val:
       **[Output]** The first parameter :math:`s` of the solution. If
       :math:`(x, y)` can't be located on the triangle, then ``s_val = -1.0``.
-   :param double* t_val:
+   :type s_val: :c:expr:`double*`
+   :param t_val:
       **[Output]** The second parameter :math:`t` of the solution. If
       :math:`(x, y)` can't be located on the triangle, then this value
       is undefined.
+   :type t_val: :c:expr:`double*`
 
    **Signature:**
 
@@ -102,35 +104,37 @@ Procedures
    :param num_nodes:
       **[Input]** The number of nodes :math:`N` in the control net of the
       B |eacute| zier triangle.
-   :type num_nodes: const int*
+   :type num_nodes: :c:expr:`const int*`
    :param nodes:
       **[Input]** The actual control net of the B |eacute| zier triangle as a
       :math:`2 \times N` array. This should be laid out in Fortran order, with
       :math:`2 N` total values.
-   :type nodes: const double*
+   :type nodes: :c:expr:`const double*`
    :param degree:
       **[Input]** The degree :math:`d` of the B |eacute| zier triangle.
-   :type degree: const int*
+   :type degree: :c:expr:`const int*`
    :param x_val:
       **[Input]** The :math:`x`\-value of the point :math:`p`.
-   :type x_val: const double*
+   :type x_val: :c:expr:`const double*`
    :param y_val:
       **[Input]** The :math:`y`\-value of the point :math:`p`.
-   :type y_val: const double*
+   :type y_val: :c:expr:`const double*`
    :param s:
       **[Input]** The first parameter :math:`s_n` of the current approximation
       of a solution.
-   :type s: const double*
+   :type s: :c:expr:`const double*`
    :param t:
       **[Input]** The second parameter :math:`t_n` of the current approximation
       of a solution.
-   :type t: const double*
-   :param double* updated_s:
+   :type t: :c:expr:`const double*`
+   :param updated_s:
       **[Output]** The first parameter :math:`s_{n + 1}` of the updated
       approximation.
-   :param double* updated_t:
+   :type updated_s: :c:expr:`double*`
+   :param updated_t:
       **[Output]** The second parameter :math:`t_{n + 1}` of the updated
       approximation.
+   :type updated_t: :c:expr:`double*`
 
    **Signature:**
 
@@ -189,53 +193,57 @@ Procedures
    :param num_nodes1:
       **[Input]** The number of nodes :math:`N_1` in the control net of the
       first B |eacute| zier triangle.
-   :type num_nodes1: const int*
+   :type num_nodes1: :c:expr:`const int*`
    :param nodes1:
       **[Input]** The actual control net of the first B |eacute| zier triangle
       as a :math:`2 \times N_1` array. This should be laid out in Fortran
       order, with :math:`2 N_1` total values.
-   :type nodes1: const double*
+   :type nodes1: :c:expr:`const double*`
    :param degree1:
       **[Input]** The degree :math:`d_1` of the first B |eacute| zier triangle.
-   :type degree1: const int*
+   :type degree1: :c:expr:`const int*`
    :param num_nodes2:
       **[Input]** The number of nodes :math:`N_2` in the control net of the
       second B |eacute| zier triangle.
-   :type num_nodes2: const int*
+   :type num_nodes2: :c:expr:`const int*`
    :param nodes2:
       **[Input]** The actual control net of the second B |eacute| zier triangle
       as a :math:`2 \times N_2` array. This should be laid out in Fortran
       order, with :math:`2 N_2` total values.
-   :type nodes2: const double*
+   :type nodes2: :c:expr:`const double*`
    :param degree2:
       **[Input]** The degree :math:`d_2` of the second B |eacute| zier triangle.
-   :type degree1: const int*
+   :type degree2: :c:expr:`const int*`
    :param segment_ends_size:
       **[Input]** The size of ``segment_ends``, which must be pre-allocated by
       the caller.
-   :type segment_ends_size: const int*
-   :param int* segment_ends:
+   :type segment_ends_size: :c:expr:`const int*`
+   :param segment_ends:
       **[Output]** An array (pre-allocated by the caller) of the end indices
       for each group of segments in ``segments``. For example, if the triangles
       intersect in two distinct curved polygons, the first of which has four
       sides and the second of which has three, then the first two values in
       ``segment_ends`` will be ``[4, 7]`` and ``num_intersected`` will be
       ``2``.
+   :type segment_ends: :c:expr:`int*`
    :param segments_size:
       **[Input]** The size of ``segments``, which must be pre-allocated by
       the caller.
-   :type segments_size: const int*
-   :param CurvedPolygonSegment* segments:
+   :type segments_size: :c:expr:`const int*`
+   :param segments:
       **[Output]** An array (pre-allocated by the caller) of the edge segments
       that make up the boundary of the curved polygon(s) that form the
       intersection of the two triangles.
-   :param int* num_intersected:
+   :type segments: :c:expr:`CurvedPolygonSegment*`
+   :param num_intersected:
       **[Output]** The number of curved polygons in the intersection of two
       triangles.
-   :param TriangleContained* contained:
+   :type num_intersected: :c:expr:`int*`
+   :param contained:
       **[Output]** Enum indicating if one triangle is **fully** contained in
       the other.
-   :param Status* status:
+   :type contained: :c:expr:`TriangleContained*`
+   :param status:
       **[Output]** The status code for the procedure. Will be
 
       * :c:data:`SUCCESS` on success.
@@ -271,6 +279,7 @@ Procedures
         intersection, a programming error or round-off which causes an
         infinite loop of intersection points to be added without wrapping
         around back to the first intersection point.
+   :type status: :c:expr:`Status*`
 
    **Signature:**
 
@@ -308,7 +317,7 @@ Procedures
 Types
 *****
 
-.. c:type:: CurvedPolygonSegment
+.. c:struct:: CurvedPolygonSegment
 
    Describes an edge of a :class:`.CurvedPolygon` formed when intersecting
    two curved B |eacute| zier triangles. The edges of the intersection need
@@ -316,19 +325,19 @@ Types
    :math:`E(s)` may be restricted to
    :math:`E\left(\left[\frac{1}{4}, \frac{7}{8}\right]\right)`.
 
-   .. c:type:: double start
+   .. c:member:: double start
 
       The start parameter of the segment. In the restriction
       :math:`E\left(\left[\frac{1}{4}, \frac{7}{8}\right]\right)`, the
       ``start`` would be ``0.25``.
 
-   .. c:type:: double end
+   .. c:member:: double end
 
       The end parameter of the segment. In the restriction
       :math:`E\left(\left[\frac{1}{4}, \frac{7}{8}\right]\right)`, the
       ``end`` would be ``0.875``.
 
-   .. c:type:: int edge_index
+   .. c:member:: int edge_index
 
       An index describing which edge the segment falls on. The edges
       of the first triangle in the intersection are given index values
@@ -345,26 +354,26 @@ Types
         int edge_index;
       } CurvedPolygonSegment;
 
-.. c:type:: TriangleContained
+.. c:enum:: TriangleContained
 
    This enum is used to indicate if one triangle is contained in
    another when doing triangle-triangle intersection.
 
-   .. c:var:: NEITHER
+   .. c:enumerator:: NEITHER
 
       (``0``)
       Indicates that neither triangle is contained in the other. This
       could mean the triangles are disjoint or that they intersect
       in a way other than full containment.
 
-   .. c:var:: FIRST
+   .. c:enumerator:: FIRST
 
       (``1``)
       Indicates that the first triangle (arguments will be ordered) is
       fully contained in the second. This allows for points of tangency,
       shared corners or shared segments along an edge.
 
-   .. c:var:: SECOND
+   .. c:enumerator:: SECOND
 
       (``2``)
       Indicates that the second triangle (arguments will be ordered) is

@@ -40,15 +40,12 @@ sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
 
 # If your documentation needs a minimal Sphinx version, state it here.
 #
-needs_sphinx = "1.7.0"
+needs_sphinx = "3.5.1"
 
 nitpicky = True
-# ``bool`` is not a stopword but ``_Bool`` is, because only ``_Bool``
-# is in the language (``bool`` requires ``<stdbool.h>``)
-sphinx.domains.c.CObject.stopwords.update(
-    ("bool", "const double", "const double* const", "const int")
-)
-nitpick_ignore = [("py:class", "bezier._base.Base")]
+nitpick_ignore = [
+    ("py:class", "bezier._base.Base"),
+]
 
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named "sphinx.ext.*") or your custom

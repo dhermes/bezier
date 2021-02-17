@@ -2,17 +2,17 @@
 status module
 #############
 
-.. c:type:: Status
+.. c:enum:: Status
 
    This enum contains all status codes that can be returned from
    procedures that can fail for **some** inputs.
 
-   .. c:var:: SUCCESS
+   .. c:enumerator:: SUCCESS
 
       (``0``)
       Procedure exited with no error.
 
-   .. c:var:: BAD_MULTIPLICITY
+   .. c:enumerator:: BAD_MULTIPLICITY
 
       (``1``)
       An iterative method (e.g. Newton's method) failed to converge because it
@@ -20,26 +20,26 @@ status module
       triple root or higher). The multiplicity is detected by the observed
       rate of convergence.
 
-   .. c:var:: NO_CONVERGE
+   .. c:enumerator:: NO_CONVERGE
 
       (``2``)
       An iterative method failed to converge in the maximum allowed
       number of iterations.
 
-   .. c:var:: INSUFFICIENT_SPACE
+   .. c:enumerator:: INSUFFICIENT_SPACE
 
       (``3``)
       All allocation must be done by the caller, hence any variable-size
       output must be already allocated. This will be used when the caller has
       not allocated enough space for the output values.
 
-   .. c:var:: SAME_CURVATURE
+   .. c:enumerator:: SAME_CURVATURE
 
       (``4``)
       Classification of a curve-curve intersection failed due to two curves
       having identical curvature at a tangent intersection.
 
-   .. c:var:: BAD_INTERIOR
+   .. c:enumerator:: BAD_INTERIOR
 
       (``5``)
       Caused by a failure during the process of triangle-triangle intersection.
@@ -47,19 +47,19 @@ status module
       into the curved polygon(s) that make up the intersection of the two
       triangles.
 
-   .. c:var:: EDGE_END
+   .. c:enumerator:: EDGE_END
 
       (``6``)
       A triangle-triangle intersection point occurs at the **end** of an
       edge (only intersections at the beginning of an edge should be used).
 
-   .. c:var:: SINGULAR
+   .. c:enumerator:: SINGULAR
 
       (``7``)
       Signifies that an attempt was made to solve a linear system that was
       singular.
 
-   .. c:var:: UNKNOWN
+   .. c:enumerator:: UNKNOWN
 
       (``999``)
       Signifies a block of code reached an "impossible" state. Either the
