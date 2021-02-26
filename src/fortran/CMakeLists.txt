@@ -22,17 +22,20 @@ endif()
 if(WIN32 AND CMAKE_Fortran_COMPILER_ID MATCHES "GNU")
   set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -static")
 
-  # Regarding `-Wl,--default-image-base-low`, see
-  # - https://github.com/actions/virtual-environments/issues/2721
-  # - https://github.com/msys2/MINGW-packages/issues/7023
-  # - https://github.com/msys2/MINGW-packages/issues/6986
-  # - https://www.msys2.org/news/#2021-01-31-aslr-enabled-by-default
-  # - https://sourceware.org/bugzilla/show_bug.cgi?id=26659
+  # Regarding `-Wl,--default-image-base-low`, see:
+  # https://github.com/actions/virtual-environments/issues/2721
+  # https://github.com/msys2/MINGW-packages/issues/7023
+  # https://github.com/msys2/MINGW-packages/issues/6986
+  # https://www.msys2.org/news/#2021-01-31-aslr-enabled-by-default
+  # https://sourceware.org/bugzilla/show_bug.cgi?id=26659
   if(CMAKE_SIZEOF_VOID_P EQUAL "8")
     # Only add the flag for 64-bit MinGW `gfortran`
-    set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -Wl,--default-image-base-low")
+    set(CMAKE_SHARED_LINKER_FLAGS
+        "${CMAKE_SHARED_LINKER_FLAGS} -Wl,--default-image-base-low")
   elseif(NOT CMAKE_SIZEOF_VOID_P EQUAL "4")
-    message(FATAL_ERROR "Unexpected pointer size: CMAKE_SIZEOF_VOID_P=${CMAKE_SIZEOF_VOID_P}")
+    message(
+      FATAL_ERROR
+        "Unexpected pointer size: CMAKE_SIZEOF_VOID_P=${CMAKE_SIZEOF_VOID_P}")
   endif()
 
   if(NOT CMAKE_IMPORT_LIBRARY_SUFFIX_Fortran)
@@ -66,8 +69,10 @@ unset(SOURCES)
 
 if(${BUILD_SHARED_LIBS})
   set_target_properties(
-    bezier PROPERTIES VERSION ${bezier_VERSION} SOVERSION 2021
-                      POSITION_INDEPENDENT_CODE ON)
+    bezier
+    PROPERTIES VERSION ${bezier_VERSION}
+               SOVERSION 2021
+               POSITION_INDEPENDENT_CODE ON)
 endif()
 
 target_include_directories(bezier PUBLIC $<INSTALL_INTERFACE:include>)
