@@ -349,16 +349,16 @@ def test_intersect(strategy, intersection_info):
     if id_ in INCORRECT_COUNT[strategy]:
         with pytest.raises(utils.IncorrectCount):
             check_intersect(intersection_info, strategy)
-    elif intersection_type == CurveIntersectionType.tangent:
+    elif intersection_type == CurveIntersectionType.TANGENT:
         check_tangent(intersection_info, strategy)
     elif (
-        intersection_type == CurveIntersectionType.coincident
+        intersection_type == CurveIntersectionType.COINCIDENT
         or id_ in COINCIDENT_OVERRIDES[strategy]
     ):
         check_coincident(intersection_info, strategy)
-    elif intersection_type == CurveIntersectionType.standard:
+    elif intersection_type == CurveIntersectionType.STANDARD:
         check_intersect(intersection_info, strategy)
-    elif intersection_type == CurveIntersectionType.no_intersection:
+    elif intersection_type == CurveIntersectionType.NO_INTERSECTION:
         check_no_intersect(intersection_info, strategy)
     else:
         raise ValueError("Unexpected intersection type", intersection_type)

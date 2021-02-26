@@ -126,7 +126,7 @@ class CurvedPolygon:
               associated with this curved polygon. This is intended to be used
               by callers that have created a curved polygon as an intersection
               between two B |eacute| zier triangles.
-            * ``_verify`` (:class:`bool`): Indicates if the edges should be
+            * ``verify`` (:class:`bool`): Indicates if the edges should be
               verified as having shared endpoints. Defaults to :data:`True`.
 
             Other keyword arguments specified will be silently ignored.
@@ -138,7 +138,7 @@ class CurvedPolygon:
         self._edges = edges
         self._num_sides = len(edges)
         self._metadata = kwargs.pop("metadata", None)
-        if kwargs.pop("_verify", True):
+        if kwargs.pop("verify", True):
             self._verify()
 
     @staticmethod

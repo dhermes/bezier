@@ -378,7 +378,7 @@ class Curve(_base.Base):
         return left, right
 
     def intersect(
-        self, other, strategy=IntersectionStrategy.GEOMETRIC, _verify=True
+        self, other, strategy=IntersectionStrategy.GEOMETRIC, verify=True
     ):
         """Find the points of intersection with another curve.
 
@@ -419,7 +419,7 @@ class Curve(_base.Base):
             strategy (Optional[ \
                 ~bezier.hazmat.intersection_helpers.IntersectionStrategy]): The
                 intersection algorithm to use. Defaults to geometric.
-            _verify (Optional[bool]): Indicates if extra caution should be
+            verify (Optional[bool]): Indicates if extra caution should be
                 used to verify assumptions about the input and current
                 curve. Can be disabled to speed up execution time.
                 Defaults to :data:`True`.
@@ -429,13 +429,13 @@ class Curve(_base.Base):
             intersections occur (possibly empty).
 
         Raises:
-            TypeError: If ``other`` is not a curve (and ``_verify=True``).
+            TypeError: If ``other`` is not a curve (and ``verify=True``).
             NotImplementedError: If at least one of the curves
-                isn't two-dimensional (and ``_verify=True``).
+                isn't two-dimensional (and ``verify=True``).
             ValueError: If ``strategy`` is not a valid
                 :class:`.IntersectionStrategy`.
         """
-        if _verify:
+        if verify:
             if not isinstance(other, Curve):
                 raise TypeError(
                     "Can only intersect with another curve", "Received", other

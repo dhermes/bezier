@@ -255,7 +255,7 @@ class TestCurve(utils.NumPyTestCase):
         self._intersect_helper()
 
     def test_intersect_no_verify(self):
-        self._intersect_helper(_verify=False)
+        self._intersect_helper(verify=False)
 
     def test_intersect_non_curve(self):
         nodes = np.asfortranarray([[0.0, 0.5, 1.0], [0.0, -0.25, 0.0]])

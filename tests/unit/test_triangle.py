@@ -331,7 +331,7 @@ class TestTriangle(utils.NumPyTestCase):
         nodes = np.asfortranarray([[0.0, 1.0, 0.0], [0.0, 0.5, 1.25]])
         triangle = self._make_one(nodes, 1)
         self.assertLess(min(lambda_vals), 0.0)
-        result = triangle.evaluate_barycentric(*lambda_vals, _verify=False)
+        result = triangle.evaluate_barycentric(*lambda_vals, verify=False)
         expected = np.asfortranarray([[-0.5], [1.3125]])
         self.assertEqual(result, expected)
 
@@ -340,7 +340,7 @@ class TestTriangle(utils.NumPyTestCase):
         nodes = np.asfortranarray([[0.0, 1.0, 0.0], [0.0, 0.5, 1.25]])
         triangle = self._make_one(nodes, 1)
         self.assertNotEqual(sum(lambda_vals), 1.0)
-        result = triangle.evaluate_barycentric(*lambda_vals, _verify=False)
+        result = triangle.evaluate_barycentric(*lambda_vals, verify=False)
         expected = np.asfortranarray([[0.25], [0.4375]])
         self.assertEqual(result, expected)
 
@@ -367,7 +367,7 @@ class TestTriangle(utils.NumPyTestCase):
         self._eval_bary_multi_helper()
 
     def test_evaluate_barycentric_multi_no_verify(self):
-        self._eval_bary_multi_helper(_verify=False)
+        self._eval_bary_multi_helper(verify=False)
 
     def test__verify_cartesian(self):
         klass = self._get_target_class()
@@ -401,7 +401,7 @@ class TestTriangle(utils.NumPyTestCase):
         nodes = np.asfortranarray([[1.0, 2.0, 1.0], [1.0, 1.5, 2.75]])
         triangle = self._make_one(nodes, 1)
         expected = np.asfortranarray([[1.25], [2.875]])
-        result = triangle.evaluate_cartesian(*s_t_vals, _verify=False)
+        result = triangle.evaluate_cartesian(*s_t_vals, verify=False)
         self.assertEqual(result, expected)
 
     def test_evaluate_cartesian_calls_helper(self):
@@ -441,7 +441,7 @@ class TestTriangle(utils.NumPyTestCase):
         self._eval_cartesian_multi_helper()
 
     def test_evaluate_cartesian_multi_no_verify(self):
-        self._eval_cartesian_multi_helper(_verify=False)
+        self._eval_cartesian_multi_helper(verify=False)
 
     def test_plot_wrong_dimension(self):
         nodes = np.asfortranarray(
@@ -633,8 +633,8 @@ class TestTriangle(utils.NumPyTestCase):
         # Make sure it fails.
         with self.assertRaises(ValueError):
             triangle.locate(point)
-        # Will only use the first row if _verify=False.
-        computed_s, computed_t = triangle.locate(point, _verify=False)
+        # Will only use the first row if verify=False.
+        computed_s, computed_t = triangle.locate(point, verify=False)
         self.assertEqual(s, computed_s)
         self.assertEqual(t, computed_t)
 
@@ -687,7 +687,7 @@ class TestTriangle(utils.NumPyTestCase):
         self._basic_intersect_helper()
 
     def test_intersect_no_verify(self):
-        self._basic_intersect_helper(_verify=False)
+        self._basic_intersect_helper(verify=False)
 
     def test_intersect_bad_strategy(self):
         triangle = self._make_one(self.UNIT_TRIANGLE, 1)

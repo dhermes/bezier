@@ -55,7 +55,7 @@ class TestCurvedPolygon(utils.NumPyTestCase):
         edge0 = bezier.Curve(self.NODES0, 2)
         with self.assertRaises(ValueError):
             self._make_one(edge0)
-        curved_poly = self._make_one(edge0, _verify=False)
+        curved_poly = self._make_one(edge0, verify=False)
         self.assertEqual(curved_poly._edges, (edge0,))
         self.assertEqual(curved_poly._num_sides, 1)
         self.assertIsNone(curved_poly._metadata)
