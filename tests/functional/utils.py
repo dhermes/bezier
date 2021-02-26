@@ -341,13 +341,13 @@ class CurveIntersectionType(enum.Enum):
     ``curve_intersection.json`` JSON-schema.
     """
 
-    coincident = "coincident"
+    COINCIDENT = "coincident"
     """Curves lie on the same underlying algebraic curve."""
-    no_intersection = "no-intersection"
+    NO_INTERSECTION = "no-intersection"
     """Curves do not intersect."""
-    tangent = "tangent"
+    TANGENT = "tangent"
     """Curves are tangent at the point of intersection."""
-    standard = "standard"
+    STANDARD = "standard"
     """Intersection is not **any** of the other types."""
 
 
