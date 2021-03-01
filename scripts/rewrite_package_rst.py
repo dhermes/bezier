@@ -24,7 +24,7 @@ try:
     import bezier
 except ImportError:
     bezier = None
-SPECIAL_MEMBERS = ("__author__", "__version__", "Surface")
+SPECIAL_MEMBERS = ("__author__", "__version__")
 UNDOCUMENTED_SPECIAL_MEMBERS = ("__author__",)
 EXPECTED = """\
 bezier package
