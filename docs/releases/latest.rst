@@ -6,6 +6,15 @@ Latest Release (``2021.2.13.dev1``)
 Python Changes
 --------------
 
+Breaking Changes
+~~~~~~~~~~~~~~~~
+
+-  Removing ``Surface`` alias for the ``Triangle``
+   `type <https://bezier.readthedocs.io/en/2021.2.13.dev1/python/reference/bezier.triangle.html#bezier.triangle.Triangle>`__
+   (`#252 <https://github.com/dhermes/bezier/pull/252>`__). The ``Surface``
+   type was deprecated (and converted to an alias) in the ``2020.1.14``
+   release.
+
 Additive Changes
 ~~~~~~~~~~~~~~~~
 
