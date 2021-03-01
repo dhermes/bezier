@@ -20,14 +20,11 @@ Plotting utilities are also provided.
 
 .. |eacute| unicode:: U+000E9 .. LATIN SMALL LETTER E WITH ACUTE
    :trim:
-
-.. autoclass:: Surface
 """
 
 # NOTE: ``__config__`` **must** be the first import because it (may)
 #       modify the search path used to locate shared libraries.
 from bezier import __config__
-from bezier._legacy import Surface
 from bezier.curve import Curve
 from bezier.curved_polygon import CurvedPolygon
 from bezier.hazmat.helpers import UnsupportedDegree
@@ -52,7 +49,6 @@ __all__ = [
     "__version__",
     "Curve",
     "CurvedPolygon",
-    "Surface",
     "Triangle",
     "UnsupportedDegree",
 ]
