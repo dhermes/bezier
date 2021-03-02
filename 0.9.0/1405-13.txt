@@ -1,0 +1,25 @@
+Collecting coveralls
+  Downloading https://files.pythonhosted.org/packages/91/4f/f52682bfaa960445af93143df5ea0a98854f1a7829ff3e377932426bf48c/coveralls-1.5.1-py2.py3-none-any.whl
+Requirement already satisfied: coverage>=3.6 in ./.nox/cover/lib/python3.7/site-packages (from coveralls) (4.5.1)
+Collecting docopt>=0.6.1 (from coveralls)
+  Downloading https://files.pythonhosted.org/packages/a2/55/8f8cab2afd404cf578136ef2cc5dfb50baa1761b68c9da1fb1e4eed343c9/docopt-0.6.2.tar.gz
+Collecting requests>=1.0.0 (from coveralls)
+  Using cached https://files.pythonhosted.org/packages/f1/ca/10332a30cb25b627192b4ea272c351bce3ca1091e541245cccbace6051d8/requests-2.20.0-py2.py3-none-any.whl
+Collecting chardet<3.1.0,>=3.0.2 (from requests>=1.0.0->coveralls)
+  Using cached https://files.pythonhosted.org/packages/bc/a9/01ffebfb562e4274b6487b4bb1ddec7ca55ec7510b22e4c51f14098443b8/chardet-3.0.4-py2.py3-none-any.whl
+Collecting idna<2.8,>=2.5 (from requests>=1.0.0->coveralls)
+  Using cached https://files.pythonhosted.org/packages/4b/2a/0276479a4b3caeb8a8c1af2f8e4355746a97fab05a372e4a2c6a6b876165/idna-2.7-py2.py3-none-any.whl
+Collecting certifi>=2017.4.17 (from requests>=1.0.0->coveralls)
+  Using cached https://files.pythonhosted.org/packages/56/9d/1d02dd80bc4cd955f98980f28c5ee2200e1209292d5f9e9cc8d030d18655/certifi-2018.10.15-py2.py3-none-any.whl
+Collecting urllib3<1.25,>=1.21.1 (from requests>=1.0.0->coveralls)
+  Using cached https://files.pythonhosted.org/packages/8c/4b/5cbc4cb46095f369117dcb751821e1bef9dd86a07c968d8757e9204c324c/urllib3-1.24-py2.py3-none-any.whl
+Building wheels for collected packages: docopt
+  Running setup.py bdist_wheel for docopt ... - done
+  Stored in directory: /root/.cache/pip/wheels/9b/04/dd/7daf4150b6d9b12949298737de9431a324d4b797ffd63f526e
+Successfully built docopt
+Installing collected packages: docopt, chardet, idna, certifi, urllib3, requests, coveralls
+Successfully installed certifi-2018.10.15 chardet-3.0.4 coveralls-1.5.1 docopt-0.6.2 idna-2.7 requests-2.20.0 urllib3-1.24
+Submitting coverage to coveralls.io...
+Coverage submitted!
+Job #1405.1
+https://coveralls.io/jobs/41740643

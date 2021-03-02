@@ -1,0 +1,8 @@
+nox > Running session check_journal(machine='circleci')
+nox > Creating virtualenv using python3.7 in /var/code/bezier/.nox/check_journal-machine-circleci
+nox > pip install --upgrade numpy >= 1.15.2
+nox > pip install --upgrade .
+nox > python /var/code/bezier/scripts/post_process_journal.py --journal-filename /tmp/tmp6mncjv5f-journal.txt --machine circleci
+nox > python /var/code/bezier/scripts/diff.py /tmp/tmp6mncjv5f-journal.txt /var/code/bezier/.circleci/expected_journal.txt
+/tmp/tmp6mncjv5f-journal.txt and /var/code/bezier/.circleci/expected_journal.txt are identical
+nox > Session check_journal(machine='circleci') was successful.

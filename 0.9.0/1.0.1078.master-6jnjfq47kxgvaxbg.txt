@@ -1,0 +1,454 @@
+[00:00:00] Build started
+[00:00:00] git clone -q --branch=master https://github.com/dhermes/bezier.git C:\projects\bezier
+[00:00:04] git checkout -qf 1b9bfa18683da91796808e137fd34c5d1f1e162c
+[00:00:04] Running Install scripts
+[00:00:04] echo "Filesystem root:"
+[00:00:04] "Filesystem root:"
+[00:00:04] dir C:\
+[00:00:04]  Volume in drive C is Windows
+[00:00:04]  Volume Serial Number is D4AB-4044
+[00:00:04] 
+[00:00:04]  Directory of C:\
+[00:00:04] 
+[00:00:04] 04/20/2016  03:18 AM    <DIR>          avvm
+[00:00:04] 03/09/2018  04:02 AM    <DIR>          cygwin
+[00:00:04] 03/09/2018  04:04 AM    <DIR>          cygwin64
+[00:00:04] 08/31/2018  08:06 PM    <JUNCTION>     go [C:\go111]
+[00:00:04] 08/31/2018  08:06 PM    <JUNCTION>     go-x86 [C:\go111-x86]
+[00:00:04] 08/24/2018  07:32 PM    <DIR>          go110
+[00:00:04] 08/24/2018  07:33 PM    <DIR>          go110-x86
+[00:00:04] 08/24/2018  08:38 PM    <DIR>          go111
+[00:00:04] 08/24/2018  08:38 PM    <DIR>          go111-x86
+[00:00:04] 09/23/2015  04:44 AM    <DIR>          go14
+[00:00:04] 09/23/2015  04:44 AM    <DIR>          go14-x86
+[00:00:04] 04/12/2016  12:28 AM    <DIR>          go15
+[00:00:04] 04/12/2016  12:27 AM    <DIR>          go15-x86
+[00:00:04] 12/01/2016  09:24 PM    <DIR>          go16
+[00:00:04] 12/01/2016  09:24 PM    <DIR>          go16-x86
+[00:00:04] 05/23/2017  06:44 PM    <DIR>          go17
+[00:00:04] 05/23/2017  06:44 PM    <DIR>          go17-x86
+[00:00:04] 02/07/2018  05:41 PM    <DIR>          go18
+[00:00:04] 02/07/2018  05:42 PM    <DIR>          go18-x86
+[00:00:04] 06/06/2018  07:50 PM    <DIR>          go19
+[00:00:04] 06/06/2018  07:50 PM    <DIR>          go19-x86
+[00:00:04] 03/09/2016  04:25 AM    <DIR>          inetpub
+[00:00:04] 07/21/2015  07:31 PM    <DIR>          jruby-9.0.0.0
+[00:00:04] 05/03/2018  03:57 AM    <DIR>          Libraries
+[00:00:04] 02/19/2017  07:06 PM    <DIR>          MinGW
+[00:00:04] 01/19/2018  02:40 AM    <DIR>          mingw-w64
+[00:00:04] 09/25/2018  03:53 AM    <DIR>          Miniconda
+[00:00:04] 09/25/2018  03:52 AM    <DIR>          Miniconda-x64
+[00:00:04] 09/25/2018  03:57 AM    <JUNCTION>     Miniconda3 [C:\Miniconda37]
+[00:00:04] 09/25/2018  03:57 AM    <JUNCTION>     Miniconda3-x64 [C:\Miniconda37-x64]
+[00:00:04] 09/25/2018  03:57 AM    <DIR>          Miniconda34
+[00:00:04] 09/25/2018  03:57 AM    <DIR>          Miniconda34-x64
+[00:00:04] 09/25/2018  03:54 AM    <DIR>          Miniconda35
+[00:00:04] 09/25/2018  03:54 AM    <DIR>          Miniconda35-x64
+[00:00:04] 09/25/2018  03:56 AM    <DIR>          Miniconda36
+[00:00:04] 09/25/2018  03:55 AM    <DIR>          Miniconda36-x64
+[00:00:04] 09/25/2018  03:57 AM    <DIR>          Miniconda37
+[00:00:04] 09/25/2018  03:57 AM    <DIR>          Miniconda37-x64
+[00:00:04] 08/31/2018  08:12 PM    <DIR>          MongoDB
+[00:00:04] 08/31/2018  09:10 PM    <DIR>          msys64
+[00:00:04] 08/31/2018  08:09 PM    <DIR>          OpenSSL-v11-Win32
+[00:00:04] 08/31/2018  08:09 PM    <DIR>          OpenSSL-v11-Win64
+[00:00:04] 08/31/2018  08:10 PM    <DIR>          OpenSSL-Win32
+[00:00:04] 08/31/2018  08:10 PM    <DIR>          OpenSSL-Win64
+[00:00:04] 08/22/2013  03:52 PM    <DIR>          PerfLogs
+[00:00:04] 04/20/2016  03:06 AM    <DIR>          Perl
+[00:00:04] 09/25/2018  04:26 PM    <DIR>          Program Files
+[00:00:04] 09/25/2018  04:28 PM    <DIR>          Program Files (x86)
+[00:00:04] 10/31/2018  05:24 AM    <DIR>          projects
+[00:00:04] 04/20/2016  02:59 AM    <DIR>          Python26
+[00:00:04] 04/20/2016  02:59 AM    <DIR>          Python26-x64
+[00:00:04] 05/14/2018  01:37 AM    <DIR>          Python27
+[00:00:04] 05/14/2018  01:37 AM    <DIR>          Python27-x64
+[00:00:04] 04/20/2016  02:59 AM    <DIR>          Python33
+[00:00:04] 04/20/2016  02:59 AM    <DIR>          Python33-x64
+[00:00:04] 08/05/2016  02:35 AM    <DIR>          Python34
+[00:00:04] 08/05/2016  02:35 AM    <DIR>          Python34-x64
+[00:00:04] 09/14/2018  01:53 AM    <DIR>          Python35
+[00:00:04] 09/14/2018  01:53 AM    <DIR>          Python35-x64
+[00:00:04] 07/08/2018  08:35 PM    <DIR>          Python36
+[00:00:04] 07/08/2018  08:36 PM    <DIR>          Python36-x64
+[00:00:04] 07/08/2018  08:37 PM    <DIR>          Python37
+[00:00:04] 07/08/2018  08:37 PM    <DIR>          Python37-x64
+[00:00:04] 08/31/2018  08:29 PM    <DIR>          Qt
+[00:00:04] 07/08/2018  08:41 PM    <DIR>          Ruby193
+[00:00:04] 01/13/2016  04:29 AM    <DIR>          Ruby200
+[00:00:04] 01/14/2016  02:52 PM    <DIR>          Ruby200-x64
+[00:00:04] 07/16/2016  08:11 PM    <DIR>          Ruby21
+[00:00:04] 07/16/2016  11:23 PM    <DIR>          Ruby21-x64
+[00:00:04] 12/06/2016  12:50 AM    <DIR>          Ruby22
+[00:00:04] 12/06/2016  01:32 AM    <DIR>          Ruby22-x64
+[00:00:04] 07/08/2018  08:42 PM    <DIR>          Ruby23
+[00:00:04] 07/08/2018  08:42 PM    <DIR>          Ruby23-x64
+[00:00:04] 07/08/2018  08:42 PM    <DIR>          Ruby24
+[00:00:04] 07/08/2018  08:43 PM    <DIR>          Ruby24-x64
+[00:00:04] 07/08/2018  08:43 PM    <DIR>          Ruby25
+[00:00:04] 07/08/2018  08:43 PM    <DIR>          Ruby25-x64
+[00:00:04] 03/09/2018  05:19 AM    <DIR>          Tools
+[00:00:04] 11/14/2017  10:57 PM    <DIR>          Users
+[00:00:04] 04/17/2016  09:44 PM    <DIR>          WinDDK
+[00:00:04] 07/08/2018  08:37 PM    <DIR>          Windows
+[00:00:04]                0 File(s)              0 bytes
+[00:00:04]               81 Dir(s)  34,225,483,776 bytes free
+[00:00:04] echo "Installed SDKs:"
+[00:00:04] "Installed SDKs:"
+[00:00:04] dir "C:/Program Files/Microsoft SDKs/Windows"
+[00:00:04]  Volume in drive C is Windows
+[00:00:04]  Volume Serial Number is D4AB-4044
+[00:00:04] 
+[00:00:04]  Directory of C:\Program Files\Microsoft SDKs\Windows
+[00:00:04] 
+[00:00:04] 04/17/2016  09:04 PM    <DIR>          .
+[00:00:04] 04/17/2016  09:04 PM    <DIR>          ..
+[00:00:04] 04/15/2016  03:06 AM    <DIR>          v6.0A
+[00:00:04] 04/17/2016  08:52 PM    <DIR>          v7.0
+[00:00:04] 04/17/2016  09:05 PM    <DIR>          v7.1
+[00:00:04]                0 File(s)              0 bytes
+[00:00:04]                5 Dir(s)  34,225,483,776 bytes free
+[00:00:04] SET PATH=%DEFAULT_PYTHON%;%DEFAULT_PYTHON%\Scripts;%PATH%
+[00:00:04] $NOX_SESSION = $env:NOX_SESSION
+[00:00:04] If ($NOX_SESSION.EndsWith("-32")) {
+[00:00:04]     $MINGW = $env:MINGW_32
+[00:00:04] } Else {
+[00:00:04]     $MINGW = $env:MINGW_64
+[00:00:04] }
+[00:00:04] $env:Path += ";$MINGW"
+[00:00:04] 
+[00:00:04] python -m pip install --upgrade pip setuptools
+[00:00:06] Collecting pip
+[00:00:07]   Downloading https://files.pythonhosted.org/packages/c2/d7/90f34cb0d83a6c5631cf71dfe64cc1054598c843a92b400e55675cc2ac37/pip-18.1-py2.py3-none-any.whl (1.3MB)
+[00:00:07] Collecting setuptools
+[00:00:08]   Downloading https://files.pythonhosted.org/packages/82/a1/ba6fb41367b375f5cb653d1317d8ca263c636cff6566e2da1b0da716069d/setuptools-40.5.0-py2.py3-none-any.whl (569kB)
+[00:00:08] Installing collected packages: pip, setuptools
+[00:00:08]   Found existing installation: pip 18.0
+[00:00:08]     Uninstalling pip-18.0:
+[00:00:08]       Successfully uninstalled pip-18.0
+[00:00:10]   Found existing installation: setuptools 39.0.1
+[00:00:10]     Uninstalling setuptools-39.0.1:
+[00:00:10]       Successfully uninstalled setuptools-39.0.1
+[00:00:11] Successfully installed pip-18.1 setuptools-40.5.0
+[00:00:11] python -m pip install --upgrade wheel
+[00:00:11] Collecting wheel
+[00:00:12]   Downloading https://files.pythonhosted.org/packages/5a/9b/6aebe9e2636d35d1a93772fa644c828303e1d5d124e8a88f156f42ac4b87/wheel-0.32.2-py2.py3-none-any.whl
+[00:00:12] Installing collected packages: wheel
+[00:00:12] Successfully installed wheel-0.32.2
+[00:00:12] python -m pip install --upgrade "nox >= 2018.10.15"
+[00:00:12] Collecting nox>=2018.10.15
+[00:00:12]   Downloading https://files.pythonhosted.org/packages/6a/31/6d83de53dd55c1b541eae28479b011d10691dc8ac91ab34fd827ac44eca3/nox-2018.10.17-py2.py3-none-any.whl
+[00:00:12] Requirement already satisfied, skipping upgrade: virtualenv>=14.0.0 in c:\python37-x64\lib\site-packages (from nox>=2018.10.15) (16.0.0)
+[00:00:12] Collecting py<2.0.0,>=1.4.0 (from nox>=2018.10.15)
+[00:00:12]   Downloading https://files.pythonhosted.org/packages/3e/c7/3da685ef117d42ac8d71af525208759742dd235f8094221fdaafcd3dba8f/py-1.7.0-py2.py3-none-any.whl (83kB)
+[00:00:12] Collecting colorlog<4.0.0,>=2.6.1 (from nox>=2018.10.15)
+[00:00:12]   Downloading https://files.pythonhosted.org/packages/69/eb/58ae10d3c46a0195ffdd0e3943d255d0d5029d71e5457785ecd665bcf0f3/colorlog-3.1.4-py2.py3-none-any.whl
+[00:00:12] Collecting colorama; sys_platform == "win32" (from colorlog<4.0.0,>=2.6.1->nox>=2018.10.15)
+[00:00:12]   Downloading https://files.pythonhosted.org/packages/0a/93/6e8289231675d561d476d656c2ee3a868c1cca207e16c118d4503b25e2bf/colorama-0.4.0-py2.py3-none-any.whl
+[00:00:12] Installing collected packages: py, colorama, colorlog, nox
+[00:00:13] Successfully installed colorama-0.4.0 colorlog-3.1.4 nox-2018.10.17 py-1.7.0
+[00:00:13] python -m nox -s "%NOX_SESSION%"
+[00:00:13] Running session doctest
+[00:00:14] Creating virtualenv using python.exe in C:\projects\bezier\.nox\doctest
+[00:00:23] pip install --upgrade --requirement C:\projects\bezier\docs\requirements.txt
+[00:00:46] pip install --upgrade .
+[00:01:23] sphinx-build -W -b doctest -d C:\projects\bezier\docs\build\doctrees C:\projects\bezier\docs C:\projects\bezier\docs\build\doctest
+[00:01:24] Running Sphinx v1.8.1
+[00:01:25] making output directory...
+[00:01:25] loading intersphinx inventory from https://matplotlib.org/objects.inv...
+[00:01:25] loading intersphinx inventory from https://docs.scipy.org/doc/numpy/objects.inv...
+[00:01:26] loading intersphinx inventory from https://docs.python.org/3/objects.inv...
+[00:01:26] building [mo]: targets for 0 po files that are out of date
+[00:01:26] building [doctest]: targets for 42 source files that are out of date
+[00:01:26] updating environment: 42 added, 0 changed, 0 removed
+[00:01:26] reading sources... [  2%] abi/curve                                            
+[00:01:26] reading sources... [  4%] abi/curve_intersection                               
+[00:01:26] reading sources... [  7%] abi/helpers                                          
+[00:01:26] reading sources... [  9%] abi/index                                            
+[00:01:26] reading sources... [ 11%] abi/status                                           
+[00:01:27] reading sources... [ 14%] abi/surface                                          
+[00:01:27] reading sources... [ 16%] abi/surface_intersection                             
+[00:01:27] reading sources... [ 19%] algorithms/curve-curve-intersection                  
+[00:01:28] reading sources... [ 21%] algorithms/helpers                                   
+[00:01:28] reading sources... [ 23%] algorithms/index                                     
+[00:01:28] reading sources... [ 26%] development                                          
+[00:01:28] reading sources... [ 28%] index                                                
+[00:01:28] reading sources... [ 30%] python/binary-extension                              
+[00:01:28] reading sources... [ 33%] python/index                                         
+[00:01:28] reading sources... [ 35%] python/pxd/curve                                     
+[00:01:28] reading sources... [ 38%] python/pxd/curve_intersection                        
+[00:01:28] reading sources... [ 40%] python/pxd/helpers                                   
+[00:01:28] reading sources... [ 42%] python/pxd/index                                     
+[00:01:28] reading sources... [ 45%] python/pxd/status                                    
+[00:01:28] reading sources... [ 47%] python/pxd/surface                                   
+[00:01:28] reading sources... [ 50%] python/pxd/surface_intersection                      
+[00:01:28] reading sources... [ 52%] python/reference/bezier                              
+[00:01:28] reading sources... [ 54%] python/reference/bezier.curve                        
+[00:01:28] reading sources... [ 57%] python/reference/bezier.curved_polygon               
+[00:01:28] reading sources... [ 59%] python/reference/bezier.surface                      
+[00:01:28] reading sources... [ 61%] releases/0.0.1                                       
+[00:01:28] reading sources... [ 64%] releases/0.1.0                                       
+[00:01:28] reading sources... [ 66%] releases/0.1.1                                       
+[00:01:29] reading sources... [ 69%] releases/0.2.0                                       
+[00:01:29] reading sources... [ 71%] releases/0.2.1                                       
+[00:01:29] reading sources... [ 73%] releases/0.3.0                                       
+[00:01:29] reading sources... [ 76%] releases/0.4.0                                       
+[00:01:29] reading sources... [ 78%] releases/0.5.0                                       
+[00:01:29] reading sources... [ 80%] releases/0.6.0                                       
+[00:01:29] reading sources... [ 83%] releases/0.6.1                                       
+[00:01:29] reading sources... [ 85%] releases/0.6.2                                       
+[00:01:29] reading sources... [ 88%] releases/0.6.3                                       
+[00:01:29] reading sources... [ 90%] releases/0.6.4                                       
+[00:01:29] reading sources... [ 92%] releases/0.7.0                                       
+[00:01:29] reading sources... [ 95%] releases/0.8.0                                       
+[00:01:29] reading sources... [ 97%] releases/index                                       
+[00:01:29] reading sources... [100%] releases/latest                                      
+[00:01:29] looking for now-outdated files... none found
+[00:01:29] pickling environment... done
+[00:01:29] checking consistency... done
+[00:01:29] running tests...
+[00:01:29] 
+[00:01:29] Document: algorithms/helpers
+[00:01:29] ----------------------------
+[00:01:29] 33 items passed all tests:
+[00:01:29]    7 tests in bezier-roots0
+[00:01:29]    6 tests in bezier-roots1
+[00:01:29]    8 tests in bezier-roots2
+[00:01:29]   14 tests in classify-intersection1
+[00:01:29]   10 tests in classify-intersection2
+[00:01:29]   10 tests in classify-intersection3
+[00:01:29]   10 tests in classify-intersection4
+[00:01:29]   10 tests in classify-intersection5
+[00:01:29]   14 tests in classify-intersection6
+[00:01:29]   16 tests in classify-intersection7
+[00:01:29]   12 tests in classify-intersection8
+[00:01:29]   10 tests in classify-intersection9
+[00:01:29]    6 tests in get-curvature
+[00:01:29]    9 tests in jacobian-det
+[00:01:29]    2 tests in linearization-error
+[00:01:29]    2 tests in linearization-error-fail
+[00:01:29]   10 tests in lu-companion
+[00:01:29]    7 tests in newton-refine-curve
+[00:01:29]   17 tests in newton-refine-curve-cusp
+[00:01:29]    6 tests in newton-refine-curve-cusp-continued
+[00:01:29]    9 tests in newton-refine-surface
+[00:01:29]    6 tests in newton-refine1
+[00:01:29]   15 tests in newton-refine2
+[00:01:29]   16 tests in newton-refine3
+[00:01:29]    7 tests in newton-refine3-continued
+[00:01:29]   11 tests in newton-refine4
+[00:01:29]    6 tests in parallel-different1
+[00:01:29]    7 tests in parallel-different2
+[00:01:29]    5 tests in parallel-different3
+[00:01:29]    5 tests in parallel-different4
+[00:01:29]    7 tests in segment-intersection1
+[00:01:29]    6 tests in segment-intersection2
+[00:01:29]    2 tests in segment-intersection2-continued
+[00:01:29] 288 tests in 33 items.
+[00:01:29] 288 passed and 0 failed.
+[00:01:29] Test passed.
+[00:01:29] 23 items passed all tests:
+[00:01:29]    1 tests in classify-intersection1 (cleanup code)
+[00:01:29]    1 tests in classify-intersection2 (cleanup code)
+[00:01:29]    1 tests in classify-intersection3 (cleanup code)
+[00:01:29]    1 tests in classify-intersection4 (cleanup code)
+[00:01:29]    1 tests in classify-intersection5 (cleanup code)
+[00:01:29]    1 tests in classify-intersection6 (cleanup code)
+[00:01:29]    1 tests in classify-intersection7 (cleanup code)
+[00:01:29]    1 tests in classify-intersection8 (cleanup code)
+[00:01:29]    1 tests in classify-intersection9 (cleanup code)
+[00:01:29]    1 tests in get-curvature (cleanup code)
+[00:01:29]    1 tests in linearization-error (cleanup code)
+[00:01:29]    1 tests in newton-refine-curve (cleanup code)
+[00:01:29]    1 tests in newton-refine-curve-cusp (cleanup code)
+[00:01:29]    1 tests in newton-refine-surface (cleanup code)
+[00:01:29]    1 tests in newton-refine1 (cleanup code)
+[00:01:29]    1 tests in newton-refine2 (cleanup code)
+[00:01:29]    1 tests in newton-refine3 (cleanup code)
+[00:01:29]    1 tests in parallel-different1 (cleanup code)
+[00:01:29]    1 tests in parallel-different2 (cleanup code)
+[00:01:29]    1 tests in parallel-different3 (cleanup code)
+[00:01:29]    1 tests in parallel-different4 (cleanup code)
+[00:01:29]    1 tests in segment-intersection1 (cleanup code)
+[00:01:29]    1 tests in segment-intersection2 (cleanup code)
+[00:01:29] 23 tests in 23 items.
+[00:01:29] 23 passed and 0 failed.
+[00:01:29] Test passed.
+[00:01:29] 
+[00:01:29] Document: algorithms/curve-curve-intersection
+[00:01:29] ---------------------------------------------
+[00:01:29] 23 items passed all tests:
+[00:01:29]   14 tests in intersect-1-13
+[00:01:29]    8 tests in intersect-1-18
+[00:01:29]    8 tests in intersect-1-19
+[00:01:29]   14 tests in intersect-1-2
+[00:01:29]    5 tests in intersect-1-24
+[00:01:29]    8 tests in intersect-1-5
+[00:01:29]    8 tests in intersect-1-6
+[00:01:29]   14 tests in intersect-1-7
+[00:01:29]    8 tests in intersect-1-8
+[00:01:29]    8 tests in intersect-1-9
+[00:01:29]    8 tests in intersect-10-11
+[00:01:29]    8 tests in intersect-10-17
+[00:01:29]    8 tests in intersect-10-23
+[00:01:29]   14 tests in intersect-11-26
+[00:01:29]   10 tests in intersect-12-self
+[00:01:29]    8 tests in intersect-14-15
+[00:01:29]    8 tests in intersect-14-16
+[00:01:29]   19 tests in intersect-15-25
+[00:01:29]   14 tests in intersect-21-22
+[00:01:29]    8 tests in intersect-29-30
+[00:01:29]    8 tests in intersect-3-4
+[00:01:29]   15 tests in intersect-8-27
+[00:01:29]    8 tests in intersect-8-9
+[00:01:29] 231 tests in 23 items.
+[00:01:29] 231 passed and 0 failed.
+[00:01:29] Test passed.
+[00:01:29] 
+[00:01:29] Document: python/pxd/index
+[00:01:29] --------------------------
+[00:01:29] 1 items passed all tests:
+[00:01:29]    2 tests in show-pxd
+[00:01:29] 2 tests in 1 items.
+[00:01:29] 2 passed and 0 failed.
+[00:01:29] Test passed.
+[00:01:29] 
+[00:01:29] Document: index
+[00:01:29] ---------------
+[00:01:29] 1 items passed all tests:
+[00:01:29]   19 tests in getting-started
+[00:01:29] 19 tests in 1 items.
+[00:01:29] 19 passed and 0 failed.
+[00:01:29] Test passed.
+[00:01:29] 1 items passed all tests:
+[00:01:29]    1 tests in getting-started (cleanup code)
+[00:01:29] 1 tests in 1 items.
+[00:01:29] 1 passed and 0 failed.
+[00:01:29] Test passed.
+[00:01:29] 
+[00:01:29] Document: python/reference/bezier.surface
+[00:01:29] -----------------------------------------
+[00:01:29] 15 items passed all tests:
+[00:01:29]    4 tests in surface-barycentric
+[00:01:29]    1 tests in surface-barycentric-fail1
+[00:01:29]    1 tests in surface-barycentric-fail2
+[00:01:29]    2 tests in surface-barycentric-no-verify
+[00:01:29]    5 tests in surface-cartesian
+[00:01:29]    4 tests in surface-constructor
+[00:01:29]    5 tests in surface-edges
+[00:01:29]    5 tests in surface-elevate
+[00:01:29]    6 tests in surface-eval-multi1
+[00:01:29]    6 tests in surface-eval-multi2
+[00:01:29]    3 tests in surface-is-valid1
+[00:01:29]    3 tests in surface-is-valid2
+[00:01:29]    3 tests in surface-is-valid3
+[00:01:29]    6 tests in surface-locate
+[00:01:29]    5 tests in surface-subdivide
+[00:01:29] 59 tests in 15 items.
+[00:01:29] 59 passed and 0 failed.
+[00:01:29] Test passed.
+[00:01:29] 10 items passed all tests:
+[00:01:29]    1 tests in surface-barycentric (cleanup code)
+[00:01:29]    1 tests in surface-constructor (cleanup code)
+[00:01:29]    1 tests in surface-elevate (cleanup code)
+[00:01:29]    1 tests in surface-eval-multi1 (cleanup code)
+[00:01:29]    1 tests in surface-eval-multi2 (cleanup code)
+[00:01:29]    1 tests in surface-is-valid1 (cleanup code)
+[00:01:29]    1 tests in surface-is-valid2 (cleanup code)
+[00:01:29]    1 tests in surface-is-valid3 (cleanup code)
+[00:01:29]    1 tests in surface-locate (cleanup code)
+[00:01:29]    1 tests in surface-subdivide (cleanup code)
+[00:01:29] 10 tests in 10 items.
+[00:01:29] 10 passed and 0 failed.
+[00:01:29] Test passed.
+[00:01:29] 
+[00:01:29] Document: python/reference/bezier
+[00:01:29] ---------------------------------
+[00:01:29] 1 items passed all tests:
+[00:01:29]    4 tests in unsupported-degree
+[00:01:29] 4 tests in 1 items.
+[00:01:29] 4 passed and 0 failed.
+[00:01:29] Test passed.
+[00:01:29] 
+[00:01:29] Document: python/reference/bezier.curved_polygon
+[00:01:29] ------------------------------------------------
+[00:01:29] 2 items passed all tests:
+[00:01:29]   11 tests in curved-polygon-constructor
+[00:01:29]   10 tests in curved-polygon-constructor-invalid
+[00:01:29] 21 tests in 2 items.
+[00:01:29] 21 passed and 0 failed.
+[00:01:29] Test passed.
+[00:01:29] 2 items passed all tests:
+[00:01:29]    1 tests in curved-polygon-constructor (cleanup code)
+[00:01:29]    1 tests in curved-polygon-constructor-invalid (cleanup code)
+[00:01:29] 2 tests in 2 items.
+[00:01:29] 2 passed and 0 failed.
+[00:01:29] Test passed.
+[00:01:29] 
+[00:01:29] Document: python/binary-extension
+[00:01:29] ---------------------------------
+[00:01:30] 4 items had no tests:
+[00:01:30]     os-x-delocated-libgfortran
+[00:01:30]     os-x-dylibs
+[00:01:30]     os-x-extension
+[00:01:30]     show-lib
+[00:01:30] 5 items passed all tests:
+[00:01:30]    3 tests in setup-extension
+[00:01:30]    6 tests in show-dll
+[00:01:30]    3 tests in show-headers
+[00:01:30]    1 tests in windows-dll
+[00:01:30]    1 tests in windows-extension
+[00:01:30] 14 tests in 9 items.
+[00:01:30] 14 passed and 0 failed.
+[00:01:30] Test passed.
+[00:01:30] 4 items passed all tests:
+[00:01:30]    1 tests in os-x-dylibs (cleanup code)
+[00:01:30]    1 tests in show-dll (cleanup code)
+[00:01:30]    1 tests in show-headers (cleanup code)
+[00:01:30]    1 tests in show-lib (cleanup code)
+[00:01:30] 4 tests in 4 items.
+[00:01:30] 4 passed and 0 failed.
+[00:01:30] Test passed.
+[00:01:30] 
+[00:01:30] Document: python/reference/bezier.curve
+[00:01:30] ---------------------------------------
+[00:01:30] 11 items passed all tests:
+[00:01:30]    4 tests in curve-constructor
+[00:01:30]    5 tests in curve-elevate
+[00:01:30]    3 tests in curve-eval
+[00:01:30]    5 tests in curve-eval-multi
+[00:01:30]    8 tests in curve-intersect
+[00:01:30]    8 tests in curve-locate
+[00:01:30]    5 tests in curve-reduce
+[00:01:30]    5 tests in curve-reduce-approx
+[00:01:30]    4 tests in curve-specialize
+[00:01:30]    5 tests in curve-specialize2
+[00:01:30]    5 tests in curve-subdivide
+[00:01:30] 57 tests in 11 items.
+[00:01:30] 57 passed and 0 failed.
+[00:01:30] Test passed.
+[00:01:30] 9 items passed all tests:
+[00:01:30]    1 tests in curve-constructor (cleanup code)
+[00:01:30]    1 tests in curve-elevate (cleanup code)
+[00:01:30]    1 tests in curve-eval (cleanup code)
+[00:01:30]    1 tests in curve-intersect (cleanup code)
+[00:01:30]    1 tests in curve-locate (cleanup code)
+[00:01:30]    1 tests in curve-reduce (cleanup code)
+[00:01:30]    1 tests in curve-reduce-approx (cleanup code)
+[00:01:30]    1 tests in curve-specialize (cleanup code)
+[00:01:30]    1 tests in curve-subdivide (cleanup code)
+[00:01:30] 9 tests in 9 items.
+[00:01:30] 9 passed and 0 failed.
+[00:01:30] Test passed.
+[00:01:30] 
+[00:01:30] Doctest summary
+[00:01:30] ===============
+[00:01:30]   695 tests
+[00:01:30]     0 failures in tests
+[00:01:30]     0 failures in setup code
+[00:01:30]     0 failures in cleanup code
+[00:01:30] build succeeded.
+[00:01:30] 
+[00:01:30] Testing of doctests in the sources finished, look at the results in docs\build\doctest/output.txt.
+[00:01:30] Session doctest was successful.
+[00:01:31] Build success

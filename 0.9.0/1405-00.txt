@@ -1,0 +1,81 @@
+Build-agent version 0.1.900-892a9f73 (2018-10-25T15:49:42+0000)
+Starting container dhermes/bezier:latest
+  image cache not found on this host, downloading dhermes/bezier:latest
+latest: Pulling from dhermes/bezier
+c64513b74145: Pulling fs layer
+01b8b12bad90: Pulling fs layer
+c5d85cf7a05f: Pulling fs layer
+b6b268720157: Pulling fs layer
+e12192999ff1: Pulling fs layer
+b7ce64499526: Pulling fs layer
+8f4ee5fa1f03: Pulling fs layer
+5848c5dcb223: Pulling fs layer
+e301e59e8050: Pulling fs layer
+318991cc9a04: Pulling fs layer
+6e3c97af035f: Pulling fs layer
+19a8d3d07575: Pulling fs layer
+b6b268720157: Waiting
+e12192999ff1: Waiting
+e301e59e8050: Waiting
+b7ce64499526: Waiting
+8f4ee5fa1f03: Waiting
+6e3c97af035f: Waiting
+19a8d3d07575: Waiting
+318991cc9a04: Waiting
+01b8b12bad90: Download complete
+c64513b74145: Verifying Checksum
+c64513b74145: Download complete
+b6b268720157: Download complete
+c5d85cf7a05f: Download complete
+e12192999ff1: Verifying Checksum
+e12192999ff1: Download complete
+8f4ee5fa1f03: Verifying Checksum
+8f4ee5fa1f03: Download complete
+e301e59e8050: Verifying Checksum
+e301e59e8050: Download complete
+318991cc9a04: Verifying Checksum
+318991cc9a04: Download complete
+c64513b74145: Pull complete
+01b8b12bad90: Pull complete
+b7ce64499526: Verifying Checksum
+b7ce64499526: Download complete
+c5d85cf7a05f: Pull complete
+b6b268720157: Pull complete
+e12192999ff1: Pull complete
+6e3c97af035f: Download complete
+19a8d3d07575: Verifying Checksum
+19a8d3d07575: Download complete
+5848c5dcb223: Verifying Checksum
+5848c5dcb223: Download complete
+b7ce64499526: Pull complete
+8f4ee5fa1f03: Pull complete
+5848c5dcb223: Pull complete
+e301e59e8050: Pull complete
+318991cc9a04: Pull complete
+6e3c97af035f: Pull complete
+19a8d3d07575: Pull complete
+Digest: sha256:e1a5a1fa52bed690e37b92d06fc9acbb9ac83817f1114ac6b00a39ea90d3b1a0
+Status: Downloaded newer image for dhermes/bezier:latest
+  using image dhermes/bezier@sha256:e1a5a1fa52bed690e37b92d06fc9acbb9ac83817f1114ac6b00a39ea90d3b1a0
+
+Using build environment variables:
+  BASH_ENV=/tmp/.bash_env-5bd93974a52ced000161b3e9-0-build
+  CI=true
+  CIRCLECI=true
+  CIRCLE_BRANCH=master
+  CIRCLE_BUILD_NUM=1405
+  CIRCLE_BUILD_URL=https://circleci.com/gh/dhermes/bezier/1405
+  CIRCLE_COMPARE_URL=https://github.com/dhermes/bezier/compare/0c7b0a35aa44...1b9bfa18683d
+  CIRCLE_JOB=build
+  CIRCLE_NODE_INDEX=0
+  CIRCLE_NODE_TOTAL=1
+  CIRCLE_PREVIOUS_BUILD_NUM=1404
+  CIRCLE_PROJECT_REPONAME=bezier
+  CIRCLE_PROJECT_USERNAME=dhermes
+  CIRCLE_REPOSITORY_URL=git@github.com:dhermes/bezier.git
+  CIRCLE_SHA1=1b9bfa18683da91796808e137fd34c5d1f1e162c
+  CIRCLE_SHELL_ENV=/tmp/.bash_env-5bd93974a52ced000161b3e9-0-build
+  CIRCLE_STAGE=build
+  CIRCLE_USERNAME=dhermes
+  CIRCLE_WORKING_DIRECTORY=/var/code/bezier/
+
