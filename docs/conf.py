@@ -45,6 +45,7 @@ needs_sphinx = "3.5.1"
 nitpicky = True
 nitpick_ignore = [
     ("py:class", "bezier._base.Base"),
+    ("py:class", "itertools.chain"),
 ]
 
 # Add any Sphinx extension module names here, as strings. They can be

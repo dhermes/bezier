@@ -20,6 +20,7 @@ written in Fortran and exposed via a Cython wrapper.
 """
 
 import itertools
+import typing
 
 import numpy as np
 
@@ -1061,7 +1062,9 @@ def bbox_line_intersect(nodes, line_start, line_end):
     return BoxIntersectionType.DISJOINT
 
 
-def intersect_one_round(candidates, intersections):
+def intersect_one_round(
+    candidates: typing.Union[list, itertools.chain], intersections
+):
     """Perform one step of the intersection process.
 
     .. note::
@@ -1077,8 +1080,7 @@ def intersect_one_round(candidates, intersections):
     encountered.
 
     Args:
-        candidates (Union[list, itertools.chain]): An iterable of
-            pairs of curves (or linearized curves).
+        candidates: An iterable of pairs of curves (or linearized curves).
         intersections (list): A list of already encountered
             intersections. If any intersections can be readily determined
             during this round of subdivision, then they will be added
@@ -1195,7 +1197,9 @@ def make_same_degree(nodes1, nodes2):
     return nodes1, nodes2
 
 
-def coincident_parameters(nodes1, nodes2):
+def coincident_parameters(
+    nodes1, nodes2
+) -> typing.Optional[typing.Tuple[typing.Tuple[float, float], ...]]:
     r"""Check if two B |eacute| zier curves are coincident.
 
     Does so by projecting each segment endpoint onto the other curve
@@ -1222,9 +1226,8 @@ def coincident_parameters(nodes1, nodes2):
             B |eacute| zier curve.
 
     Returns:
-        Optional[Tuple[Tuple[float, float], ...]]: A ``2 x 2`` array of
-        parameters where the two coincident curves meet. If they are not
-        coincident, returns :data:`None`.
+        A ``2 x 2`` array of parameters where the two coincident curves meet.
+        If they are not coincident, returns :data:`None`.
     """
     # NOTE: There is no corresponding "enable", but the disable only applies
     #       in this lexical scope.

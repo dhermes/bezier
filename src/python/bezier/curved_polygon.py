@@ -25,9 +25,12 @@ boundary.
    import bezier
 """
 
+import typing
+
 from bezier import _helpers
 from bezier import _plot_helpers
 from bezier import _triangle_helpers
+from bezier import curve
 
 
 class CurvedPolygon:
@@ -118,8 +121,7 @@ class CurvedPolygon:
        make_images.curved_polygon_constructor2(curved_poly)
 
     Args:
-        edges (Tuple[~bezier.curve.Curve, ...]): The boundary edges
-            of the curved polygon.
+        edges: The boundary edges of the curved polygon.
         kwargs: There are two keyword arguments accepted:
 
             * ``metadata`` (:class:`~typing.Sequence`): A sequence of triples
@@ -134,7 +136,7 @@ class CurvedPolygon:
 
     __slots__ = ("_edges", "_num_sides", "_metadata")
 
-    def __init__(self, *edges, **kwargs):
+    def __init__(self, *edges: typing.Tuple[curve.Curve, ...], **kwargs):
         self._edges = edges
         self._num_sides = len(edges)
         self._metadata = kwargs.pop("metadata", None)

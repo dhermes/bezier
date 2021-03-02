@@ -13,6 +13,7 @@
 """Pure Python generic geometry and floating point helpers."""
 
 import bisect
+import typing
 
 import numpy as np
 
@@ -544,16 +545,16 @@ class UnsupportedDegree(NotImplementedError):
 
     Args:
         degree (int): The degree that is not possible to support.
-        supported (Tuple[int, ...]): The degrees that are
-            actually supported by the failing method.
+        supported: The degrees that are actually supported by the failing
+            method.
     """
 
-    def __init__(self, degree, supported=()):
+    def __init__(self, degree, supported: typing.Tuple[int, ...] = ()):
         super().__init__()
         self.degree = degree
         """int: The degree that the caller attempted to use."""
-        self.supported = supported
-        """Tuple[int, ...]: The degrees supported by the failing method."""
+        self.supported: typing.Tuple[int, ...] = supported
+        """The degrees supported by the failing method."""
 
     def __str__(self):
         num_supported = len(self.supported)
