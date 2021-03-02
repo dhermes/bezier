@@ -624,7 +624,7 @@ class Curve(_base.Base):
            import make_images
            make_images.curve_specialize(curve, new_curve)
 
-        This is generalized version of :meth:`subdivide`, and can even
+        This is a generalized version of :meth:`subdivide`, and can even
         match the output of that method:
 
         .. testsetup:: curve-specialize2
