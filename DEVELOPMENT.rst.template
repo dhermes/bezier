@@ -351,15 +351,10 @@ and are written in the `Google style`_, e.g.
        BufferedFileStorage: A buffered writable file descriptor
 
 In order to support these in Sphinx, we use the `Napoleon`_ extension.
-In addition, the `sphinx-docstring-typing`_ Sphinx extension is used to
-allow for `type annotation`_ for arguments and result (introduced in
-Python 3.5).
 
 .. _PEP257: https://www.python.org/dev/peps/pep-0257/
 .. _Google style: https://google.github.io/styleguide/pyguide.html#Comments__body
 .. _Napoleon: https://sphinxcontrib-napoleon.readthedocs.io
-.. _sphinx-docstring-typing: https://pypi.org/project/sphinx-docstring-typing/
-.. _type annotation: https://docs.python.org/3/library/typing.html
 
 *************
 Documentation
