@@ -57,7 +57,6 @@ extensions = [
     "sphinx.ext.intersphinx",
     "sphinx.ext.mathjax",
     "sphinx.ext.napoleon",
-    "sphinx_docstring_typing",
     "custom_html_writer",
     "doctest_monkeypatch",
 ]
