@@ -1,0 +1,446 @@
+[00:00:00] Build started
+[00:00:00] git clone -q --branch=master https://github.com/dhermes/bezier.git C:\projects\bezier
+[00:00:04] git checkout -qf dad0cc7cdc6b6cb00ad0085933fe52991214d184
+[00:00:04] Running Install scripts
+[00:00:04] echo "Filesystem root:"
+[00:00:04] "Filesystem root:"
+[00:00:04] dir C:\
+[00:00:04]  Volume in drive C is Windows
+[00:00:04]  Volume Serial Number is D4AB-4044
+[00:00:04] 
+[00:00:04]  Directory of C:\
+[00:00:04] 
+[00:00:04] 04/20/2016  03:18 AM    <DIR>          avvm
+[00:00:04] 11/15/2017  01:08 AM    <DIR>          cygwin
+[00:00:04] 11/15/2017  01:09 AM    <DIR>          cygwin64
+[00:00:04] 11/14/2017  07:03 PM    <JUNCTION>     go [C:\go19]
+[00:00:04] 11/14/2017  07:03 PM    <JUNCTION>     go-x86 [C:\go19-x86]
+[00:00:04] 09/23/2015  04:44 AM    <DIR>          go14
+[00:00:04] 09/23/2015  04:44 AM    <DIR>          go14-x86
+[00:00:04] 04/12/2016  12:28 AM    <DIR>          go15
+[00:00:04] 04/12/2016  12:27 AM    <DIR>          go15-x86
+[00:00:04] 12/01/2016  09:24 PM    <DIR>          go16
+[00:00:04] 12/01/2016  09:24 PM    <DIR>          go16-x86
+[00:00:04] 05/23/2017  06:44 PM    <DIR>          go17
+[00:00:04] 05/23/2017  06:44 PM    <DIR>          go17-x86
+[00:00:04] 10/25/2017  05:42 PM    <DIR>          go18
+[00:00:04] 10/25/2017  05:41 PM    <DIR>          go18-x86
+[00:00:04] 10/25/2017  06:41 PM    <DIR>          go19
+[00:00:04] 10/25/2017  06:40 PM    <DIR>          go19-x86
+[00:00:04] 03/09/2016  04:25 AM    <DIR>          inetpub
+[00:00:04] 07/21/2015  07:31 PM    <DIR>          jruby-9.0.0.0
+[00:00:04] 03/16/2017  04:56 AM    <DIR>          Libraries
+[00:00:04] 02/19/2017  07:06 PM    <DIR>          MinGW
+[00:00:04] 03/16/2017  04:59 AM    <DIR>          mingw-w64
+[00:00:04] 11/14/2017  07:47 PM    <DIR>          Miniconda
+[00:00:04] 11/14/2017  07:46 PM    <DIR>          Miniconda-x64
+[00:00:04] 11/14/2017  07:49 PM    <JUNCTION>     Miniconda3 [C:\Miniconda36]
+[00:00:04] 11/14/2017  07:49 PM    <JUNCTION>     Miniconda3-x64 [C:\Miniconda36-x64]
+[00:00:04] 11/14/2017  07:49 PM    <DIR>          Miniconda34
+[00:00:04] 11/14/2017  07:49 PM    <DIR>          Miniconda34-x64
+[00:00:04] 11/14/2017  07:48 PM    <DIR>          Miniconda35
+[00:00:04] 11/14/2017  07:48 PM    <DIR>          Miniconda35-x64
+[00:00:04] 11/14/2017  07:49 PM    <DIR>          Miniconda36
+[00:00:04] 11/14/2017  07:48 PM    <DIR>          Miniconda36-x64
+[00:00:04] 04/15/2016  02:47 AM    <DIR>          mongodb
+[00:00:04] 10/04/2017  03:20 AM    <DIR>          msys64
+[00:00:04] 07/20/2017  10:58 PM    <DIR>          OpenSSL-Win32
+[00:00:04] 07/20/2017  10:58 PM    <DIR>          OpenSSL-Win64
+[00:00:04] 08/22/2013  03:52 PM    <DIR>          PerfLogs
+[00:00:04] 04/20/2016  03:06 AM    <DIR>          Perl
+[00:00:04] 11/15/2017  07:15 PM    <DIR>          Program Files
+[00:00:04] 11/15/2017  07:17 PM    <DIR>          Program Files (x86)
+[00:00:04] 01/10/2018  05:33 AM    <DIR>          projects
+[00:00:04] 04/20/2016  02:59 AM    <DIR>          Python26
+[00:00:04] 04/20/2016  02:59 AM    <DIR>          Python26-x64
+[00:00:04] 10/04/2017  03:39 AM    <DIR>          Python27
+[00:00:04] 10/04/2017  03:40 AM    <DIR>          Python27-x64
+[00:00:04] 04/20/2016  02:59 AM    <DIR>          Python33
+[00:00:04] 04/20/2016  02:59 AM    <DIR>          Python33-x64
+[00:00:04] 08/05/2016  02:35 AM    <DIR>          Python34
+[00:00:04] 08/05/2016  02:35 AM    <DIR>          Python34-x64
+[00:00:04] 02/19/2017  07:23 PM    <DIR>          Python35
+[00:00:04] 02/19/2017  07:24 PM    <DIR>          Python35-x64
+[00:00:04] 10/04/2017  03:41 AM    <DIR>          Python36
+[00:00:04] 10/19/2017  05:28 PM    <DIR>          Python36-x64
+[00:00:04] 11/11/2017  07:07 PM    <DIR>          Qt
+[00:00:04] 11/12/2017  06:12 AM    <DIR>          Ruby193
+[00:00:04] 01/13/2016  04:29 AM    <DIR>          Ruby200
+[00:00:04] 01/14/2016  02:52 PM    <DIR>          Ruby200-x64
+[00:00:04] 07/16/2016  08:11 PM    <DIR>          Ruby21
+[00:00:04] 07/16/2016  11:23 PM    <DIR>          Ruby21-x64
+[00:00:04] 12/06/2016  12:50 AM    <DIR>          Ruby22
+[00:00:04] 12/06/2016  01:32 AM    <DIR>          Ruby22-x64
+[00:00:04] 11/12/2017  06:12 AM    <DIR>          Ruby23
+[00:00:04] 11/12/2017  06:13 AM    <DIR>          Ruby23-x64
+[00:00:04] 11/12/2017  06:13 AM    <DIR>          Ruby24
+[00:00:04] 11/12/2017  06:13 AM    <DIR>          Ruby24-x64
+[00:00:04] 08/15/2017  07:31 PM    <DIR>          Tools
+[00:00:04] 11/14/2017  10:57 PM    <DIR>          Users
+[00:00:04] 04/17/2016  09:44 PM    <DIR>          WinDDK
+[00:00:04] 10/19/2017  05:28 PM    <DIR>          Windows
+[00:00:04]                0 File(s)              0 bytes
+[00:00:04]               69 Dir(s)  40,976,109,568 bytes free
+[00:00:04] echo "Installed SDKs:"
+[00:00:04] "Installed SDKs:"
+[00:00:05] dir "C:/Program Files/Microsoft SDKs/Windows"
+[00:00:05]  Volume in drive C is Windows
+[00:00:05]  Volume Serial Number is D4AB-4044
+[00:00:05] 
+[00:00:05]  Directory of C:\Program Files\Microsoft SDKs\Windows
+[00:00:05] 
+[00:00:05] 04/17/2016  09:04 PM    <DIR>          .
+[00:00:05] 04/17/2016  09:04 PM    <DIR>          ..
+[00:00:05] 04/15/2016  03:06 AM    <DIR>          v6.0A
+[00:00:05] 04/17/2016  08:52 PM    <DIR>          v7.0
+[00:00:05] 04/17/2016  09:05 PM    <DIR>          v7.1
+[00:00:05]                0 File(s)              0 bytes
+[00:00:05]                5 Dir(s)  40,976,109,568 bytes free
+[00:00:05] SET PATH=%PYTHON%;%PYTHON%\\Scripts;%PATH%
+[00:00:05] set PY_CMD=python -c "import platform; print(platform.architecture()[0][:2])"
+[00:00:05] for /f "tokens=1 delims=" %%i in ('%PY_CMD%') do set PYTHON_ARCH=%%i
+[00:00:06] set PY_CMD=python -c "import platform; print(platform.python_version())"
+[00:00:06] for /f "tokens=1 delims=" %%i in ('%PY_CMD%') do set PYTHON_VERSION=%%i
+[00:00:06] python appveyor\env_info.py
+[00:00:06] os.name: nt
+[00:00:06] os.environ['PYTHON_ARCH']: 64
+[00:00:06] os.environ['PYTHON_VERSION']: 3.6.3
+[00:00:06] sys.platform: win32
+[00:00:06] sys.maxsize: 2^(63) - 1
+[00:00:06] sys.version:
+[00:00:06] 3.6.3 (v3.6.3:2c5fed8, Oct  3 2017, 18:11:49) [MSC v.1900 64 bit (AMD64)]
+[00:00:06] struct.calcsize('P') * 8: 64
+[00:00:06] $PYTHON_ARCH = $env:PYTHON_ARCH
+[00:00:06] If ($PYTHON_ARCH -eq 32) {
+[00:00:06]     $MINGW = $env:MINGW_32
+[00:00:06] } Else {
+[00:00:06]     $MINGW = $env:MINGW_64
+[00:00:06] }
+[00:00:06] $env:Path += ";$MINGW"
+[00:00:06] 
+[00:00:06] python -m pip install --upgrade pip setuptools
+[00:00:07] Requirement already up-to-date: pip in c:\python36-x64\lib\site-packages
+[00:00:07] Collecting setuptools
+[00:00:08]   Downloading setuptools-38.4.0-py2.py3-none-any.whl (489kB)
+[00:00:08] Installing collected packages: setuptools
+[00:00:08]   Found existing installation: setuptools 28.8.0
+[00:00:08]     Uninstalling setuptools-28.8.0:
+[00:00:08]       Successfully uninstalled setuptools-28.8.0
+[00:00:09] Successfully installed setuptools-38.4.0
+[00:00:09] python -m pip install --upgrade wheel
+[00:00:10] Collecting wheel
+[00:00:10]   Downloading wheel-0.30.0-py2.py3-none-any.whl (49kB)
+[00:00:10] Installing collected packages: wheel
+[00:00:10] Successfully installed wheel-0.30.0
+[00:00:10] python -m pip install --upgrade numpy
+[00:00:11] Collecting numpy
+[00:00:11]   Downloading numpy-1.14.0-cp36-none-win_amd64.whl (13.4MB)
+[00:00:14] Installing collected packages: numpy
+[00:00:17] Successfully installed numpy-1.14.0
+[00:00:18] if ($env:TEST_TYPE -eq "journal") { $env:BEZIER_JOURNAL = $env:APPVEYOR_BUILD_FOLDER + "\\journal.txt"; }
+[00:00:18] %CMD_IN_ENV% python -m pip install -vv .
+[00:00:18] Using default MSVC build environment for 64 bit architecture
+[00:00:18] Executing: python -m pip install -vv .
+[00:00:18] Config variable 'Py_DEBUG' is unset, Python ABI tag may be incorrect
+[00:00:18] Config variable 'WITH_PYMALLOC' is unset, Python ABI tag may be incorrect
+[00:00:18] Processing c:\projects\bezier
+[00:00:19]   Running setup.py (path:C:\Users\appveyor\AppData\Local\Temp\1\pip-0f39dvub-build\setup.py) egg_info for package from file:///C:/projects/bezier
+[00:00:19]     Running command python setup.py egg_info
+[00:00:20]     Could not locate executable g77
+[00:00:20]     Could not locate executable f77
+[00:00:20]     Could not locate executable ifort
+[00:00:20]     Could not locate executable ifl
+[00:00:20]     Could not locate executable f90
+[00:00:20]     Could not locate executable efl
+[00:00:20]     running egg_info
+[00:00:20]     creating pip-egg-info\bezier.egg-info
+[00:00:20]     writing pip-egg-info\bezier.egg-info\PKG-INFO
+[00:00:20]     writing dependency_links to pip-egg-info\bezier.egg-info\dependency_links.txt
+[00:00:20]     writing requirements to pip-egg-info\bezier.egg-info\requires.txt
+[00:00:20]     writing top-level names to pip-egg-info\bezier.egg-info\top_level.txt
+[00:00:20]     writing manifest file 'pip-egg-info\bezier.egg-info\SOURCES.txt'
+[00:00:21]     reading manifest file 'pip-egg-info\bezier.egg-info\SOURCES.txt'
+[00:00:21]     reading manifest template 'MANIFEST.in'
+[00:00:21]     warning: no previously-included files matching '*.so' found anywhere in distribution
+[00:00:21]     warning: no previously-included files matching '*.pyd' found anywhere in distribution
+[00:00:21]     warning: no previously-included files matching '*.o' found anywhere in distribution
+[00:00:21]     warning: no previously-included files matching '*.obj' found anywhere in distribution
+[00:00:21]     warning: no previously-included files matching '*.a' found anywhere in distribution
+[00:00:21]     warning: no previously-included files matching '*.def' found anywhere in distribution
+[00:00:21]     warning: no previously-included files matching '*.exp' found anywhere in distribution
+[00:00:21]     warning: no previously-included files matching '*.pyc' found anywhere in distribution
+[00:00:21]     warning: no previously-included files matching '__pycache__' found anywhere in distribution
+[00:00:21]     writing manifest file 'pip-egg-info\bezier.egg-info\SOURCES.txt'
+[00:00:21]   Source in c:\users\appveyor\appdata\local\temp\1\pip-0f39dvub-build has version 0.6.0, which satisfies requirement bezier==0.6.0 from file:///C:/projects/bezier
+[00:00:21] Requirement already satisfied: numpy>=1.14.0 in c:\python36-x64\lib\site-packages (from bezier==0.6.0)
+[00:00:21] Collecting six>=1.11.0 (from bezier==0.6.0)
+[00:00:21]   1 location(s) to search for versions of six:
+[00:00:21]   * https://pypi.python.org/simple/six/
+[00:00:21]   Getting page https://pypi.python.org/simple/six/
+[00:00:21]   Looking up "https://pypi.python.org/simple/six/" in the cache
+[00:00:21]   No cache entry available
+[00:00:21]   Starting new HTTPS connection (1): pypi.python.org
+[00:00:21]   "GET /simple/six/ HTTP/1.1" 200 2699
+[00:00:21]   Updating cache with response from "https://pypi.python.org/simple/six/"
+[00:00:21]   Caching b/c date exists and max-age > 0
+[00:00:21]   Analyzing links from page https://pypi.python.org/simple/six/
+[00:00:21]     Found link https://pypi.python.org/packages/02/c3/8e2a38edaac777ee2bbe479b3a65b020ade549efd6a224c2f4e95c818799/six-1.6.0.tar.gz#md5=eb22a24e8be9497dd71930bf2321b6ec (from https://pypi.python.org/simple/six/), version: 1.6.0
+[00:00:21]     Found link https://pypi.python.org/packages/02/f8/d16f06e49b0d2ef40548bf42826f926c8964ad3b1d00f8098dcc6ef15aea/six-1.3.0.tar.gz#md5=ec47fe6070a8a64c802363d2c2b1e2ee (from https://pypi.python.org/simple/six/), version: 1.3.0
+[00:00:21]     Found link https://pypi.python.org/packages/0b/5e/4b3f417a85d9cd30b172a1512a2d3cdd0ffb05a5deacb8adf2ef30db100d/six-1.5.1.tar.gz#md5=bb00c982fc0ec0dd6a760500b0941fa9 (from https://pypi.python.org/simple/six/), version: 1.5.1
+[00:00:21]     Found link https://pypi.python.org/packages/0e/f9/66471f9b7e9291cca697b2e61a10645a537f389a9d5c0679d50dd86b20f7/six-0.9.0.tar.gz#md5=5ce2947347101b9f54674c19ef88233d (from https://pypi.python.org/simple/six/), version: 0.9.0
+[00:00:21]     Found link https://pypi.python.org/packages/0f/dd/379fa572b72da0b482545116139529af8da92e686ea136271beecddd4e81/six-1.5.0.tar.gz#md5=72b33ff89f3b2f21dd2cb28fb94f7031 (from https://pypi.python.org/simple/six/), version: 1.5.0
+[00:00:21]     Found link https://pypi.python.org/packages/10/e3/a7f8eea80a9fa8358c1cd89ef489bc03675e69e54ed2982cd6f2a28d8295/six-1.9.0-py2.py3-none-any.whl#md5=9ac7e129a80f72d6fc1f0216f6e9627b (from https://pypi.python.org/simple/six/), version: 1.9.0
+[00:00:21]     Found link https://pypi.python.org/packages/11/3f/2b3c217c5427cdd12619024b1ee1b04d49e27fde5c29df2a0b92c26677c2/six-1.8.0.tar.gz#md5=1626eb24cc889110c38f7e786ec69885 (from https://pypi.python.org/simple/six/), version: 1.8.0
+[00:00:21]     Found link https://pypi.python.org/packages/16/64/1dc5e5976b17466fd7d712e59cbe9fb1e18bec153109e5ba3ed6c9102f1a/six-1.9.0.tar.gz#md5=476881ef4012262dfc8adc645ee786c4 (from https://pypi.python.org/simple/six/), version: 1.9.0
+[00:00:21]     Found link https://pypi.python.org/packages/16/d8/bc6316cf98419719bd59c91742194c111b6f2e85abac88e496adefaf7afe/six-1.11.0.tar.gz#md5=d12789f9baf7e9fb2524c0c64f1773f8 (from https://pypi.python.org/simple/six/), version: 1.11.0
+[00:00:21]     Found link https://pypi.python.org/packages/1b/2a/ad686ae156581a70a7be28e7762f7d956bec30d62dafe9295b78dc019692/six-1.7.1.tar.gz#md5=f9fbad970c6e855cabde7ec1144b9058 (from https://pypi.python.org/simple/six/), version: 1.7.1
+[00:00:21]     Found link https://pypi.python.org/packages/1d/8e/220ce5a36dac3aabccee871a34561ceba82ce14b53760143cf5e01bb4d2c/six-1.5.2.tar.gz#md5=322b86d0c50a7d165c05600154cecc0a (from https://pypi.python.org/simple/six/), version: 1.5.2
+[00:00:21]     Found link https://pypi.python.org/packages/20/0a/617bf23511160454995bf1cbe6789f22beeb8b49c1f3b1bbf4b5cd6a55ca/six-1.7.0-py2.py3-none-any.whl#md5=e5ca7e89cc79d755ea128fc7e2cb136e (from https://pypi.python.org/simple/six/), version: 1.7.0
+[00:00:21]     Found link https://pypi.python.org/packages/2b/4a/233721f6c6afeed5a2034f617f120fa646da935039f08e67ab8dc008a3e6/six-1.7.3.tar.gz#md5=784c6e5541c3c4952de9c0a966a0a80b (from https://pypi.python.org/simple/six/), version: 1.7.3
+[00:00:21]     Found link https://pypi.python.org/packages/2e/a4/6dcb84af409b7bc0c258a0d6bd7e14231724d9a46b750c048f09d74d870c/six-1.7.3-py2.py3-none-any.whl#md5=5f34fe522765d398b21decdce62ebd1d (from https://pypi.python.org/simple/six/), version: 1.7.3
+[00:00:21]     Found link https://pypi.python.org/packages/4e/02/f08545a99829a04e841b6443267f216629c723c23fb9cfd17c99c068e33a/six-0.9.1.tar.gz#md5=1b249e0011355722f569406135a8ac93 (from https://pypi.python.org/simple/six/), version: 0.9.1
+[00:00:21]     Found link https://pypi.python.org/packages/4e/aa/73683ca0c4237891e33562e3f55bcaab972869959b97b397637519d92035/six-1.4.1.tar.gz#md5=bdbb9e12d3336c198695aa4cf3a61d62 (from https://pypi.python.org/simple/six/), version: 1.4.1
+[00:00:21]     Found link https://pypi.python.org/packages/54/45/8b5eef1ba0b79acbdab01435359f37ae13dc6c4aafaa444b805e3867386d/six-1.6.0-py2.py3-none-any.whl#md5=e2755cf8a1d8e4eda44a8e3436c458ca (from https://pypi.python.org/simple/six/), version: 1.6.0
+[00:00:21]     Found link https://pypi.python.org/packages/54/d4/8f7d631f1c3defa2ff4bd7c3daddcc5ed6eb9df7631f3cf24cc376aa3231/six-1.1.0.tar.gz#md5=9e8099b57cd27493a6988e9c9b313e23 (from https://pypi.python.org/simple/six/), version: 1.1.0
+[00:00:21]     Found link https://pypi.python.org/packages/60/84/72c628d5a4efffb23e2fb46cdbf8ee669046d8208ba5dab08f989b7bfe9c/six-1.5.1-py2.py3-none-any.whl#md5=2064b715201fa76a55dea75675ee19f2 (from https://pypi.python.org/simple/six/), version: 1.5.1
+[00:00:21]     Found link https://pypi.python.org/packages/67/4b/141a581104b1f6397bfa78ac9d43d8ad29a7ca43ea90a2d863fe3056e86a/six-1.11.0-py2.py3-none-any.whl#md5=866ab722be6bdfed6830f3179af65468 (from https://pypi.python.org/simple/six/), version: 1.11.0
+[00:00:21]     Found link https://pypi.python.org/packages/6b/30/839b8059d1225dbd3a0dd97c3c370bbb978cde505e160b30515fb7be17d8/six-1.7.2-py2.py3-none-any.whl#md5=0e10f8d8e65257408e4428632859dad9 (from https://pypi.python.org/simple/six/), version: 1.7.2
+[00:00:21]     Found link https://pypi.python.org/packages/7e/16/792311d76b8e23da84e1b177fb973679de1c963391d0dcd7e963634bed4b/six-1.7.0.tar.gz#md5=92f7210da3db1e988979fa394aa41d7a (from https://pypi.python.org/simple/six/), version: 1.7.0
+[00:00:21]     Found link https://pypi.python.org/packages/8b/08/8f569ab2c81c1443ce43e29df2e7eec1ab7f005455f6c193793728b00f04/six-1.0b1.tar.gz#md5=cbfcc64af1f27162a6a6b5510e262c9d (from https://pypi.python.org/simple/six/), version: 1.0b1
+[00:00:21]     Found link https://pypi.python.org/packages/99/25/2df8760d6902620cfca85e36f07de491d14f2c325ecc01c1a5590d8af22d/six-1.4.0.tar.gz#md5=5fcab6a067b5ebf68ede2f4d02fe7547 (from https://pypi.python.org/simple/six/), version: 1.4.0
+[00:00:21]     Found link https://pypi.python.org/packages/a2/4b/2b4532b4eba116a02fc0b5e0b3540a073a61c003b7b6293b7b884afa8ff1/six-1.8.0-py2.py3-none-any.whl#md5=2f5f96148c68f3c1611f489678a8b445 (from https://pypi.python.org/simple/six/), version: 1.8.0
+[00:00:21]     Found link https://pypi.python.org/packages/a4/ed/a1410f4a3ae1492d87cbc7acdeea819db3caf6e526ef7032dd6fe50d2083/six-1.7.2.tar.gz#md5=4c26276583b01dfc73474cb32327af91 (from https://pypi.python.org/simple/six/), version: 1.7.2
+[00:00:21]     Found link https://pypi.python.org/packages/a6/af/4506a069312018665b8936e5d51b3aa013971ef65eab5231ef151a482dcd/six-1.0.0.tar.gz#md5=37c7ff036fdff2b1bb8d55e49ccb3b44 (from https://pypi.python.org/simple/six/), version: 1.0.0
+[00:00:21]     Found link https://pypi.python.org/packages/aa/ec/e6954e19e617c1b9860325f0995d456d8416c84a6cb9bce1c10998280b59/six-1.7.1-py2.py3-none-any.whl#md5=c3c1e251733acc9db947e75c9a02cf06 (from https://pypi.python.org/simple/six/), version: 1.7.1
+[00:00:21]     Found link https://pypi.python.org/packages/af/33/fa2097ac4bc7a9672517fdcb982bc7454fdd113f49f7ab353025b906a119/six-0.9.2.tar.gz#md5=92ea7c870396dd9222029a188c6bbd7f (from https://pypi.python.org/simple/six/), version: 0.9.2
+[00:00:21]     Found link https://pypi.python.org/packages/b3/b2/238e2590826bfdd113244a40d9d3eb26918bd798fc187e2360a8367068db/six-1.10.0.tar.gz#md5=34eed507548117b2ab523ab14b2f8b55 (from https://pypi.python.org/simple/six/), version: 1.10.0
+[00:00:21]     Found link https://pypi.python.org/packages/ba/19/aa48edcff9d0c396a4d009d362d0a0a1ac3db6f9d7d5736e0175b94d7ef8/six-1.6.1-py2.py3-none-any.whl#md5=ca195cc2271b03ae1c8750a88081c7f1 (from https://pypi.python.org/simple/six/), version: 1.6.1
+[00:00:21]     Found link https://pypi.python.org/packages/c7/a4/35520d20a8e4b3c28c9db705fffd4c7053e0236928951da32167e5078faa/six-1.5.2-py2.py3-none-any.whl#md5=ba32222ad0c5c7057a7c42e66e81289d (from https://pypi.python.org/simple/six/), version: 1.5.2
+[00:00:21]     Found link https://pypi.python.org/packages/c8/0a/b6723e1bc4c516cb687841499455a8505b44607ab535be01091c0f24f079/six-1.10.0-py2.py3-none-any.whl#md5=3ab558cf5d4f7a72611d59a81a315dc8 (from https://pypi.python.org/simple/six/), version: 1.10.0
+[00:00:21]     Found link https://pypi.python.org/packages/ca/15/e62a66024dded9640f8d39112330e6b108e7ab21a1b8618c2d1e2eea7e1d/six-1.5.0-py2.py3-none-any.whl#md5=3307efe2bc4ca8556befc9afe297c530 (from https://pypi.python.org/simple/six/), version: 1.5.0
+[00:00:21]     Found link https://pypi.python.org/packages/e8/70/b9c441d8c02b70eb3bf923c49944b8fc656f78a43c084d2a98534d7404e2/six-1.6.1.tar.gz#md5=07d606ac08595d795bf926cc9985674f (from https://pypi.python.org/simple/six/), version: 1.6.1
+[00:00:21]     Found link https://pypi.python.org/packages/e9/b4/0ccbc17cd49a812ab8363058bb12f0134cf2d3ba752391f309ddf567ae97/six-1.2.0.tar.gz#md5=2a5d1afc79912832ac78fd38e3d75d7e (from https://pypi.python.org/simple/six/), version: 1.2.0
+[00:00:21]   Using version 1.11.0 (newest of versions: 1.11.0)
+[00:00:21]   Looking up "https://pypi.python.org/packages/67/4b/141a581104b1f6397bfa78ac9d43d8ad29a7ca43ea90a2d863fe3056e86a/six-1.11.0-py2.py3-none-any.whl" in the cache
+[00:00:21]   No cache entry available
+[00:00:21]   "GET /packages/67/4b/141a581104b1f6397bfa78ac9d43d8ad29a7ca43ea90a2d863fe3056e86a/six-1.11.0-py2.py3-none-any.whl HTTP/1.1" 200 10702
+[00:00:21]   Downloading six-1.11.0-py2.py3-none-any.whl
+[00:00:21]   Downloading from URL https://pypi.python.org/packages/67/4b/141a581104b1f6397bfa78ac9d43d8ad29a7ca43ea90a2d863fe3056e86a/six-1.11.0-py2.py3-none-any.whl#md5=866ab722be6bdfed6830f3179af65468 (from https://pypi.python.org/simple/six/)
+[00:00:21]   Updating cache with response from "https://pypi.python.org/packages/67/4b/141a581104b1f6397bfa78ac9d43d8ad29a7ca43ea90a2d863fe3056e86a/six-1.11.0-py2.py3-none-any.whl"
+[00:00:21]   Caching due to etag
+[00:00:21] Could not parse version from link: file:///C:/projects/bezier
+[00:00:21] Installing collected packages: six, bezier
+[00:00:21] 
+[00:00:21]   Running setup.py install for bezier: started
+[00:00:21]     Running command C:\Python36-x64\python.exe -u -c "import setuptools, tokenize;__file__='C:\\Users\\appveyor\\AppData\\Local\\Temp\\1\\pip-0f39dvub-build\\setup.py';f=getattr(tokenize, 'open', open)(__file__);code=f.read().replace('\r\n', '\n');f.close();exec(compile(code, __file__, 'exec'))" install --record C:\Users\appveyor\AppData\Local\Temp\1\pip-4mw58_0z-record\install-record.txt --single-version-externally-managed --compile
+[00:00:22]     Could not locate executable g77
+[00:00:22]     Could not locate executable f77
+[00:00:22]     Could not locate executable ifort
+[00:00:22]     Could not locate executable ifl
+[00:00:22]     Could not locate executable f90
+[00:00:22]     Could not locate executable efl
+[00:00:22]     running install
+[00:00:22]     running build
+[00:00:22]     running build_py
+[00:00:22]     creating build
+[00:00:22]     creating build\lib.win-amd64-3.6
+[00:00:22]     creating build\lib.win-amd64-3.6\bezier
+[00:00:22]     copying src\bezier\curve.py -> build\lib.win-amd64-3.6\bezier
+[00:00:22]     copying src\bezier\curved_polygon.py -> build\lib.win-amd64-3.6\bezier
+[00:00:22]     copying src\bezier\surface.py -> build\lib.win-amd64-3.6\bezier
+[00:00:22]     copying src\bezier\_algebraic_intersection.py -> build\lib.win-amd64-3.6\bezier
+[00:00:22]     copying src\bezier\_base.py -> build\lib.win-amd64-3.6\bezier
+[00:00:22]     copying src\bezier\_curve_helpers.py -> build\lib.win-amd64-3.6\bezier
+[00:00:22]     copying src\bezier\_geometric_intersection.py -> build\lib.win-amd64-3.6\bezier
+[00:00:22]     copying src\bezier\_helpers.py -> build\lib.win-amd64-3.6\bezier
+[00:00:22]     copying src\bezier\_intersection_helpers.py -> build\lib.win-amd64-3.6\bezier
+[00:00:22]     copying src\bezier\_plot_helpers.py -> build\lib.win-amd64-3.6\bezier
+[00:00:22]     copying src\bezier\_surface_helpers.py -> build\lib.win-amd64-3.6\bezier
+[00:00:22]     copying src\bezier\_surface_intersection.py -> build\lib.win-amd64-3.6\bezier
+[00:00:22]     copying src\bezier\__config__.py -> build\lib.win-amd64-3.6\bezier
+[00:00:22]     copying src\bezier\__init__.py -> build\lib.win-amd64-3.6\bezier
+[00:00:22]     copying src\bezier\_curve.pxd -> build\lib.win-amd64-3.6\bezier
+[00:00:22]     copying src\bezier\_curve_intersection.pxd -> build\lib.win-amd64-3.6\bezier
+[00:00:22]     copying src\bezier\_helpers.pxd -> build\lib.win-amd64-3.6\bezier
+[00:00:22]     copying src\bezier\_status.pxd -> build\lib.win-amd64-3.6\bezier
+[00:00:22]     copying src\bezier\_surface.pxd -> build\lib.win-amd64-3.6\bezier
+[00:00:22]     copying src\bezier\_surface_intersection.pxd -> build\lib.win-amd64-3.6\bezier
+[00:00:22]     creating build\lib.win-amd64-3.6\bezier\include
+[00:00:22]     copying src\bezier\include\bezier.h -> build\lib.win-amd64-3.6\bezier\include
+[00:00:22]     creating build\lib.win-amd64-3.6\bezier\include\bezier
+[00:00:22]     copying src\bezier\include\bezier\curve.h -> build\lib.win-amd64-3.6\bezier\include\bezier
+[00:00:22]     copying src\bezier\include\bezier\curve_intersection.h -> build\lib.win-amd64-3.6\bezier\include\bezier
+[00:00:22]     copying src\bezier\include\bezier\helpers.h -> build\lib.win-amd64-3.6\bezier\include\bezier
+[00:00:22]     copying src\bezier\include\bezier\status.h -> build\lib.win-amd64-3.6\bezier\include\bezier
+[00:00:22]     copying src\bezier\include\bezier\surface.h -> build\lib.win-amd64-3.6\bezier\include\bezier
+[00:00:22]     copying src\bezier\include\bezier\surface_intersection.h -> build\lib.win-amd64-3.6\bezier\include\bezier
+[00:00:22]     copying src\bezier\include\bezier\_bool_patch.h -> build\lib.win-amd64-3.6\bezier\include\bezier
+[00:00:22]     running build_ext
+[00:00:22]     Fortran f77 compiler: C:\mingw-w64\x86_64-6.3.0-posix-seh-rt_v5-rev1\mingw64\bin\gfortran.exe -Wall -g -ffixed-form -fno-second-underscore -O3 -funroll-loops
+[00:00:22]     Fortran f90 compiler: C:\mingw-w64\x86_64-6.3.0-posix-seh-rt_v5-rev1\mingw64\bin\gfortran.exe -Wall -fno-second-underscore -O3 -funroll-loops -Wextra -Wno-compare-reals -Wimplicit-interface -fmax-errors=1 -std=f2008 -Werror -march=native
+[00:00:22]     Fortran fix compiler: C:\mingw-w64\x86_64-6.3.0-posix-seh-rt_v5-rev1\mingw64\bin\gfortran.exe -Wall -g -ffixed-form -fno-second-underscore -Wall -g -fno-second-underscore -O3 -funroll-loops
+[00:00:22]     creating build\temp.win-amd64-3.6
+[00:00:22]     creating build\temp.win-amd64-3.6\Release
+[00:00:22]     creating build\temp.win-amd64-3.6\Release\src
+[00:00:22]     creating build\temp.win-amd64-3.6\Release\src\bezier
+[00:00:22]     creating build\temp.win-amd64-3.6\Release\src\bezier\quadpack
+[00:00:22]     compile options: '-c'
+[00:00:22]     extra options: '-J build\temp.win-amd64-3.6\Release'
+[00:00:22]     gfortran.exe:f90: src\bezier\types.f90
+[00:00:23]     gfortran.exe:f90: src\bezier\status.f90
+[00:00:23]     gfortran.exe:f90: src\bezier\helpers.f90
+[00:00:23]     gfortran.exe:f90: src\bezier\curve.f90
+[00:00:25]     gfortran.exe:f90: src\bezier\surface.f90
+[00:00:29]     gfortran.exe:f90: src\bezier\curve_intersection.f90
+[00:00:30]     gfortran.exe:f90: src\bezier\surface_intersection.f90
+[00:00:31]     gfortran.exe:f77: src\bezier\quadpack\d1mach.f
+[00:00:31]     gfortran.exe:f77: src\bezier\quadpack\dqelg.f
+[00:00:32]     gfortran.exe:f77: src\bezier\quadpack\dqpsrt.f
+[00:00:32]     gfortran.exe:f77: src\bezier\quadpack\dqk21.f
+[00:00:32]     gfortran.exe:f77: src\bezier\quadpack\dqagse.f
+[00:00:32]     C:\mingw-w64\x86_64-6.3.0-posix-seh-rt_v5-rev1\mingw64\bin\gfortran.exe -static -shared -o build\temp.win-amd64-3.6\Release\libbezier.dll build\temp.win-amd64-3.6\Release\src\bezier\quadpack\d1mach.o build\temp.win-amd64-3.6\Release\src\bezier\quadpack\dqelg.o build\temp.win-amd64-3.6\Release\src\bezier\quadpack\dqpsrt.o build\temp.win-amd64-3.6\Release\src\bezier\quadpack\dqk21.o build\temp.win-amd64-3.6\Release\src\bezier\quadpack\dqagse.o build\temp.win-amd64-3.6\Release\src\bezier\types.o build\temp.win-amd64-3.6\Release\src\bezier\status.o build\temp.win-amd64-3.6\Release\src\bezier\helpers.o build\temp.win-amd64-3.6\Release\src\bezier\curve.o build\temp.win-amd64-3.6\Release\src\bezier\surface.o build\temp.win-amd64-3.6\Release\src\bezier\curve_intersection.o build\temp.win-amd64-3.6\Release\src\bezier\surface_intersection.o -Wl,--output-def,build\temp.win-amd64-3.6\Release\libbezier.def
+[00:00:32]     C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\BIN\x86_amd64\lib.exe /def:build\temp.win-amd64-3.6\Release\libbezier.def /out:build\temp.win-amd64-3.6\Release\bezier.lib /machine:x64
+[00:00:33]     No module named 'numpy.distutils._msvccompiler' in numpy.distutils; trying from distutils
+[00:00:33]     building 'bezier._helpers_speedup' extension
+[00:00:33]     C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\BIN\x86_amd64\cl.exe /c /nologo /Ox /W3 /GL /DNDEBUG /MD -IC:\Python36-x64\lib\site-packages\numpy\core\include -Isrc\bezier\include -IC:\Python36-x64\include -IC:\Python36-x64\include -I"C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\INCLUDE" -I"C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\ATLMFC\INCLUDE" -I"C:\Program Files (x86)\Windows Kits\10\include\10.0.14393.0\ucrt" -I"C:\Program Files (x86)\Windows Kits\NETFXSDK\4.6.1\include\um" -I"C:\Program Files (x86)\Windows Kits\10\include\10.0.14393.0\shared" -I"C:\Program Files (x86)\Windows Kits\10\include\10.0.14393.0\um" -I"C:\Program Files (x86)\Windows Kits\10\include\10.0.14393.0\winrt" -I"C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\INCLUDE" -I"C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\ATLMFC\INCLUDE" -I"C:\Program Files (x86)\Windows Kits\10\include\10.0.14393.0\ucrt" -I"C:\Program Files (x86)\Windows Kits\NETFXSDK\4.6.1\include\um" -I"C:\Program Files (x86)\Windows Kits\10\include\10.0.14393.0\shared" -I"C:\Program Files (x86)\Windows Kits\10\include\10.0.14393.0\um" -I"C:\Program Files (x86)\Windows Kits\10\include\10.0.14393.0\winrt" /Tcsrc\bezier\_helpers_speedup.c /Fobuild\temp.win-amd64-3.6\Release\src\bezier\_helpers_speedup.obj
+[00:00:34]     C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\BIN\x86_amd64\link.exe /nologo /INCREMENTAL:NO /LTCG /DLL /MANIFEST:EMBED,ID=2 /MANIFESTUAC:NO /LIBPATH:build\lib.win-amd64-3.6\bezier\lib /LIBPATH:C:\Python36-x64\libs /LIBPATH:C:\Python36-x64\PCbuild\amd64 /LIBPATH:"C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\LIB\amd64" /LIBPATH:"C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\ATLMFC\LIB\amd64" /LIBPATH:"C:\Program Files (x86)\Windows Kits\10\lib\10.0.14393.0\ucrt\x64" /LIBPATH:"C:\Program Files (x86)\Windows Kits\NETFXSDK\4.6.1\lib\um\x64" /LIBPATH:"C:\Program Files (x86)\Windows Kits\10\lib\10.0.14393.0\um\x64" /LIBPATH:"C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\LIB\amd64" /LIBPATH:"C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\ATLMFC\LIB\amd64" /LIBPATH:"C:\Program Files (x86)\Windows Kits\10\lib\10.0.14393.0\ucrt\x64" /LIBPATH:"C:\Program Files (x86)\Windows Kits\NETFXSDK\4.6.1\lib\um\x64" /LIBPATH:"C:\Program Files (x86)\Windows Kits\10\lib\10.0.14393.0\um\x64" bezier.lib /EXPORT:PyInit__helpers_speedup build\temp.win-amd64-3.6\Release\src\bezier\_helpers_speedup.obj /OUT:build\lib.win-amd64-3.6\bezier\_helpers_speedup.cp36-win_amd64.pyd /IMPLIB:build\temp.win-amd64-3.6\Release\src\bezier\_helpers_speedup.cp36-win_amd64.lib
+[00:00:35]     building 'bezier._curve_speedup' extension
+[00:00:35]     C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\BIN\x86_amd64\cl.exe /c /nologo /Ox /W3 /GL /DNDEBUG /MD -IC:\Python36-x64\lib\site-packages\numpy\core\include -Isrc\bezier\include -IC:\Python36-x64\include -IC:\Python36-x64\include -I"C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\INCLUDE" -I"C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\ATLMFC\INCLUDE" -I"C:\Program Files (x86)\Windows Kits\10\include\10.0.14393.0\ucrt" -I"C:\Program Files (x86)\Windows Kits\NETFXSDK\4.6.1\include\um" -I"C:\Program Files (x86)\Windows Kits\10\include\10.0.14393.0\shared" -I"C:\Program Files (x86)\Windows Kits\10\include\10.0.14393.0\um" -I"C:\Program Files (x86)\Windows Kits\10\include\10.0.14393.0\winrt" -I"C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\INCLUDE" -I"C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\ATLMFC\INCLUDE" -I"C:\Program Files (x86)\Windows Kits\10\include\10.0.14393.0\ucrt" -I"C:\Program Files (x86)\Windows Kits\NETFXSDK\4.6.1\include\um" -I"C:\Program Files (x86)\Windows Kits\10\include\10.0.14393.0\shared" -I"C:\Program Files (x86)\Windows Kits\10\include\10.0.14393.0\um" -I"C:\Program Files (x86)\Windows Kits\10\include\10.0.14393.0\winrt" /Tcsrc\bezier\_curve_speedup.c /Fobuild\temp.win-amd64-3.6\Release\src\bezier\_curve_speedup.obj
+[00:00:35]     C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\BIN\x86_amd64\link.exe /nologo /INCREMENTAL:NO /LTCG /DLL /MANIFEST:EMBED,ID=2 /MANIFESTUAC:NO /LIBPATH:build\lib.win-amd64-3.6\bezier\lib /LIBPATH:C:\Python36-x64\libs /LIBPATH:C:\Python36-x64\PCbuild\amd64 /LIBPATH:"C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\LIB\amd64" /LIBPATH:"C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\ATLMFC\LIB\amd64" /LIBPATH:"C:\Program Files (x86)\Windows Kits\10\lib\10.0.14393.0\ucrt\x64" /LIBPATH:"C:\Program Files (x86)\Windows Kits\NETFXSDK\4.6.1\lib\um\x64" /LIBPATH:"C:\Program Files (x86)\Windows Kits\10\lib\10.0.14393.0\um\x64" /LIBPATH:"C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\LIB\amd64" /LIBPATH:"C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\ATLMFC\LIB\amd64" /LIBPATH:"C:\Program Files (x86)\Windows Kits\10\lib\10.0.14393.0\ucrt\x64" /LIBPATH:"C:\Program Files (x86)\Windows Kits\NETFXSDK\4.6.1\lib\um\x64" /LIBPATH:"C:\Program Files (x86)\Windows Kits\10\lib\10.0.14393.0\um\x64" bezier.lib /EXPORT:PyInit__curve_speedup build\temp.win-amd64-3.6\Release\src\bezier\_curve_speedup.obj /OUT:build\lib.win-amd64-3.6\bezier\_curve_speedup.cp36-win_amd64.pyd /IMPLIB:build\temp.win-amd64-3.6\Release\src\bezier\_curve_speedup.cp36-win_amd64.lib
+[00:00:36]     building 'bezier._surface_speedup' extension
+[00:00:36]     C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\BIN\x86_amd64\cl.exe /c /nologo /Ox /W3 /GL /DNDEBUG /MD -IC:\Python36-x64\lib\site-packages\numpy\core\include -Isrc\bezier\include -IC:\Python36-x64\include -IC:\Python36-x64\include -I"C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\INCLUDE" -I"C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\ATLMFC\INCLUDE" -I"C:\Program Files (x86)\Windows Kits\10\include\10.0.14393.0\ucrt" -I"C:\Program Files (x86)\Windows Kits\NETFXSDK\4.6.1\include\um" -I"C:\Program Files (x86)\Windows Kits\10\include\10.0.14393.0\shared" -I"C:\Program Files (x86)\Windows Kits\10\include\10.0.14393.0\um" -I"C:\Program Files (x86)\Windows Kits\10\include\10.0.14393.0\winrt" -I"C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\INCLUDE" -I"C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\ATLMFC\INCLUDE" -I"C:\Program Files (x86)\Windows Kits\10\include\10.0.14393.0\ucrt" -I"C:\Program Files (x86)\Windows Kits\NETFXSDK\4.6.1\include\um" -I"C:\Program Files (x86)\Windows Kits\10\include\10.0.14393.0\shared" -I"C:\Program Files (x86)\Windows Kits\10\include\10.0.14393.0\um" -I"C:\Program Files (x86)\Windows Kits\10\include\10.0.14393.0\winrt" /Tcsrc\bezier\_surface_speedup.c /Fobuild\temp.win-amd64-3.6\Release\src\bezier\_surface_speedup.obj
+[00:00:37]     C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\BIN\x86_amd64\link.exe /nologo /INCREMENTAL:NO /LTCG /DLL /MANIFEST:EMBED,ID=2 /MANIFESTUAC:NO /LIBPATH:build\lib.win-amd64-3.6\bezier\lib /LIBPATH:C:\Python36-x64\libs /LIBPATH:C:\Python36-x64\PCbuild\amd64 /LIBPATH:"C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\LIB\amd64" /LIBPATH:"C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\ATLMFC\LIB\amd64" /LIBPATH:"C:\Program Files (x86)\Windows Kits\10\lib\10.0.14393.0\ucrt\x64" /LIBPATH:"C:\Program Files (x86)\Windows Kits\NETFXSDK\4.6.1\lib\um\x64" /LIBPATH:"C:\Program Files (x86)\Windows Kits\10\lib\10.0.14393.0\um\x64" /LIBPATH:"C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\LIB\amd64" /LIBPATH:"C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\ATLMFC\LIB\amd64" /LIBPATH:"C:\Program Files (x86)\Windows Kits\10\lib\10.0.14393.0\ucrt\x64" /LIBPATH:"C:\Program Files (x86)\Windows Kits\NETFXSDK\4.6.1\lib\um\x64" /LIBPATH:"C:\Program Files (x86)\Windows Kits\10\lib\10.0.14393.0\um\x64" bezier.lib /EXPORT:PyInit__surface_speedup build\temp.win-amd64-3.6\Release\src\bezier\_surface_speedup.obj /OUT:build\lib.win-amd64-3.6\bezier\_surface_speedup.cp36-win_amd64.pyd /IMPLIB:build\temp.win-amd64-3.6\Release\src\bezier\_surface_speedup.cp36-win_amd64.lib
+[00:00:38]     building 'bezier._curve_intersection_speedup' extension
+[00:00:38]     C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\BIN\x86_amd64\cl.exe /c /nologo /Ox /W3 /GL /DNDEBUG /MD -IC:\Python36-x64\lib\site-packages\numpy\core\include -Isrc\bezier\include -IC:\Python36-x64\include -IC:\Python36-x64\include -I"C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\INCLUDE" -I"C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\ATLMFC\INCLUDE" -I"C:\Program Files (x86)\Windows Kits\10\include\10.0.14393.0\ucrt" -I"C:\Program Files (x86)\Windows Kits\NETFXSDK\4.6.1\include\um" -I"C:\Program Files (x86)\Windows Kits\10\include\10.0.14393.0\shared" -I"C:\Program Files (x86)\Windows Kits\10\include\10.0.14393.0\um" -I"C:\Program Files (x86)\Windows Kits\10\include\10.0.14393.0\winrt" -I"C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\INCLUDE" -I"C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\ATLMFC\INCLUDE" -I"C:\Program Files (x86)\Windows Kits\10\include\10.0.14393.0\ucrt" -I"C:\Program Files (x86)\Windows Kits\NETFXSDK\4.6.1\include\um" -I"C:\Program Files (x86)\Windows Kits\10\include\10.0.14393.0\shared" -I"C:\Program Files (x86)\Windows Kits\10\include\10.0.14393.0\um" -I"C:\Program Files (x86)\Windows Kits\10\include\10.0.14393.0\winrt" /Tcsrc\bezier\_curve_intersection_speedup.c /Fobuild\temp.win-amd64-3.6\Release\src\bezier\_curve_intersection_speedup.obj
+[00:00:38]     C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\BIN\x86_amd64\link.exe /nologo /INCREMENTAL:NO /LTCG /DLL /MANIFEST:EMBED,ID=2 /MANIFESTUAC:NO /LIBPATH:build\lib.win-amd64-3.6\bezier\lib /LIBPATH:C:\Python36-x64\libs /LIBPATH:C:\Python36-x64\PCbuild\amd64 /LIBPATH:"C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\LIB\amd64" /LIBPATH:"C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\ATLMFC\LIB\amd64" /LIBPATH:"C:\Program Files (x86)\Windows Kits\10\lib\10.0.14393.0\ucrt\x64" /LIBPATH:"C:\Program Files (x86)\Windows Kits\NETFXSDK\4.6.1\lib\um\x64" /LIBPATH:"C:\Program Files (x86)\Windows Kits\10\lib\10.0.14393.0\um\x64" /LIBPATH:"C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\LIB\amd64" /LIBPATH:"C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\ATLMFC\LIB\amd64" /LIBPATH:"C:\Program Files (x86)\Windows Kits\10\lib\10.0.14393.0\ucrt\x64" /LIBPATH:"C:\Program Files (x86)\Windows Kits\NETFXSDK\4.6.1\lib\um\x64" /LIBPATH:"C:\Program Files (x86)\Windows Kits\10\lib\10.0.14393.0\um\x64" bezier.lib /EXPORT:PyInit__curve_intersection_speedup build\temp.win-amd64-3.6\Release\src\bezier\_curve_intersection_speedup.obj /OUT:build\lib.win-amd64-3.6\bezier\_curve_intersection_speedup.cp36-win_amd64.pyd /IMPLIB:build\temp.win-amd64-3.6\Release\src\bezier\_curve_intersection_speedup.cp36-win_amd64.lib
+[00:00:40]     building 'bezier._surface_intersection_speedup' extension
+[00:00:40]     C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\BIN\x86_amd64\cl.exe /c /nologo /Ox /W3 /GL /DNDEBUG /MD -IC:\Python36-x64\lib\site-packages\numpy\core\include -Isrc\bezier\include -IC:\Python36-x64\include -IC:\Python36-x64\include -I"C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\INCLUDE" -I"C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\ATLMFC\INCLUDE" -I"C:\Program Files (x86)\Windows Kits\10\include\10.0.14393.0\ucrt" -I"C:\Program Files (x86)\Windows Kits\NETFXSDK\4.6.1\include\um" -I"C:\Program Files (x86)\Windows Kits\10\include\10.0.14393.0\shared" -I"C:\Program Files (x86)\Windows Kits\10\include\10.0.14393.0\um" -I"C:\Program Files (x86)\Windows Kits\10\include\10.0.14393.0\winrt" -I"C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\INCLUDE" -I"C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\ATLMFC\INCLUDE" -I"C:\Program Files (x86)\Windows Kits\10\include\10.0.14393.0\ucrt" -I"C:\Program Files (x86)\Windows Kits\NETFXSDK\4.6.1\include\um" -I"C:\Program Files (x86)\Windows Kits\10\include\10.0.14393.0\shared" -I"C:\Program Files (x86)\Windows Kits\10\include\10.0.14393.0\um" -I"C:\Program Files (x86)\Windows Kits\10\include\10.0.14393.0\winrt" /Tcsrc\bezier\_surface_intersection_speedup.c /Fobuild\temp.win-amd64-3.6\Release\src\bezier\_surface_intersection_speedup.obj
+[00:00:40]     C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\BIN\x86_amd64\link.exe /nologo /INCREMENTAL:NO /LTCG /DLL /MANIFEST:EMBED,ID=2 /MANIFESTUAC:NO /LIBPATH:build\lib.win-amd64-3.6\bezier\lib /LIBPATH:C:\Python36-x64\libs /LIBPATH:C:\Python36-x64\PCbuild\amd64 /LIBPATH:"C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\LIB\amd64" /LIBPATH:"C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\ATLMFC\LIB\amd64" /LIBPATH:"C:\Program Files (x86)\Windows Kits\10\lib\10.0.14393.0\ucrt\x64" /LIBPATH:"C:\Program Files (x86)\Windows Kits\NETFXSDK\4.6.1\lib\um\x64" /LIBPATH:"C:\Program Files (x86)\Windows Kits\10\lib\10.0.14393.0\um\x64" /LIBPATH:"C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\LIB\amd64" /LIBPATH:"C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\ATLMFC\LIB\amd64" /LIBPATH:"C:\Program Files (x86)\Windows Kits\10\lib\10.0.14393.0\ucrt\x64" /LIBPATH:"C:\Program Files (x86)\Windows Kits\NETFXSDK\4.6.1\lib\um\x64" /LIBPATH:"C:\Program Files (x86)\Windows Kits\10\lib\10.0.14393.0\um\x64" bezier.lib /EXPORT:PyInit__surface_intersection_speedup build\temp.win-amd64-3.6\Release\src\bezier\_surface_intersection_speedup.obj /OUT:build\lib.win-amd64-3.6\bezier\_surface_intersection_speedup.cp36-win_amd64.pyd /IMPLIB:build\temp.win-amd64-3.6\Release\src\bezier\_surface_intersection_speedup.cp36-win_amd64.lib
+[00:00:42]     running install_lib
+[00:00:42]     creating C:\Python36-x64\Lib\site-packages\bezier
+[00:00:42]     copying build\lib.win-amd64-3.6\bezier\curve.py -> C:\Python36-x64\Lib\site-packages\bezier
+[00:00:42]     copying build\lib.win-amd64-3.6\bezier\curved_polygon.py -> C:\Python36-x64\Lib\site-packages\bezier
+[00:00:42]     creating C:\Python36-x64\Lib\site-packages\bezier\extra-dll
+[00:00:42]     copying build\lib.win-amd64-3.6\bezier\extra-dll\libbezier.dll -> C:\Python36-x64\Lib\site-packages\bezier\extra-dll
+[00:00:42]     creating C:\Python36-x64\Lib\site-packages\bezier\include
+[00:00:42]     creating C:\Python36-x64\Lib\site-packages\bezier\include\bezier
+[00:00:42]     copying build\lib.win-amd64-3.6\bezier\include\bezier\curve.h -> C:\Python36-x64\Lib\site-packages\bezier\include\bezier
+[00:00:42]     copying build\lib.win-amd64-3.6\bezier\include\bezier\curve_intersection.h -> C:\Python36-x64\Lib\site-packages\bezier\include\bezier
+[00:00:42]     copying build\lib.win-amd64-3.6\bezier\include\bezier\helpers.h -> C:\Python36-x64\Lib\site-packages\bezier\include\bezier
+[00:00:42]     copying build\lib.win-amd64-3.6\bezier\include\bezier\status.h -> C:\Python36-x64\Lib\site-packages\bezier\include\bezier
+[00:00:42]     copying build\lib.win-amd64-3.6\bezier\include\bezier\surface.h -> C:\Python36-x64\Lib\site-packages\bezier\include\bezier
+[00:00:42]     copying build\lib.win-amd64-3.6\bezier\include\bezier\surface_intersection.h -> C:\Python36-x64\Lib\site-packages\bezier\include\bezier
+[00:00:42]     copying build\lib.win-amd64-3.6\bezier\include\bezier\_bool_patch.h -> C:\Python36-x64\Lib\site-packages\bezier\include\bezier
+[00:00:42]     copying build\lib.win-amd64-3.6\bezier\include\bezier.h -> C:\Python36-x64\Lib\site-packages\bezier\include
+[00:00:42]     creating C:\Python36-x64\Lib\site-packages\bezier\lib
+[00:00:42]     copying build\lib.win-amd64-3.6\bezier\lib\bezier.lib -> C:\Python36-x64\Lib\site-packages\bezier\lib
+[00:00:42]     copying build\lib.win-amd64-3.6\bezier\surface.py -> C:\Python36-x64\Lib\site-packages\bezier
+[00:00:42]     copying build\lib.win-amd64-3.6\bezier\_algebraic_intersection.py -> C:\Python36-x64\Lib\site-packages\bezier
+[00:00:42]     copying build\lib.win-amd64-3.6\bezier\_base.py -> C:\Python36-x64\Lib\site-packages\bezier
+[00:00:42]     copying build\lib.win-amd64-3.6\bezier\_curve.pxd -> C:\Python36-x64\Lib\site-packages\bezier
+[00:00:42]     copying build\lib.win-amd64-3.6\bezier\_curve_helpers.py -> C:\Python36-x64\Lib\site-packages\bezier
+[00:00:42]     copying build\lib.win-amd64-3.6\bezier\_curve_intersection.pxd -> C:\Python36-x64\Lib\site-packages\bezier
+[00:00:42]     copying build\lib.win-amd64-3.6\bezier\_curve_intersection_speedup.cp36-win_amd64.pyd -> C:\Python36-x64\Lib\site-packages\bezier
+[00:00:42]     copying build\lib.win-amd64-3.6\bezier\_curve_speedup.cp36-win_amd64.pyd -> C:\Python36-x64\Lib\site-packages\bezier
+[00:00:42]     copying build\lib.win-amd64-3.6\bezier\_geometric_intersection.py -> C:\Python36-x64\Lib\site-packages\bezier
+[00:00:42]     copying build\lib.win-amd64-3.6\bezier\_helpers.pxd -> C:\Python36-x64\Lib\site-packages\bezier
+[00:00:42]     copying build\lib.win-amd64-3.6\bezier\_helpers.py -> C:\Python36-x64\Lib\site-packages\bezier
+[00:00:42]     copying build\lib.win-amd64-3.6\bezier\_helpers_speedup.cp36-win_amd64.pyd -> C:\Python36-x64\Lib\site-packages\bezier
+[00:00:42]     copying build\lib.win-amd64-3.6\bezier\_intersection_helpers.py -> C:\Python36-x64\Lib\site-packages\bezier
+[00:00:42]     copying build\lib.win-amd64-3.6\bezier\_plot_helpers.py -> C:\Python36-x64\Lib\site-packages\bezier
+[00:00:42]     copying build\lib.win-amd64-3.6\bezier\_status.pxd -> C:\Python36-x64\Lib\site-packages\bezier
+[00:00:42]     copying build\lib.win-amd64-3.6\bezier\_surface.pxd -> C:\Python36-x64\Lib\site-packages\bezier
+[00:00:42]     copying build\lib.win-amd64-3.6\bezier\_surface_helpers.py -> C:\Python36-x64\Lib\site-packages\bezier
+[00:00:42]     copying build\lib.win-amd64-3.6\bezier\_surface_intersection.pxd -> C:\Python36-x64\Lib\site-packages\bezier
+[00:00:42]     copying build\lib.win-amd64-3.6\bezier\_surface_intersection.py -> C:\Python36-x64\Lib\site-packages\bezier
+[00:00:42]     copying build\lib.win-amd64-3.6\bezier\_surface_intersection_speedup.cp36-win_amd64.pyd -> C:\Python36-x64\Lib\site-packages\bezier
+[00:00:42]     copying build\lib.win-amd64-3.6\bezier\_surface_speedup.cp36-win_amd64.pyd -> C:\Python36-x64\Lib\site-packages\bezier
+[00:00:42]     copying build\lib.win-amd64-3.6\bezier\__config__.py -> C:\Python36-x64\Lib\site-packages\bezier
+[00:00:42]     copying build\lib.win-amd64-3.6\bezier\__init__.py -> C:\Python36-x64\Lib\site-packages\bezier
+[00:00:42]     byte-compiling C:\Python36-x64\Lib\site-packages\bezier\curve.py to curve.cpython-36.pyc
+[00:00:42]     byte-compiling C:\Python36-x64\Lib\site-packages\bezier\curved_polygon.py to curved_polygon.cpython-36.pyc
+[00:00:42]     byte-compiling C:\Python36-x64\Lib\site-packages\bezier\surface.py to surface.cpython-36.pyc
+[00:00:42]     byte-compiling C:\Python36-x64\Lib\site-packages\bezier\_algebraic_intersection.py to _algebraic_intersection.cpython-36.pyc
+[00:00:42]     byte-compiling C:\Python36-x64\Lib\site-packages\bezier\_base.py to _base.cpython-36.pyc
+[00:00:42]     byte-compiling C:\Python36-x64\Lib\site-packages\bezier\_curve_helpers.py to _curve_helpers.cpython-36.pyc
+[00:00:42]     byte-compiling C:\Python36-x64\Lib\site-packages\bezier\_geometric_intersection.py to _geometric_intersection.cpython-36.pyc
+[00:00:42]     byte-compiling C:\Python36-x64\Lib\site-packages\bezier\_helpers.py to _helpers.cpython-36.pyc
+[00:00:42]     byte-compiling C:\Python36-x64\Lib\site-packages\bezier\_intersection_helpers.py to _intersection_helpers.cpython-36.pyc
+[00:00:42]     byte-compiling C:\Python36-x64\Lib\site-packages\bezier\_plot_helpers.py to _plot_helpers.cpython-36.pyc
+[00:00:42]     byte-compiling C:\Python36-x64\Lib\site-packages\bezier\_surface_helpers.py to _surface_helpers.cpython-36.pyc
+[00:00:42]     byte-compiling C:\Python36-x64\Lib\site-packages\bezier\_surface_intersection.py to _surface_intersection.cpython-36.pyc
+[00:00:42]     byte-compiling C:\Python36-x64\Lib\site-packages\bezier\__config__.py to __config__.cpython-36.pyc
+[00:00:42]     byte-compiling C:\Python36-x64\Lib\site-packages\bezier\__init__.py to __init__.cpython-36.pyc
+[00:00:42]     running install_egg_info
+[00:00:42]     running egg_info
+[00:00:42]     creating src\bezier.egg-info
+[00:00:42]     writing src\bezier.egg-info\PKG-INFO
+[00:00:42]     writing dependency_links to src\bezier.egg-info\dependency_links.txt
+[00:00:42]     writing requirements to src\bezier.egg-info\requires.txt
+[00:00:42]     writing top-level names to src\bezier.egg-info\top_level.txt
+[00:00:42]     writing manifest file 'src\bezier.egg-info\SOURCES.txt'
+[00:00:42]     reading manifest file 'src\bezier.egg-info\SOURCES.txt'
+[00:00:42]     reading manifest template 'MANIFEST.in'
+[00:00:42]     warning: no previously-included files matching '*.so' found anywhere in distribution
+[00:00:42]     warning: no previously-included files matching '*.pyd' found anywhere in distribution
+[00:00:42]     warning: no previously-included files matching '*.o' found anywhere in distribution
+[00:00:42]     warning: no previously-included files matching '*.obj' found anywhere in distribution
+[00:00:42]     warning: no previously-included files matching '*.a' found anywhere in distribution
+[00:00:42]     warning: no previously-included files matching '*.def' found anywhere in distribution
+[00:00:42]     warning: no previously-included files matching '*.exp' found anywhere in distribution
+[00:00:42]     warning: no previously-included files matching '*.pyc' found anywhere in distribution
+[00:00:42]     warning: no previously-included files matching '__pycache__' found anywhere in distribution
+[00:00:42]     writing manifest file 'src\bezier.egg-info\SOURCES.txt'
+[00:00:42]     Copying src\bezier.egg-info to C:\Python36-x64\Lib\site-packages\bezier-0.6.0-py3.6.egg-info
+[00:00:42]     running install_scripts
+[00:00:42]     writing list of installed files to 'C:\Users\appveyor\AppData\Local\Temp\1\pip-4mw58_0z-record\install-record.txt'
+[00:00:42]     Running setup.py install for bezier: finished with status 'done'
+[00:00:42]   Removing source in C:\Users\appveyor\AppData\Local\Temp\1\pip-0f39dvub-build
+[00:00:42] Successfully installed bezier-0.6.0 six-1.11.0
+[00:00:42] Cleaning up...
+[00:00:42] if ($env:TEST_TYPE -eq "base") { python -m pip install pytest mock "scipy >= 1.0.0rc1"; }
+[00:00:42] if ($env:TEST_TYPE -eq "cover") { python -m pip install pytest mock coverage pytest-cov "scipy >= 1.0.0rc1"; }
+[00:00:42] if ($env:TEST_TYPE -eq "functional") { python -m pip install pytest mock; }
+[00:00:42] Collecting pytest
+[00:00:43]   Downloading pytest-3.3.2-py2.py3-none-any.whl (185kB)
+[00:00:43] Collecting mock
+[00:00:43]   Downloading mock-2.0.0-py2.py3-none-any.whl (56kB)
+[00:00:43] Collecting colorama; sys_platform == "win32" (from pytest)
+[00:00:43]   Downloading colorama-0.3.9-py2.py3-none-any.whl
+[00:00:43] Requirement already satisfied: setuptools in c:\python36-x64\lib\site-packages (from pytest)
+[00:00:43] Requirement already satisfied: six>=1.10.0 in c:\python36-x64\lib\site-packages (from pytest)
+[00:00:43] Collecting py>=1.5.0 (from pytest)
+[00:00:43]   Downloading py-1.5.2-py2.py3-none-any.whl (88kB)
+[00:00:43] Collecting attrs>=17.2.0 (from pytest)
+[00:00:43]   Downloading attrs-17.4.0-py2.py3-none-any.whl
+[00:00:43] Collecting pluggy<0.7,>=0.5 (from pytest)
+[00:00:43]   Downloading pluggy-0.6.0.tar.gz
+[00:00:43] Collecting pbr>=0.11 (from mock)
+[00:00:43]   Downloading pbr-3.1.1-py2.py3-none-any.whl (99kB)
+[00:00:44] Building wheels for collected packages: pluggy
+[00:00:44]   Running setup.py bdist_wheel for pluggy: started
+[00:00:44]   Running setup.py bdist_wheel for pluggy: finished with status 'done'
+[00:00:44]   Stored in directory: C:\Users\appveyor\AppData\Local\pip\Cache\wheels\df\44\8e\e136760ae525eac46b3e3db643ef58ff1753177b5a722b0c96
+[00:00:44] Successfully built pluggy
+[00:00:44] Installing collected packages: colorama, py, attrs, pluggy, pytest, pbr, mock
+[00:00:45] Successfully installed attrs-17.4.0 colorama-0.3.9 mock-2.0.0 pbr-3.1.1 pluggy-0.6.0 py-1.5.2 pytest-3.3.2
+[00:00:45] if ($env:TEST_TYPE -eq "doctest") { python -m pip install Sphinx sphinx-rtd-theme sphinx-docstring-typing mock; }
+[00:00:45] if ($env:TEST_TYPE -eq "base") { python -m pytest tests/unit; }
+[00:00:45] if ($env:TEST_TYPE -eq "cover") { python -m pytest ` --cov=bezier ` --cov=tests.unit ` tests/unit; }
+[00:00:45] if ($env:TEST_TYPE -eq "functional") { python -m pytest tests/functional; }
+[00:00:46] ============================= test session starts =============================
+[00:00:46] platform win32 -- Python 3.6.3, pytest-3.3.2, py-1.5.2, pluggy-0.6.0
+[00:00:46] rootdir: C:\projects\bezier, inifile: setup.cfg
+[00:00:46] collected 177 items
+[00:00:46] 
+[00:00:46] tests\functional\test_curve_curve.py ................................... [ 19%]
+[00:00:46] .................................................                        [ 47%]
+[00:00:46] tests\functional\test_segment_box.py ....                                [ 49%]
+[00:00:46] tests\functional\test_surface_locate.py .........                        [ 54%]
+[00:00:46] tests\functional\test_surface_surface.py ............................... [ 72%]
+[00:00:46] .................................................                        [100%]
+[00:00:46] 
+[00:00:46] ========================= 177 passed in 0.69 seconds ==========================
+[00:00:46] if ($env:TEST_TYPE -eq "doctest") { sphinx-build -W ` -b doctest ` -d docs/build/doctrees ` docs ` docs/build/doctest; }
+[00:00:46] if ($env:TEST_TYPE -eq "journal") { python ` .\scripts\post_process_journal.py ` --journal-filename $env:BEZIER_JOURNAL ` --machine appveyor; python ` .\scripts\diff.py ` $env:BEZIER_JOURNAL ` .\appveyor\expected_journal.txt; }
+[00:00:46] Build success

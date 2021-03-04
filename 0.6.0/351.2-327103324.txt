@@ -1,0 +1,1644 @@
+travis_fold:start:worker_info[0K[33;1mWorker information[0m
+hostname: b6f28e25-9797-48c4-9af9-6b07350a7d6d@26726.wjb-2
+version: v3.3.1 https://github.com/travis-ci/worker/tree/1153e5010ef9863bf96264b75fba506109633460
+instance: 6c2c81e0-0347-4db0-89b3-729a1075b347 travis-ci-macos10.12-xcode8.3-1507738863 (via amqp)
+startup: 1m14.938024115s
+travis_fold:end:worker_info[0Ktravis_fold:start:system_info[0K[33;1mBuild system information[0m
+Build language: generic
+Build id: 327103320
+Job id: 327103324
+Runtime kernel version: 16.7.0
+travis-build version: af4b84614
+travis_fold:end:system_info[0K
+##
+# Host Database
+#
+# localhost is used to configure the loopback interface
+# when the system is booting.  Do not change this entry.
+##
+127.0.0.1	localhost Traviss-Mac-614.local
+255.255.255.255	broadcasthost
+::1             localhost
+Fix WWDRCA Certificate
+Unable to delete certificate matching "0950B6CD3D2F37EA246A1AAA20DFAADBD6FE1F75"security: AppleWWDRCA.cer: already in /Library/Keychains/System.keychain
+$ rvm use
+[32mUsing /Users/travis/.rvm/gems/ruby-2.4.2[0m
+/Users/travis/.travis/job_stages: line 428: yarn: command not found
+travis_fold:start:git.checkout[0Ktravis_time:start:07443396[0K$ git clone --depth=50 --branch=master https://github.com/dhermes/bezier.git dhermes/bezier
+Cloning into 'dhermes/bezier'...
+remote: Counting objects: 803, done.[K
+remote: Compressing objects:   0% (1/490)   [Kremote: Compressing objects:   1% (5/490)   [Kremote: Compressing objects:   2% (10/490)   [Kremote: Compressing objects:   3% (15/490)   [Kremote: Compressing objects:   4% (20/490)   [Kremote: Compressing objects:   5% (25/490)   [Kremote: Compressing objects:   6% (30/490)   [Kremote: Compressing objects:   7% (35/490)   [Kremote: Compressing objects:   8% (40/490)   [Kremote: Compressing objects:   9% (45/490)   [Kremote: Compressing objects:  10% (49/490)   [Kremote: Compressing objects:  11% (54/490)   [Kremote: Compressing objects:  12% (59/490)   [Kremote: Compressing objects:  13% (64/490)   [Kremote: Compressing objects:  14% (69/490)   [Kremote: Compressing objects:  15% (74/490)   [Kremote: Compressing objects:  16% (79/490)   [Kremote: Compressing objects:  17% (84/490)   [Kremote: Compressing objects:  18% (89/490)   [Kremote: Compressing objects:  19% (94/490)   [Kremote: Compressing objects:  20% (98/490)   [Kremote: Compressing objects:  21% (103/490)   [Kremote: Compressing objects:  22% (108/490)   [Kremote: Compressing objects:  23% (113/490)   [Kremote: Compressing objects:  24% (118/490)   [Kremote: Compressing objects:  25% (123/490)   [Kremote: Compressing objects:  26% (128/490)   [Kremote: Compressing objects:  27% (133/490)   [Kremote: Compressing objects:  28% (138/490)   [Kremote: Compressing objects:  29% (143/490)   [Kremote: Compressing objects:  30% (147/490)   [Kremote: Compressing objects:  31% (152/490)   [Kremote: Compressing objects:  32% (157/490)   [Kremote: Compressing objects:  33% (162/490)   [Kremote: Compressing objects:  34% (167/490)   [Kremote: Compressing objects:  35% (172/490)   [Kremote: Compressing objects:  36% (177/490)   [Kremote: Compressing objects:  37% (182/490)   [Kremote: Compressing objects:  38% (187/490)   [Kremote: Compressing objects:  39% (192/490)   [Kremote: Compressing objects:  40% (196/490)   [Kremote: Compressing objects:  41% (201/490)   [Kremote: Compressing objects:  42% (206/490)   [Kremote: Compressing objects:  43% (211/490)   [Kremote: Compressing objects:  44% (216/490)   [Kremote: Compressing objects:  45% (221/490)   [Kremote: Compressing objects:  46% (226/490)   [Kremote: Compressing objects:  47% (231/490)   [Kremote: Compressing objects:  48% (236/490)   [Kremote: Compressing objects:  49% (241/490)   [Kremote: Compressing objects:  50% (245/490)   [Kremote: Compressing objects:  51% (250/490)   [Kremote: Compressing objects:  52% (255/490)   [Kremote: Compressing objects:  53% (260/490)   [Kremote: Compressing objects:  54% (265/490)   [Kremote: Compressing objects:  55% (270/490)   [Kremote: Compressing objects:  56% (275/490)   [Kremote: Compressing objects:  57% (280/490)   [Kremote: Compressing objects:  58% (285/490)   [Kremote: Compressing objects:  59% (290/490)   [Kremote: Compressing objects:  60% (294/490)   [Kremote: Compressing objects:  61% (299/490)   [Kremote: Compressing objects:  62% (304/490)   [Kremote: Compressing objects:  63% (309/490)   [Kremote: Compressing objects:  64% (314/490)   [Kremote: Compressing objects:  65% (319/490)   [Kremote: Compressing objects:  66% (324/490)   [Kremote: Compressing objects:  67% (329/490)   [Kremote: Compressing objects:  68% (334/490)   [Kremote: Compressing objects:  69% (339/490)   [Kremote: Compressing objects:  70% (343/490)   [Kremote: Compressing objects:  71% (348/490)   [Kremote: Compressing objects:  72% (353/490)   [Kremote: Compressing objects:  73% (358/490)   [Kremote: Compressing objects:  74% (363/490)   [Kremote: Compressing objects:  75% (368/490)   [Kremote: Compressing objects:  76% (373/490)   [Kremote: Compressing objects:  77% (378/490)   [Kremote: Compressing objects:  78% (383/490)   [Kremote: Compressing objects:  79% (388/490)   [Kremote: Compressing objects:  80% (392/490)   [Kremote: Compressing objects:  81% (397/490)   [Kremote: Compressing objects:  82% (402/490)   [Kremote: Compressing objects:  83% (407/490)   [Kremote: Compressing objects:  84% (412/490)   [Kremote: Compressing objects:  85% (417/490)   [Kremote: Compressing objects:  86% (422/490)   [Kremote: Compressing objects:  87% (427/490)   [Kremote: Compressing objects:  88% (432/490)   [Kremote: Compressing objects:  89% (437/490)   [Kremote: Compressing objects:  90% (441/490)   [Kremote: Compressing objects:  91% (446/490)   [Kremote: Compressing objects:  92% (451/490)   [Kremote: Compressing objects:  93% (456/490)   [Kremote: Compressing objects:  94% (461/490)   [Kremote: Compressing objects:  95% (466/490)   [Kremote: Compressing objects:  96% (471/490)   [Kremote: Compressing objects:  97% (476/490)   [Kremote: Compressing objects:  98% (481/490)   [Kremote: Compressing objects:  99% (486/490)   [Kremote: Compressing objects: 100% (490/490)   [Kremote: Compressing objects: 100% (490/490), done.[K
+Receiving objects:   0% (1/803)   Receiving objects:   1% (9/803)   Receiving objects:   2% (17/803)   Receiving objects:   3% (25/803)   Receiving objects:   4% (33/803)   Receiving objects:   5% (41/803)   Receiving objects:   6% (49/803)   Receiving objects:   7% (57/803)   Receiving objects:   8% (65/803)   Receiving objects:   9% (73/803)   Receiving objects:  10% (81/803)   Receiving objects:  11% (89/803)   Receiving objects:  12% (97/803)   Receiving objects:  13% (105/803)   Receiving objects:  14% (113/803)   Receiving objects:  15% (121/803)   Receiving objects:  16% (129/803)   Receiving objects:  17% (137/803)   Receiving objects:  18% (145/803)   Receiving objects:  19% (153/803)   Receiving objects:  20% (161/803)   Receiving objects:  21% (169/803)   Receiving objects:  22% (177/803)   Receiving objects:  23% (185/803)   Receiving objects:  24% (193/803)   Receiving objects:  25% (201/803)   Receiving objects:  26% (209/803)   Receiving objects:  27% (217/803)   Receiving objects:  28% (225/803)   Receiving objects:  29% (233/803)   Receiving objects:  30% (241/803)   Receiving objects:  31% (249/803)   Receiving objects:  32% (257/803)   Receiving objects:  33% (265/803)   Receiving objects:  34% (274/803)   Receiving objects:  35% (282/803)   Receiving objects:  36% (290/803)   Receiving objects:  37% (298/803)   Receiving objects:  38% (306/803)   Receiving objects:  39% (314/803)   Receiving objects:  40% (322/803)   Receiving objects:  41% (330/803)   Receiving objects:  42% (338/803)   Receiving objects:  43% (346/803)   Receiving objects:  44% (354/803)   Receiving objects:  45% (362/803)   Receiving objects:  46% (370/803)   Receiving objects:  47% (378/803)   Receiving objects:  48% (386/803)   Receiving objects:  49% (394/803)   Receiving objects:  50% (402/803), 3.10 MiB | 6.14 MiB/s   Receiving objects:  51% (410/803), 3.10 MiB | 6.14 MiB/s   Receiving objects:  52% (418/803), 3.10 MiB | 6.14 MiB/s   Receiving objects:  53% (426/803), 3.10 MiB | 6.14 MiB/s   Receiving objects:  54% (434/803), 3.10 MiB | 6.14 MiB/s   Receiving objects:  55% (442/803), 3.10 MiB | 6.14 MiB/s   Receiving objects:  56% (450/803), 3.10 MiB | 6.14 MiB/s   Receiving objects:  57% (458/803), 3.10 MiB | 6.14 MiB/s   Receiving objects:  58% (466/803), 3.10 MiB | 6.14 MiB/s   Receiving objects:  59% (474/803), 3.10 MiB | 6.14 MiB/s   Receiving objects:  60% (482/803), 3.10 MiB | 6.14 MiB/s   Receiving objects:  61% (490/803), 3.10 MiB | 6.14 MiB/s   Receiving objects:  62% (498/803), 3.10 MiB | 6.14 MiB/s   Receiving objects:  63% (506/803), 3.10 MiB | 6.14 MiB/s   Receiving objects:  64% (514/803), 3.10 MiB | 6.14 MiB/s   Receiving objects:  65% (522/803), 3.10 MiB | 6.14 MiB/s   Receiving objects:  66% (530/803), 3.10 MiB | 6.14 MiB/s   Receiving objects:  67% (539/803), 3.10 MiB | 6.14 MiB/s   Receiving objects:  68% (547/803), 3.10 MiB | 6.14 MiB/s   Receiving objects:  69% (555/803), 3.10 MiB | 6.14 MiB/s   Receiving objects:  70% (563/803), 3.10 MiB | 6.14 MiB/s   Receiving objects:  71% (571/803), 3.10 MiB | 6.14 MiB/s   Receiving objects:  72% (579/803), 3.10 MiB | 6.14 MiB/s   Receiving objects:  73% (587/803), 3.10 MiB | 6.14 MiB/s   Receiving objects:  74% (595/803), 3.10 MiB | 6.14 MiB/s   Receiving objects:  75% (603/803), 3.10 MiB | 6.14 MiB/s   Receiving objects:  76% (611/803), 3.10 MiB | 6.14 MiB/s   Receiving objects:  77% (619/803), 3.10 MiB | 6.14 MiB/s   Receiving objects:  78% (627/803), 3.10 MiB | 6.14 MiB/s   Receiving objects:  79% (635/803), 3.10 MiB | 6.14 MiB/s   Receiving objects:  80% (643/803), 3.10 MiB | 6.14 MiB/s   Receiving objects:  81% (651/803), 3.10 MiB | 6.14 MiB/s   Receiving objects:  82% (659/803), 3.10 MiB | 6.14 MiB/s   Receiving objects:  83% (667/803), 3.10 MiB | 6.14 MiB/s   Receiving objects:  84% (675/803), 3.10 MiB | 6.14 MiB/s   Receiving objects:  85% (683/803), 3.10 MiB | 6.14 MiB/s   Receiving objects:  86% (691/803), 3.10 MiB | 6.14 MiB/s   Receiving objects:  87% (699/803), 3.10 MiB | 6.14 MiB/s   Receiving objects:  88% (707/803), 3.10 MiB | 6.14 MiB/s   Receiving objects:  89% (715/803), 3.10 MiB | 6.14 MiB/s   Receiving objects:  90% (723/803), 3.10 MiB | 6.14 MiB/s   Receiving objects:  91% (731/803), 3.10 MiB | 6.14 MiB/s   Receiving objects:  92% (739/803), 3.10 MiB | 6.14 MiB/s   Receiving objects:  93% (747/803), 3.10 MiB | 6.14 MiB/s   Receiving objects:  94% (755/803), 3.10 MiB | 6.14 MiB/s   Receiving objects:  95% (763/803), 3.10 MiB | 6.14 MiB/s   Receiving objects:  96% (771/803), 3.10 MiB | 6.14 MiB/s   remote: Total 803 (delta 372), reused 613 (delta 279), pack-reused 0[K
+Receiving objects:  97% (779/803), 3.10 MiB | 6.14 MiB/s   Receiving objects:  98% (787/803), 3.10 MiB | 6.14 MiB/s   Receiving objects:  99% (795/803), 3.10 MiB | 6.14 MiB/s   Receiving objects: 100% (803/803), 3.10 MiB | 6.14 MiB/s   Receiving objects: 100% (803/803), 3.50 MiB | 6.48 MiB/s, done.
+Resolving deltas:   0% (0/372)   Resolving deltas:   3% (14/372)   Resolving deltas:   4% (15/372)   Resolving deltas:   5% (19/372)   Resolving deltas:   8% (32/372)   Resolving deltas:   9% (37/372)   Resolving deltas:  10% (38/372)   Resolving deltas:  14% (53/372)   Resolving deltas:  17% (65/372)   Resolving deltas:  18% (69/372)   Resolving deltas:  19% (71/372)   Resolving deltas:  20% (76/372)   Resolving deltas:  22% (84/372)   Resolving deltas:  23% (86/372)   Resolving deltas:  24% (90/372)   Resolving deltas:  26% (98/372)   Resolving deltas:  27% (103/372)   Resolving deltas:  28% (106/372)   Resolving deltas:  29% (108/372)   Resolving deltas:  31% (118/372)   Resolving deltas:  32% (120/372)   Resolving deltas:  33% (123/372)   Resolving deltas:  34% (128/372)   Resolving deltas:  35% (131/372)   Resolving deltas:  36% (136/372)   Resolving deltas:  42% (159/372)   Resolving deltas:  43% (163/372)   Resolving deltas:  44% (167/372)   Resolving deltas:  46% (172/372)   Resolving deltas:  49% (185/372)   Resolving deltas:  50% (187/372)   Resolving deltas:  51% (192/372)   Resolving deltas:  52% (194/372)   Resolving deltas:  54% (202/372)   Resolving deltas:  55% (205/372)   Resolving deltas:  56% (212/372)   Resolving deltas:  57% (213/372)   Resolving deltas:  59% (221/372)   Resolving deltas:  62% (231/372)   Resolving deltas:  63% (237/372)   Resolving deltas:  64% (239/372)   Resolving deltas:  65% (242/372)   Resolving deltas:  66% (248/372)   Resolving deltas:  67% (251/372)   Resolving deltas:  68% (253/372)   Resolving deltas:  69% (260/372)   Resolving deltas:  70% (261/372)   Resolving deltas:  71% (265/372)   Resolving deltas:  72% (269/372)   Resolving deltas:  78% (293/372)   Resolving deltas:  79% (294/372)   Resolving deltas:  80% (299/372)   Resolving deltas:  82% (307/372)   Resolving deltas:  86% (323/372)   Resolving deltas:  87% (324/372)   Resolving deltas:  89% (332/372)   Resolving deltas:  96% (359/372)   Resolving deltas: 100% (372/372)   Resolving deltas: 100% (372/372), done.
+
+travis_time:end:07443396:start=1515562150775033000,finish=1515562152488356000,duration=1713323000[0K$ cd dhermes/bezier
+$ git checkout -qf dad0cc7cdc6b6cb00ad0085933fe52991214d184
+travis_fold:end:git.checkout[0K
+[33;1mSetting environment variables from .travis.yml[0m
+$ export PY_VERSION=3.5
+
+$ bash -c 'echo $BASH_VERSION'
+3.2.57(1)-release
+travis_fold:start:install[0Ktravis_time:start:09468f4e[0K$ source scripts/osx/travis-setup.sh
+[32m==>[0m [1mUninstalling Cask oclint[0m
+[34m==>[0m [1mUnlinking Binary '/usr/local/bin/oclint'.[0m
+[34m==>[0m [1mUnlinking Binary '/usr/local/bin/oclint-json-compilation-database'.[0m
+[34m==>[0m [1mUnlinking Binary '/usr/local/bin/oclint-xcodebuild'.[0m
+[34m==>[0m [1mUnlinking Binary '/usr/local/lib/oclint'.[0m
+[34m==>[0m [1mUnlinking Binary '/usr/local/include/c++'.[0m
+Updating Homebrew...
+[34m==>[0m [1mAuto-updated Homebrew![0m
+Updated 2 taps (caskroom/cask, homebrew/core).
+[34m==>[0m [1mNew Formulae[0m
+apm-server
+arcade-learning-environment
+asciidoctor
+asciidoctorj
+auditbeat
+avimetaedit
+bamtools
+bcftools
+bedops
+bedtools
+bioawk
+blast
+bwa
+chamber
+cling
+clingo
+cp2k
+csvkit
+darksky-weather
+ddgr
+diamond
+dislocker
+dnsdist
+docker-ls
+dps8m
+e2tools
+elasticsearch@5.6
+elektra
+envconsul
+fastqc
+fbi-servefiles
+field3d
+genometools
+gifski
+git-appraise
+glib-openssl
+glslviewer
+go-jira
+go-statik
+google-authenticator-libpam
+gox
+gutenberg
+heartbeat
+htslib
+igv
+inspectrum
+iron-functions
+jabba
+joplin
+just
+kaitai-struct-compiler
+kallisto
+kedge
+keystone
+kibana@5.6
+kontena
+kubeless
+kumo
+lammps
+laszip@2
+lgogdownloader
+libbitcoin-database
+libidn2
+librealsense@1
+libtomcrypt
+libxo
+logstash@5.6
+massren
+monero
+mongodb@3.4
+mrboom
+neal
+node@8
+nopoll
+ocaml-findlib
+ocaml-num
+opencascade
+orocos-kdl
+picard-tools
+pinboard-notes-backup
+pipenv
+postgresql@9.6
+prodigal
+pspg
+qpid-proton
+quicktype
+rawtoaces
+raylib
+rbenv-chefdk
+restic
+rst-lint
+rsync-time-backup
+samtools
+sc-im
+sceptre
+seqtk
+sickle
+simg2img
+singular
+spades
+sratoolkit
+stress-ng
+swift-protobuf
+telnetd
+terraform_landscape
+tnftp
+tnftpd
+traefik
+travis
+vcftools
+vert
+visp
+ydcv
+yq
+zip
+[34m==>[0m [1mUpdated Formulae[0m
+[1mboost [32m✔[0m[0m
+[1mcarthage [32m✔[0m[0m
+[1mcmake [32m✔[0m[0m
+[1mcoreutils [32m✔[0m[0m
+[1mgdbm [32m���[0m[0m
+[1mgit [32m✔[0m[0m
+[1mgmp [32m✔[0m[0m
+[1mgnupg [32m✔[0m[0m
+[1mgnutls [32m✔[0m[0m
+[1mgo [32m✔[0m[0m
+[1mgpg-agent [32m✔[0m[0m
+[1micu4c [32m✔[0m[0m
+[1mlibassuan [32m✔[0m[0m
+[1mlibgcrypt [32m✔[0m[0m
+[1mlibtiff [32m✔[0m[0m
+[1mlibunistring [32m✔[0m[0m
+[1mlibxml2 [32m✔[0m[0m
+[1mmaven [32m✔[0m[0m
+[1mmercurial [32m✔[0m[0m
+[1mnettle [32m✔[0m[0m
+[1mnode [32m✔[0m[0m
+[1mopenssl [32m✔[0m[0m
+[1mopenssl@1.1 [32m✔[0m[0m
+[1mpinentry [32m✔[0m[0m
+[1mpostgis [32m✔[0m[0m
+[1mpostgresql [32m✔[0m[0m
+[1mpyenv [32m✔[0m[0m
+[1mpython [32m✔[0m[0m
+[1msqlite [32m✔[0m[0m
+[1mswiftlint [32m✔[0m[0m
+[1mwget [32m✔[0m[0m
+[1mxctool [32m✔[0m[0m
+abcm2ps
+abcmidi
+abyss
+ace
+aces_container
+ack
+acmetool
+activemq
+adplug
+advancemame
+adwaita-icon-theme
+afl-fuzz
+agedu
+akamai
+alexjs
+algernon
+allegro
+allure
+amazon-ecs-cli
+ammonite-repl
+amqp-cpp
+angband
+angular-cli
+ansible
+ansible-cmdb
+ansible-lint
+ansifilter
+antigen
+antlr
+antlr4-cpp-runtime
+apache-arrow
+apache-geode
+apache-opennlp
+apache-spark
+apibuilder-cli
+apktool
+app-engine-go-64
+app-engine-java
+appscale-tools
+apr
+apr-util
+aptly
+arangodb
+archivemount
+argon2
+argyll-cms
+aria2
+armadillo
+armor
+artifactory
+asciidoc
+asdf
+aspcud
+aspectj
+assh
+assimp
+at-spi2-atk
+at-spi2-core
+atk
+atlassian-cli
+ats2-postiats
+aurora-cli
+autogen
+aws-elasticbeanstalk
+aws-sdk-cpp
+aws-shell
+awscli
+azure-cli
+azure-cli@1
+b2-tools
+babl
+bacula-fd
+baresip
+bartycrouch
+basex
+bash-git-prompt
+bash-preexec
+bash-snippets
+bazaar
+bazel
+bchunk
+bdw-gc
+bear
+bench
+bento4
+bettercap
+bfg
+bibtexconv
+binaryen
+bindfs
+bit
+bitcoin
+bitrise
+blackbox
+blastem
+blink1
+blockhash
+bluepill
+bmake
+boost-bcp
+boost-build
+boost-mpi
+boost-python
+bowtie2
+braid
+brew-gem
+bro
+brotli
+bsponmpi
+btfs
+buku
+bwfmetaedit
+byobu
+bzt
+cabal-install
+caf
+cairo
+cake
+calcurse
+camlp4
+camlp5
+cargo-completion
+casperjs
+cassandra@2.2
+cayley
+ccm
+ceres-solver
+certbot
+certigo
+cfitsio
+cgrep
+chakra
+charm
+charm-tools
+cheat
+check
+check_postgres
+checkstyle
+chezscheme
+chicken
+chisel
+chromedriver
+chronograf
+cimg
+citus
+ckan
+clac
+clang-format
+clhep
+cli53
+clinfo
+clipper
+clojure
+clojurescript
+closure-compiler
+cmark
+cmark-gfm
+cnats
+cockatrice
+cockroach
+cocot
+codemod
+coffeescript
+collectd
+commandbox
+conan
+conjure-up
+consul
+consul-template
+convmv
+convox
+cookiecutter
+coq
+corebird
+corsixth
+coturn
+couchdb
+couchdb-lucene
+cppad
+cpprestsdk
+credstash
+creduce
+cromwell
+crosstool-ng
+crowdin
+crystal-icr
+crystal-lang
+cucumber-cpp
+curl
+cython
+czmq
+dar
+datomic
+davix
+davmail
+dbhash
+dbus
+dcm2niix
+dcos-cli
+debianutils
+deja-gnu
+dep
+dependency-check
+derby
+devd
+dhall-json
+dialog
+diff-pdf
+diff-so-fancy
+diffoscope
+digdag
+direnv
+django-completion
+dlib
+dmd
+dmtx-utils
+dnscrypt-proxy
+docfx
+docker
+docker-completion
+docker-compose
+docker-compose-completion
+docker-machine
+docker-machine-completion
+docker-machine-nfs
+docker2aci
+doctl
+doitlive
+dovecot
+doxygen
+dpkg
+druid
+dscanner
+dssim
+dub
+duck
+duplicity
+dvm
+dwdiff
+e2fsprogs
+easyrpg-player
+ecl
+efl
+ejabberd
+elasticsearch
+elixir
+emscripten
+enchant
+enigma
+entr
+ephemeralpg
+erlang
+erlang@18
+erlang@19
+etcd
+etsh
+exiftool
+exim
+exomizer
+expat
+expect
+exploitdb
+eye-d3
+faac
+faad2
+faas-cli
+fabio
+fail2ban
+fantom
+fcitx-remote-for-osx
+fd
+fdroidserver
+feedgnuplot
+feh
+ffmpeg
+ffmpeg@2.8
+fftw
+fibjs
+fifechan
+file-roller
+filebeat
+fio
+firebase-cli
+fish
+flake8
+flatbuffers
+flatcc
+flawfinder
+flow
+fluent-bit
+fluid-synth
+flyway
+fmt
+fn
+fobis
+folly
+fon-flash-cli
+fonttools
+fossil
+fpc
+freediameter
+freeling
+freeswitch
+freetds
+freetype
+frugal
+fswatch
+fuse-emulator
+fuse-zip
+fuseki
+fwup
+fzf
+galen
+game-music-emu
+gammu
+gandi.cli
+gauge
+gawk
+gdcm
+gdnsd
+gearman
+geckodriver
+gedit
+geeqie
+gegl
+generate-json-schema
+geoipupdate
+geoserver
+get-flash-videos
+get_iplayer
+getdns
+geth
+getmail
+gexiv2
+ghc
+ghi
+gibo
+gifsicle
+gist
+git-annex
+git-cinnabar
+git-cola
+git-crypt
+git-ftp
+git-lfs
+git-quick-stats
+git-review
+git-secret
+git-town
+gitbucket
+gitg
+github-keygen
+gitlab-runner
+gitup
+gjs
+gjstest
+glade
+glassfish
+glib
+glib-networking
+glide
+global
+glog
+glpk
+gmic
+gmime
+gmsh
+gmt
+gmt@4
+gnome-builder
+gnome-recipes
+gnu-smalltalk
+gnu-tar
+gnu-time
+gnu-units
+gnumeric
+gnupg@2.0
+gnuplot
+gnuplot@4
+gnuradio
+go@1.8
+goad
+godep
+goenv
+gofabric8
+goffice
+gollum
+gomplate
+goofys
+google-benchmark
+google-java-format
+goolabs
+gopass
+gosu
+govendor
+gperftools
+gpgme
+gpsbabel
+gradle
+gradle-completion
+grafana
+grails
+grakn
+graphicsmagick
+grib-api
+gromacs
+gron
+groonga
+groovysdk
+grpc
+gsmartcontrol
+gsoap
+gspell
+gst-editing-services
+gst-libav
+gst-plugins-bad
+gst-plugins-base
+gst-plugins-good
+gst-plugins-ugly
+gst-python
+gst-rtsp-server
+gst-validate
+gstreamer
+gstreamermm
+gtk+
+gtk+3
+gtk-doc
+gtk-gnutella
+gtksourceview3
+gtkspell3
+gucharmap
+guile
+guile@2.0
+gx
+gx-go
+gzip
+h2o
+hadolint
+hadoop
+hana
+haproxy
+harfbuzz
+hashcat
+haskell-stack
+haste-client
+hdf5@1.8
+heimdal
+hercules
+heroku
+hfstospell
+hg-flow
+hh
+highlight
+hive
+hivemind
+hledger
+homebank
+html-xml-utils
+htmlcleaner
+htmldoc
+htop
+httest
+httpd
+huexpress
+hugo
+hydra
+hyperscan
+hypre
+i2p
+ibex
+ice
+icoutils
+idnits
+idris
+imagemagick
+imagemagick@6
+imapfilter
+immortal
+infer
+influxdb
+influxdb@0.8
+innotop
+inspircd
+instead
+iperf3
+ipfs
+ironcli
+irssi
+iso-codes
+ispc
+itstool
+ivykis
+jack
+jboss-forge
+jena
+jenkins
+jenkins-lts
+jfrog-cli-go
+jhipster
+jmxtrans
+jpeg-turbo
+jruby
+json-fortran
+jsoncpp
+jsvc
+juju
+juju-wait
+jump
+kapacitor
+karn
+kerl
+keychain
+kibana
+kitchen-sync
+kite
+knot
+knot-resolver
+kobalt
+kompose
+konoha
+kops
+kotlin
+kpcli
+krb5
+kube-aws
+kubectx
+kubernetes-cli
+kubernetes-helm
+kvazaar
+kyoto-tycoon
+kyua
+lablgtk
+landscaper
+languagetool
+lapack
+lastpass-cli
+latexila
+lbdb
+ldc
+lean-cli
+ledger
+leiningen
+libass
+libatomic_ops
+libbitcoin
+libbitcoin-blockchain
+libbitcoin-explorer
+libbitcoin-node
+libbitcoin-server
+libbluray
+libcddb
+libcdio
+libcdr
+libcds
+libcello
+libconfig
+libcouchbase
+libcue
+libdivecomputer
+libdvdcss
+libebur128
+libetonyek
+libextractor
+libfabric
+libfaketime
+libfixbuf
+libfreehand
+libfreenect
+libgig
+libgit2-glib
+libgosu
+libgphoto2
+libgraphqlparser
+libgsf
+libgweather
+libhttpseverywhere
+libical
+libjson-rpc-cpp
+liblcf
+liblinear
+libmatio
+libmaxminddb
+libmicrohttpd
+libmspub
+libmwaw
+libmxml
+libogg
+libopusenc
+libpagemaker
+libphonenumber
+libpq
+libpqxx
+libpqxx@3
+libqalculate
+libquvi
+libraw
+librdkafka
+libre
+librealsense
+libressl
+librest
+librsvg
+librsync
+libsass
+libsodium
+libsoup
+libstfl
+libswiften
+libtcod
+libtensorflow
+libtins
+libtorrent-rasterbar
+libtrace
+libu2f-server
+libuv
+libvirt
+libvisio
+libwebsockets
+libwpg
+libwps
+libxc
+libxkbcommon
+libxslt
+libzdb
+lighttpd
+link-grammar
+linkerd
+liquid-dsp
+liquigraph
+little-cms2
+lldpd
+llvm
+loc
+logrotate
+logstash
+logtalk
+lsyncd
+lua
+lua@5.1
+lutok
+lwtools
+lxc
+lynis
+lysp
+macosvpn
+macvim
+magic-wormhole
+mailutils
+mairix
+mame
+mapnik
+mapserver
+mariadb
+mariadb@10.0
+mariadb@10.1
+mat
+mawk
+maxima
+mdds
+mdp
+media-info
+mediaconch
+megacmd
+memcached
+menhir
+mesalib-glw
+meson
+metabase
+metaproxy
+metricbeat
+mg
+mgba
+micro
+micropython
+midnight-commander
+mighttpd2
+mikutter
+miller
+mimic
+mingw-w64
+minimal-racket
+minio
+minio-mc
+miniupnpc
+mitie
+mkclean
+mkdocs
+mkvalidator
+mkvtoolnix
+moc
+mockserver
+moco
+modd
+modules
+molecule
+monetdb
+mongo-c-driver
+mongodb
+mongoose
+monit
+mono
+mono-libgdiplus
+monotone
+moreutils
+mosh
+mosquitto
+mpd
+mpg123
+mpich
+mpv
+mr
+mujs
+multimarkdown
+mupdf
+mupdf-tools
+mutt
+mvnvm
+mypy
+mysql
+mysql++
+mysql-connector-c++
+mysql-sandbox
+mysql@5.5
+mysql@5.6
+mytop
+nano
+nanomsg
+nanomsgxx
+nanopb-generator
+nasm
+natalie
+nativefier
+nats-streaming-server
+ncmpc
+ncmpcpp
+nco
+ncrack
+ncview
+ndpi
+neko
+neo4j
+neovim
+netcdf
+netpbm
+nfdump
+nghttp2
+nginx
+ngrep
+nickle
+nikto
+nmh
+nnn
+node-build
+node@4
+node@6
+nodebrew
+nomad
+notmuch
+nq
+nrpe
+nsd
+nsq
+nss
+ntl
+ntopng
+nuget
+numpy
+nuttcp
+nuxeo
+nvc
+nvm
+ocaml
+ocamlbuild
+ocamlsdl
+octave
+offlineimap
+ohcount
+omniorb
+ompl
+oniguruma
+onioncat
+onscripter
+opam
+open-mpi
+open-scene-graph
+opencbm
+opencoarrays
+opencv
+opencv@2
+openfortivpn
+openjazz
+openmotif
+openrtsp
+opensaml
+openshift-cli
+openttd
+openvdb
+optipng
+opusfile
+orc
+ortp
+osc
+osm2pgrouting
+osm2pgsql
+osquery
+osrm-backend
+ott
+overmind
+pacapt
+packer
+packetbeat
+packetq
+packmol
+paket
+pandoc
+pandoc-citeproc
+pandoc-crossref
+pango
+paperkey
+parallel
+pari
+pass
+passenger
+passpie
+payara
+pazpar2
+pcb
+pcl
+pcsc-lite
+pdal
+pdf2htmlex
+pdfcrack
+pdfpc
+pdftoedn
+pdftoipe
+pdns
+pdnsrec
+peco
+pegtl
+percona-server
+percona-server-mongodb
+percona-server@5.5
+percona-server@5.6
+percona-toolkit
+pex
+pg_top
+pgbouncer
+pgcli
+pgpool-ii
+pgroonga
+pgrouting
+phoronix-test-suite
+physfs
+pianod
+pick
+picocom
+pigz
+pike
+pilosa
+pioneer
+pioneers
+pius
+pjproject
+planck
+plantuml
+platformio
+pldebugger
+plzip
+pmd
+pngquant
+poco
+pod2man
+polyml
+pony-stable
+ponyc
+poppler
+postgresql@9.4
+postgresql@9.5
+postgrest
+povray
+pow
+ppsspp
+pqiv
+pre-commit
+prest
+presto
+primesieve
+proguard
+prometheus
+protobuf
+protobuf-c
+protobuf-swift
+psftools
+psqlodbc
+pulledpork
+pumba
+pure-ftpd
+purescript
+pushpin
+pwntools
+py2cairo
+py3cairo
+pygobject
+pygobject3
+pyinvoke
+pypy
+pypy3
+pyqt
+python-markdown
+python3
+pyvim
+q
+qbs
+qca
+qcli
+qd
+qemu
+qjackctl
+qmmp
+qscintilla2
+qt
+qtfaststart
+quex
+r
+rabbitmq
+radamsa
+radare2
+rakudo-star
+rancher-cli
+rancid
+ratfor
+rbenv-aliases
+rbenv-binstubs
+rbenv-bundle-exec
+rbenv-bundler
+rbenv-bundler-ruby-version
+rbenv-communal-gems
+rbenv-ctags
+rbenv-default-gems
+rbenv-gemset
+rbenv-use
+rbenv-vars
+rbenv-whatis
+rclone
+rdfind
+re2
+re2c
+rebar@3
+recutils
+redex
+redis
+redpen
+regex-opt
+remake
+reminiscence
+reposurgeon
+resty
+ringojs
+ripgrep
+rocksdb
+rom-tools
+root
+roswell
+rpm
+rtags
+rtv
+ruby
+ruby-build
+ruby@1.8
+ruby@1.9
+ruby@2.0
+ruby@2.1
+ruby@2.2
+ruby@2.3
+rust
+rustup-init
+s-nail
+s3cmd
+s3fs
+s6
+sagittarius-scheme
+sassc
+sbcl
+sbt
+scala
+scalaenv
+scalapack
+scalariform
+scalastyle
+scamper
+sccache
+schismtracker
+scipy
+scm-manager
+scons
+screen
+sdl2
+sdl2_gfx
+sdl2_image
+sdl2_mixer
+sdl_gfx
+sdl_mixer
+sec
+securefs
+selenium-server-standalone
+sfk
+shadowsocks-libev
+shairport-sync
+shellcheck
+shfmt
+shibboleth-sp
+shmcat
+shpotify
+sile
+silk
+simgrid
+simple-obfs
+sip
+sispmctl
+sjk
+skinny
+slackcat
+sleuthkit
+smali
+smartmontools
+smlnj
+snakemake
+snappy
+snapraid
+snort
+solr
+solr@5.5
+sonarqube
+source-highlight
+source-to-image
+sourcekitten
+sourcery
+spdlog
+speedtest-cli
+sphinx-doc
+spigot
+spin
+sql-translator
+sqlcipher
+sqldiff
+sqlite-analyzer
+sqlmap
+squashfs
+src
+ssdeep
+sshguard
+sslh
+sslmate
+sslscan
+sslyze
+stanford-parser
+statik
+stern
+stoken
+stormlib
+streamlink
+strongswan
+stubby
+stunnel
+subnetcalc
+suil
+suite-sparse
+sundials
+supersonic
+suricata
+svgcleaner
+svgo
+swagger-codegen
+swfmill
+swi-prolog
+swift
+swiftformat
+swiftgen
+sword
+syncthing
+sysbench
+taisei
+tarantool
+task-spooler
+tasksh
+tbb
+tcl-tk
+tclap
+tectonic
+telegraf
+telegram-cli
+teleport
+temporal_tables
+tenyr
+terminal-notifier
+termius
+terraform
+terraform-docs
+terragrunt
+texapp
+texmath
+tfenv
+tgui
+thefuck
+thrift
+tidy-html5
+tig
+tile38
+tinc
+tintin
+tinyxml2
+tippecanoe
+tmuxinator-completion
+tnef
+tomcat
+tor
+tracebox
+translate-shell
+treefrog
+ttfautohint
+tth
+ttyd
+ttyrec
+twarc
+txt2tags
+typescript
+u-boot-tools
+uftp
+uhd
+uncrustify
+unoconv
+upscaledb
+urh
+userspace-rcu
+vagrant-completion
+vala
+vapoursynth
+varnish
+varnish@4
+vault
+vault-cli
+vcdimager
+vert.x
+vim
+vim@7.4
+vips
+vowpal-wabbit
+vpcs
+vte3
+vtk
+vultr
+w3m
+watson
+weboob
+webp
+webpack
+websocketd
+weechat
+wesnoth
+when
+whois
+widelands
+wildfly-as
+wine
+winetricks
+wireguard-tools
+wireshark
+wolfssl
+wpcli-completion
+wpscan
+writerperfect
+wtf
+wxmaxima
+x265
+x3270
+xapian
+xcenv
+xclip
+xmake
+xmoto
+xmrig
+xonsh
+xrootd
+xtensor
+xxhash
+yadm
+yaf
+yara
+yarn
+yash
+yaz
+yaze-ag
+ykman
+yle-dl
+you-get
+youtube-dl
+yubico-piv-tool
+z3
+z80dasm
+zabbix
+zanata-client
+zbackup
+zbar
+zebra
+zenity
+zero-install
+zeromq
+zile
+zimg
+zint
+zmqpp
+zorba
+zplug
+zsh
+zsh-autosuggestions
+zsh-completions
+zstd
+zurl
+[34m==>[0m [1mRenamed Formulae[0m
+camlistore -> perkeep
+findbugs -> spotbugs
+newsbeuter -> newsboat
+[34m==>[0m [1mDeleted Formulae[0m
+angolmois
+clasp
+cloudbees-sdk
+geogit
+gringo
+htop-osx
+jboss-as
+jboss-as@5
+libical-glib
+litmus
+lua@5.3
+mongodb@2.6
+otto
+pond
+ponscripter-sekai
+solr@5.4
+stklos
+
+[32m==>[0m [1mInstalling dependencies for gcc: [32mgmp[39m, [32mlibmpc[39m, [32misl[39m[0m
+[32m==>[0m [1mInstalling gcc dependency: [32mgmp[39m[0m
+[34m==>[0m [1mDownloading https://homebrew.bintray.com/bottles/gmp-6.1.2_1.sierra.bottle.tar.gz[0m
+[34m==>[0m [1mPouring gmp-6.1.2_1.sierra.bottle.tar.gz[0m
+🍺  /usr/local/Cellar/gmp/6.1.2_1: 18 files, 3.1MB
+[32m==>[0m [1mInstalling gcc dependency: [32mlibmpc[39m[0m
+[34m==>[0m [1mDownloading https://homebrew.bintray.com/bottles/libmpc-1.0.3_1.sierra.bottle.tar.gz[0m
+[34m==>[0m [1mPouring libmpc-1.0.3_1.sierra.bottle.tar.gz[0m
+🍺  /usr/local/Cellar/libmpc/1.0.3_1: 12 files, 345.0KB
+[32m==>[0m [1mInstalling gcc dependency: [32misl[39m[0m
+[34m==>[0m [1mDownloading https://homebrew.bintray.com/bottles/isl-0.18.sierra.bottle.tar.gz[0m
+[34m==>[0m [1mPouring isl-0.18.sierra.bottle.tar.gz[0m
+🍺  /usr/local/Cellar/isl/0.18: 80 files, 3.8MB
+[32m==>[0m [1mInstalling [32mgcc[39m[0m
+[34m==>[0m [1mDownloading https://homebrew.bintray.com/bottles/gcc-7.2.0.sierra.bottle.tar.gz[0m
+[34m==>[0m [1mPouring gcc-7.2.0.sierra.bottle.tar.gz[0m
+🍺  /usr/local/Cellar/gcc/7.2.0: 1,487 files, 284MB
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100 11705  100 11705    0     0  71465      0 --:--:-- --:--:-- --:--:-- 71809
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100 11334  100 11334    0     0   107k      0 --:--:-- --:--:-- --:--:--  108k
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  7 23.7M    7 1872k    0     0  10.8M      0  0:00:02 --:--:--  0:00:02 10.8M100 23.7M  100 23.7M    0     0  24.8M      0 --:--:-- --:--:-- --:--:-- 24.8M
+installer: Package name is Python
+installer: Installing at base path /
+installer: The install was successful.
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0     0    0     0    0     0      0      0 --:--:--  0:00:01 --:--:--     0100 1558k  100 1558k    0     0   853k      0  0:00:01  0:00:01 --:--:--  853k
+[33mThe directory '/Users/travis/Library/Caches/pip/http' or its parent directory is not owned by the current user and the cache has been disabled. Please check the permissions and owner of that directory. If executing pip with sudo, you may want sudo's -H flag.[0m
+[33mThe directory '/Users/travis/Library/Caches/pip' or its parent directory is not owned by the current user and caching wheels has been disabled. check the permissions and owner of that directory. If executing pip with sudo, you may want sudo's -H flag.[0m
+Collecting pip
+  Downloading pip-9.0.1-py2.py3-none-any.whl (1.3MB)
+[?25l[K    0% |▎                               | 10kB 2.1MB/s eta 0:00:01[K    1% |▌                               | 20kB 2.2MB/s eta 0:00:01[K    2% |▉                               | 30kB 2.3MB/s eta 0:00:01[K    3% |█                               | 40kB 2.2MB/s eta 0:00:01[K    4% |█▎                              | 51kB 2.4MB/s eta 0:00:01[K    4% |█▋                              | 61kB 2.8MB/s eta 0:00:01[K    5% |█▉                              | 71kB 2.9MB/s eta 0:00:01[K    6% |██                              | 81kB 3.1MB/s eta 0:00:01[K    7% |██▍                             | 92kB 3.4MB/s eta 0:00:01[K    8% |██▋                             | 102kB 3.5MB/s eta 0:00:01[K    8% |██▉                             | 112kB 4.2MB/s eta 0:00:01[K    9% |███▏                            | 122kB 4.7MB/s eta 0:00:01[K    10% |███▍                            | 133kB 5.5MB/s eta 0:00:01[K    11% |███▋                            | 143kB 7.4MB/s eta 0:00:01[K    12% |████                            | 153kB 8.0MB/s eta 0:00:01[K    13% |████▏                           | 163kB 7.5MB/s eta 0:00:01[K    13% |████▍                           | 174kB 8.8MB/s eta 0:00:01[K    14% |████▊                           | 184kB 10.1MB/s eta 0:00:01[K    15% |█████                           | 194kB 9.8MB/s eta 0:00:01[K    16% |█████▎                          | 204kB 11.0MB/s eta 0:00:01[K    17% |█████▌                          | 215kB 10.4MB/s eta 0:00:01[K    17% |█████▊                          | 225kB 11.1MB/s eta 0:00:01[K    18% |██████                          | 235kB 11.3MB/s eta 0:00:01[K    19% |██████▎                         | 245kB 10.6MB/s eta 0:00:01[K    20% |██████▌                         | 256kB 12.0MB/s eta 0:00:01[K    21% |██████▉                         | 266kB 12.4MB/s eta 0:00:01[K    22% |███████                         | 276kB 12.3MB/s eta 0:00:01[K    22% |███████▎                        | 286kB 12.1MB/s eta 0:00:01[K    23% |███████▋                        | 296kB 12.2MB/s eta 0:00:01[K    24% |███████▉                        | 307kB 13.1MB/s eta 0:00:01[K    25% |████████                        | 317kB 13.6MB/s eta 0:00:01[K    26% |████████▍                       | 327kB 13.3MB/s eta 0:00:01[K    26% |████████▋                       | 337kB 14.0MB/s eta 0:00:01[K    27% |████████▉                       | 348kB 13.2MB/s eta 0:00:01[K    28% |█████████▏                      | 358kB 13.2MB/s eta 0:00:01[K    29% |█████████▍                      | 368kB 14.0MB/s eta 0:00:01[K    30% |█████████▋                      | 378kB 13.8MB/s eta 0:00:01[K    31% |██████████                      | 389kB 14.8MB/s eta 0:00:01[K    31% |██████████▏                     | 399kB 15.1MB/s eta 0:00:01[K    32% |██████████▌                     | 409kB 14.5MB/s eta 0:00:01[K    33% |██████████▊                     | 419kB 15.4MB/s eta 0:00:01[K    34% |███████████                     | 430kB 16.0MB/s eta 0:00:01[K    35% |███████████▎                    | 440kB 16.3MB/s eta 0:00:01[K    35% |███████████▌                    | 450kB 17.8MB/s eta 0:00:01[K    36% |███████████▊                    | 460kB 17.1MB/s eta 0:00:01[K    37% |████████████                    | 471kB 18.2MB/s eta 0:00:01[K    38% |████████████▎                   | 481kB 18.5MB/s eta 0:00:01[K    39% |████████████▌                   | 491kB 17.6MB/s eta 0:00:01[K    39% |████████████▉                   | 501kB 17.9MB/s eta 0:00:01[K    40% |█████████████                   | 512kB 17.9MB/s eta 0:00:01[K    41% |█████████████▎                  | 522kB 17.5MB/s eta 0:00:01[K    42% |█████████████▋                  | 532kB 18.1MB/s eta 0:00:01[K    43% |█████████████▉                  | 542kB 17.0MB/s eta 0:00:01[K    44% |██████████████                  | 552kB 18.4MB/s eta 0:00:01[K    44% |██████████████▍                 | 563kB 18.3MB/s eta 0:00:01[K    45% |██████████████▋                 | 573kB 17.6MB/s eta 0:00:01[K    46% |██████████████▉                 | 583kB 18.4MB/s eta 0:00:01[K    47% |███████████████▏                | 593kB 18.7MB/s eta 0:00:01[K    48% |███████████████▍                | 604kB 18.5MB/s eta 0:00:01[K    48% |███████████████▊                | 614kB 18.5MB/s eta 0:00:01[K    49% |████████████████                | 624kB 16.7MB/s eta 0:00:01[K    50% |████████████████▏               | 634kB 17.0MB/s eta 0:00:01[K    51% |████████████████▌               | 645kB 17.1MB/s eta 0:00:01[K    52% |████████████████▊               | 655kB 15.6MB/s eta 0:00:01[K    53% |█████████████████               | 665kB 16.4MB/s eta 0:00:01[K    53% |█████████████████▎              | 675kB 15.7MB/s eta 0:00:01[K    54% |█████████████████▌              | 686kB 15.7MB/s eta 0:00:01[K    55% |█████████████████▊              | 696kB 15.2MB/s eta 0:00:01[K    56% |██████████████████              | 706kB 14.4MB/s eta 0:00:01[K    57% |██████████████████▎             | 716kB 15.0MB/s eta 0:00:01[K    57% |██████████████████▌             | 727kB 15.7MB/s eta 0:00:01[K    58% |█���████████████████▉             | 737kB 15.1MB/s eta 0:00:01[K    59% |███████████████████             | 747kB 16.0MB/s eta 0:00:01[K    60% |███████████████████▎            | 757kB 16.6MB/s eta 0:00:01[K    61% |███████████████████▋            | 768kB 15.8MB/s eta 0:00:01[K    62% |███████████████████▉            | 778kB 15.6MB/s eta 0:00:01[K    62% |████████████████████            | 788kB 15.1MB/s eta 0:00:01[K    63% |████████████████████▍           | 798kB 15.4MB/s eta 0:00:01[K    64% |████████████████████▋           | 808kB 16.3MB/s eta 0:00:01[K    65% |█████████████████████           | 819kB 15.6MB/s eta 0:00:01[K    66% |█████████████████████▏          | 829kB 16.4MB/s eta 0:00:01[K    66% |█████████████████████▍          | 839kB 15.6MB/s eta 0:00:01[K    67% |█████████████████████▊          | 849kB 14.6MB/s eta 0:00:01[K    68% |██████████████████████          | 860kB 14.8MB/s eta 0:00:01[K    69% |██████████████████████▏         | 870kB 11.6MB/s eta 0:00:01[K    70% |██████████████████████▌         | 880kB 11.4MB/s eta 0:00:01[K    70% |██████████████████████▊         | 890kB 10.7MB/s eta 0:00:01[K    71% |███████████████████████         | 901kB 10.4MB/s eta 0:00:01[K    72% |███████████████████████▎        | 911kB 7.8MB/s eta 0:00:01[K    73% |███████████████████████▌        | 921kB 7.4MB/s eta 0:00:01[K    74% |███████████████████████▊        | 931kB 5.0MB/s eta 0:00:01[K    75% |████████████████████████        | 942kB 5.0MB/s eta 0:00:01[K    75% |████████████████████████▎       | 952kB 4.6MB/s eta 0:00:01[K    76% |████████████████████████▌       | 962kB 4.6MB/s eta 0:00:01[K    77% |████████████████████████▉       | 972kB 5.0MB/s eta 0:00:01[K    78% |█████████████████████████       | 983kB 5.1MB/s eta 0:00:01[K    79% |█████████████████████████▎      | 993kB 5.2MB/s eta 0:00:01[K    79% |█████████████████████████▋      | 1.0MB 5.2MB/s eta 0:00:01[K    80% |█████████████████████████▉      | 1.0MB 6.2MB/s eta 0:00:01[K    81% |██���███████████████████████▏     | 1.0MB 6.4MB/s eta 0:00:01[K    82% |██████████████████████████▍     | 1.0MB 10.0MB/s eta 0:00:01[K    83% |██████████████████████████▋     | 1.0MB 10.5MB/s eta 0:00:01[K    84% |███████████████████████████     | 1.1MB 11.9MB/s eta 0:00:01[K    84% |███████████████████████████▏    | 1.1MB 11.6MB/s eta 0:00:01[K    85% |███████████████████████████▍    | 1.1MB 12.0MB/s eta 0:00:01[K    86% |███████████████████████████▊    | 1.1MB 11.9MB/s eta 0:00:01[K    87% |████████████████████████████    | 1.1MB 12.3MB/s eta 0:00:01[K    88% |████████████████████████████▏   | 1.1MB 12.3MB/s eta 0:00:01[K    88% |████████████████████████████▌   | 1.1MB 11.3MB/s eta 0:00:01[K    89% |████████████████████████████▊   | 1.1MB 11.7MB/s eta 0:00:01[K    90% |█████████████████████████████   | 1.1MB 11.9MB/s eta 0:00:01[K    91% |█████████████████████████████▎  | 1.1MB 12.0MB/s eta 0:00:01[K    92% |█████████████████████████████▌  | 1.2MB 12.8MB/s eta 0:00:01[K    93% |█████████████████████████████▊  | 1.2MB 13.3MB/s eta 0:00:01[K    93% |██████████████████████████████  | 1.2MB 13.5MB/s eta 0:00:01[K    94% |██████████████████████████████▎ | 1.2MB 13.4MB/s eta 0:00:01[K    95% |██████████████████████████████▌ | 1.2MB 13.0MB/s eta 0:00:01[K    96% |██████████████████████████████▉ | 1.2MB 13.7MB/s eta 0:00:01[K    97% |███████████████████████████████ | 1.2MB 15.0MB/s eta 0:00:01[K    97% |███████████████████████████████▍| 1.2MB 14.8MB/s eta 0:00:01[K    98% |███████████████████████████████▋| 1.2MB 16.2MB/s eta 0:00:01[K    99% |███████████████████████████████▉| 1.2MB 16.0MB/s eta 0:00:01[K    100% |████████████████████████████████| 1.3MB 851kB/s 
+[?25hCollecting wheel
+  Downloading wheel-0.30.0-py2.py3-none-any.whl (49kB)
+[?25l[K    20% |██████▋                         | 10kB 26.2MB/s eta 0:00:01[K    41% |█████████████▏                  | 20kB 15.7MB/s eta 0:00:01[K    61% |███████████████████▊            | 30kB 18.7MB/s eta 0:00:01[K    82% |██████████████████████████▍     | 40kB 16.5MB/s eta 0:00:01[K    100% |████████████████████████████████| 51kB 6.2MB/s 
+[?25hInstalling collected packages: pip, wheel
+Successfully installed pip-9.0.1 wheel-0.30.0
+PYTHON_EXE=/Library/Frameworks/Python.framework/Versions/3.5/bin/python3.5
+PIP_CMD=sudo -H /Library/Frameworks/Python.framework/Versions/3.5/bin/pip3.5
+Collecting virtualenv
+  Downloading virtualenv-15.1.0-py2.py3-none-any.whl (1.8MB)
+[?25l[K    0% |▏                               | 10kB 9.3MB/s eta 0:00:01[K    1% |▍                               | 20kB 8.8MB/s eta 0:00:01[K    1% |▌                               | 30kB 11.0MB/s eta 0:00:01[K    2% |▊                               | 40kB 11.9MB/s eta 0:00:01[K    2% |█                               | 51kB 11.5MB/s eta 0:00:01[K    3% |█                               | 61kB 12.8MB/s eta 0:00:01[K    3% |█▎                              | 71kB 12.8MB/s eta 0:00:01[K    4% |█▍                              | 81kB 12.8MB/s eta 0:00:01[K    5% |█▋                              | 92kB 13.5MB/s eta 0:00:01[K    5% |█▉                              | 102kB 12.9MB/s eta 0:00:01[K    6% |██                              | 112kB 14.2MB/s eta 0:00:01[K    6% |██▏                             | 122kB 15.3MB/s eta 0:00:01[K    7% |██▍                             | 133kB 13.4MB/s eta 0:00:01[K    7% |██▌                             | 143kB 13.9MB/s eta 0:00:01[K    8% |██▊                             | 153kB 13.8MB/s eta 0:00:01[K    8% |██▉                             | 163kB 12.9MB/s eta 0:00:01[K    9% |███                             | 174kB 13.6MB/s eta 0:00:01[K    10% |███▎                            | 184kB 12.8MB/s eta 0:00:01[K    10% |███▍                            | 194kB 12.8MB/s eta 0:00:01[K    11% |███▋                            | 204kB 12.8MB/s eta 0:00:01[K    11% |███▉                            | 215kB 12.5MB/s eta 0:00:01[K    12% |████                            | 225kB 13.0MB/s eta 0:00:01[K    12% |████▏                           | 235kB 13.8MB/s eta 0:00:01[K    13% |████▎                           | 245kB 13.4MB/s eta 0:00:01[K    14% |████▌                           | 256kB 14.5MB/s eta 0:00:01[K    14% |████▊                           | 266kB 15.0MB/s eta 0:00:01[K    15% |████▉                           | 276kB 14.7MB/s eta 0:00:01[K    15% |█████                           | 286kB 16.2MB/s eta 0:00:01[K    16% |█████▏                          | 296kB 15.4MB/s eta 0:00:01[K    16% |█████▍                          | 307kB 17.1MB/s eta 0:00:01[K    17% |█████▋                          | 317kB 16.7MB/s eta 0:00:01[K    17% |█████▊                          | 327kB 16.1MB/s eta 0:00:01[K    18% |██████                          | 337kB 17.5MB/s eta 0:00:01[K    19% |██████▏                         | 348kB 17.5MB/s eta 0:00:01[K    19% |██████▎                         | 358kB 17.7MB/s eta 0:00:01[K    20% |██████▌                         | 368kB 17.7MB/s eta 0:00:01[K    20% |██████▋                         | 378kB 16.8MB/s eta 0:00:01[K    21% |██████▉                         | 389kB 17.5MB/s eta 0:00:01[K    21% |███████                         | 399kB 18.0MB/s eta 0:00:01[K    22% |███████▏                        | 409kB 15.5MB/s eta 0:00:01[K    23% |███████▍                        | 419kB 16.4MB/s eta 0:00:01[K    23% |███████▋                        | 430kB 16.1MB/s eta 0:00:01[K    24% |███████▊                        | 440kB 16.4MB/s eta 0:00:01[K    24% |████████                        | 450kB 16.2MB/s eta 0:00:01[K    25% |████████                        | 460kB 15.7MB/s eta 0:00:01[K    25% |████████▎                       | 471kB 16.0MB/s eta 0:00:01[K    26% |████████▌                       | 481kB 16.5MB/s eta 0:00:01[K    26% |████████▋                       | 491kB 15.7MB/s eta 0:00:01[K    27% |████████▉                       | 501kB 16.5MB/s eta 0:00:01[K    28% |█████████                       | 512kB 17.7MB/s eta 0:00:01[K    28% |█████████▏                      | 522kB 17.8MB/s eta 0:00:01[K    29% |█████████▍                      | 532kB 17.8MB/s eta 0:00:01[K    29% |█████████▌                      | 542kB 17.2MB/s eta 0:00:01[K    30% |█████████▊                      | 552kB 18.0MB/s eta 0:00:01[K    30% |██████████                      | 563kB 17.8MB/s eta 0:00:01[K    31% |██████████                      | 573kB 16.9MB/s eta 0:00:01[K    32% |██████████▎                     | 583kB 17.4MB/s eta 0:00:01[K    32% |██████████▍                     | 593kB 17.3MB/s eta 0:00:01[K    33% |██████████▋                     | 604kB 17.3MB/s eta 0:00:01[K    33% |██████████▉                     | 614kB 17.4MB/s eta 0:00:01[K    34% |███████████                     | 624kB 15.7MB/s eta 0:00:01[K    34% |███████████▏                    | 634kB 16.1MB/s eta 0:00:01[K    35% |███████████▍                    | 645kB 15.6MB/s eta 0:00:01[K    35% |███████████▌                    | 655kB 14.8MB/s eta 0:00:01[K    36% |███████████▊                    | 665kB 15.5MB/s eta 0:00:01[K    37% |███████████▉                    | 675kB 15.8MB/s eta 0:00:01[K    37% |████████████                    | 686kB 16.1MB/s eta 0:00:01[K    38% |████████████▎                   | 696kB 16.0MB/s eta 0:00:01[K    38% |████████████▍                   | 706kB 13.2MB/s eta 0:00:01[K    39% |████████████▋                   | 716kB 14.2MB/s eta 0:00:01[K    39% |████████████▉                   | 727kB 15.1MB/s eta 0:00:01[K    40% |█████████████                   | 737kB 14.8MB/s eta 0:00:01[K    41% |█████████████▏                  | 747kB 16.2MB/s eta 0:00:01[K    41% |█████████████▎                  | 757kB 14.8MB/s eta 0:00:01[K    42% |█████████████▌                  | 768kB 14.0MB/s eta 0:00:01[K    42% |█████████████▊                  | 778kB 13.3MB/s eta 0:00:01[K    43% |█████████████▉                  | 788kB 12.9MB/s eta 0:00:01[K    43% |██████████████                  | 798kB 13.8MB/s eta 0:00:01[K    44% |██████████████▏                 | 808kB 14.6MB/s eta 0:00:01[K    44% |██████████████▍                 | 819kB 12.7MB/s eta 0:00:01[K    45% |██████████████▋                 | 829kB 12.9MB/s eta 0:00:01[K    46% |██████████████▊                 | 839kB 12.4MB/s eta 0:00:01[K    46% |███████████████                 | 849kB 12.3MB/s eta 0:00:01[K    47% |███████████████▏                | 860kB 12.4MB/s eta 0:00:01[K    47% |███████████████▎                | 870kB 12.1MB/s eta 0:00:01[K    48% |███████████████▌                | 880kB 13.3MB/s eta 0:00:01[K    48% |███████████████▋                | 890kB 13.3MB/s eta 0:00:01[K    49% |███████████████▉                | 901kB 11.6MB/s eta 0:00:01[K    50% |████████████████                | 911kB 13.2MB/s eta 0:00:01[K    50% |████████████████▏               | 921kB 13.9MB/s eta 0:00:01[K    51% |████████████████▍               | 931kB 13.0MB/s eta 0:00:01[K    51% |████████████████▋               | 942kB 13.5MB/s eta 0:00:01[K    52% |████████████████▊               | 952kB 12.9MB/s eta 0:00:01[K    52% |█████████████████               | 962kB 13.0MB/s eta 0:00:01[K    53% |█████████████████               | 972kB 13.1MB/s eta 0:00:01[K    53% |█████████████████▎              | 983kB 12.5MB/s eta 0:00:01[K    54% |█████████████████▌              | 993kB 12.9MB/s eta 0:00:01[K    55% |█████████████████▋              | 1.0MB 13.8MB/s eta 0:00:01[K    55% |█████████████████▉              | 1.0MB 13.3MB/s eta 0:00:01[K    56% |██████████████████              | 1.0MB 13.1MB/s eta 0:00:01[K    56% |██████████████████▏             | 1.0MB 12.5MB/s eta 0:00:01[K    57% |██████████████████▍             | 1.0MB 13.2MB/s eta 0:00:01[K    57% |██████████████████▌             | 1.1MB 12.7MB/s eta 0:00:01[K    58% |██████████████████▊             | 1.1MB 12.4MB/s eta 0:00:01[K    59% |███████████████████             | 1.1MB 12.3MB/s eta 0:00:01[K    59% |███████████████████             | 1.1MB 10.4MB/s eta 0:00:01[K    60% |███████████████████▎            | 1.1MB 10.4MB/s eta 0:00:01[K    60% |███████████████████▍            | 1.1MB 10.0MB/s eta 0:00:01[K    61% |███████████████████▋            | 1.1MB 9.5MB/s eta 0:00:01[K    61% |███████████████████▉            | 1.1MB 10.4MB/s eta 0:00:01[K    62% |████████████████████            | 1.1MB 10.9MB/s eta 0:00:01[K    62% |████████████████████▏           | 1.1MB 10.6MB/s eta 0:00:01[K    63% |████████████████████▍           | 1.2MB 10.1MB/s eta 0:00:01[K    64% |████████████████████▌           | 1.2MB 9.8MB/s eta 0:00:01[K    64% |████████████████████▊           | 1.2MB 9.4MB/s eta 0:00:01[K    65% |████████████████████▉           | 1.2MB 10.5MB/s eta 0:00:01[K    65% |█████████████████████           | 1.2MB 9.9MB/s eta 0:00:01[K    66% |█████████████████████▎          | 1.2MB 10.6MB/s eta 0:00:01[K    66% |█████████████████████▍          | 1.2MB 10.5MB/s eta 0:00:01[K    67% |█████████████████████▋          | 1.2MB 9.4MB/s eta 0:00:01[K    68% |█████████████████████▊          | 1.2MB 9.6MB/s eta 0:00:01[K    68% |██████████████████████          | 1.2MB 9.4MB/s eta 0:00:01[K    69% |██████████████████████▏         | 1.3MB 10.4MB/s eta 0:00:01[K    69% |██████████████████████▎         | 1.3MB 11.8MB/s eta 0:00:01[K    70% |██████████████████████▌         | 1.3MB 12.5MB/s eta 0:00:01[K    70% |██████████████████████▊         | 1.3MB 14.0MB/s eta 0:00:01[K    71% |██████████████████████▉         | 1.3MB 14.2MB/s eta 0:00:01[K    71% |███████████████████████         | 1.3MB 13.9MB/s eta 0:00:01[K    72% |███████████████████████▏        | 1.3MB 15.2MB/s eta 0:00:01[K    73% |███████████████████████▍        | 1.3MB 16.7MB/s eta 0:00:01[K    73% |███████████████████████▋        | 1.3MB 17.8MB/s eta 0:00:01[K    74% |███████████████████████▊        | 1.4MB 17.7MB/s eta 0:00:01[K    74% |████████████████████████        | 1.4MB 17.1MB/s eta 0:00:01[K    75% |████████████████████████▏       | 1.4MB 17.4MB/s eta 0:00:01[K    75% |████████████████████████▎       | 1.4MB 17.6MB/s eta 0:00:01[K    76% |████████████████████████▌       | 1.4MB 16.2MB/s eta 0:00:01[K    77% |████████████████████████▋       | 1.4MB 15.2MB/s eta 0:00:01[K    77% |████████████████████████▉       | 1.4MB 14.5MB/s eta 0:00:01[K    78% |█████████████████████████       | 1.4MB 14.1MB/s eta 0:00:01[K    78% |█████████████████████████▏      | 1.4MB 13.6MB/s eta 0:00:01[K    79% |█████████████████████████▍      | 1.4MB 12.6MB/s eta 0:00:01[K    79% |█████████████████████████▋      | 1.5MB 12.7MB/s eta 0:00:01[K    80% |█████████████████████████▊      | 1.5MB 12.8MB/s eta 0:00:01[K    80% |██████████████████████████      | 1.5MB 12.3MB/s eta 0:00:01[K    81% |██████████████████████████      | 1.5MB 13.2MB/s eta 0:00:01[K    82% |██████████████████████████▎     | 1.5MB 13.3MB/s eta 0:00:01[K    82% |██████████████████████████▌     | 1.5MB 15.1MB/s eta 0:00:01[K    83% |██████████████���███████████▋     | 1.5MB 16.0MB/s eta 0:00:01[K    83% |██████████████████████████▉     | 1.5MB 15.8MB/s eta 0:00:01[K    84% |███████████████████████████     | 1.5MB 17.5MB/s eta 0:00:01[K    84% |███████████████████████████▏    | 1.5MB 18.2MB/s eta 0:00:01[K    85% |███████████████████████████▍    | 1.6MB 17.9MB/s eta 0:00:01[K    86% |███████████████████████████▌    | 1.6MB 18.6MB/s eta 0:00:01[K    86% |███████████████████████████▊    | 1.6MB 19.4MB/s eta 0:00:01[K    87% |████████████████████████████    | 1.6MB 18.3MB/s eta 0:00:01[K    87% |████████████████████████████    | 1.6MB 18.6MB/s eta 0:00:01[K    88% |████████████████████████████▎   | 1.6MB 17.5MB/s eta 0:00:01[K    88% |████████████████████████████▍   | 1.6MB 18.0MB/s eta 0:00:01[K    89% |████████████████████████████▋   | 1.6MB 17.8MB/s eta 0:00:01[K    89% |████████████████████████████▉   | 1.6MB 16.6MB/s eta 0:00:01[K    90% |█████���███████████████████████   | 1.6MB 17.9MB/s eta 0:00:01[K    91% |█████████████████████████████▏  | 1.7MB 17.5MB/s eta 0:00:01[K    91% |█████████████████████████████▍  | 1.7MB 17.5MB/s eta 0:00:01[K    92% |█████████████████████████████▌  | 1.7MB 17.1MB/s eta 0:00:01[K    92% |█████████████████████████████▊  | 1.7MB 17.3MB/s eta 0:00:01[K    93% |█████████████████████████████▉  | 1.7MB 17.8MB/s eta 0:00:01[K    93% |██████████████████████████████  | 1.7MB 18.1MB/s eta 0:00:01[K    94% |██████████████████████████████▎ | 1.7MB 16.8MB/s eta 0:00:01[K    95% |██████████████████████████████▍ | 1.7MB 16.3MB/s eta 0:00:01[K    95% |██████████████████████████████▋ | 1.7MB 15.6MB/s eta 0:00:01[K    96% |██████████████████████████████▊ | 1.8MB 15.3MB/s eta 0:00:01[K    96% |███████████████████████████████ | 1.8MB 15.2MB/s eta 0:00:01[K    97% |███████████████████████████████▏| 1.8MB 14.6MB/s eta 0:00:01[K    97% |███████████████████████████████▎| 1.8MB 15.2MB/s eta 0:00:01[K    98% |███████████████████████████████▌| 1.8MB 15.0MB/s eta 0:00:01[K    98% |███████████████████████████████▊| 1.8MB 14.6MB/s eta 0:00:01[K    99% |███████████████████████████████▉| 1.8MB 15.1MB/s eta 0:00:01[K    100% |████████████████████████████████| 1.8MB 472kB/s 
+[?25hCollecting pip
+  Downloading pip-9.0.1-py2.py3-none-any.whl (1.3MB)
+[?25l[K    0% |▎                               | 10kB 16.0MB/s eta 0:00:01[K    1% |▌                               | 20kB 16.3MB/s eta 0:00:01[K    2% |▉                               | 30kB 18.4MB/s eta 0:00:01[K    3% |█                               | 40kB 18.5MB/s eta 0:00:01[K    4% |█▎                              | 51kB 18.0MB/s eta 0:00:01[K    4% |█▋                              | 61kB 19.2MB/s eta 0:00:01[K    5% |█▉                              | 71kB 18.6MB/s eta 0:00:01[K    6% |██                              | 81kB 18.1MB/s eta 0:00:01[K    7% |██▍                             | 92kB 17.9MB/s eta 0:00:01[K    8% |██▋                             | 102kB 18.0MB/s eta 0:00:01[K    8% |██▉                             | 112kB 18.8MB/s eta 0:00:01[K    9% |███▏                            | 122kB 19.0MB/s eta 0:00:01[K    10% |███▍                            | 133kB 12.3MB/s eta 0:00:01[K    11% |███▋                            | 143kB 12.4MB/s eta 0:00:01[K    12% |████                            | 153kB 12.2MB/s eta 0:00:01[K    13% |████▏                           | 163kB 11.2MB/s eta 0:00:01[K    13% |████▍                           | 174kB 11.2MB/s eta 0:00:01[K    14% |████▊                           | 184kB 11.2MB/s eta 0:00:01[K    15% |█████                           | 194kB 11.4MB/s eta 0:00:01[K    16% |█████▎                          | 204kB 10.8MB/s eta 0:00:01[K    17% |█████▌                          | 215kB 10.4MB/s eta 0:00:01[K    17% |█████▊                          | 225kB 10.3MB/s eta 0:00:01[K    18% |██████                          | 235kB 13.4MB/s eta 0:00:01[K    19% |██████▎                         | 245kB 12.6MB/s eta 0:00:01[K    20% |██████▌                         | 256kB 13.3MB/s eta 0:00:01[K    21% |██████▉                         | 266kB 13.8MB/s eta 0:00:01[K    22% |███████                         | 276kB 14.5MB/s eta 0:00:01[K    22% |███████▎                        | 286kB 14.3MB/s eta 0:00:01[K    23% |███████▋                        | 296kB 14.1MB/s eta 0:00:01[K    24% |███████▉                        | 307kB 14.5MB/s eta 0:00:01[K    25% |████████                        | 317kB 14.4MB/s eta 0:00:01[K    26% |████████▍                       | 327kB 14.2MB/s eta 0:00:01[K    26% |████████▋                       | 337kB 14.8MB/s eta 0:00:01[K    27% |████████▉                       | 348kB 15.3MB/s eta 0:00:01[K    28% |█████████▏                      | 358kB 14.4MB/s eta 0:00:01[K    29% |█████████▍                      | 368kB 14.3MB/s eta 0:00:01[K    30% |█████████▋                      | 378kB 12.9MB/s eta 0:00:01[K    31% |█���████████                      | 389kB 13.1MB/s eta 0:00:01[K    31% |██████████▏                     | 399kB 12.7MB/s eta 0:00:01[K    32% |██████████▌                     | 409kB 11.4MB/s eta 0:00:01[K    33% |██████████▊                     | 419kB 11.5MB/s eta 0:00:01[K    34% |███████████                     | 430kB 11.2MB/s eta 0:00:01[K    35% |███████████▎                    | 440kB 11.4MB/s eta 0:00:01[K    35% |███████████▌                    | 450kB 11.1MB/s eta 0:00:01[K    36% |███████████▊                    | 460kB 10.2MB/s eta 0:00:01[K    37% |████████████                    | 471kB 9.6MB/s eta 0:00:01[K    38% |████████████▎                   | 481kB 10.1MB/s eta 0:00:01[K    39% |████████████▌                   | 491kB 9.8MB/s eta 0:00:01[K    39% |████████████▉                   | 501kB 9.8MB/s eta 0:00:01[K    40% |█████████████                   | 512kB 10.9MB/s eta 0:00:01[K    41% |█████████████▎                  | 522kB 11.3MB/s eta 0:00:01[K    42% |█████████████▋                  | 532kB 11.1MB/s eta 0:00:01[K    43% |█████████████▉                  | 542kB 8.7MB/s eta 0:00:01[K    44% |██████████████                  | 552kB 7.9MB/s eta 0:00:01[K    44% |���█████████████▍                 | 563kB 8.3MB/s eta 0:00:01[K    45% |██████████████▋                 | 573kB 8.1MB/s eta 0:00:01[K    46% |██████████████▉                 | 583kB 7.9MB/s eta 0:00:01[K    47% |███████████████▏                | 593kB 7.4MB/s eta 0:00:01[K    48% |███████████████▍                | 604kB 7.5MB/s eta 0:00:01[K    48% |███████████████▊                | 614kB 7.5MB/s eta 0:00:01[K    49% |████████████████                | 624kB 7.3MB/s eta 0:00:01[K    50% |████████████████▏               | 634kB 7.6MB/s eta 0:00:01[K    51% |████████████████▌               | 645kB 8.6MB/s eta 0:00:01[K    52% |████████████████▊               | 655kB 9.2MB/s eta 0:00:01[K    53% |█████████████████               | 665kB 9.8MB/s eta 0:00:01[K    53% |█████████████████▎              | 675kB 10.6MB/s eta 0:00:01[K    54% |█████████████████▌              | 686kB 10.7MB/s eta 0:00:01[K    55% |█████████████████▊              | 696kB 11.4MB/s eta 0:00:01[K    56% |██████████████████              | 706kB 11.0MB/s eta 0:00:01[K    57% |██████████████████▎             | 716kB 11.5MB/s eta 0:00:01[K    57% |██████████████████▌             | 727kB 11.6MB/s eta 0:00:01[K    58% |██████████████████▉             | 737kB 11.0MB/s eta 0:00:01[K    59% |███████████████████             | 747kB 11.9MB/s eta 0:00:01[K    60% |███████████████████▎            | 757kB 12.4MB/s eta 0:00:01[K    61% |███████████████████▋            | 768kB 12.1MB/s eta 0:00:01[K    62% |███████████████████▉            | 778kB 11.5MB/s eta 0:00:01[K    62% |████████████████████            | 788kB 11.7MB/s eta 0:00:01[K    63% |████████████████████▍           | 798kB 12.9MB/s eta 0:00:01[K    64% |████████████████████▋           | 808kB 12.7MB/s eta 0:00:01[K    65% |█████████████████████           | 819kB 10.9MB/s eta 0:00:01[K    66% |█████████████████████▏          | 829kB 11.1MB/s eta 0:00:01[K    66% |█████████████████████▍          | 839kB 11.6MB/s eta 0:00:01[K    67% |█████████████████████▊          | 849kB 12.2MB/s eta 0:00:01[K    68% |██████████████████████          | 860kB 12.7MB/s eta 0:00:01[K    69% |█████���████████████████▏         | 870kB 12.7MB/s eta 0:00:01[K    70% |██████████████████████▌         | 880kB 13.8MB/s eta 0:00:01[K    70% |██████████████████████▊         | 890kB 14.2MB/s eta 0:00:01[K    71% |███████████████████████         | 901kB 13.6MB/s eta 0:00:01[K    72% |███████████████████████▎        | 911kB 15.1MB/s eta 0:00:01[K    73% |███████████████████████▌        | 921kB 17.7MB/s eta 0:00:01[K    74% |███████████████████████▊        | 931kB 17.8MB/s eta 0:00:01[K    75% |████████████████████████        | 942kB 17.6MB/s eta 0:00:01[K    75% |████████████████████████▎       | 952kB 16.9MB/s eta 0:00:01[K    76% |████████████████████████▌       | 962kB 17.7MB/s eta 0:00:01[K    77% |████████████████████████▉       | 972kB 17.9MB/s eta 0:00:01[K    78% |█████████████████████████       | 983kB 10.6MB/s eta 0:00:01[K    79% |█████████████████████████▎      | 993kB 10.3MB/s eta 0:00:01[K    79% |█████████████████████████▋      | 1.0MB 8.2MB/s eta 0:00:01[K    80% |█████████████████████████▉      | 1.0MB 7.3MB/s eta 0:00:01[K    81% |██████████████████████████▏     | 1.0MB 6.9MB/s eta 0:00:01[K    82% |██████████████████████████▍     | 1.0MB 6.7MB/s eta 0:00:01[K    83% |██████████████████████████▋     | 1.0MB 6.8MB/s eta 0:00:01[K    84% |███████████████████████████     | 1.1MB 6.6MB/s eta 0:00:01[K    84% |███████████████████████████▏    | 1.1MB 6.4MB/s eta 0:00:01[K    85% |███████████████████████████▍    | 1.1MB 6.5MB/s eta 0:00:01[K    86% |███████████████████████████▊    | 1.1MB 8.6MB/s eta 0:00:01[K    87% |████████████████████████████    | 1.1MB 9.0MB/s eta 0:00:01[K    88% |████████████████████████████▏   | 1.1MB 11.9MB/s eta 0:00:01[K    88% |████████████████████████████▌   | 1.1MB 13.7MB/s eta 0:00:01[K    89% |████████████████████████████▊   | 1.1MB 15.2MB/s eta 0:00:01[K    90% |█████████████████████████████   | 1.1MB 15.1MB/s eta 0:00:01[K    91% |█████████████████████████████▎  | 1.1MB 13.6MB/s eta 0:00:01[K    92% |█████████████████████████████▌  | 1.2MB 13.7MB/s eta 0:00:01[K    93% |█████████████████████████████▊  | 1.2MB 13.5MB/s eta 0:00:01[K    93% |██████████████████████████████  | 1.2MB 13.1MB/s eta 0:00:01[K    94% |██████████████████████████████▎ | 1.2MB 12.5MB/s eta 0:00:01[K    95% |██████████████████████████████▌ | 1.2MB 11.7MB/s eta 0:00:01[K    96% |██████████████████████████████▉ | 1.2MB 11.8MB/s eta 0:00:01[K    97% |███████████████████████████████ | 1.2MB 11.7MB/s eta 0:00:01[K    97% |███████████████████████████████▍| 1.2MB 12.0MB/s eta 0:00:01[K    98% |███████████████████████████████▋| 1.2MB 12.7MB/s eta 0:00:01[K    99% |███████████████████████████████▉| 1.2MB 13.6MB/s eta 0:00:01[K    100% |████████████████████████████████| 1.3MB 740kB/s 
+[?25hInstalling collected packages: virtualenv, pip
+Successfully installed pip-9.0.1 virtualenv-15.1.0
+Collecting nox-automation>=0.18.1
+  Downloading nox_automation-0.18.2-py2.py3-none-any.whl
+Collecting numpy
+  Downloading numpy-1.14.0-cp35-cp35m-macosx_10_6_intel.macosx_10_9_intel.macosx_10_9_x86_64.macosx_10_10_intel.macosx_10_10_x86_64.whl (4.7MB)
+[?25l[K    0% |                                | 10kB 30.5MB/s eta 0:00:01[K    0% |▏                               | 20kB 14.6MB/s eta 0:00:01[K    0% |▏                               | 30kB 16.5MB/s eta 0:00:01[K    0% |▎                               | 40kB 14.2MB/s eta 0:00:01[K    1% |▍                               | 51kB 13.9MB/s eta 0:00:01[K    1% |▍                               | 61kB 14.8MB/s eta 0:00:01[K    1% |▌                               | 71kB 14.6MB/s eta 0:00:01[K    1% |▋                               | 81kB 14.0MB/s eta 0:00:01[K    1% |▋                               | 92kB 14.7MB/s eta 0:00:01[K    2% |▊                               | 102kB 12.9MB/s eta 0:00:01[K    2% |▊                               | 112kB 11.9MB/s eta 0:00:01[K    2% |▉                               | 122kB 10.9MB/s eta 0:00:01[K    2% |█                               | 133kB 9.7MB/s eta 0:00:01[K    3% |█                               | 143kB 9.9MB/s eta 0:00:01[K    3% |█                               | 153kB 9.8MB/s eta 0:00:01[K    3% |█▏                              | 163kB 9.5MB/s eta 0:00:01[K    3% |█▏                              | 174kB 8.7MB/s eta 0:00:01[K    3% |█▎                              | 184kB 8.3MB/s eta 0:00:01[K    4% |█▍                              | 194kB 7.8MB/s eta 0:00:01[K    4% |█▍                              | 204kB 8.3MB/s eta 0:00:01[K    4% |█▌                              | 215kB 8.4MB/s eta 0:00:01[K    4% |█▌                              | 225kB 8.3MB/s eta 0:00:01[K    5% |█▋                              | 235kB 8.2MB/s eta 0:00:01[K    5% |█▊                              | 245kB 7.9MB/s eta 0:00:01[K    5% |█▊                              | 256kB 7.0MB/s eta 0:00:01[K    5% |█▉                              | 266kB 6.5MB/s eta 0:00:01[K    5% |██                              | 276kB 7.2MB/s eta 0:00:01[K    6% |██                              | 286kB 7.5MB/s eta 0:00:01[K    6% |██                              | 296kB 7.6MB/s eta 0:00:01[K    6% |██                              | 307kB 7.2MB/s eta 0:00:01[K    6% |██▏                             | 317kB 7.2MB/s eta 0:00:01[K    7% |██▎                             | 327kB 7.8MB/s eta 0:00:01[K    7% |██▎                             | 337kB 8.6MB/s eta 0:00:01[K    7% |██▍                             | 348kB 8.8MB/s eta 0:00:01[K    7% |██▌                             | 358kB 10.6MB/s eta 0:00:01[K    7% |██▌                             | 368kB 12.0MB/s eta 0:00:01[K    8% |██▋                             | 378kB 11.2MB/s eta 0:00:01[K    8% |██▊                             | 389kB 11.6MB/s eta 0:00:01[K    8% |██▊                             | 399kB 12.0MB/s eta 0:00:01[K    8% |██▉                             | 409kB 13.5MB/s eta 0:00:01[K    8% |██▉                             | 419kB 14.5MB/s eta 0:00:01[K    9% |███                             | 430kB 14.7MB/s eta 0:00:01[K    9% |███                             | 440kB 15.1MB/s eta 0:00:01[K    9% |███                             | 450kB 15.5MB/s eta 0:00:01[K    9% |███▏                            | 460kB 15.3MB/s eta 0:00:01[K    10% |███▎                            | 471kB 16.3MB/s eta 0:00:01[K    10% |███▎                            | 481kB 16.9MB/s eta 0:00:01[K    10% |███▍                            | 491kB 16.4MB/s eta 0:00:01[K    10% |███▍                            | 501kB 16.3MB/s eta 0:00:01[K    10% |███▌                            | 512kB 15.9MB/s eta 0:00:01[K    11% |███▋                            | 522kB 16.1MB/s eta 0:00:01[K    11% |███▋                            | 532kB 16.1MB/s eta 0:00:01[K    11% |███▊                            | 542kB 14.4MB/s eta 0:00:01[K    11% |███▉                            | 552kB 14.7MB/s eta 0:00:01[K    12% |███▉                            | 563kB 12.7MB/s eta 0:00:01[K    12% |████                            | 573kB 11.9MB/s eta 0:00:01[K    12% |████                            | 583kB 12.3MB/s eta 0:00:01[K    12% |████                            | 593kB 12.1MB/s eta 0:00:01[K    12% |████▏                           | 604kB 12.7MB/s eta 0:00:01[K    13% |████▏                           | 614kB 12.6MB/s eta 0:00:01[K    13% |████▎                           | 624kB 11.6MB/s eta 0:00:01[K    13% |████▍                           | 634kB 12.2MB/s eta 0:00:01[K    13% |████▍                           | 645kB 12.9MB/s eta 0:00:01[K    14% |████▌                           | 655kB 12.5MB/s eta 0:00:01[K    14% |████▋                           | 665kB 15.4MB/s eta 0:00:01[K    14% |████▋                           | 675kB 16.2MB/s eta 0:00:01[K    14% |████▊                           | 686kB 15.1MB/s eta 0:00:01[K    14% |████▊                           | 696kB 15.0MB/s eta 0:00:01[K    15% |████▉                           | 706kB 13.4MB/s eta 0:00:01[K    15% |█████                           | 716kB 13.6MB/s eta 0:00:01[K    15% |█████                           | 727kB 13.8MB/s eta 0:00:01[K    15% |█████                           | 737kB 12.2MB/s eta 0:00:01[K    16% |█████▏                          | 747kB 12.6MB/s eta 0:00:01[K    16% |█████▏                          | 757kB 12.2MB/s eta 0:00:01[K    16% |█████▎                          | 768kB 11.7MB/s eta 0:00:01[K    16% |█████▍                          | 778kB 11.3MB/s eta 0:00:01[K    16% |█████▍                          | 788kB 11.6MB/s eta 0:00:01[K    17% |█████▌                          | 798kB 12.2MB/s eta 0:00:01[K    17% |█████▌                          | 808kB 13.1MB/s eta 0:00:01[K    17% |█████▋                          | 819kB 13.0MB/s eta 0:00:01[K    17% |█████▊                          | 829kB 14.1MB/s eta 0:00:01[K    17% |█████▊                          | 839kB 15.4MB/s eta 0:00:01[K    18% |█████▉                          | 849kB 15.9MB/s eta 0:00:01[K    18% |██████                          | 860kB 16.7MB/s eta 0:00:01[K    18% |██████                          | 870kB 17.1MB/s eta 0:00:01[K    18% |██████                          | 880kB 19.0MB/s eta 0:00:01[K    19% |██████                          | 890kB 18.7MB/s eta 0:00:01[K    19% |██████▏                         | 901kB 17.9MB/s eta 0:00:01[K    19% |██████▎                         | 911kB 18.4MB/s eta 0:00:01[K    19% |██████▎                         | 921kB 18.9MB/s eta 0:00:01[K    19% |██████▍                         | 931kB 18.3MB/s eta 0:00:01[K    20% |██████▌                         | 942kB 18.8MB/s eta 0:00:01[K    20% |██████▌                         | 952kB 17.5MB/s eta 0:00:01[K    20% |██████▋                         | 962kB 18.5MB/s eta 0:00:01[K    20% |██████▊                         | 972kB 17.6MB/s eta 0:00:01[K    21% |██████▊                         | 983kB 16.6MB/s eta 0:00:01[K    21% |██████▉                         | 993kB 17.7MB/s eta 0:00:01[K    21% |██████▉                         | 1.0MB 17.5MB/s eta 0:00:01[K    21% |███████                         | 1.0MB 17.8MB/s eta 0:00:01[K    21% |███████                         | 1.0MB 17.9MB/s eta 0:00:01[K    22% |███████                         | 1.0MB 17.2MB/s eta 0:00:01[K    22% |███████▏                        | 1.0MB 17.8MB/s eta 0:00:01[K    22% |███████▎                        | 1.1MB 15.1MB/s eta 0:00:01[K    22% |███████▎                        | 1.1MB 13.4MB/s eta 0:00:01[K    23% |███████▍                        | 1.1MB 14.3MB/s eta 0:00:01[K    23% |███████▍                        | 1.1MB 12.2MB/s eta 0:00:01[K    23% |███████▌                        | 1.1MB 12.0MB/s eta 0:00:01[K    23% |███████▋                        | 1.1MB 11.8MB/s eta 0:00:01[K    23% |███████▋                        | 1.1MB 11.4MB/s eta 0:00:01[K    24% |███████▊                        | 1.1MB 11.6MB/s eta 0:00:01[K    24% |███████▉                        | 1.1MB 11.7MB/s eta 0:00:01[K    24% |███████▉                        | 1.1MB 11.3MB/s eta 0:00:01[K    24% |████████                        | 1.2MB 13.2MB/s eta 0:00:01[K    25% |████████                        | 1.2MB 14.3MB/s eta 0:00:01[K    25% |████████                        | 1.2MB 14.1MB/s eta 0:00:01[K    25% |████████▏                       | 1.2MB 17.6MB/s eta 0:00:01[K    25% |████████▏                       | 1.2MB 16.8MB/s eta 0:00:01[K    25% |████████▎                       | 1.2MB 18.3MB/s eta 0:00:01[K    26% |████████▍                       | 1.2MB 18.2MB/s eta 0:00:01[K    26% |████████▍                       | 1.2MB 17.4MB/s eta 0:00:01[K    26% |████████▌                       | 1.2MB 17.6MB/s eta 0:00:01[K    26% |████████▋                       | 1.2MB 17.9MB/s eta 0:00:01[K    26% |████████▋                       | 1.3MB 17.7MB/s eta 0:00:01[K    27% |████████▊                       | 1.3MB 17.7MB/s eta 0:00:01[K    27% |████████▊                       | 1.3MB 16.7MB/s eta 0:00:01[K    27% |████████▉                       | 1.3MB 17.3MB/s eta 0:00:01[K    27% |█████████                       | 1.3MB 17.4MB/s eta 0:00:01[K    28% |█████████                       | 1.3MB 16.7MB/s eta 0:00:01[K    28% |█████████                       | 1.3MB 17.1MB/s eta 0:00:01[K    28% |█████████▏                      | 1.3MB 16.0MB/s eta 0:00:01[K    28% |█████████▏                      | 1.3MB 16.9MB/s eta 0:00:01[K    28% |█████████▎                      | 1.4MB 16.3MB/s eta 0:00:01[K    29% |█████████▍                      | 1.4MB 13.0MB/s eta 0:00:01[K    29% |█████████▍                      | 1.4MB 13.3MB/s eta 0:00:01[K    29% |█████████▌                      | 1.4MB 13.8MB/s eta 0:00:01[K    29% |█████████▌                      | 1.4MB 13.1MB/s eta 0:00:01[K    30% |█████████▋                      | 1.4MB 13.5MB/s eta 0:00:01[K    30% |█████████▊                      | 1.4MB 13.3MB/s eta 0:00:01[K    30% |█████████▊                      | 1.4MB 13.3MB/s eta 0:00:01[K    30% |█████████▉                      | 1.4MB 13.6MB/s eta 0:00:01[K    30% |██████████                      | 1.4MB 12.4MB/s eta 0:00:01[K    31% |██████████                      | 1.5MB 12.9MB/s eta 0:00:01[K    31% |██████████                      | 1.5MB 16.0MB/s eta 0:00:01[K    31% |���█████████                      | 1.5MB 15.2MB/s eta 0:00:01[K    31% |██████████▏                     | 1.5MB 15.7MB/s eta 0:00:01[K    32% |██████████▎                     | 1.5MB 15.3MB/s eta 0:00:01[K    32% |██████████▎                     | 1.5MB 14.6MB/s eta 0:00:01[K    32% |██████████▍                     | 1.5MB 13.8MB/s eta 0:00:01[K    32% |██████████▌                     | 1.5MB 13.6MB/s eta 0:00:01[K    32% |██████████▌                     | 1.5MB 14.4MB/s eta 0:00:01[K    33% |██████████▋                     | 1.5MB 15.5MB/s eta 0:00:01[K    33% |██████████▊                     | 1.6MB 15.1MB/s eta 0:00:01[K    33% |██████████▊                     | 1.6MB 15.6MB/s eta 0:00:01[K    33% |██████████▉                     | 1.6MB 15.4MB/s eta 0:00:01[K    33% |██████████▉                     | 1.6MB 13.8MB/s eta 0:00:01[K    34% |███████████                     | 1.6MB 12.5MB/s eta 0:00:01[K    34% |███████████                     | 1.6MB 12.5MB/s eta 0:00:01[K    34% |███████████                     | 1.6MB 13.7MB/s eta 0:00:01[K    34% |███████████▏                    | 1.6MB 13.3MB/s eta 0:00:01[K    35% |███████████▎                    | 1.6MB 12.8MB/s eta 0:00:01[K    35% |███████████▎                    | 1.6MB 13.1MB/s eta 0:00:01[K    35% |███████████▍                    | 1.7MB 13.1MB/s eta 0:00:01[K    35% |███████████▍                    | 1.7MB 13.2MB/s eta 0:00:01[K    35% |███████████▌                    | 1.7MB 11.4MB/s eta 0:00:01[K    36% |███████████▋                    | 1.7MB 12.0MB/s eta 0:00:01[K    36% |███████████▋                    | 1.7MB 14.2MB/s eta 0:00:01[K    36% |███████████▊                    | 1.7MB 13.5MB/s eta 0:00:01[K    36% |███████████▉                    | 1.7MB 12.0MB/s eta 0:00:01[K    37% |███████████▉                    | 1.7MB 12.4MB/s eta 0:00:01[K    37% |████████████                    | 1.7MB 11.7MB/s eta 0:00:01[K    37% |████████████                    | 1.8MB 11.7MB/s eta 0:00:01[K    37% |████████████                    | 1.8MB 11.8MB/s eta 0:00:01[K    37% |████████████▏                   | 1.8MB 11.4MB/s eta 0:00:01[K    38% |████████████▏                   | 1.8MB 13.9MB/s eta 0:00:01[K    38% |████████████▎                   | 1.8MB 13.9MB/s eta 0:00:01[K    38% |████████████▍                   | 1.8MB 12.9MB/s eta 0:00:01[K    38% |████████████▍                   | 1.8MB 14.4MB/s eta 0:00:01[K    39% |██████████���█▌                   | 1.8MB 15.3MB/s eta 0:00:01[K    39% |████████████▋                   | 1.8MB 16.1MB/s eta 0:00:01[K    39% |████████████▋                   | 1.8MB 17.9MB/s eta 0:00:01[K    39% |████████████▊                   | 1.9MB 15.6MB/s eta 0:00:01[K    39% |████████████▊                   | 1.9MB 16.2MB/s eta 0:00:01[K    40% |████████████▉                   | 1.9MB 15.8MB/s eta 0:00:01[K    40% |█████████████                   | 1.9MB 14.0MB/s eta 0:00:01[K    40% |█████████████                   | 1.9MB 14.8MB/s eta 0:00:01[K    40% |█████████████                   | 1.9MB 15.0MB/s eta 0:00:01[K    41% |█████████████▏                  | 1.9MB 15.0MB/s eta 0:00:01[K    41% |█████████████▏                  | 1.9MB 14.9MB/s eta 0:00:01[K    41% |█████████████▎                  | 1.9MB 11.6MB/s eta 0:00:01[K    41% |█████████████▍                  | 1.9MB 12.0MB/s eta 0:00:01[K    41% |█████████████▍                  | 2.0MB 12.9MB/s eta 0:00:01[K    42% |█████████████▌                  | 2.0MB 12.5MB/s eta 0:00:01[K    42% |█████████████▌                  | 2.0MB 13.1MB/s eta 0:00:01[K    42% |█████████████▋                  | 2.0MB 14.1MB/s eta 0:00:01[K    42% |█████████████▊                  | 2.0MB 14.1MB/s eta 0:00:01[K    42% |█████████████▊                  | 2.0MB 14.4MB/s eta 0:00:01[K    43% |█████████████▉                  | 2.0MB 12.9MB/s eta 0:00:01[K    43% |██████████████                  | 2.0MB 13.8MB/s eta 0:00:01[K    43% |██████████████                  | 2.0MB 17.9MB/s eta 0:00:01[K    43% |██████████████                  | 2.0MB 15.7MB/s eta 0:00:01[K    44% |██████████████                  | 2.1MB 16.2MB/s eta 0:00:01[K    44% |██████████████▏                 | 2.1MB 13.2MB/s eta 0:00:01[K    44% |██████████████▎                 | 2.1MB 13.2MB/s eta 0:00:01[K    44% |██████████████▎                 | 2.1MB 12.8MB/s eta 0:00:01[K    44% |██████████████▍                 | 2.1MB 12.5MB/s eta 0:00:01[K    45% |██████████████▌                 | 2.1MB 12.9MB/s eta 0:00:01[K    45% |██████████████▌                 | 2.1MB 11.1MB/s eta 0:00:01[K    45% |██████████████▋                 | 2.1MB 7.3MB/s eta 0:00:01[K    45% |██████████████▊                 | 2.1MB 7.2MB/s eta 0:00:01[K    46% |██████████████▊                 | 2.2MB 7.2MB/s eta 0:00:01[K    46% |██���███████████▉                 | 2.2MB 7.2MB/s eta 0:00:01[K    46% |██████████████▉                 | 2.2MB 7.9MB/s eta 0:00:01[K    46% |███████████████                 | 2.2MB 7.8MB/s eta 0:00:01[K    46% |███████████████                 | 2.2MB 8.0MB/s eta 0:00:01[K    47% |███████████████                 | 2.2MB 8.0MB/s eta 0:00:01[K    47% |███████████████▏                | 2.2MB 7.8MB/s eta 0:00:01[K    47% |███████████████▎                | 2.2MB 9.4MB/s eta 0:00:01[K    47% |███████████████▎                | 2.2MB 13.6MB/s eta 0:00:01[K    48% |███████████████▍                | 2.2MB 14.4MB/s eta 0:00:01[K    48% |███████████████▍                | 2.3MB 15.4MB/s eta 0:00:01[K    48% |███████████████▌                | 2.3MB 14.8MB/s eta 0:00:01[K    48% |███████████████▋                | 2.3MB 15.1MB/s eta 0:00:01[K    48% |███████████████▋                | 2.3MB 15.2MB/s eta 0:00:01[K    49% |███████████████▊                | 2.3MB 12.8MB/s eta 0:00:01[K    49% |███████████████▉                | 2.3MB 13.1MB/s eta 0:00:01[K    49% |███████████████▉                | 2.3MB 13.1MB/s eta 0:00:01[K    49% |████████████████                | 2.3MB 13.0MB/s eta 0:00:01[K    50% |████████████████                | 2.3MB 12.9MB/s eta 0:00:01[K    50% |████████████████                | 2.3MB 12.6MB/s eta 0:00:01[K    50% |████████████████▏               | 2.4MB 12.8MB/s eta 0:00:01[K    50% |████████████████▏               | 2.4MB 11.8MB/s eta 0:00:01[K    50% |████████████████▎               | 2.4MB 11.7MB/s eta 0:00:01[K    51% |████████████████▍               | 2.4MB 11.8MB/s eta 0:00:01[K    51% |████████████████▍               | 2.4MB 12.7MB/s eta 0:00:01[K    51% |████████████████▌               | 2.4MB 12.6MB/s eta 0:00:01[K    51% |████████████████▋               | 2.4MB 12.7MB/s eta 0:00:01[K    51% |████████████████▋               | 2.4MB 11.5MB/s eta 0:00:01[K    52% |████████████████▊               | 2.4MB 13.7MB/s eta 0:00:01[K    52% |████████████████▊               | 2.4MB 13.5MB/s eta 0:00:01[K    52% |████████████████▉               | 2.5MB 13.3MB/s eta 0:00:01[K    52% |█████████████████               | 2.5MB 14.5MB/s eta 0:00:01[K    53% |█████████████████               | 2.5MB 13.5MB/s eta 0:00:01[K    53% |█████████████████               | 2.5MB 10.9MB/s eta 0:00:01[K    53% |█████████████████▏              | 2.5MB 9.6MB/s eta 0:00:01[K    53% |█████████████████▏              | 2.5MB 7.2MB/s eta 0:00:01[K    53% |█████████████████▎              | 2.5MB 6.5MB/s eta 0:00:01[K    54% |█████████████████▍              | 2.5MB 6.5MB/s eta 0:00:01[K    54% |█████████████████▍              | 2.5MB 6.1MB/s eta 0:00:01[K    54% |█████████████████▌              | 2.5MB 6.0MB/s eta 0:00:01[K    54% |█████████████████▌              | 2.6MB 5.8MB/s eta 0:00:01[K    55% |█████████████████▋              | 2.6MB 5.7MB/s eta 0:00:01[K    55% |█████████████████▊              | 2.6MB 5.6MB/s eta 0:00:01[K    55% |█████████████████▊              | 2.6MB 6.0MB/s eta 0:00:01[K    55% |█████████████████▉              | 2.6MB 6.7MB/s eta 0:00:01[K    55% |██████████████████              | 2.6MB 8.3MB/s eta 0:00:01[K    56% |██████████████████              | 2.6MB 9.5MB/s eta 0:00:01[K    56% |██████████████████              | 2.6MB 10.1MB/s eta 0:00:01[K    56% |██████████████████              | 2.6MB 11.3MB/s eta 0:00:01[K    56% |██████████████████▏             | 2.7MB 11.4MB/s eta 0:00:01[K    57% |██████████████████▎             | 2.7MB 12.3MB/s eta 0:00:01[K    57% |██████████████████▎             | 2.7MB 12.4MB/s eta 0:00:01[K    57% |██████████████████▍             | 2.7MB 13.7MB/s eta 0:00:01[K    57% |██████████████████▌             | 2.7MB 13.3MB/s eta 0:00:01[K    57% |██████████████████▌             | 2.7MB 12.6MB/s eta 0:00:01[K    58% |██████████████████▋             | 2.7MB 13.6MB/s eta 0:00:01[K    58% |██████████████████▊             | 2.7MB 13.2MB/s eta 0:00:01[K    58% |██████████████████▊             | 2.7MB 12.8MB/s eta 0:00:01[K    58% |██████████████████▉             | 2.7MB 12.5MB/s eta 0:00:01[K    59% |██████████████████▉             | 2.8MB 12.5MB/s eta 0:00:01[K    59% |███████████████████             | 2.8MB 12.8MB/s eta 0:00:01[K    59% |███████████████████             | 2.8MB 13.2MB/s eta 0:00:01[K    59% |███████████████████             | 2.8MB 13.2MB/s eta 0:00:01[K    59% |███████████████████▏            | 2.8MB 14.5MB/s eta 0:00:01[K    60% |███████████████████▎            | 2.8MB 15.3MB/s eta 0:00:01[K    60% |███████████████████▎            | 2.8MB 15.7MB/s eta 0:00:01[K    60% |███████████████████▍            | 2.8MB 16.2MB/s eta 0:00:01[K    60% |███████████████████▍            | 2.8MB 16.0MB/s eta 0:00:01[K    60% |███████████████████▌            | 2.8MB 16.8MB/s eta 0:00:01[K    61% |███████████████████▋            | 2.9MB 17.3MB/s eta 0:00:01[K    61% |███████████████████▋            | 2.9MB 16.4MB/s eta 0:00:01[K    61% |███████████████████▊            | 2.9MB 17.5MB/s eta 0:00:01[K    61% |███████████████████▉            | 2.9MB 17.5MB/s eta 0:00:01[K    62% |███████████████████▉            | 2.9MB 17.6MB/s eta 0:00:01[K    62% |████████████████████            | 2.9MB 17.5MB/s eta 0:00:01[K    62% |████████████████████            | 2.9MB 16.6MB/s eta 0:00:01[K    62% |████████████████████            | 2.9MB 17.8MB/s eta 0:00:01[K    62% |████████████████████▏           | 2.9MB 18.5MB/s eta 0:00:01[K    63% |████████████████████▏           | 2.9MB 17.6MB/s eta 0:00:01[K    63% |████████████████████▎           | 3.0MB 18.2MB/s eta 0:00:01[K    63% |████████████████████▍           | 3.0MB 18.8MB/s eta 0:00:01[K    63% |████████████████████▍           | 3.0MB 18.8MB/s eta 0:00:01[K    64% |████████████████████▌           | 3.0MB 19.0MB/s eta 0:00:01[K    64% |████████████████████▋           | 3.0MB 18.2MB/s eta 0:00:01[K    64% |████████████████████▋           | 3.0MB 19.3MB/s eta 0:00:01[K    64% |████████████████████▊           | 3.0MB 17.0MB/s eta 0:00:01[K    64% |████████████████████▊           | 3.0MB 14.9MB/s eta 0:00:01[K    65% |████████████████████▉           | 3.0MB 15.1MB/s eta 0:00:01[K    65% |█████████████████████           | 3.1MB 15.2MB/s eta 0:00:01[K    65% |█████████████████████           | 3.1MB 15.1MB/s eta 0:00:01[K    65% |█████████████████████           | 3.1MB 14.8MB/s eta 0:00:01[K    66% |█████████████████████▏          | 3.1MB 11.8MB/s eta 0:00:01[K    66% |█████████████████████▏          | 3.1MB 12.2MB/s eta 0:00:01[K    66% |█████████████████████▎          | 3.1MB 11.8MB/s eta 0:00:01[K    66% |█████████████████████▍          | 3.1MB 9.9MB/s eta 0:00:01[K    66% |█████████████████████▍          | 3.1MB 11.0MB/s eta 0:00:01[K    67% |█████████████████████▌          | 3.1MB 11.6MB/s eta 0:00:01[K    67% |█████████████████████▌          | 3.1MB 11.8MB/s eta 0:00:01[K    67% |█████████████████████▋          | 3.2MB 10.3MB/s eta 0:00:01[K    67% |█████████████████████▊          | 3.2MB 8.7MB/s eta 0:00:01[K    67% |█████████████████████▊          | 3.2MB 8.9MB/s eta 0:00:01[K    68% |█████████████████████▉          | 3.2MB 8.2MB/s eta 0:00:01[K    68% |██████████████████████          | 3.2MB 6.9MB/s eta 0:00:01[K    68% |██████████████████████          | 3.2MB 7.0MB/s eta 0:00:01[K    68% |██████████████████████          | 3.2MB 7.8MB/s eta 0:00:01[K    69% |██████████████████████          | 3.2MB 7.8MB/s eta 0:00:01[K    69% |██████████████████████▏         | 3.2MB 7.8MB/s eta 0:00:01[K    69% |██████████████████████▎         | 3.2MB 6.5MB/s eta 0:00:01[K    69% |██████████████████████▎         | 3.3MB 7.2MB/s eta 0:00:01[K    69% |██████████████████████▍         | 3.3MB 8.0MB/s eta 0:00:01[K    70% |██████████████████████▌         | 3.3MB 6.5MB/s eta 0:00:01[K    70% |██████████████████████▌         | 3.3MB 7.8MB/s eta 0:00:01[K    70% |██████████████████████▋         | 3.3MB 8.9MB/s eta 0:00:01[K    70% |██████████████████████▊         | 3.3MB 8.9MB/s eta 0:00:01[K    71% |██████████████████████▊         | 3.3MB 8.5MB/s eta 0:00:01[K    71% |██████████████████████▉         | 3.3MB 8.1MB/s eta 0:00:01[K    71% |██████████████████████▉         | 3.3MB 8.2MB/s eta 0:00:01[K    71% |███████████████████████         | 3.3MB 9.0MB/s eta 0:00:01[K    71% |███████████████████████         | 3.4MB 7.8MB/s eta 0:00:01[K    72% |███████████████████████         | 3.4MB 8.0MB/s eta 0:00:01[K    72% |███████████████████████▏        | 3.4MB 9.0MB/s eta 0:00:01[K    72% |███████████████████████▎        | 3.4MB 9.2MB/s eta 0:00:01[K    72% |███████████████████████▎        | 3.4MB 9.5MB/s eta 0:00:01[K    73% |███████████████████████▍        | 3.4MB 8.2MB/s eta 0:00:01[K    73% |███████████████████████▍        | 3.4MB 8.7MB/s eta 0:00:01[K    73% |███████████████████████▌        | 3.4MB 9.0MB/s eta 0:00:01[K    73% |███████████████████████▋        | 3.4MB 7.1MB/s eta 0:00:01[K    73% |███████████████████████▋        | 3.5MB 7.7MB/s eta 0:00:01[K    74% |███████████████████████▊        | 3.5MB 8.8MB/s eta 0:00:01[K    74% |███████████████████████▉        | 3.5MB 8.5MB/s eta 0:00:01[K    74% |███████████████████████▉        | 3.5MB 8.3MB/s eta 0:00:01[K    74% |████████████████████████        | 3.5MB 8.0MB/s eta 0:00:01[K    75% |████████████████████████        | 3.5MB 8.2MB/s eta 0:00:01[K    75% |████████████████████████        | 3.5MB 9.4MB/s eta 0:00:01[K    75% |████████████████████████▏       | 3.5MB 7.9MB/s eta 0:00:01[K    75% |████████████████████████▏       | 3.5MB 8.1MB/s eta 0:00:01[K    75% |████████████████████████▎       | 3.5MB 8.7MB/s eta 0:00:01[K    76% |████████████████████████▍       | 3.6MB 8.4MB/s eta 0:00:01[K    76% |████████████████████████▍       | 3.6MB 7.9MB/s eta 0:00:01[K    76% |████████████████████████▌       | 3.6MB 6.7MB/s eta 0:00:01[K    76% |████████████████████████▋       | 3.6MB 6.6MB/s eta 0:00:01[K    76% |████████████████████████▋       | 3.6MB 6.5MB/s eta 0:00:01[K    77% |████████████████████████▊       | 3.6MB 6.3MB/s eta 0:00:01[K    77% |████████████████████████▊       | 3.6MB 6.4MB/s eta 0:00:01[K    77% |████████████████████████▉       | 3.6MB 7.1MB/s eta 0:00:01[K    77% |█████████████████████████       | 3.6MB 7.0MB/s eta 0:00:01[K    78% |█████████████████████████       | 3.6MB 7.8MB/s eta 0:00:01[K    78% |█████████���███████████████       | 3.7MB 7.5MB/s eta 0:00:01[K    78% |█████████████████████████▏      | 3.7MB 7.7MB/s eta 0:00:01[K    78% |█████████████████████████▏      | 3.7MB 9.6MB/s eta 0:00:01[K    78% |█████████████████████████▎      | 3.7MB 11.4MB/s eta 0:00:01[K    79% |█████████████████████████▍      | 3.7MB 12.3MB/s eta 0:00:01[K    79% |█████████████████████████▍      | 3.7MB 12.7MB/s eta 0:00:01[K    79% |█████████████████████████▌      | 3.7MB 12.9MB/s eta 0:00:01[K    79% |█████████████████████████▌      | 3.7MB 12.8MB/s eta 0:00:01[K    80% |█████████████████████████▋      | 3.7MB 11.9MB/s eta 0:00:01[K    80% |█████████████████████████▊      | 3.7MB 12.8MB/s eta 0:00:01[K    80% |█████████████████████████▊      | 3.8MB 14.9MB/s eta 0:00:01[K    80% |█████████████████████████▉      | 3.8MB 12.1MB/s eta 0:00:01[K    80% |██████████████████████████      | 3.8MB 12.0MB/s eta 0:00:01[K    81% |████████████████████���█████      | 3.8MB 11.9MB/s eta 0:00:01[K    81% |██████████████████████████      | 3.8MB 11.3MB/s eta 0:00:01[K    81% |██████████████████████████      | 3.8MB 11.1MB/s eta 0:00:01[K    81% |██████████████████████████▏     | 3.8MB 10.4MB/s eta 0:00:01[K    82% |██████████████████████████▎     | 3.8MB 10.7MB/s eta 0:00:01[K    82% |██████████████████████████▎     | 3.8MB 11.1MB/s eta 0:00:01[K    82% |██████████████████████████▍     | 3.9MB 9.7MB/s eta 0:00:01[K    82% |██████████████████████████▌     | 3.9MB 9.7MB/s eta 0:00:01[K    82% |██████████████████████████▌     | 3.9MB 11.1MB/s eta 0:00:01[K    83% |██████████████████████████▋     | 3.9MB 11.1MB/s eta 0:00:01[K    83% |██████████████████████████▊     | 3.9MB 9.7MB/s eta 0:00:01[K    83% |██████████████████████████▊     | 3.9MB 9.7MB/s eta 0:00:01[K    83% |██████████████████████████▉     | 3.9MB 10.2MB/s eta 0:00:01[K    84% |████████████████████████���█▉     | 3.9MB 10.7MB/s eta 0:00:01[K    84% |███████████████████████████     | 3.9MB 10.5MB/s eta 0:00:01[K    84% |███████████████████████████     | 3.9MB 11.1MB/s eta 0:00:01[K    84% |███████████████████████████     | 4.0MB 12.6MB/s eta 0:00:01[K    84% |███████████████████████████▏    | 4.0MB 13.1MB/s eta 0:00:01[K    85% |███████████████████████████▎    | 4.0MB 13.9MB/s eta 0:00:01[K    85% |███████████████████████████▎    | 4.0MB 14.1MB/s eta 0:00:01[K    85% |███████████████████████████▍    | 4.0MB 18.4MB/s eta 0:00:01[K    85% |███████████████████████████▍    | 4.0MB 19.2MB/s eta 0:00:01[K    85% |███████████████████████████▌    | 4.0MB 18.5MB/s eta 0:00:01[K    86% |███████████████████████████▋    | 4.0MB 19.2MB/s eta 0:00:01[K    86% |███████████████████████████▋    | 4.0MB 18.2MB/s eta 0:00:01[K    86% |███████████████████████████▊    | 4.0MB 18.3MB/s eta 0:00:01[K    86% |███████████████████���███████▉    | 4.1MB 17.5MB/s eta 0:00:01[K    87% |███████████████████████████▉    | 4.1MB 16.7MB/s eta 0:00:01[K    87% |████████████████████████████    | 4.1MB 17.6MB/s eta 0:00:01[K    87% |████████████████████████████    | 4.1MB 17.7MB/s eta 0:00:01[K    87% |████████████████████████████    | 4.1MB 16.5MB/s eta 0:00:01[K    87% |████████████████████████████▏   | 4.1MB 16.9MB/s eta 0:00:01[K    88% |████████████████████████████▏   | 4.1MB 17.1MB/s eta 0:00:01[K    88% |████████████████████████████▎   | 4.1MB 16.5MB/s eta 0:00:01[K    88% |████████████████████████████▍   | 4.1MB 17.7MB/s eta 0:00:01[K    88% |████████████████████████████▍   | 4.1MB 16.2MB/s eta 0:00:01[K    89% |████████████████████████████▌   | 4.2MB 17.5MB/s eta 0:00:01[K    89% |████████████████████████████▋   | 4.2MB 17.7MB/s eta 0:00:01[K    89% |████████████████████████████▋   | 4.2MB 15.3MB/s eta 0:00:01[K    89% |████████████████████████████▊   | 4.2MB 15.8MB/s eta 0:00:01[K    89% |████████████████████████████▊   | 4.2MB 16.2MB/s eta 0:00:01[K    90% |████████████████████████████▉   | 4.2MB 16.2MB/s eta 0:00:01[K    90% |█████████████████████████████   | 4.2MB 15.7MB/s eta 0:00:01[K    90% |█████████████████████████████   | 4.2MB 15.8MB/s eta 0:00:01[K    90% |█████████████████████████████   | 4.2MB 16.2MB/s eta 0:00:01[K    91% |█████████████████████████████▏  | 4.2MB 17.0MB/s eta 0:00:01[K    91% |█████████████████████████████▏  | 4.3MB 16.2MB/s eta 0:00:01[K    91% |█████████████████████████████▎  | 4.3MB 17.0MB/s eta 0:00:01[K    91% |█████████████████████████████▍  | 4.3MB 18.5MB/s eta 0:00:01[K    91% |█████████████████████████████▍  | 4.3MB 18.5MB/s eta 0:00:01[K    92% |█████████████████████████████▌  | 4.3MB 18.5MB/s eta 0:00:01[K    92% |█████████████████████████████▌  | 4.3MB 16.1MB/s eta 0:00:01[K    92% |█████████████████████████████▋  | 4.3MB 17.2MB/s eta 0:00:01[K    92% |█████████████████████████████▊  | 4.3MB 17.1MB/s eta 0:00:01[K    92% |█████████████████████████████▊  | 4.3MB 14.8MB/s eta 0:00:01[K    93% |█████████████████████████████▉  | 4.4MB 15.3MB/s eta 0:00:01[K    93% |██████████████████████████████  | 4.4MB 15.4MB/s eta 0:00:01[K    93% |██████████████████████████████  | 4.4MB 15.3MB/s eta 0:00:01[K    93% |██████████████████████████████  | 4.4MB 15.5MB/s eta 0:00:01[K    94% |██████████████████████████████  | 4.4MB 15.1MB/s eta 0:00:01[K    94% |██████████████████████████████▏ | 4.4MB 15.5MB/s eta 0:00:01[K    94% |██████████████████████████████▎ | 4.4MB 17.1MB/s eta 0:00:01[K    94% |██████████████████████████████▎ | 4.4MB 16.3MB/s eta 0:00:01[K    94% |██████████████████████████████▍ | 4.4MB 17.0MB/s eta 0:00:01[K    95% |██████████████████████████████▌ | 4.4MB 19.0MB/s eta 0:00:01[K    95% |██████████████████████████████▌ | 4.5MB 19.1MB/s eta 0:00:01[K    95% |██████████████████████████████▋ | 4.5MB 19.5MB/s eta 0:00:01[K    95% |██████████████████████████████▊ | 4.5MB 18.5MB/s eta 0:00:01[K    96% |██████████████████████████████▊ | 4.5MB 19.6MB/s eta 0:00:01[K    96% |██████████████████████████████▉ | 4.5MB 19.3MB/s eta 0:00:01[K    96% |██████████████████████████████▉ | 4.5MB 19.0MB/s eta 0:00:01[K    96% |███████████████████████████████ | 4.5MB 19.1MB/s eta 0:00:01[K    96% |███████████████████████████████ | 4.5MB 19.6MB/s eta 0:00:01[K    97% |███████████████████████████████ | 4.5MB 19.0MB/s eta 0:00:01[K    97% |███████████████████████████████▏| 4.5MB 19.5MB/s eta 0:00:01[K    97% |███████████████████████████████▎| 4.6MB 17.2MB/s eta 0:00:01[K    97% |██████████���████████████████████▎| 4.6MB 16.8MB/s eta 0:00:01[K    98% |███████████████████████████████▍| 4.6MB 15.7MB/s eta 0:00:01[K    98% |███████████████████████████████▍| 4.6MB 15.2MB/s eta 0:00:01[K    98% |███████████████████████████████▌| 4.6MB 15.3MB/s eta 0:00:01[K    98% |███████████████████████████████▋| 4.6MB 13.6MB/s eta 0:00:01[K    98% |███████████████████████████████▋| 4.6MB 13.2MB/s eta 0:00:01[K    99% |███████████████████████████████▊| 4.6MB 13.0MB/s eta 0:00:01[K    99% |███████████████████████████████▉| 4.6MB 12.7MB/s eta 0:00:01[K    99% |███████████████████████████████▉| 4.6MB 12.8MB/s eta 0:00:01[K    99% |████████████████████████████████| 4.7MB 11.7MB/s eta 0:00:01[K    100% |████████████████████████████████| 4.7MB 211kB/s 
+[?25hRequirement already up-to-date: virtualenv>=14.0.0 in /Library/Frameworks/Python.framework/Versions/3.5/lib/python3.5/site-packages (from nox-automation>=0.18.1)
+Collecting colorlog<3.0.0,>=2.6.1 (from nox-automation>=0.18.1)
+  Downloading colorlog-2.10.0-py2.py3-none-any.whl
+Collecting six<2.0.0,>=1.4.0 (from nox-automation>=0.18.1)
+  Downloading six-1.11.0-py2.py3-none-any.whl
+Collecting py<2.0.0,>=1.4.0 (from nox-automation>=0.18.1)
+  Downloading py-1.5.2-py2.py3-none-any.whl (88kB)
+[?25l[K    11% |███▊                            | 10kB 12.6MB/s eta 0:00:01[K    23% |███████▍                        | 20kB 8.6MB/s eta 0:00:01[K    34% |███████████▏                    | 30kB 9.2MB/s eta 0:00:01[K    46% |██████████████▉                 | 40kB 10.1MB/s eta 0:00:01[K    57% |██████████████████▌             | 51kB 10.7MB/s eta 0:00:01[K    69% |██████████████████████▎         | 61kB 11.9MB/s eta 0:00:01[K    81% |██████████████████████████      | 71kB 12.4MB/s eta 0:00:01[K    92% |█████████████████████████████▋  | 81kB 12.4MB/s eta 0:00:01[K    100% |████████████████████████████████| 92kB 5.7MB/s 
+[?25hInstalling collected packages: colorlog, six, py, nox-automation, numpy
+Successfully installed colorlog-2.10.0 nox-automation-0.18.2 numpy-1.14.0 py-1.5.2 six-1.11.0
+PY_BIN_DIR=/Library/Frameworks/Python.framework/Versions/3.5/bin
+``gfortran`` library directories:
+	/usr/local/Cellar/gcc/7.2.0/lib/gcc/7/gcc/x86_64-apple-darwin16.7.0/7.2.0
+	/usr/local/Cellar/gcc/7.2.0/lib/gcc/7
+Found x86_64 ``libgfortran``:
+	/usr/local/Cellar/gcc/7.2.0/lib/gcc/7/libgfortran.4.dylib
+Found directory with ``i386`` dynamic libraries:
+	/usr/local/Cellar/gcc/7.2.0/lib/gcc/7/i386
+Non-universal libraries found:
+	/usr/local/Cellar/gcc/7.2.0/lib/gcc/7/libquadmath.0.dylib
+	/usr/local/Cellar/gcc/7.2.0/lib/gcc/7/libgfortran.4.dylib
+Copied:
+	  /usr/local/Cellar/gcc/7.2.0/lib/gcc/7/i386/libgfortran.4.dylib
+	->/Users/travis/build/dhermes/bezier/scripts/osx/frankenstein/i386/libgfortran.4.dylib
+/Users/travis/build/dhermes/bezier/scripts/osx/frankenstein/i386/libgfortran.4.dylib:
+	``install_name``:
+		/Users/travis/build/dhermes/bezier/scripts/osx/frankenstein/libgfortran.4.dylib
+	Dependencies:
+		/Users/travis/build/dhermes/bezier/scripts/osx/frankenstein/libquadmath.0.dylib
+		/usr/lib/libSystem.B.dylib
+		/usr/local/lib/gcc/7/libgcc_s.1.dylib
+Copied:
+	  /usr/local/Cellar/gcc/7.2.0/lib/gcc/7/i386/libquadmath.0.dylib
+	->/Users/travis/build/dhermes/bezier/scripts/osx/frankenstein/i386/libquadmath.0.dylib
+/Users/travis/build/dhermes/bezier/scripts/osx/frankenstein/i386/libquadmath.0.dylib:
+	``install_name``:
+		/Users/travis/build/dhermes/bezier/scripts/osx/frankenstein/libquadmath.0.dylib
+	Dependencies:
+		/usr/lib/libSystem.B.dylib
+		/usr/local/lib/gcc/7/libgcc_s.1.dylib
+Copied:
+	  /usr/local/Cellar/gcc/7.2.0/lib/gcc/7/libgfortran.4.dylib
+	->/Users/travis/build/dhermes/bezier/scripts/osx/frankenstein/x86_64/libgfortran.4.dylib
+/Users/travis/build/dhermes/bezier/scripts/osx/frankenstein/x86_64/libgfortran.4.dylib:
+	``install_name``:
+		/Users/travis/build/dhermes/bezier/scripts/osx/frankenstein/libgfortran.4.dylib
+	Dependencies:
+		/Users/travis/build/dhermes/bezier/scripts/osx/frankenstein/libquadmath.0.dylib
+		/usr/lib/libSystem.B.dylib
+		/usr/local/lib/gcc/7/libgcc_s.1.dylib
+Copied:
+	  /usr/local/Cellar/gcc/7.2.0/lib/gcc/7/libquadmath.0.dylib
+	->/Users/travis/build/dhermes/bezier/scripts/osx/frankenstein/x86_64/libquadmath.0.dylib
+/Users/travis/build/dhermes/bezier/scripts/osx/frankenstein/x86_64/libquadmath.0.dylib:
+	``install_name``:
+		/Users/travis/build/dhermes/bezier/scripts/osx/frankenstein/libquadmath.0.dylib
+	Dependencies:
+		/usr/lib/libSystem.B.dylib
+		/usr/local/lib/gcc/7/libgcc_s.1.dylib
+Created universal dynamic library:
+	/Users/travis/build/dhermes/bezier/scripts/osx/frankenstein/libgfortran.4.dylib
+Created symbolic link:
+	libgfortran.dylib@ -> libgfortran.4.dylib
+Created universal dynamic library:
+	/Users/travis/build/dhermes/bezier/scripts/osx/frankenstein/libquadmath.0.dylib
+Created symbolic link:
+	libquadmath.dylib@ -> libquadmath.0.dylib
+
+travis_time:end:09468f4e:start=1515562152660772000,finish=1515562333002668000,duration=180341896000[0Ktravis_fold:end:install[0Ktravis_time:start:11caa629[0K$ scripts/osx/travis-test.sh
++[[ -z 3.5 ]]
++[[ -z /Library/Frameworks/Python.framework/Versions/3.5/bin ]]
++[[ 3.5 == \2\.\7 ]]
++[[ 3.5 == \3\.\5 ]]
++/Library/Frameworks/Python.framework/Versions/3.5/bin/nox -s 'unit(py='\''3.5'\'')'
+[36mnox > [33mRunning session unit(py='3.5')[0m
+[36mnox > [34m/Library/Frameworks/Python.framework/Versions/3.5/bin/python3.5 -m virtualenv /Users/travis/build/dhermes/bezier/.nox/unit-py-3-5 -p python3.5[0m
+[36mnox > [36mchdir /Users/travis/build/dhermes/bezier[0m
+[36mnox > [34mpip install --upgrade numpy >= 1.14.0 pytest scipy >= 1.0.0[0m
+[36mnox > [34mpip install --upgrade .[0m
+[36mnox > [34mpy.test /Users/travis/build/dhermes/bezier/tests/unit[0m
+[1m============================= test session starts ==============================[0m
+platform darwin -- Python 3.5.4, pytest-3.3.2, py-1.5.2, pluggy-0.6.0
+rootdir: /Users/travis/build/dhermes/bezier, inifile: setup.cfg
+[1mcollecting 0 items                                                             [0m[1mcollecting 5 items                                                             [0m[1mcollecting 7 items                                                             [0m[1mcollecting 7 items                                                             [0m[1mcollecting 8 items                                                             [0m[1mcollecting 9 items                                                             [0m[1mcollecting 10 items                                                            [0m[1mcollecting 11 items                                                            [0m[1mcollecting 13 items                                                            [0m[1mcollecting 13 items                                                            [0m[1mcollecting 14 items                                                            [0m[1mcollecting 19 items                                                            [0m[1mcollecting 21 items                                                            [0m[1mcollecting 22 items                                                            [0m[1mcollecting 23 items                                                            [0m[1mcollecting 24 items                                                            [0m[1mcollecting 26 items                                                            [0m[1mcollecting 27 items                                                            [0m[1mcollecting 28 items                                                            [0m[1mcollecting 29 items                                                            [0m[1mcollecting 38 items                                                            [0m[1mcollecting 39 items                                                            [0m[1mcollecting 40 items                                                            [0m[1mcollecting 42 items                                                            [0m[1mcollecting 46 items                                                            [0m[1mcollecting 49 items                                                            [0m[1mcollecting 54 items                                                            [0m[1mcollecting 57 items                                                            [0m[1mcollecting 65 items                                                            [0m[1mcollecting 67 items                                                            [0m[1mcollecting 80 items                                                            [0m[1mcollecting 84 items                                                            [0m[1mcollecting 88 items                                                            [0m[1mcollecting 101 items                                                           [0m[1mcollecting 106 items                                                           [0m[1mcollecting 111 items                                                           [0m[1mcollecting 113 items                                                           [0m[1mcollecting 113 items                                                           [0m[1mcollecting 120 items                                                           [0m[1mcollecting 120 items                                                           [0m[1mcollecting 124 items                                                           [0m[1mcollecting 131 items                                                           [0m[1mcollecting 138 items                                                           [0m[1mcollecting 139 items                                                           [0m[1mcollecting 140 items                                                           [0m[1mcollecting 142 items                                                           [0m[1mcollecting 144 items                                                           [0m[1mcollecting 146 items                                                           [0m[1mcollecting 150 items                                                           [0m[1mcollecting 154 items                                                           [0m[1mcollecting 156 items                                                           [0m[1mcollecting 158 items                                                           [0m[1mcollecting 159 items                                                           [0m[1mcollecting 163 items                                                           [0m[1mcollecting 167 items                                                           [0m[1mcollecting 170 items                                                           [0m[1mcollecting 173 items                                                           [0m[1mcollecting 176 items                                                           [0m[1mcollecting 179 items                                                           [0m[1mcollecting 180 items                                                           [0m[1mcollecting 181 items                                                           [0m[1mcollecting 184 items                                                           [0m[1mcollecting 187 items                                                           [0m[1mcollecting 196 items                                                           [0m[1mcollecting 205 items                                                           [0m[1mcollecting 207 items                                                           [0m[1mcollecting 213 items                                                           [0m[1mcollecting 218 items                                                           [0m[1mcollecting 223 items                                                           [0m[1mcollecting 223 items                                                           [0m[1mcollecting 228 items                                                           [0m[1mcollecting 233 items                                                           [0m[1mcollecting 242 items                                                           [0m[1mcollecting 244 items                                                           [0m[1mcollecting 249 items                                                           [0m[1mcollecting 251 items                                                           [0m[1mcollecting 261 items                                                           [0m[1mcollecting 264 items                                                           [0m[1mcollecting 267 items                                                           [0m[1mcollecting 270 items                                                           [0m[1mcollecting 276 items                                                           [0m[1mcollecting 283 items                                                           [0m[1mcollecting 289 items                                                           [0m[1mcollecting 297 items                                                           [0m[1mcollecting 301 items                                                           [0m[1mcollecting 310 items                                                           [0m[1mcollecting 312 items                                                           [0m[1mcollecting 313 items                                                           [0m[1mcollecting 313 items                                                           [0m[1mcollecting 319 items                                                           [0m[1mcollecting 325 items                                                           [0m[1mcollecting 329 items                                                           [0m[1mcollecting 333 items                                                           [0m[1mcollecting 335 items                                                           [0m[1mcollecting 337 items                                                           [0m[1mcollecting 341 items                                                           [0m[1mcollecting 345 items                                                           [0m[1mcollecting 346 items                                                           [0m[1mcollecting 347 items                                                           [0m[1mcollecting 353 items                                                           [0m[1mcollecting 359 items                                                           [0m[1mcollecting 360 items                                                           [0m[1mcollecting 370 items                                                           [0m[1mcollecting 380 items                                                           [0m[1mcollecting 380 items                                                           [0m[1mcollecting 385 items                                                           [0m[1mcollecting 390 items                                                           [0m[1mcollecting 393 items                                                           [0m[1mcollecting 393 items                                                           [0m[1mcollecting 394 items                                                           [0m[1mcollecting 396 items                                                           [0m[1mcollecting 397 items                                                           [0m[1mcollecting 397 items                                                           [0m[1mcollecting 404 items                                                           [0m[1mcollecting 406 items                                                           [0m[1mcollecting 408 items                                                           [0m[1mcollecting 409 items                                                           [0m[1mcollecting 412 items                                                           [0m[1mcollecting 415 items                                                           [0m[1mcollecting 417 items                                                           [0m[1mcollecting 418 items                                                           [0m[1mcollecting 422 items                                                           [0m[1mcollecting 426 items                                                           [0m[1mcollecting 434 items                                                           [0m[1mcollecting 442 items                                                           [0m[1mcollecting 446 items                                                           [0m[1mcollecting 450 items                                                           [0m[1mcollecting 453 items                                                           [0m[1mcollecting 456 items                                                           [0m[1mcollecting 458 items                                                           [0m[1mcollecting 460 items                                                           [0m[1mcollecting 465 items                                                           [0m[1mcollecting 473 items                                                           [0m[1mcollecting 476 items                                                           [0m[1mcollecting 480 items                                                           [0m[1mcollecting 484 items                                                           [0m[1mcollecting 488 items                                                           [0m[1mcollecting 495 items                                                           [0m[1mcollecting 497 items                                                           [0m[1mcollecting 499 items                                                           [0m[1mcollecting 502 items                                                           [0m[1mcollecting 507 items                                                           [0m[1mcollecting 510 items                                                           [0m[1mcollecting 516 items                                                           [0m[1mcollecting 522 items                                                           [0m[1mcollecting 525 items                                                           [0m[1mcollecting 530 items                                                           [0m[1mcollecting 535 items                                                           [0m[1mcollecting 537 items                                                           [0m[1mcollecting 539 items                                                           [0m[1mcollecting 541 items                                                           [0m[1mcollecting 543 items                                                           [0m[1mcollecting 546 items                                                           [0m[1mcollecting 549 items                                                           [0m[1mcollecting 549 items                                                           [0m[1mcollecting 550 items                                                           [0m[1mcollecting 552 items                                                           [0m[1mcollecting 554 items                                                           [0m[1mcollecting 556 items                                                           [0m[1mcollecting 557 items                                                           [0m[1mcollecting 560 items                                                           [0m[1mcollecting 563 items                                                           [0m[1mcollecting 567 items                                                           [0m[1mcollecting 575 items                                                           [0m[1mcollecting 576 items                                                           [0m[1mcollecting 577 items                                                           [0m[1mcollecting 586 items                                                           [0m[1mcollecting 595 items                                                           [0m[1mcollecting 607 items                                                           [0m[1mcollecting 608 items                                                           [0m[1mcollecting 608 items                                                           [0m[1mcollecting 635 items                                                           [0m[1mcollecting 635 items                                                           [0m[1mcollecting 646 items                                                           [0m[1mcollecting 646 items                                                           [0m[1mcollecting 703 items                                                           [0m[1mcollecting 704 items                                                           [0m[1mcollecting 704 items                                                           [0m[1mcollected 704 items                                                            [0m
+
+tests/unit/test___config__.py .......[36m                                    [  0%][0m
+tests/unit/test___init__.py ......[36m                                       [  1%][0m
+tests/unit/test__algebraic_intersection.py .............................[36m [  5%]
+[0m.......................................................................[36m  [ 16%][0m
+tests/unit/test__base.py .......[36m                                         [ 17%][0m
+tests/unit/test__curve_helpers.py ......................................[36m [ 22%]
+[0m.................................................................[36m        [ 31%][0m
+tests/unit/test__geometric_intersection.py .............................[36m [ 35%]
+[0m...........................................................x.[36m            [ 44%][0m
+tests/unit/test__helpers.py ............................................[36m [ 50%]
+[0m.......................[36m                                                  [ 53%][0m
+tests/unit/test__intersection_helpers.py .............[36m                   [ 55%][0m
+tests/unit/test__plot_helpers.py ....[36m                                    [ 56%][0m
+tests/unit/test__surface_helpers.py ....................................[36m [ 61%]
+[0m........................................................................[36m [ 71%]
+[0m............................................[36m                             [ 77%][0m
+tests/unit/test__surface_intersection.py ...............................[36m [ 82%]
+[0m............................[36m                                             [ 86%][0m
+tests/unit/test_curve.py ...........................[36m                     [ 90%][0m
+tests/unit/test_curved_polygon.py ...........[36m                            [ 91%][0m
+tests/unit/test_surface.py .............................................[36m [ 98%]
+[0m.............[36m                                                            [100%][0m
+
+[32m[1m==================== 703 passed, 1 xfailed in 3.31 seconds =====================[0m
+[36mnox > [32mSession unit(py='3.5') was successful.[0m
++arch -32 .nox/unit-py-3-5/bin/python -m pytest tests/unit/
+[1m============================= test session starts ==============================[0m
+platform darwin -- Python 3.5.4, pytest-3.3.2, py-1.5.2, pluggy-0.6.0
+rootdir: /Users/travis/build/dhermes/bezier, inifile: setup.cfg
+[1mcollecting 0 items                                                             [0m[1mcollecting 5 items                                                             [0m[1mcollecting 7 items                                                             [0m[1mcollecting 7 items                                                             [0m[1mcollecting 8 items                                                             [0m[1mcollecting 9 items                                                             [0m[1mcollecting 10 items                                                            [0m[1mcollecting 11 items                                                            [0m[1mcollecting 13 items                                                            [0m[1mcollecting 13 items                                                            [0m[1mcollecting 14 items                                                            [0m[1mcollecting 19 items                                                            [0m[1mcollecting 21 items                                                            [0m[1mcollecting 22 items                                                            [0m[1mcollecting 23 items                                                            [0m[1mcollecting 24 items                                                            [0m[1mcollecting 26 items                                                            [0m[1mcollecting 27 items                                                            [0m[1mcollecting 28 items                                                            [0m[1mcollecting 29 items                                                            [0m[1mcollecting 38 items                                                            [0m[1mcollecting 39 items                                                            [0m[1mcollecting 40 items                                                            [0m[1mcollecting 42 items                                                            [0m[1mcollecting 46 items                                                            [0m[1mcollecting 49 items                                                            [0m[1mcollecting 54 items                                                            [0m[1mcollecting 57 items                                                            [0m[1mcollecting 65 items                                                            [0m[1mcollecting 67 items                                                            [0m[1mcollecting 80 items                                                            [0m[1mcollecting 84 items                                                            [0m[1mcollecting 88 items                                                            [0m[1mcollecting 101 items                                                           [0m[1mcollecting 106 items                                                           [0m[1mcollecting 111 items                                                           [0m[1mcollecting 113 items                                                           [0m[1mcollecting 113 items                                                           [0m[1mcollecting 120 items                                                           [0m[1mcollecting 120 items                                                           [0m[1mcollecting 124 items                                                           [0m[1mcollecting 131 items                                                           [0m[1mcollecting 138 items                                                           [0m[1mcollecting 139 items                                                           [0m[1mcollecting 140 items                                                           [0m[1mcollecting 142 items                                                           [0m[1mcollecting 144 items                                                           [0m[1mcollecting 146 items                                                           [0m[1mcollecting 150 items                                                           [0m[1mcollecting 154 items                                                           [0m[1mcollecting 156 items                                                           [0m[1mcollecting 158 items                                                           [0m[1mcollecting 159 items                                                           [0m[1mcollecting 163 items                                                           [0m[1mcollecting 167 items                                                           [0m[1mcollecting 170 items                                                           [0m[1mcollecting 173 items                                                           [0m[1mcollecting 176 items                                                           [0m[1mcollecting 179 items                                                           [0m[1mcollecting 180 items                                                           [0m[1mcollecting 181 items                                                           [0m[1mcollecting 184 items                                                           [0m[1mcollecting 187 items                                                           [0m[1mcollecting 196 items                                                           [0m[1mcollecting 205 items                                                           [0m[1mcollecting 207 items                                                           [0m[1mcollecting 213 items                                                           [0m[1mcollecting 218 items                                                           [0m[1mcollecting 223 items                                                           [0m[1mcollecting 223 items                                                           [0m[1mcollecting 228 items                                                           [0m[1mcollecting 233 items                                                           [0m[1mcollecting 242 items                                                           [0m[1mcollecting 244 items                                                           [0m[1mcollecting 249 items                                                           [0m[1mcollecting 251 items                                                           [0m[1mcollecting 261 items                                                           [0m[1mcollecting 264 items                                                           [0m[1mcollecting 267 items                                                           [0m[1mcollecting 270 items                                                           [0m[1mcollecting 276 items                                                           [0m[1mcollecting 283 items                                                           [0m[1mcollecting 289 items                                                           [0m[1mcollecting 297 items                                                           [0m[1mcollecting 301 items                                                           [0m[1mcollecting 310 items                                                           [0m[1mcollecting 312 items                                                           [0m[1mcollecting 313 items                                                           [0m[1mcollecting 313 items                                                           [0m[1mcollecting 319 items                                                           [0m[1mcollecting 325 items                                                           [0m[1mcollecting 329 items                                                           [0m[1mcollecting 333 items                                                           [0m[1mcollecting 335 items                                                           [0m[1mcollecting 337 items                                                           [0m[1mcollecting 341 items                                                           [0m[1mcollecting 345 items                                                           [0m[1mcollecting 346 items                                                           [0m[1mcollecting 347 items                                                           [0m[1mcollecting 353 items                                                           [0m[1mcollecting 359 items                                                           [0m[1mcollecting 360 items                                                           [0m[1mcollecting 370 items                                                           [0m[1mcollecting 380 items                                                           [0m[1mcollecting 380 items                                                           [0m[1mcollecting 385 items                                                           [0m[1mcollecting 390 items                                                           [0m[1mcollecting 393 items                                                           [0m[1mcollecting 393 items                                                           [0m[1mcollecting 394 items                                                           [0m[1mcollecting 396 items                                                           [0m[1mcollecting 397 items                                                           [0m[1mcollecting 397 items                                                           [0m[1mcollecting 404 items                                                           [0m[1mcollecting 406 items                                                           [0m[1mcollecting 408 items                                                           [0m[1mcollecting 409 items                                                           [0m[1mcollecting 412 items                                                           [0m[1mcollecting 415 items                                                           [0m[1mcollecting 417 items                                                           [0m[1mcollecting 418 items                                                           [0m[1mcollecting 422 items                                                           [0m[1mcollecting 426 items                                                           [0m[1mcollecting 434 items                                                           [0m[1mcollecting 442 items                                                           [0m[1mcollecting 446 items                                                           [0m[1mcollecting 450 items                                                           [0m[1mcollecting 453 items                                                           [0m[1mcollecting 456 items                                                           [0m[1mcollecting 458 items                                                           [0m[1mcollecting 460 items                                                           [0m[1mcollecting 465 items                                                           [0m[1mcollecting 473 items                                                           [0m[1mcollecting 476 items                                                           [0m[1mcollecting 480 items                                                           [0m[1mcollecting 484 items                                                           [0m[1mcollecting 488 items                                                           [0m[1mcollecting 495 items                                                           [0m[1mcollecting 497 items                                                           [0m[1mcollecting 499 items                                                           [0m[1mcollecting 502 items                                                           [0m[1mcollecting 507 items                                                           [0m[1mcollecting 510 items                                                           [0m[1mcollecting 516 items                                                           [0m[1mcollecting 522 items                                                           [0m[1mcollecting 525 items                                                           [0m[1mcollecting 530 items                                                           [0m[1mcollecting 535 items                                                           [0m[1mcollecting 537 items                                                           [0m[1mcollecting 539 items                                                           [0m[1mcollecting 541 items                                                           [0m[1mcollecting 543 items                                                           [0m[1mcollecting 546 items                                                           [0m[1mcollecting 549 items                                                           [0m[1mcollecting 549 items                                                           [0m[1mcollecting 550 items                                                           [0m[1mcollecting 552 items                                                           [0m[1mcollecting 554 items                                                           [0m[1mcollecting 556 items                                                           [0m[1mcollecting 557 items                                                           [0m[1mcollecting 560 items                                                           [0m[1mcollecting 563 items                                                           [0m[1mcollecting 567 items                                                           [0m[1mcollecting 575 items                                                           [0m[1mcollecting 576 items                                                           [0m[1mcollecting 577 items                                                           [0m[1mcollecting 586 items                                                           [0m[1mcollecting 595 items                                                           [0m[1mcollecting 607 items                                                           [0m[1mcollecting 608 items                                                           [0m[1mcollecting 608 items                                                           [0m[1mcollecting 635 items                                                           [0m[1mcollecting 635 items                                                           [0m[1mcollecting 646 items                                                           [0m[1mcollecting 646 items                                                           [0m[1mcollecting 703 items                                                           [0m[1mcollecting 704 items                                                           [0m[1mcollecting 704 items                                                           [0m[1mcollected 704 items                                                            [0m
+
+tests/unit/test___config__.py .......[36m                                    [  0%][0m
+tests/unit/test___init__.py ......[36m                                       [  1%][0m
+tests/unit/test__algebraic_intersection.py .............................[36m [  5%]
+[0m...........................................ss....ssssssssss............[36m  [ 16%][0m
+tests/unit/test__base.py .......[36m                                         [ 17%][0m
+tests/unit/test__curve_helpers.py ..........................s.s.........[36m [ 22%]
+[0m.................................................................[36m        [ 31%][0m
+tests/unit/test__geometric_intersection.py .............................[36m [ 35%]
+[0m...........................................................x.[36m            [ 44%][0m
+tests/unit/test__helpers.py ............................................[36m [ 50%]
+[0m.......................[36m                                                  [ 53%][0m
+tests/unit/test__intersection_helpers.py .............[36m                   [ 55%][0m
+tests/unit/test__plot_helpers.py ....[36m                                    [ 56%][0m
+tests/unit/test__surface_helpers.py ....................................[36m [ 61%]
+[0m........................................................................[36m [ 71%]
+[0m............................................[36m                             [ 77%][0m
+tests/unit/test__surface_intersection.py ...............................[36m [ 82%]
+[0m............................[36m                                             [ 86%][0m
+tests/unit/test_curve.py ...........................[36m                     [ 90%][0m
+tests/unit/test_curved_polygon.py ...........[36m                            [ 91%][0m
+tests/unit/test_surface.py .............................................[36m [ 98%]
+[0m.............[36m                                                            [100%][0m
+
+[32m[1m============== 689 passed, 14 skipped, 1 xfailed in 3.26 seconds ===============[0m
+
+travis_time:end:11caa629:start=1515562333017038000,finish=1515562459370061000,duration=126353023000[0K
+[32;1mThe command "scripts/osx/travis-test.sh" exited with 0.[0m
+
+Done. Your build exited with 0.
