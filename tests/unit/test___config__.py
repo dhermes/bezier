@@ -68,6 +68,19 @@ class Test_modify_path(unittest.TestCase):
         "files",
         side_effect=importlib_metadata.PackageNotFoundError,
     )
+    def test_windows_without_package(self, metadata_files):
+        return_value = self._call_function_under_test()
+        self.assertIsNone(return_value)
+        self.assertEqual(os.environ, {})
+        # Check mock.
+        metadata_files.assert_called_once_with("bezier")
+
+    @unittest.mock.patch.multiple(os, name="nt", environ={})
+    @unittest.mock.patch.object(
+        importlib_metadata,
+        "files",
+        return_value=(),
+    )
     def test_windows_without_dll(self, metadata_files):
         return_value = self._call_function_under_test()
         self.assertIsNone(return_value)
