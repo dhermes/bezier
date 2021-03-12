@@ -6,6 +6,17 @@ Latest Release (``2021.2.13.dev1``)
 Python Changes
 --------------
 
+Bug Fixes
+~~~~~~~~~
+
+-  Allow the ``extra-dll`` directory to be absent on Windows. For binary wheel
+   installs, this directory contains the ``libbezier`` DLL (e.g.
+   ``extra-dll\bezier-2a44d276.dll`` was in the most recent release for 64-bit
+   Python 3.9). For pure Python installs, the ``extra-dll`` directory will
+   be absent.
+   (`#255 <https://github.com/dhermes/bezier/pull/255>`__). Fixed
+   `#254 <https://github.com/dhermes/bezier/issues/254>`__.
+
 Breaking Changes
 ~~~~~~~~~~~~~~~~
 

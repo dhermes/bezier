@@ -32,11 +32,8 @@ class Test__get_extra_dll_dir(unittest.TestCase):
         return __config__._get_extra_dll_dir(bezier_files)
 
     def test_no_matches(self):
-        with self.assertRaises(ImportError) as exc_info:
-            self._call_function_under_test(())
-
-        expected = ("No DLL directory found", ())
-        self.assertEqual(exc_info.exception.args, expected)
+        extra_dll_dir = self._call_function_under_test(())
+        self.assertIsNone(extra_dll_dir)
 
     def test_multiple_choices_with_match(self):
         mock_path1 = importlib_metadata.PackagePath("bezier", "__config__.py")
@@ -70,6 +67,19 @@ class Test_modify_path(unittest.TestCase):
         importlib_metadata,
         "files",
         side_effect=importlib_metadata.PackageNotFoundError,
+    )
+    def test_windows_without_package(self, metadata_files):
+        return_value = self._call_function_under_test()
+        self.assertIsNone(return_value)
+        self.assertEqual(os.environ, {})
+        # Check mock.
+        metadata_files.assert_called_once_with("bezier")
+
+    @unittest.mock.patch.multiple(os, name="nt", environ={})
+    @unittest.mock.patch.object(
+        importlib_metadata,
+        "files",
+        return_value=(),
     )
     def test_windows_without_dll(self, metadata_files):
         return_value = self._call_function_under_test()

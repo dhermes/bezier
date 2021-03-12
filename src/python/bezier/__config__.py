@@ -69,10 +69,8 @@ def _get_extra_dll_dir(bezier_files):
             paths.
 
     Returns:
-        str: The path of the matching ``extra-dll`` directory.
-
-    Raises:
-        ImportError: If no match can be found.
+        Optional[str]: The path of the matching ``extra-dll`` directory, or
+        :data:`None` if no match can be found.
     """
     for path in bezier_files:
         if not _is_extra_dll(path):
@@ -81,7 +79,7 @@ def _get_extra_dll_dir(bezier_files):
         absolute_path = path.locate()
         return str(absolute_path.parent)
 
-    raise ImportError("No DLL directory found", bezier_files)
+    return None
 
 
 def modify_path():
@@ -107,6 +105,8 @@ def modify_path():
         return
 
     extra_dll_dir = _get_extra_dll_dir(bezier_files)
+    if extra_dll_dir is None:
+        return
     add_dll_directory(extra_dll_dir)
 
 
