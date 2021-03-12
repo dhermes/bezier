@@ -32,11 +32,8 @@ class Test__get_extra_dll_dir(unittest.TestCase):
         return __config__._get_extra_dll_dir(bezier_files)
 
     def test_no_matches(self):
-        with self.assertRaises(ImportError) as exc_info:
-            self._call_function_under_test(())
-
-        expected = ("No DLL directory found", ())
-        self.assertEqual(exc_info.exception.args, expected)
+        extra_dll_dir = self._call_function_under_test(())
+        self.assertIsNone(extra_dll_dir)
 
     def test_multiple_choices_with_match(self):
         mock_path1 = importlib_metadata.PackagePath("bezier", "__config__.py")
