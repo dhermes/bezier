@@ -1,0 +1,237 @@
+[00:00:00] Build started
+[00:00:00] git clone -q --branch=master https://github.com/dhermes/bezier.git C:\projects\bezier
+[00:00:03] git checkout -qf 9d2cc51a18bd2ec8e3a17d576e907e306310d0be
+[00:00:07] Restoring build cache
+[00:00:07] 
+[00:00:08] Cache 'C:\Users\appveyor\AppData\Local\pip\Cache' - Downloading (65,071,920 bytes)...1%
+[00:00:08] Cache 'C:\Users\appveyor\AppData\Local\pip\Cache' - Downloading (65,071,920 bytes)...10%
+[00:00:08] Cache 'C:\Users\appveyor\AppData\Local\pip\Cache' - Downloading (65,071,920 bytes)...20%
+[00:00:08] Cache 'C:\Users\appveyor\AppData\Local\pip\Cache' - Downloading (65,071,920 bytes)...30%
+[00:00:08] Cache 'C:\Users\appveyor\AppData\Local\pip\Cache' - Downloading (65,071,920 bytes)...40%
+[00:00:08] Cache 'C:\Users\appveyor\AppData\Local\pip\Cache' - Downloading (65,071,920 bytes)...50%
+[00:00:08] Cache 'C:\Users\appveyor\AppData\Local\pip\Cache' - Downloading (65,071,920 bytes)...60%
+[00:00:08] Cache 'C:\Users\appveyor\AppData\Local\pip\Cache' - Downloading (65,071,920 bytes)...70%
+[00:00:08] Cache 'C:\Users\appveyor\AppData\Local\pip\Cache' - Downloading (65,071,920 bytes)...80%
+[00:00:08] Cache 'C:\Users\appveyor\AppData\Local\pip\Cache' - Downloading (65,071,920 bytes)...90%
+[00:00:08] Cache 'C:\Users\appveyor\AppData\Local\pip\Cache' - Downloading (65,071,920 bytes)...100%
+[00:00:09] Cache 'C:\Users\appveyor\AppData\Local\pip\Cache' - Unzipping...
+[00:00:09] Cache 'C:\Users\appveyor\AppData\Local\pip\Cache' - Restored
+[00:00:09] Running Install scripts
+[00:00:09] echo "Filesystem root:"
+[00:00:09] "Filesystem root:"
+[00:00:09] dir C:\
+[00:00:09]  Volume in drive C is Windows
+[00:00:09]  Volume Serial Number is D4AB-4044
+[00:00:09] 
+[00:00:09]  Directory of C:\
+[00:00:09] 
+[00:00:09] 04/20/2016  03:18 AM    <DIR>          avvm
+[00:00:09] 11/03/2019  02:13 AM    <DIR>          cygwin
+[00:00:09] 11/03/2019  02:15 AM    <DIR>          cygwin64
+[00:00:09] 11/03/2019  03:11 AM    <JUNCTION>     go [C:\go113]
+[00:00:09] 11/03/2019  03:11 AM    <JUNCTION>     go-x86 [C:\go113-x86]
+[00:00:09] 01/23/2019  07:57 PM    <DIR>          go110
+[00:00:09] 01/23/2019  07:57 PM    <DIR>          go110-x86
+[00:00:09] 08/13/2019  04:52 PM    <DIR>          go111
+[00:00:09] 08/13/2019  04:52 PM    <DIR>          go111-x86
+[00:00:09] 10/17/2019  09:55 PM    <DIR>          go112
+[00:00:09] 10/17/2019  09:55 PM    <DIR>          go112-x86
+[00:00:09] 10/17/2019  10:02 PM    <DIR>          go113
+[00:00:09] 10/17/2019  10:04 PM    <DIR>          go113-x86
+[00:00:09] 09/23/2015  04:44 AM    <DIR>          go14
+[00:00:09] 09/23/2015  04:44 AM    <DIR>          go14-x86
+[00:00:09] 04/12/2016  12:28 AM    <DIR>          go15
+[00:00:09] 04/12/2016  12:27 AM    <DIR>          go15-x86
+[00:00:09] 12/01/2016  09:24 PM    <DIR>          go16
+[00:00:09] 12/01/2016  09:24 PM    <DIR>          go16-x86
+[00:00:09] 05/23/2017  06:44 PM    <DIR>          go17
+[00:00:09] 05/23/2017  06:44 PM    <DIR>          go17-x86
+[00:00:09] 02/07/2018  05:41 PM    <DIR>          go18
+[00:00:09] 02/07/2018  05:42 PM    <DIR>          go18-x86
+[00:00:09] 06/06/2018  07:50 PM    <DIR>          go19
+[00:00:09] 06/06/2018  07:50 PM    <DIR>          go19-x86
+[00:00:09] 03/09/2016  04:25 AM    <DIR>          inetpub
+[00:00:09] 07/21/2015  07:31 PM    <DIR>          jruby-9.0.0.0
+[00:00:09] 02/03/2019  07:46 PM    <DIR>          Libraries
+[00:00:09] 02/19/2017  07:06 PM    <DIR>          MinGW
+[00:00:09] 01/19/2018  02:40 AM    <DIR>          mingw-w64
+[00:00:09] 11/03/2019  02:55 AM    <DIR>          Miniconda
+[00:00:09] 11/03/2019  02:55 AM    <DIR>          Miniconda-x64
+[00:00:09] 11/03/2019  02:57 AM    <JUNCTION>     Miniconda3 [C:\Miniconda37]
+[00:00:09] 11/03/2019  02:57 AM    <JUNCTION>     Miniconda3-x64 [C:\Miniconda37-x64]
+[00:00:09] 11/03/2019  02:57 AM    <DIR>          Miniconda34
+[00:00:09] 11/03/2019  02:57 AM    <DIR>          Miniconda34-x64
+[00:00:09] 11/03/2019  02:56 AM    <DIR>          Miniconda35
+[00:00:09] 11/03/2019  02:56 AM    <DIR>          Miniconda35-x64
+[00:00:09] 11/03/2019  02:57 AM    <DIR>          Miniconda36
+[00:00:09] 11/03/2019  02:56 AM    <DIR>          Miniconda36-x64
+[00:00:09] 11/03/2019  02:57 AM    <DIR>          Miniconda37
+[00:00:09] 11/03/2019  02:57 AM    <DIR>          Miniconda37-x64
+[00:00:09] 08/31/2018  08:12 PM    <DIR>          MongoDB
+[00:00:09] 07/25/2019  07:29 PM    <DIR>          msys64
+[00:00:09] 11/03/2019  03:01 AM    <DIR>          OpenSSL-v11-Win32
+[00:00:09] 11/03/2019  03:02 AM    <DIR>          OpenSSL-v11-Win64
+[00:00:09] 11/03/2019  03:02 AM    <DIR>          OpenSSL-v111-Win32
+[00:00:09] 11/03/2019  03:02 AM    <DIR>          OpenSSL-v111-Win64
+[00:00:09] 11/03/2019  03:02 AM    <DIR>          OpenSSL-Win32
+[00:00:09] 11/03/2019  03:03 AM    <DIR>          OpenSSL-Win64
+[00:00:09] 08/22/2013  03:52 PM    <DIR>          PerfLogs
+[00:00:09] 04/20/2016  03:06 AM    <DIR>          Perl
+[00:00:09] 11/03/2019  03:33 AM    <DIR>          Program Files
+[00:00:09] 11/03/2019  05:09 PM    <DIR>          Program Files (x86)
+[00:00:09] 01/11/2020  10:28 PM    <DIR>          projects
+[00:00:09] 04/20/2016  02:59 AM    <DIR>          Python26
+[00:00:09] 04/20/2016  02:59 AM    <DIR>          Python26-x64
+[00:00:09] 11/03/2019  02:40 AM    <DIR>          Python27
+[00:00:09] 11/03/2019  02:40 AM    <DIR>          Python27-x64
+[00:00:09] 04/20/2016  02:59 AM    <DIR>          Python33
+[00:00:09] 04/20/2016  02:59 AM    <DIR>          Python33-x64
+[00:00:09] 08/05/2016  02:35 AM    <DIR>          Python34
+[00:00:09] 08/05/2016  02:35 AM    <DIR>          Python34-x64
+[00:00:09] 09/14/2018  01:53 AM    <DIR>          Python35
+[00:00:09] 09/14/2018  01:53 AM    <DIR>          Python35-x64
+[00:00:09] 02/03/2019  06:14 PM    <DIR>          Python36
+[00:00:09] 02/03/2019  06:15 PM    <DIR>          Python36-x64
+[00:00:09] 11/03/2019  02:42 AM    <DIR>          Python37
+[00:00:09] 11/03/2019  02:43 AM    <DIR>          Python37-x64
+[00:00:09] 11/03/2019  02:44 AM    <DIR>          Python38
+[00:00:09] 11/03/2019  02:44 AM    <DIR>          Python38-x64
+[00:00:09] 11/03/2019  01:24 AM    <DIR>          Qt
+[00:00:09] 07/25/2019  06:50 PM    <DIR>          Ruby193
+[00:00:09] 01/13/2016  04:29 AM    <DIR>          Ruby200
+[00:00:09] 01/14/2016  02:52 PM    <DIR>          Ruby200-x64
+[00:00:09] 07/16/2016  08:11 PM    <DIR>          Ruby21
+[00:00:09] 07/16/2016  11:23 PM    <DIR>          Ruby21-x64
+[00:00:09] 12/06/2016  12:50 AM    <DIR>          Ruby22
+[00:00:09] 12/06/2016  01:32 AM    <DIR>          Ruby22-x64
+[00:00:09] 07/25/2019  06:51 PM    <DIR>          Ruby23
+[00:00:09] 07/25/2019  06:52 PM    <DIR>          Ruby23-x64
+[00:00:09] 07/25/2019  06:52 PM    <DIR>          Ruby24
+[00:00:09] 07/25/2019  06:52 PM    <DIR>          Ruby24-x64
+[00:00:09] 07/25/2019  06:53 PM    <DIR>          Ruby25
+[00:00:09] 07/25/2019  06:53 PM    <DIR>          Ruby25-x64
+[00:00:09] 07/25/2019  06:53 PM    <DIR>          Ruby26
+[00:00:09] 07/25/2019  06:53 PM    <DIR>          Ruby26-x64
+[00:00:09] 07/25/2019  06:50 PM    <DIR>          Tools
+[00:00:09] 11/14/2017  10:57 PM    <DIR>          Users
+[00:00:09] 04/17/2016  09:44 PM    <DIR>          WinDDK
+[00:00:09] 11/03/2019  02:44 AM    <DIR>          Windows
+[00:00:09]                0 File(s)              0 bytes
+[00:00:09]               91 Dir(s)  44,369,444,864 bytes free
+[00:00:09] echo "Installed SDKs:"
+[00:00:09] "Installed SDKs:"
+[00:00:09] dir "C:/Program Files/Microsoft SDKs/Windows"
+[00:00:09]  Volume in drive C is Windows
+[00:00:09]  Volume Serial Number is D4AB-4044
+[00:00:09] 
+[00:00:09]  Directory of C:\Program Files\Microsoft SDKs\Windows
+[00:00:09] 
+[00:00:09] 04/17/2016  09:04 PM    <DIR>          .
+[00:00:09] 04/17/2016  09:04 PM    <DIR>          ..
+[00:00:09] 04/15/2016  03:06 AM    <DIR>          v6.0A
+[00:00:09] 04/17/2016  08:52 PM    <DIR>          v7.0
+[00:00:09] 04/17/2016  09:05 PM    <DIR>          v7.1
+[00:00:09]                0 File(s)              0 bytes
+[00:00:09]                5 Dir(s)  44,369,444,864 bytes free
+[00:00:09] SET PATH=%DEFAULT_PYTHON%;%DEFAULT_PYTHON%\Scripts;%PATH%
+[00:00:09] $NOX_SESSION = $env:NOX_SESSION
+[00:00:09] If ($NOX_SESSION.EndsWith("-32")) {
+[00:00:09]     $MINGW = $env:MINGW_32
+[00:00:09] } Else {
+[00:00:09]     $MINGW = $env:MINGW_64
+[00:00:09] }
+[00:00:09] $env:Path += ";$MINGW"
+[00:00:09] 
+[00:00:09] python -m pip install --upgrade pip setuptools
+[00:00:10] Requirement already up-to-date: pip in c:\python38-x64\lib\site-packages (19.3.1)
+[00:00:11] Collecting setuptools
+[00:00:11]   Using cached https://files.pythonhosted.org/packages/f9/d3/955738b20d3832dfa3cd3d9b07e29a8162edb480bf988332f5e6e48ca444/setuptools-44.0.0-py2.py3-none-any.whl
+[00:00:11] Installing collected packages: setuptools
+[00:00:11]   Found existing installation: setuptools 41.2.0
+[00:00:11]     Uninstalling setuptools-41.2.0:
+[00:00:11]       Successfully uninstalled setuptools-41.2.0
+[00:00:12] Successfully installed setuptools-44.0.0
+[00:00:12] python -m pip install --upgrade wheel
+[00:00:12] Collecting wheel
+[00:00:12]   Using cached https://files.pythonhosted.org/packages/00/83/b4a77d044e78ad1a45610eb88f745be2fd2c6d658f9798a15e384b7d57c9/wheel-0.33.6-py2.py3-none-any.whl
+[00:00:12] Installing collected packages: wheel
+[00:00:12] Successfully installed wheel-0.33.6
+[00:00:12] python -m pip install --upgrade "nox >= 2018.10.15"
+[00:00:13] Collecting nox>=2018.10.15
+[00:00:13]   Using cached https://files.pythonhosted.org/packages/e9/f7/56e4a667031414d8a028797d7651431ca6d2649e2f28633386e91d9c723e/nox-2019.11.9-py2.py3-none-any.whl
+[00:00:13] Collecting py<2.0.0,>=1.4.0
+[00:00:13]   Using cached https://files.pythonhosted.org/packages/99/8d/21e1767c009211a62a8e3067280bfce76e89c9f876180308515942304d2d/py-1.8.1-py2.py3-none-any.whl
+[00:00:13] Collecting colorlog<5.0.0,>=2.6.1
+[00:00:13]   Using cached https://files.pythonhosted.org/packages/00/0d/22c73c2eccb21dd3498df7d22c0b1d4a30f5a5fb3feb64e1ce06bc247747/colorlog-4.1.0-py2.py3-none-any.whl
+[00:00:13] Collecting argcomplete<2.0,>=1.9.4
+[00:00:13]   Using cached https://files.pythonhosted.org/packages/65/a6/4fd54d4f4fe699b8b9b709e7501a2617aa6352de074e0790adb3437ecd98/argcomplete-1.11.0-py2.py3-none-any.whl
+[00:00:13] Requirement already satisfied, skipping upgrade: virtualenv>=14.0.0 in c:\python38-x64\lib\site-packages (from nox>=2018.10.15) (16.7.7)
+[00:00:13] Collecting colorama; sys_platform == "win32"
+[00:00:13]   Using cached https://files.pythonhosted.org/packages/c9/dc/45cdef1b4d119eb96316b3117e6d5708a08029992b2fee2c143c7a0a5cc5/colorama-0.4.3-py2.py3-none-any.whl
+[00:00:13] Installing collected packages: py, colorama, colorlog, argcomplete, nox
+[00:00:14] Successfully installed argcomplete-1.11.0 colorama-0.4.3 colorlog-4.1.0 nox-2019.11.9 py-1.8.1
+[00:00:14] python -m nox -s "%NOX_SESSION%"
+[00:00:14] nox > Running session unit-3.8-32
+[00:00:14] nox > Creating virtual environment (virtualenv) using python.exe in .nox\unit-3-8-32
+[00:00:23] nox > pip install numpy >= 1.18.1 pytest >= 5.3.2 sympy >= 1.5.1 scipy >= 1.4.1
+[00:00:51] nox > pip install .
+[00:01:01] nox > pytest C:\projects\bezier\tests\unit
+[00:01:02] ============================= test session starts =============================
+[00:01:02] platform win32 -- Python 3.8.0, pytest-5.3.2, py-1.8.1, pluggy-0.13.1
+[00:01:02] rootdir: C:\projects\bezier, inifile: setup.cfg
+[00:01:04] collected 905 items
+[00:01:04] 
+[00:01:04] tests\unit\test___config__.py ........                                   [  0%]
+[00:01:04] tests\unit\test___init__.py ......                                       [  1%]
+[00:01:04] tests\unit\test__algebraic_intersection.py ............................. [  4%]
+[00:01:04] .......................................................................  [ 12%]
+[00:01:04] tests\unit\test__base.py ...........                                     [ 13%]
+[00:01:04] tests\unit\test__clipping.py ................                            [ 15%]
+[00:01:04] tests\unit\test__curve_helpers.py ...................................... [ 19%]
+[00:01:04] ............                                                             [ 21%]
+[00:01:04] tests\unit\test__geometric_intersection.py ...................x.         [ 23%]
+[00:01:04] tests\unit\test__helpers.py .....................................        [ 27%]
+[00:01:04] tests\unit\test__intersection_helpers.py ......                          [ 28%]
+[00:01:04] tests\unit\test__plot_helpers.py ....                                    [ 28%]
+[00:01:05] tests\unit\test__py_curve_helpers.py ................................... [ 32%]
+[00:01:05] ..............................                                           [ 35%]
+[00:01:05] tests\unit\test__py_geometric_intersection.py .......................... [ 38%]
+[00:01:06] ........ss.............................................................. [ 46%]
+[00:01:06] ..........                                                               [ 47%]
+[00:01:06] tests\unit\test__py_helpers.py ......................................... [ 52%]
+[00:01:06] .............                                                            [ 53%]
+[00:01:06] tests\unit\test__py_intersection_helpers.py ............................ [ 56%]
+[00:01:06] ......                                                                   [ 57%]
+[00:01:10] tests\unit\test__py_surface_helpers.py ................................. [ 61%]
+[00:01:10] ........................................................................ [ 69%]
+[00:01:10] .........................................                                [ 73%]
+[00:01:10] tests\unit\test__py_surface_intersection.py ............................ [ 76%]
+[00:01:10] .......................................                                  [ 80%]
+[00:01:10] tests\unit\test__surface_helpers.py .................................... [ 84%]
+[00:01:10]                                                                          [ 84%]
+[00:01:10] tests\unit\test__surface_intersection.py ....................x.          [ 87%]
+[00:01:11] tests\unit\test__symbolic.py .........                                   [ 88%]
+[00:01:11] tests\unit\test_curve.py ...............................                 [ 91%]
+[00:01:11] tests\unit\test_curved_polygon.py ............                           [ 93%]
+[00:01:11] tests\unit\test_surface.py ............................................. [ 98%]
+[00:01:11] .................                                                        [100%]
+[00:01:11] 
+[00:01:11] ================== 901 passed, 2 skipped, 2 xfailed in 9.31s ==================
+[00:01:11] nox > Session unit-3.8-32 was successful.
+[00:01:11] Updating build cache...
+[00:01:11] 
+[00:01:12] Cache 'C:\Users\appveyor\AppData\Local\pip\Cache' - Calculating checksum...
+[00:01:13] Cache 'C:\Users\appveyor\AppData\Local\pip\Cache' - Zipping...
+[00:01:14] Cache 'C:\Users\appveyor\AppData\Local\pip\Cache' - Uploading (65,114,725 bytes)...1%
+[00:01:14] Cache 'C:\Users\appveyor\AppData\Local\pip\Cache' - Uploading (65,114,725 bytes)...10%
+[00:01:14] Cache 'C:\Users\appveyor\AppData\Local\pip\Cache' - Uploading (65,114,725 bytes)...20%
+[00:01:14] Cache 'C:\Users\appveyor\AppData\Local\pip\Cache' - Uploading (65,114,725 bytes)...30%
+[00:01:14] Cache 'C:\Users\appveyor\AppData\Local\pip\Cache' - Uploading (65,114,725 bytes)...40%
+[00:01:14] Cache 'C:\Users\appveyor\AppData\Local\pip\Cache' - Uploading (65,114,725 bytes)...50%
+[00:01:14] Cache 'C:\Users\appveyor\AppData\Local\pip\Cache' - Uploading (65,114,725 bytes)...60%
+[00:01:14] Cache 'C:\Users\appveyor\AppData\Local\pip\Cache' - Uploading (65,114,725 bytes)...70%
+[00:01:14] Cache 'C:\Users\appveyor\AppData\Local\pip\Cache' - Uploading (65,114,725 bytes)...80%
+[00:01:14] Cache 'C:\Users\appveyor\AppData\Local\pip\Cache' - Uploading (65,114,725 bytes)...90%
+[00:01:14] Cache 'C:\Users\appveyor\AppData\Local\pip\Cache' - Uploading (65,114,725 bytes)...100%
+[00:01:14] Cache 'C:\Users\appveyor\AppData\Local\pip\Cache' - Updated
+[00:01:14] Build success

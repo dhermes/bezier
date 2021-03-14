@@ -1,0 +1,47 @@
+nox > Running session unit-3.7
+nox > Creating virtual environment (virtualenv) using python3.7 in .nox/unit-3-7
+nox > pip install numpy >= 1.18.1 pytest >= 5.3.2 sympy >= 1.5.1 scipy >= 1.4.1
+nox > pip install .
+nox > pytest /var/code/bezier/tests/unit
+============================= test session starts ==============================
+platform linux -- Python 3.7.5, pytest-5.3.2, py-1.8.1, pluggy-0.13.1
+rootdir: /var/code/bezier, inifile: setup.cfg
+collecting ... collecting 15 items                                                            collecting 904 items                                                           collected 905 items                                                            
+
+tests/unit/test___config__.py ........                                   [  0%]
+tests/unit/test___init__.py ......                                       [  1%]
+tests/unit/test__algebraic_intersection.py ............................. [  4%]
+.......................................................................  [ 12%]
+tests/unit/test__base.py ...........                                     [ 13%]
+tests/unit/test__clipping.py ................                            [ 15%]
+tests/unit/test__curve_helpers.py ...................................... [ 19%]
+............                                                             [ 21%]
+tests/unit/test__geometric_intersection.py ...................x.         [ 23%]
+tests/unit/test__helpers.py .....................................        [ 27%]
+tests/unit/test__intersection_helpers.py ......                          [ 28%]
+tests/unit/test__plot_helpers.py ....                                    [ 28%]
+tests/unit/test__py_curve_helpers.py ................................... [ 32%]
+..............................                                           [ 35%]
+tests/unit/test__py_geometric_intersection.py .......................... [ 38%]
+........................................................................ [ 46%]
+..........                                                               [ 47%]
+tests/unit/test__py_helpers.py ......................................... [ 52%]
+.............                                                            [ 53%]
+tests/unit/test__py_intersection_helpers.py ............................ [ 56%]
+......                                                                   [ 57%]
+tests/unit/test__py_surface_helpers.py ................................. [ 61%]
+........................................................................ [ 69%]
+.........................................                                [ 73%]
+tests/unit/test__py_surface_intersection.py ............................ [ 76%]
+.......................................                                  [ 80%]
+tests/unit/test__surface_helpers.py .................................... [ 84%]
+                                                                         [ 84%]
+tests/unit/test__surface_intersection.py ....................x.          [ 87%]
+tests/unit/test__symbolic.py .........                                   [ 88%]
+tests/unit/test_curve.py ...............................                 [ 91%]
+tests/unit/test_curved_polygon.py ............                           [ 93%]
+tests/unit/test_surface.py ............................................. [ 98%]
+.................                                                        [100%]
+
+======================== 903 passed, 2 xfailed in 6.54s ========================
+nox > Session unit-3.7 was successful.

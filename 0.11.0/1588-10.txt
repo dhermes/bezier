@@ -1,0 +1,173 @@
+nox > Running session docs
+nox > Creating virtual environment (virtualenv) using python3.8 in .nox/docs
+nox > pip install --requirement /var/code/bezier/docs/requirements.txt
+nox > pip install .
+nox > /var/code/bezier/scripts/build_docs.sh 
++ rm -r docs/python/reference
++ OPTIONS=members,inherited-members,undoc-members,show-inheritance
++ SPHINX_APIDOC_OPTIONS=members,inherited-members,undoc-members,show-inheritance
++ sphinx-apidoc --separate --force --module-first --output-dir docs/python/reference src/python/bezier
+Creating file docs/python/reference/bezier.rst.
+Creating file docs/python/reference/bezier.curve.rst.
+Creating file docs/python/reference/bezier.curved_polygon.rst.
+Creating file docs/python/reference/bezier.surface.rst.
+Creating file docs/python/reference/modules.rst.
++ rm docs/python/reference/modules.rst
++ python scripts/rewrite_package_rst.py
+++ git diff -- docs/
++ [[ -n '' ]]
++ sphinx-build -W -b html -d docs/build/doctrees docs docs/build/html
+Running Sphinx v2.3.1
+making output directory... done
+loading pickled environment... done
+building [mo]: targets for 0 po files that are out of date
+building [html]: targets for 45 source files that are out of date
+updating environment: 0 added, 4 changed, 0 removed
+reading sources... [ 25%] python/reference/bezier
+reading sources... [ 50%] python/reference/bezier.curve
+reading sources... [ 75%] python/reference/bezier.curved_polygon
+reading sources... [100%] python/reference/bezier.surface
+
+looking for now-outdated files... none found
+pickling environment... done
+checking consistency... done
+preparing documents... done
+writing output... [  2%] abi/curve
+writing output... [  4%] abi/curve_intersection
+writing output... [  6%] abi/helpers
+writing output... [  8%] abi/index
+writing output... [ 11%] abi/status
+writing output... [ 13%] abi/surface
+writing output... [ 15%] abi/surface_intersection
+writing output... [ 17%] algorithms/algebraic-helpers
+writing output... [ 20%] algorithms/curve-curve-intersection
+writing output... [ 22%] algorithms/geometric-helpers
+writing output... [ 24%] algorithms/index
+writing output... [ 26%] development
+writing output... [ 28%] index
+writing output... [ 31%] python/binary-extension
+writing output... [ 33%] python/index
+writing output... [ 35%] python/pxd/curve
+writing output... [ 37%] python/pxd/curve_intersection
+writing output... [ 40%] python/pxd/helpers
+writing output... [ 42%] python/pxd/index
+writing output... [ 44%] python/pxd/status
+writing output... [ 46%] python/pxd/surface
+writing output... [ 48%] python/pxd/surface_intersection
+writing output... [ 51%] python/reference/bezier
+writing output... [ 53%] python/reference/bezier.curve
+writing output... [ 55%] python/reference/bezier.curved_polygon
+writing output... [ 57%] python/reference/bezier.surface
+writing output... [ 60%] releases/0.0.1
+writing output... [ 62%] releases/0.1.0
+writing output... [ 64%] releases/0.1.1
+writing output... [ 66%] releases/0.10.0
+writing output... [ 68%] releases/0.2.0
+writing output... [ 71%] releases/0.2.1
+writing output... [ 73%] releases/0.3.0
+writing output... [ 75%] releases/0.4.0
+writing output... [ 77%] releases/0.5.0
+writing output... [ 80%] releases/0.6.0
+writing output... [ 82%] releases/0.6.1
+writing output... [ 84%] releases/0.6.2
+writing output... [ 86%] releases/0.6.3
+writing output... [ 88%] releases/0.6.4
+writing output... [ 91%] releases/0.7.0
+writing output... [ 93%] releases/0.8.0
+writing output... [ 95%] releases/0.9.0
+writing output... [ 97%] releases/index
+writing output... [100%] releases/latest
+
+generating indices...  genindex py-modindexdone
+writing additional pages...  search/var/code/bezier/.nox/docs/lib/python3.8/site-packages/sphinx_rtd_theme/search.html:20: RemovedInSphinx30Warning: To modify script_files in the theme is deprecated. Please insert a <script> tag directly in your theme instead.
+  {{ super() }}
+done
+copying images... [  1%] abi/../images/curve_elevate.png
+copying images... [  2%] abi/../images/get_curvature.png
+copying images... [  3%] abi/../images/curve_locate.png
+copying images... [  5%] abi/../images/newton_refine_curve.png
+copying images... [  6%] abi/../images/curve_reduce.png
+copying images... [  7%] abi/../images/curve_specialize.png
+copying images... [  8%] abi/../images/curve_subdivide.png
+copying images... [ 10%] algorithms/../images/curves1_and_8.png
+copying images... [ 11%] algorithms/../images/curves1_and_9.png
+copying images... [ 12%] algorithms/../images/curves10_and_11.png
+copying images... [ 14%] algorithms/../images/curves8_and_9.png
+copying images... [ 15%] algorithms/../images/curves29_and_30.png
+copying images... [ 16%] algorithms/../images/curves1_and_5.png
+copying images... [ 17%] algorithms/../images/curves3_and_4.png
+copying images... [ 19%] algorithms/../images/curves14_and_16.png
+copying images... [ 20%] algorithms/../images/curves1_and_2.png
+copying images... [ 21%] algorithms/../images/curves1_and_7.png
+copying images... [ 23%] algorithms/../images/curves1_and_13.png
+copying images... [ 24%] algorithms/../images/curves21_and_22.png
+copying images... [ 25%] algorithms/../images/curves15_and_25.png
+copying images... [ 26%] algorithms/../images/curves11_and_26.png
+copying images... [ 28%] algorithms/../images/curves8_and_27.png
+copying images... [ 29%] algorithms/../images/curves1_and_18.png
+copying images... [ 30%] algorithms/../images/curves1_and_19.png
+copying images... [ 32%] algorithms/../images/curves10_and_17.png
+copying images... [ 33%] algorithms/../images/curves42_and_43.png
+copying images... [ 34%] algorithms/../images/curves1_and_6.png
+copying images... [ 35%] algorithms/../images/curves14_and_15.png
+copying images... [ 37%] algorithms/../images/curves10_and_23.png
+copying images... [ 38%] algorithms/../images/curves1_and_24.png
+copying images... [ 39%] algorithms/../images/newton_refine1.png
+copying images... [ 41%] algorithms/../images/newton_refine2.png
+copying images... [ 42%] algorithms/../images/newton_refine3.png
+copying images... [ 43%] algorithms/../images/linearization_error.png
+copying images... [ 44%] algorithms/../images/segment_intersection1.png
+copying images... [ 46%] algorithms/../images/segment_intersection2.png
+copying images... [ 47%] algorithms/../images/parallel_lines_parameters1.png
+copying images... [ 48%] algorithms/../images/parallel_lines_parameters2.png
+copying images... [ 50%] algorithms/../images/parallel_lines_parameters3.png
+copying images... [ 51%] algorithms/../images/parallel_lines_parameters4.png
+copying images... [ 52%] algorithms/../images/get_curvature.png
+copying images... [ 53%] algorithms/../images/newton_refine_curve.png
+copying images... [ 55%] algorithms/../images/newton_refine_curve_cusp.png
+copying images... [ 56%] algorithms/../images/classify_intersection1.png
+copying images... [ 57%] algorithms/../images/classify_intersection2.png
+copying images... [ 58%] algorithms/../images/classify_intersection3.png
+copying images... [ 60%] algorithms/../images/classify_intersection4.png
+copying images... [ 61%] algorithms/../images/classify_intersection5.png
+copying images... [ 62%] algorithms/../images/classify_intersection9.png
+copying images... [ 64%] algorithms/../images/classify_intersection6.png
+copying images... [ 65%] algorithms/../images/classify_intersection7.png
+copying images... [ 66%] algorithms/../images/classify_intersection8.png
+copying images... [ 67%] algorithms/../images/newton_refine_surface.png
+copying images... [ 69%] images/surfaces6Q_and_7Q.png
+copying images... [ 70%] images/curves1_and_13.png
+copying images... [ 71%] python/reference/../../images/curve_constructor.png
+copying images... [ 73%] python/reference/../../images/curve_evaluate.png
+copying images... [ 74%] python/reference/../../images/curve_subdivide.png
+copying images... [ 75%] python/reference/../../images/curve_intersect.png
+copying images... [ 76%] python/reference/../../images/curve_elevate.png
+copying images... [ 78%] python/reference/../../images/curve_reduce.png
+copying images... [ 79%] python/reference/../../images/curve_reduce_approx.png
+copying images... [ 80%] python/reference/../../images/curve_specialize.png
+copying images... [ 82%] python/reference/../../images/curve_locate.png
+copying images... [ 83%] python/reference/../../images/curved_polygon_constructor1.png
+copying images... [ 84%] python/reference/../../images/curved_polygon_constructor2.png
+copying images... [ 85%] python/reference/../../images/unit_triangle.png
+copying images... [ 87%] python/reference/../../images/surface_constructor.png
+copying images... [ 88%] python/reference/../../images/surface_evaluate_barycentric.png
+copying images... [ 89%] python/reference/../../images/surface_evaluate_barycentric_multi.png
+copying images... [ 91%] python/reference/../../images/surface_evaluate_cartesian_multi.png
+copying images... [ 92%] python/reference/../../images/surface_subdivide1.png
+copying images... [ 93%] python/reference/../../images/surface_subdivide2.png
+copying images... [ 94%] python/reference/../../images/surface_is_valid1.png
+copying images... [ 96%] python/reference/../../images/surface_is_valid2.png
+copying images... [ 97%] python/reference/../../images/surface_is_valid3.png
+copying images... [ 98%] python/reference/../../images/surface_locate.png
+copying images... [100%] python/reference/../../images/surface_elevate.png
+
+copying static files... ... done
+copying extra files... done
+dumping search index in English (code: en)... done
+dumping object inventory... done
+build succeeded.
+
+The HTML pages are in docs/build/html.
++ echo 'Build finished. The HTML pages are in docs/build/html.'
+Build finished. The HTML pages are in docs/build/html.
+nox > Session docs was successful.
