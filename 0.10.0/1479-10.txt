@@ -1,0 +1,28 @@
+nox > Running session lint
+nox > Creating virtualenv using python3.7 in .nox/lint
+nox > pip install numpy >= 1.17.0 pytest >= 5.0.1 black >= 19.3b0 docutils flake8 flake8-import-order matplotlib >= 3.1.1 Pygments pylint >= 2.3.1 seaborn >= 0.9.0
+nox > pip install .
+nox > python /var/code/bezier/scripts/check_doc_templates.py
+README contents are as expected.
+README.rst.release.template contents are as expected.
+docs/index.rst contents are as expected.
+docs/index.rst.release.template contents are as expected.
+DEVELOPMENT.rst contents are as expected.
+docs/python/binary-extension.rst contents are as expected.
+nox > python /var/code/bezier/setup.py check --metadata --restructuredtext --strict
+running check
+nox > python /var/code/bezier/scripts/black_check_all_files.py
+All done! ✨ 🍰 ✨
+65 files would be left unchanged.
+nox > flake8 --import-order-style=google --application-import-names=bezier,tests /var/code/bezier/src/bezier /var/code/bezier/tests
+nox > pylint --rcfile pylintrc --max-module-lines=3035 --disable=missing-raises-doc --disable=missing-return-type-doc --disable=missing-param-doc --disable=missing-type-doc /var/code/bezier/src/bezier
+
+------------------------------------
+Your code has been rated at 10.00/10
+
+nox > pylint --rcfile pylintrc --disable=missing-docstring --disable=protected-access --disable=too-many-public-methods --disable=missing-param-doc --disable=missing-type-doc --max-module-lines=2473 /var/code/bezier/tests
+
+------------------------------------
+Your code has been rated at 10.00/10
+
+nox > Session lint was successful.

@@ -1,0 +1,69 @@
+Build-agent version 1.0.13455-a66ea3ac (2019-08-12T21:51:13+0000)
+Docker Engine Version: 18.09.6
+Kernel Version: Linux d0ea1a6de612 4.15.0-1043-aws #45-Ubuntu SMP Mon Jun 24 14:07:03 UTC 2019 x86_64 Linux
+Starting container dhermes/bezier:latest
+  image cache not found on this host, downloading dhermes/bezier:latest
+latest: Pulling from dhermes/bezier
+7413c47ba209: Already exists
+0fe7e7cbb2e8: Already exists
+1d425c982345: Already exists
+344da5c95cec: Already exists
+1e46b7fdff47: Pulling fs layer
+40d08760a619: Pulling fs layer
+2e2e36706257: Pulling fs layer
+26d68a7b2ab4: Pulling fs layer
+155553ba3f3c: Pulling fs layer
+eeb9c5d77ae3: Pulling fs layer
+0dd0c6bf1e33: Pulling fs layer
+155553ba3f3c: Waiting
+26d68a7b2ab4: Waiting
+eeb9c5d77ae3: Waiting
+0dd0c6bf1e33: Waiting
+40d08760a619: Verifying Checksum
+40d08760a619: Download complete
+26d68a7b2ab4: Verifying Checksum
+26d68a7b2ab4: Download complete
+155553ba3f3c: Verifying Checksum
+155553ba3f3c: Download complete
+eeb9c5d77ae3: Verifying Checksum
+eeb9c5d77ae3: Download complete
+0dd0c6bf1e33: Verifying Checksum
+0dd0c6bf1e33: Download complete
+2e2e36706257: Verifying Checksum
+2e2e36706257: Download complete
+1e46b7fdff47: Download complete
+1e46b7fdff47: Pull complete
+40d08760a619: Pull complete
+2e2e36706257: Pull complete
+26d68a7b2ab4: Pull complete
+155553ba3f3c: Pull complete
+eeb9c5d77ae3: Pull complete
+0dd0c6bf1e33: Pull complete
+Digest: sha256:ead61a37ce768ab24d435e05e1d5d4fc78955e2aed876ac457f2bfa9ee89a367
+Status: Downloaded newer image for dhermes/bezier:latest
+  using image dhermes/bezier@sha256:ead61a37ce768ab24d435e05e1d5d4fc78955e2aed876ac457f2bfa9ee89a367
+
+Using build environment variables
+  BASH_ENV=/tmp/.bash_env-5d539829ed5f85055c0ffb44-0-build
+  CI=true
+  CIRCLECI=true
+  CIRCLE_BRANCH=master
+  CIRCLE_BUILD_NUM=1479
+  CIRCLE_BUILD_URL=https://circleci.com/gh/dhermes/bezier/1479
+  CIRCLE_COMPARE_URL=https://github.com/dhermes/bezier/compare/aa793374eb16...13a7f488b0a0
+  CIRCLE_JOB=build
+  CIRCLE_NODE_INDEX=0
+  CIRCLE_NODE_TOTAL=1
+  CIRCLE_PREVIOUS_BUILD_NUM=1478
+  CIRCLE_PROJECT_REPONAME=bezier
+  CIRCLE_PROJECT_USERNAME=dhermes
+  CIRCLE_REPOSITORY_URL=git@github.com:dhermes/bezier.git
+  CIRCLE_SHA1=13a7f488b0a029ecb18b778747be5b40a934acc6
+  CIRCLE_SHELL_ENV=/tmp/.bash_env-5d539829ed5f85055c0ffb44-0-build
+  CIRCLE_STAGE=build
+  CIRCLE_USERNAME=dhermes
+  CIRCLE_WORKING_DIRECTORY=/var/code/bezier/
+
+Using environment variables from project settings and/or contexts
+  COVERALLS_REPO_TOKEN=**REDACTED**
+

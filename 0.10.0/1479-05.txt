@@ -1,0 +1,80 @@
+nox > Running session cover
+nox > Creating virtualenv using python3.7 in .nox/cover
+nox > pip install numpy >= 1.17.0 pytest >= 5.0.1 scipy >= 1.3.0 pytest-cov coverage
+nox > pip install .
+nox > pytest --cov=bezier --cov=tests.unit /var/code/bezier/tests/unit
+============================= test session starts ==============================
+platform linux -- Python 3.7.4, pytest-5.0.1, py-1.8.0, pluggy-0.12.0
+rootdir: /var/code/bezier, inifile: setup.cfg
+plugins: cov-2.7.1
+collecting ... collecting 514 items                                                           collected 873 items                                                            
+
+tests/unit/test___config__.py .......                                    [  0%]
+tests/unit/test___init__.py ......                                       [  1%]
+tests/unit/test__algebraic_intersection.py ............................. [  4%]
+.......................................................................  [ 12%]
+tests/unit/test__base.py .......                                         [ 13%]
+tests/unit/test__clipping.py ................                            [ 15%]
+tests/unit/test__curve_helpers.py ...................................... [ 19%]
+.....................................................................    [ 27%]
+tests/unit/test__geometric_intersection.py ............................. [ 31%]
+........................................................................ [ 39%]
+..........................x.                                             [ 42%]
+tests/unit/test__helpers.py ............................................ [ 47%]
+...............................................                          [ 53%]
+tests/unit/test__intersection_helpers.py ............................... [ 56%]
+.........                                                                [ 57%]
+tests/unit/test__plot_helpers.py ....                                    [ 58%]
+tests/unit/test__surface_helpers.py .................................... [ 62%]
+........................................................................ [ 70%]
+........................................................................ [ 78%]
+..                                                                       [ 78%]
+tests/unit/test__surface_intersection.py ............................... [ 82%]
+.......................................................x..               [ 89%]
+tests/unit/test_curve.py ..........................                      [ 92%]
+tests/unit/test_curved_polygon.py ............                           [ 93%]
+tests/unit/test_surface.py ............................................. [ 98%]
+............                                                             [100%]
+
+----------- coverage: platform linux, python 3.7.4-final-0 -----------
+Name                                                                       Stmts   Miss Branch BrPart  Cover   Missing
+----------------------------------------------------------------------------------------------------------------------
+.nox/cover/lib/python3.7/site-packages/bezier/__config__.py                   22      0      8      0   100%
+.nox/cover/lib/python3.7/site-packages/bezier/__init__.py                     22      0      2      0   100%
+.nox/cover/lib/python3.7/site-packages/bezier/_algebraic_intersection.py     312      0    112      0   100%
+.nox/cover/lib/python3.7/site-packages/bezier/_base.py                        20      0      4      0   100%
+.nox/cover/lib/python3.7/site-packages/bezier/_clipping.py                    62      0     24      0   100%
+.nox/cover/lib/python3.7/site-packages/bezier/_curve_helpers.py              226      0     64      0   100%
+.nox/cover/lib/python3.7/site-packages/bezier/_geometric_intersection.py     347      0    142      0   100%
+.nox/cover/lib/python3.7/site-packages/bezier/_helpers.py                    158      0     67      0   100%
+.nox/cover/lib/python3.7/site-packages/bezier/_intersection_helpers.py       155      0     34      0   100%
+.nox/cover/lib/python3.7/site-packages/bezier/_plot_helpers.py                33      0      4      0   100%
+.nox/cover/lib/python3.7/site-packages/bezier/_surface_helpers.py            522      0    210      0   100%
+.nox/cover/lib/python3.7/site-packages/bezier/_surface_intersection.py       207      0    102      0   100%
+.nox/cover/lib/python3.7/site-packages/bezier/curve.py                        74      0     18      0   100%
+.nox/cover/lib/python3.7/site-packages/bezier/curved_polygon.py               42      0     14      0   100%
+.nox/cover/lib/python3.7/site-packages/bezier/surface.py                     173      0     72      0   100%
+tests/unit/__init__.py                                                         0      0      0      0   100%
+tests/unit/test___config__.py                                                 54      0      0      0   100%
+tests/unit/test___init__.py                                                   53      0      0      0   100%
+tests/unit/test__algebraic_intersection.py                                   799      0     48      0   100%
+tests/unit/test__base.py                                                      49      0      0      0   100%
+tests/unit/test__clipping.py                                                 134      0      0      0   100%
+tests/unit/test__curve_helpers.py                                            511      0     30      0   100%
+tests/unit/test__geometric_intersection.py                                  1156      0     36      0   100%
+tests/unit/test__helpers.py                                                  433      0     20      0   100%
+tests/unit/test__intersection_helpers.py                                     430      0      8      0   100%
+tests/unit/test__plot_helpers.py                                              94      0      2      0   100%
+tests/unit/test__surface_helpers.py                                         1200      0     54      0   100%
+tests/unit/test__surface_intersection.py                                     724      0     18      0   100%
+tests/unit/test_curve.py                                                     214      0      0      0   100%
+tests/unit/test_curved_polygon.py                                             98      0      0      0   100%
+tests/unit/test_surface.py                                                   510      0      3      0   100%
+tests/unit/utils.py                                                           66      0      4      0   100%
+----------------------------------------------------------------------------------------------------------------------
+TOTAL                                                                       8900      0   1100      0   100%
+
+Required test coverage of 100% reached. Total coverage: 100.00%
+
+==================== 871 passed, 2 xfailed in 3.83 seconds =====================
+nox > Session cover was successful.

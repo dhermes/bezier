@@ -1,0 +1,491 @@
+nox > Running session fortran_unit
+nox > Creating virtualenv using python3.7 in .nox/fortran_unit
+nox > pip install lcov_cobertura pycobertura
+nox > cd /var/code/bezier/tests/fortran
+nox > make unit
+gfortran -fPIC -O0 -c /var/code/bezier/src/bezier/quadpack/d1mach.f -o /var/code/bezier/tests/fortran/d1mach.o
+gfortran -fPIC -O0 -c /var/code/bezier/src/bezier/quadpack/dqelg.f -o /var/code/bezier/tests/fortran/dqelg.o
+gfortran -fPIC -O0 -c /var/code/bezier/src/bezier/quadpack/dqpsrt.f -o /var/code/bezier/tests/fortran/dqpsrt.o
+gfortran -fPIC -O0 -c /var/code/bezier/src/bezier/quadpack/dqk21.f -o /var/code/bezier/tests/fortran/dqk21.o
+gfortran -fPIC -O0 -c /var/code/bezier/src/bezier/quadpack/dqagse.f -o /var/code/bezier/tests/fortran/dqagse.o
+gfortran -Wall -Wextra -Wno-compare-reals -Wno-conversion -Wimplicit-interface -Werror -fPIC -fmax-errors=1 -std=f2008 -O0 -g -fcheck=all -fbacktrace -fimplicit-none -pedantic -fprofile-arcs -ftest-coverage -c /var/code/bezier/src/bezier/types.f90 -o /var/code/bezier/tests/fortran/types.o
+gfortran -Wall -Wextra -Wno-compare-reals -Wno-conversion -Wimplicit-interface -Werror -fPIC -fmax-errors=1 -std=f2008 -O0 -g -fcheck=all -fbacktrace -fimplicit-none -pedantic -fprofile-arcs -ftest-coverage -c /var/code/bezier/src/bezier/status.f90 -o /var/code/bezier/tests/fortran/status.o
+gfortran -Wall -Wextra -Wno-compare-reals -Wno-conversion -Wimplicit-interface -Werror -fPIC -fmax-errors=1 -std=f2008 -O0 -g -fcheck=all -fbacktrace -fimplicit-none -pedantic -fprofile-arcs -ftest-coverage -c /var/code/bezier/src/bezier/helpers.f90 -o /var/code/bezier/tests/fortran/helpers.o
+gfortran -Wall -Wextra -Wno-compare-reals -Wno-conversion -Wimplicit-interface -Werror -fPIC -fmax-errors=1 -std=f2008 -O0 -g -fcheck=all -fbacktrace -fimplicit-none -pedantic -fprofile-arcs -ftest-coverage -c /var/code/bezier/src/bezier/curve.f90 -o /var/code/bezier/tests/fortran/curve.o
+gfortran -Wall -Wextra -Wno-compare-reals -Wno-conversion -Wimplicit-interface -Werror -fPIC -fmax-errors=1 -std=f2008 -O0 -g -fcheck=all -fbacktrace -fimplicit-none -pedantic -fprofile-arcs -ftest-coverage -c /var/code/bezier/src/bezier/surface.f90 -o /var/code/bezier/tests/fortran/surface.o
+gfortran -Wall -Wextra -Wno-compare-reals -Wno-conversion -Wimplicit-interface -Werror -fPIC -fmax-errors=1 -std=f2008 -O0 -g -fcheck=all -fbacktrace -fimplicit-none -pedantic -fprofile-arcs -ftest-coverage -c /var/code/bezier/src/bezier/curve_intersection.f90 -o /var/code/bezier/tests/fortran/curve_intersection.o
+gfortran -Wall -Wextra -Wno-compare-reals -Wno-conversion -Wimplicit-interface -Werror -fPIC -fmax-errors=1 -std=f2008 -O0 -g -fcheck=all -fbacktrace -fimplicit-none -pedantic -fprofile-arcs -ftest-coverage -c /var/code/bezier/src/bezier/surface_intersection.f90 -o /var/code/bezier/tests/fortran/surface_intersection.o
+gfortran -Wall -Wextra -Wno-compare-reals -Wno-conversion -Wimplicit-interface -Werror -fPIC -fmax-errors=1 -std=f2008 -O0 -g -fcheck=all -fbacktrace -fimplicit-none -pedantic -fprofile-arcs -ftest-coverage -c /var/code/bezier/tests/fortran/unit_test_helpers.f90 -o /var/code/bezier/tests/fortran/unit_test_helpers.o
+gfortran -Wall -Wextra -Wno-compare-reals -Wno-conversion -Wimplicit-interface -Werror -fPIC -fmax-errors=1 -std=f2008 -O0 -g -fcheck=all -fbacktrace -fimplicit-none -pedantic -fprofile-arcs -ftest-coverage -c /var/code/bezier/tests/fortran/test_helpers.f90 -o /var/code/bezier/tests/fortran/test_helpers.o
+gfortran -Wall -Wextra -Wno-compare-reals -Wno-conversion -Wimplicit-interface -Werror -fPIC -fmax-errors=1 -std=f2008 -O0 -g -fcheck=all -fbacktrace -fimplicit-none -pedantic -fprofile-arcs -ftest-coverage -c /var/code/bezier/tests/fortran/test_curve.f90 -o /var/code/bezier/tests/fortran/test_curve.o
+gfortran -Wall -Wextra -Wno-compare-reals -Wno-conversion -Wimplicit-interface -Werror -fPIC -fmax-errors=1 -std=f2008 -O0 -g -fcheck=all -fbacktrace -fimplicit-none -pedantic -fprofile-arcs -ftest-coverage -c /var/code/bezier/tests/fortran/test_surface.f90 -o /var/code/bezier/tests/fortran/test_surface.o
+gfortran -Wall -Wextra -Wno-compare-reals -Wno-conversion -Wimplicit-interface -Werror -fPIC -fmax-errors=1 -std=f2008 -O0 -g -fcheck=all -fbacktrace -fimplicit-none -pedantic -fprofile-arcs -ftest-coverage -c /var/code/bezier/tests/fortran/test_curve_intersection.f90 -o /var/code/bezier/tests/fortran/test_curve_intersection.o
+gfortran -Wall -Wextra -Wno-compare-reals -Wno-conversion -Wimplicit-interface -Werror -fPIC -fmax-errors=1 -std=f2008 -O0 -g -fcheck=all -fbacktrace -fimplicit-none -pedantic -fprofile-arcs -ftest-coverage -c /var/code/bezier/tests/fortran/test_surface_intersection.f90 -o /var/code/bezier/tests/fortran/test_surface_intersection.o
+gfortran -Wall -Wextra -Wno-compare-reals -Wno-conversion -Wimplicit-interface -Werror -fPIC -fmax-errors=1 -std=f2008 -O0 -g -fcheck=all -fbacktrace -fimplicit-none -pedantic -fprofile-arcs -ftest-coverage \
+  -o /var/code/bezier/tests/fortran/unit-test-bin \
+   /var/code/bezier/tests/fortran/d1mach.o  /var/code/bezier/tests/fortran/dqelg.o  /var/code/bezier/tests/fortran/dqpsrt.o  /var/code/bezier/tests/fortran/dqk21.o  /var/code/bezier/tests/fortran/dqagse.o \
+   /var/code/bezier/tests/fortran/types.o  /var/code/bezier/tests/fortran/status.o  /var/code/bezier/tests/fortran/helpers.o  /var/code/bezier/tests/fortran/curve.o  /var/code/bezier/tests/fortran/surface.o  /var/code/bezier/tests/fortran/curve_intersection.o  /var/code/bezier/tests/fortran/surface_intersection.o \
+   /var/code/bezier/tests/fortran/unit_test_helpers.o  /var/code/bezier/tests/fortran/test_helpers.o  /var/code/bezier/tests/fortran/test_curve.o  /var/code/bezier/tests/fortran/test_surface.o  /var/code/bezier/tests/fortran/test_curve_intersection.o  /var/code/bezier/tests/fortran/test_surface_intersection.o \
+  /var/code/bezier/tests/fortran/unit_test.f90
+/var/code/bezier/tests/fortran/unit-test-bin
+               cross_product: Case  1 success
+                        bbox: Case  1 success
+                        bbox: Case  2 success
+             wiggle_interval: Case  1 success
+             wiggle_interval: Case  2 success
+             wiggle_interval: Case  3 success
+             wiggle_interval: Case  4 success
+             wiggle_interval: Case  5 success
+             wiggle_interval: Case  6 success
+             wiggle_interval: Case  7 success
+             wiggle_interval: Case  8 success
+             wiggle_interval: Case  9 success
+             wiggle_interval: Case 10 success
+             wiggle_interval: Case 11 success
+                 contains_nd: Case  1 success
+                 contains_nd: Case  2 success
+                 contains_nd: Case  3 success
+                vector_close: Case  1 success
+                vector_close: Case  2 success
+                vector_close: Case  3 success
+                vector_close: Case  4 success
+                vector_close: Case  5 success
+                vector_close: Case  6 success
+                 in_interval: Case  1 success
+                 in_interval: Case  2 success
+                 in_interval: Case  3 success
+                 in_interval: Case  4 success
+                   in_sorted: Case  1 success
+                   in_sorted: Case  2 success
+                   in_sorted: Case  3 success
+                 convex_hull: Case  1 success
+                 convex_hull: Case  2 success
+                 convex_hull: Case  3 success
+                 convex_hull: Case  4 success
+                 convex_hull: Case  5 success
+                 convex_hull: Case  6 success
+                 convex_hull: Case  7 success
+             polygon_collide: Case  1 success
+             polygon_collide: Case  2 success
+             polygon_collide: Case  3 success
+             polygon_collide: Case  4 success
+             polygon_collide: Case  5 success
+                    solve2x2: Case  1 success
+                    solve2x2: Case  2 success
+                    solve2x2: Case  3 success
+                    solve2x2: Case  4 success
+                    solve2x2: Case  5 success
+  evaluate_curve_barycentric: Case  1 success
+              evaluate_multi: Case  1 success
+              evaluate_multi: Case  2 success
+            specialize_curve: Case  1 success
+            specialize_curve: Case  2 success
+            specialize_curve: Case  3 success
+            specialize_curve: Case  4 success
+          evaluate_hodograph: Case  1 success
+          evaluate_hodograph: Case  2 success
+          evaluate_hodograph: Case  3 success
+     subdivide_nodes (Curve): Case  1 success
+     subdivide_nodes (Curve): Case  2 success
+     subdivide_nodes (Curve): Case  3 success
+     subdivide_nodes (Curve): Case  4 success
+     subdivide_nodes (Curve): Case  5 success
+     subdivide_nodes (Curve): Case  6 success
+     subdivide_nodes (Curve): Case  7 success
+               newton_refine: Case  1 success
+        locate_point (Curve): Case  1 success
+        locate_point (Curve): Case  2 success
+        locate_point (Curve): Case  3 success
+        locate_point (Curve): Case  4 success
+        locate_point (Curve): Case  5 success
+               elevate_nodes: Case  1 success
+               elevate_nodes: Case  2 success
+               get_curvature: Case  1 success
+               get_curvature: Case  2 success
+               get_curvature: Case  3 success
+       reduce_pseudo_inverse: Case  1 success
+       reduce_pseudo_inverse: Case  2 success
+       reduce_pseudo_inverse: Case  3 success
+       reduce_pseudo_inverse: Case  4 success
+       reduce_pseudo_inverse: Case  5 success
+       reduce_pseudo_inverse: Case  6 success
+       reduce_pseudo_inverse: Case  7 success
+       reduce_pseudo_inverse: Case  8 success
+       reduce_pseudo_inverse: Case  9 success
+                 full_reduce: Case  1 success
+                 full_reduce: Case  2 success
+                 full_reduce: Case  3 success
+                 full_reduce: Case  4 success
+                 full_reduce: Case  5 success
+                 full_reduce: Case  6 success
+                 full_reduce: Case  7 success
+                 full_reduce: Case  8 success
+              compute_length: Case  1 success
+              compute_length: Case  2 success
+              compute_length: Case  3 success
+                curves_equal: Case  1 success
+                curves_equal: Case  2 success
+                curves_equal: Case  3 success
+                curves_equal: Case  4 success
+                curves_equal: Case  5 success
+                curves_equal: Case  6 success
+                curves_equal: Case  7 success
+                curves_equal: Case  8 success
+             subdivide_curve: Case  1 success
+             subdivide_curve: Case  2 success
+      de_casteljau_one_round: Case  1 success
+      de_casteljau_one_round: Case  2 success
+      de_casteljau_one_round: Case  3 success
+        evaluate_barycentric: Case  1 success
+        evaluate_barycentric: Case  2 success
+        evaluate_barycentric: Case  3 success
+        evaluate_barycentric: Case  4 success
+        evaluate_barycentric: Case  5 success
+  evaluate_barycentric_multi: Case  1 success
+  evaluate_barycentric_multi: Case  2 success
+  evaluate_barycentric_multi: Case  3 success
+    evaluate_cartesian_multi: Case  1 success
+    evaluate_cartesian_multi: Case  2 success
+    evaluate_cartesian_multi: Case  3 success
+               jacobian_both: Case  1 success
+               jacobian_both: Case  2 success
+               jacobian_both: Case  3 success
+                jacobian_det: Case  1 success
+                jacobian_det: Case  2 success
+          specialize_surface: Case  1 success
+          specialize_surface: Case  2 success
+          specialize_surface: Case  3 success
+          specialize_surface: Case  4 success
+          specialize_surface: Case  5 success
+          specialize_surface: Case  6 success
+          specialize_surface: Case  7 success
+          specialize_surface: Case  8 success
+          specialize_surface: Case  9 success
+          specialize_surface: Case 10 success
+          specialize_surface: Case 11 success
+          specialize_surface: Case 12 success
+          specialize_surface: Case 13 success
+          specialize_surface: Case 14 success
+          specialize_surface: Case 15 success
+          specialize_surface: Case 16 success
+   subdivide_nodes (Surface): Case  1 success
+   subdivide_nodes (Surface): Case  2 success
+   subdivide_nodes (Surface): Case  3 success
+   subdivide_nodes (Surface): Case  4 success
+   subdivide_nodes (Surface): Case  5 success
+   subdivide_nodes (Surface): Case  6 success
+   subdivide_nodes (Surface): Case  7 success
+   subdivide_nodes (Surface): Case  8 success
+          compute_edge_nodes: Case  1 success
+          compute_edge_nodes: Case  2 success
+          compute_edge_nodes: Case  3 success
+           shoelace_for_area: Case  1 success
+           shoelace_for_area: Case  2 success
+           shoelace_for_area: Case  3 success
+           shoelace_for_area: Case  4 success
+           shoelace_for_area: Case  5 success
+                compute_area: Case  1 success
+                compute_area: Case  2 success
+                compute_area: Case  3 success
+                compute_area: Case  4 success
+         linearization_error: Case  1 success
+         linearization_error: Case  2 success
+         linearization_error: Case  3 success
+         linearization_error: Case  4 success
+         linearization_error: Case  5 success
+         linearization_error: Case  6 success
+         linearization_error: Case  7 success
+         linearization_error: Case  8 success
+         linearization_error: Case  9 success
+         linearization_error: Case 10 success
+         linearization_error: Case 11 success
+        segment_intersection: Case  1 success
+        segment_intersection: Case  2 success
+     newton_refine_intersect: Case  1 success
+     newton_refine_intersect: Case  2 success
+     newton_refine_intersect: Case  3 success
+     newton_refine_intersect: Case  4 success
+     newton_refine_intersect: Case  5 success
+     newton_refine_intersect: Case  6 success
+              bbox_intersect: Case  1 success
+              bbox_intersect: Case  2 success
+              bbox_intersect: Case  3 success
+              bbox_intersect: Case  4 success
+              bbox_intersect: Case  5 success
+   parallel_lines_parameters: Case  1 success
+   parallel_lines_parameters: Case  2 success
+   parallel_lines_parameters: Case  3 success
+   parallel_lines_parameters: Case  4 success
+   parallel_lines_parameters: Case  5 success
+   parallel_lines_parameters: Case  6 success
+   parallel_lines_parameters: Case  7 success
+   parallel_lines_parameters: Case  8 success
+   parallel_lines_parameters: Case  9 success
+   parallel_lines_parameters: Case 10 success
+   parallel_lines_parameters: Case 11 success
+   parallel_lines_parameters: Case 12 success
+   parallel_lines_parameters: Case 13 success
+   parallel_lines_parameters: Case 14 success
+           line_line_collide: Case  1 success
+           line_line_collide: Case  2 success
+           line_line_collide: Case  3 success
+           line_line_collide: Case  4 success
+           line_line_collide: Case  5 success
+         convex_hull_collide: Case  1 success
+         convex_hull_collide: Case  2 success
+         convex_hull_collide: Case  3 success
+          newton_simple_root: Case  1 success
+          newton_simple_root: Case  2 success
+          newton_double_root: Case  1 success
+          newton_double_root: Case  2 success
+              newton_iterate: Case  1 success
+              newton_iterate: Case  2 success
+              newton_iterate: Case  3 success
+              newton_iterate: Case  4 success
+              newton_iterate: Case  5 success
+              newton_iterate: Case  6 success
+              newton_iterate: Case  7 success
+              newton_iterate: Case  8 success
+              newton_iterate: Case  9 success
+              newton_iterate: Case 10 success
+         full_newton_nonzero: Case  1 success
+         full_newton_nonzero: Case  2 success
+         full_newton_nonzero: Case  3 success
+         full_newton_nonzero: Case  4 success
+         full_newton_nonzero: Case  5 success
+                 full_newton: Case  1 success
+                 full_newton: Case  2 success
+                 full_newton: Case  3 success
+                 full_newton: Case  4 success
+             from_linearized: Case  1 success
+             from_linearized: Case  2 success
+             from_linearized: Case  3 success
+             from_linearized: Case  4 success
+             from_linearized: Case  5 success
+             from_linearized: Case  6 success
+             from_linearized: Case  7 success
+             from_linearized: Case  8 success
+         bbox_line_intersect: Case  1 success
+         bbox_line_intersect: Case  2 success
+         bbox_line_intersect: Case  3 success
+         bbox_line_intersect: Case  4 success
+         bbox_line_intersect: Case  5 success
+         bbox_line_intersect: Case  6 success
+                 check_lines: Case  1 success
+                 check_lines: Case  2 success
+                 check_lines: Case  3 success
+                 check_lines: Case  4 success
+                 check_lines: Case  5 success
+                 check_lines: Case  6 success
+                 check_lines: Case  7 success
+                 check_lines: Case  8 success
+            add_intersection: Case  1 success
+            add_intersection: Case  2 success
+            add_intersection: Case  3 success
+            add_intersection: Case  4 success
+            add_intersection: Case  5 success
+            add_intersection: Case  6 success
+            add_intersection: Case  7 success
+         add_from_linearized: Case  1 success
+         add_from_linearized: Case  2 success
+         add_from_linearized: Case  3 success
+         add_from_linearized: Case  4 success
+         add_from_linearized: Case  5 success
+              endpoint_check: Case  1 success
+              endpoint_check: Case  2 success
+              endpoint_check: Case  3 success
+   tangent_bbox_intersection: Case  1 success
+   tangent_bbox_intersection: Case  2 success
+   tangent_bbox_intersection: Case  3 success
+              add_candidates: Case  1 success
+              add_candidates: Case  2 success
+              add_candidates: Case  3 success
+              add_candidates: Case  4 success
+              add_candidates: Case  5 success
+         intersect_one_round: Case  1 success
+         intersect_one_round: Case  2 success
+         intersect_one_round: Case  3 success
+         intersect_one_round: Case  4 success
+         intersect_one_round: Case  5 success
+         intersect_one_round: Case  6 success
+            make_same_degree: Case  1 success
+            make_same_degree: Case  2 success
+            make_same_degree: Case  3 success
+            make_same_degree: Case  4 success
+            make_same_degree: Case  5 success
+   add_coincident_parameters: Case  1 success
+   add_coincident_parameters: Case  2 success
+   add_coincident_parameters: Case  3 success
+   add_coincident_parameters: Case  4 success
+   add_coincident_parameters: Case  5 success
+   add_coincident_parameters: Case  6 success
+   add_coincident_parameters: Case  7 success
+   add_coincident_parameters: Case  8 success
+   add_coincident_parameters: Case  9 success
+   add_coincident_parameters: Case 10 success
+   add_coincident_parameters: Case 11 success
+   add_coincident_parameters: Case 12 success
+   add_coincident_parameters: Case 13 success
+   add_coincident_parameters: Case 14 success
+   add_coincident_parameters: Case 15 success
+   add_coincident_parameters: Case 16 success
+           all_intersections: Case  1 success
+           all_intersections: Case  2 success
+           all_intersections: Case  3 success
+           all_intersections: Case  4 success
+           all_intersections: Case  5 success
+           all_intersections: Case  6 success
+           all_intersections: Case  7 success
+           all_intersections: Case  8 success
+           all_intersections: Case  9 success
+           all_intersections: Case 10 success
+       all_intersections_abi: Case  1 success
+       all_intersections_abi: Case  2 success
+       all_intersections_abi: Case  3 success
+     newton_refine (Surface): Case  1 success
+     newton_refine (Surface): Case  2 success
+     newton_refine (Surface): Case  1 success
+     newton_refine (Surface): Case  2 success
+     newton_refine (Surface): Case  3 success
+       classify_intersection: Case  1 success
+       classify_intersection: Case  2 success
+       classify_intersection: Case  3 success
+       classify_intersection: Case  4 success
+       classify_intersection: Case  5 success
+       classify_intersection: Case  6 success
+       classify_intersection: Case  7 success
+       classify_intersection: Case  8 success
+       classify_intersection: Case  9 success
+       classify_intersection: Case 10 success
+       classify_intersection: Case 11 success
+       classify_intersection: Case 12 success
+       classify_intersection: Case 13 success
+       classify_intersection: Case 14 success
+       classify_intersection: Case 15 success
+       classify_intersection: Case 16 success
+       classify_intersection: Case 17 success
+       classify_intersection: Case 18 success
+       classify_intersection: Case 19 success
+       classify_intersection: Case 20 success
+       classify_intersection: Case 21 success
+       classify_intersection: Case 22 success
+      update_edge_end_unused: Case  1 success
+      update_edge_end_unused: Case  2 success
+      update_edge_end_unused: Case  3 success
+      update_edge_end_unused: Case  4 success
+      update_edge_end_unused: Case  5 success
+          find_corner_unused: Case  1 success
+          find_corner_unused: Case  2 success
+          find_corner_unused: Case  3 success
+          find_corner_unused: Case  4 success
+                 add_st_vals: Case  1 success
+                 add_st_vals: Case  2 success
+                 add_st_vals: Case  3 success
+                 add_st_vals: Case  4 success
+                 add_st_vals: Case  5 success
+                 add_st_vals: Case  6 success
+                 should_keep: Case  1 success
+                 should_keep: Case  2 success
+                 should_keep: Case  3 success
+                 should_keep: Case  4 success
+                 should_keep: Case  5 success
+surfaces_intersection_points: Case  1 success
+surfaces_intersection_points: Case  2 success
+surfaces_intersection_points: Case  3 success
+surfaces_intersection_points: Case  4 success
+                    is_first: Case  1 success
+                    is_first: Case  2 success
+                    is_first: Case  3 success
+                   is_second: Case  1 success
+                   is_second: Case  2 success
+                   is_second: Case  3 success
+                    get_next: Case  1 success
+                    get_next: Case  2 success
+                    get_next: Case  3 success
+                    get_next: Case  4 success
+                    get_next: Case  5 success
+                    get_next: Case  6 success
+                    to_front: Case  1 success
+                    to_front: Case  2 success
+                    to_front: Case  3 success
+                    to_front: Case  4 success
+                    to_front: Case  5 success
+                 add_segment: Case  1 success
+                 add_segment: Case  2 success
+                 add_segment: Case  3 success
+                 add_segment: Case  4 success
+                 add_segment: Case  5 success
+            interior_combine: Case  1 success
+            interior_combine: Case  2 success
+            interior_combine: Case  3 success
+            interior_combine: Case  4 success
+            interior_combine: Case  5 success
+            interior_combine: Case  6 success
+            interior_combine: Case  7 success
+          surfaces_intersect: Case  1 success
+          surfaces_intersect: Case  2 success
+          surfaces_intersect: Case  3 success
+          surfaces_intersect: Case  4 success
+          surfaces_intersect: Case  5 success
+          surfaces_intersect: Case  6 success
+          surfaces_intersect: Case  7 success
+          surfaces_intersect: Case  8 success
+          surfaces_intersect: Case  9 success
+          surfaces_intersect: Case 10 success
+          surfaces_intersect: Case 11 success
+          surfaces_intersect: Case 12 success
+          surfaces_intersect: Case 13 success
+          surfaces_intersect: Case 14 success
+      surfaces_intersect_abi: Case  1 success
+      surfaces_intersect_abi: Case  2 success
+      surfaces_intersect_abi: Case  3 success
+      surfaces_intersect_abi: Case  4 success
+      surfaces_intersect_abi: Case  5 success
+nox > cd /var/code/bezier
+nox > lcov --capture --directory /var/code/bezier/tests/fortran --output-file /var/code/bezier/tests/fortran/coverage.info
+Capturing coverage data from /var/code/bezier/tests/fortran
+Found gcov version: 7.4.0
+Scanning /var/code/bezier/tests/fortran for .gcda files ...
+Found 12 data files in /var/code/bezier/tests/fortran
+Processing fortran/unit_test.gcda
+Processing fortran/test_surface_intersection.gcda
+Processing fortran/test_curve.gcda
+Processing fortran/curve.gcda
+Processing fortran/helpers.gcda
+Processing fortran/unit_test_helpers.gcda
+Processing fortran/test_surface.gcda
+Processing fortran/test_curve_intersection.gcda
+Processing fortran/surface_intersection.gcda
+Processing fortran/test_helpers.gcda
+Processing fortran/curve_intersection.gcda
+Processing fortran/surface.gcda
+Finished .info-file creation
+nox > python /var/code/bezier/scripts/report_lcov.py --lcov-filename /var/code/bezier/tests/fortran/coverage.info
+Filename                                       Stmts    Miss  Cover    Missing
+-------------------------------------------  -------  ------  -------  ---------
+tests/fortran/unit_test.f90                       12       0  100.00%
+tests/fortran/test_surface_intersection.f90     1070       0  100.00%
+tests/fortran/test_curve.f90                     534       0  100.00%
+tests/fortran/unit_test_helpers.f90               40       0  100.00%
+tests/fortran/test_surface.f90                   805       0  100.00%
+tests/fortran/test_curve_intersection.f90       1651       0  100.00%
+tests/fortran/test_helpers.f90                   306       0  100.00%
+src/bezier/curve.f90                             381       0  100.00%
+src/bezier/helpers.f90                           209       0  100.00%
+src/bezier/surface_intersection.f90              622       0  100.00%
+src/bezier/curve_intersection.f90                662       0  100.00%
+src/bezier/surface.f90                           454       0  100.00%
+TOTAL                                           6746       0  100.00%
+nox > cd /var/code/bezier/tests/fortran
+nox > make clean
+rm -f /var/code/bezier/tests/fortran/*.gcno
+rm -f /var/code/bezier/tests/fortran/*.gcda
+rm -f /var/code/bezier/tests/fortran/*.mod
+rm -f /var/code/bezier/tests/fortran/*.o
+rm -f /var/code/bezier/tests/fortran/functional-test-bin
+rm -f /var/code/bezier/tests/fortran/unit-test-bin
+rm -f /var/code/bezier/tests/fortran/coverage.info
+rm -fr /var/code/bezier/tests/fortran/unit-test-bin.dSYM
+rm -fr /var/code/bezier/tests/fortran/functional-test-bin.dSYM
+rm -fr /var/code/bezier/tests/fortran/lcov-html
+nox > Session fortran_unit was successful.
