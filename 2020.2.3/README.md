@@ -42,13 +42,13 @@ Build `1.0.1404.master`
 
 ### Build Matrix
 
-| Job ID             | `NOX_SESSION`                       |
-|--------------------|-------------------------------------|
-| `xxyq1d3jsgv5ws8i` | `unit-3.6-32`                       |
-| `yamdne12hctkeoa2` | `unit-3.6`                          |
-| `63dqysa8v1008mjr` | `unit-3.7-32`                       |
-| `dtfn0fmvhaho7ggw` | `unit-3.7`                          |
-| `8kd1jm5ys7wnt67i` | `unit-3.8-32`                       |
-| `gxvg4jr034lu95vp` | `cover`                             |
-| `pogm7wkcaxdafobw` | `functional-3.8`                    |
-| `uft7eb4840u5s7ni` | `doctest`                           |
+| Job ID             | `NOX_SESSION`    |
+|--------------------|------------------|
+| `xxyq1d3jsgv5ws8i` | `unit-3.6-32`    |
+| `yamdne12hctkeoa2` | `unit-3.6`       |
+| `63dqysa8v1008mjr` | `unit-3.7-32`    |
+| `dtfn0fmvhaho7ggw` | `unit-3.7`       |
+| `8kd1jm5ys7wnt67i` | `unit-3.8-32`    |
+| `gxvg4jr034lu95vp` | `cover`          |
+| `pogm7wkcaxdafobw` | `functional-3.8` |
+| `uft7eb4840u5s7ni` | `doctest`        |

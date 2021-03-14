@@ -1,0 +1,116 @@
+nox > Running session unit-3.7
+nox > Creating virtual environment (virtualenv) using python3.7 in .nox/unit-3-7
+nox > pip install numpy >= 1.18.1 pytest >= 5.3.2 importlib-metadata; python_version<"3.8" sympy >= 1.5.1 scipy >= 1.4.1
+nox > <function makedirs at 0x7f3c1ee3adc0>(args=('/var/code/bezier/.nox/libbezier-debug',), kwargs={'exist_ok': True})
+nox > <built-in function print>(args=('Using pre-installed ``cmake``',), kwargs={})
+Using pre-installed ``cmake``
+nox > cmake --version
+cmake version 3.15.3
+
+CMake suite maintained and supported by Kitware (kitware.com/cmake).
+nox > <function makedirs at 0x7f3c1ee3adc0>(args=('/var/code/bezier/.nox/libbezier-debug/build',), kwargs={'exist_ok': True})
+nox > cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_INSTALL_PREFIX:PATH=/var/code/bezier/.nox/libbezier-debug/usr -DCMAKE_VERBOSE_MAKEFILE:BOOL=ON -S src/fortran -B /var/code/bezier/.nox/libbezier-debug/build
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /var/code/bezier/.nox/libbezier-debug/build
+nox > cmake --build /var/code/bezier/.nox/libbezier-debug/build --config Debug --target install
+/root/.pyenv/versions/3.8.0/lib/python3.8/site-packages/cmake/data/bin/cmake -S/var/code/bezier/src/fortran -B/var/code/bezier/.nox/libbezier-debug/build --check-build-system CMakeFiles/Makefile.cmake 0
+/root/.pyenv/versions/3.8.0/lib/python3.8/site-packages/cmake/data/bin/cmake -E cmake_progress_start /var/code/bezier/.nox/libbezier-debug/build/CMakeFiles /var/code/bezier/.nox/libbezier-debug/build/CMakeFiles/progress.marks
+/usr/bin/make -f CMakeFiles/Makefile2 all
+make[1]: Entering directory '/var/code/bezier/.nox/libbezier-debug/build'
+/usr/bin/make -f quadpack/CMakeFiles/quadpack.dir/build.make quadpack/CMakeFiles/quadpack.dir/depend
+make[2]: Entering directory '/var/code/bezier/.nox/libbezier-debug/build'
+cd /var/code/bezier/.nox/libbezier-debug/build && /root/.pyenv/versions/3.8.0/lib/python3.8/site-packages/cmake/data/bin/cmake -E cmake_depends "Unix Makefiles" /var/code/bezier/src/fortran /var/code/bezier/src/fortran/quadpack /var/code/bezier/.nox/libbezier-debug/build /var/code/bezier/.nox/libbezier-debug/build/quadpack /var/code/bezier/.nox/libbezier-debug/build/quadpack/CMakeFiles/quadpack.dir/DependInfo.cmake --color=
+make[2]: Leaving directory '/var/code/bezier/.nox/libbezier-debug/build'
+/usr/bin/make -f quadpack/CMakeFiles/quadpack.dir/build.make quadpack/CMakeFiles/quadpack.dir/build
+make[2]: Entering directory '/var/code/bezier/.nox/libbezier-debug/build'
+make[2]: Nothing to be done for 'quadpack/CMakeFiles/quadpack.dir/build'.
+make[2]: Leaving directory '/var/code/bezier/.nox/libbezier-debug/build'
+[ 38%] Built target quadpack
+/usr/bin/make -f CMakeFiles/bezier.dir/build.make CMakeFiles/bezier.dir/depend
+make[2]: Entering directory '/var/code/bezier/.nox/libbezier-debug/build'
+cd /var/code/bezier/.nox/libbezier-debug/build && /root/.pyenv/versions/3.8.0/lib/python3.8/site-packages/cmake/data/bin/cmake -E cmake_depends "Unix Makefiles" /var/code/bezier/src/fortran /var/code/bezier/src/fortran /var/code/bezier/.nox/libbezier-debug/build /var/code/bezier/.nox/libbezier-debug/build /var/code/bezier/.nox/libbezier-debug/build/CMakeFiles/bezier.dir/DependInfo.cmake --color=
+make[2]: Leaving directory '/var/code/bezier/.nox/libbezier-debug/build'
+/usr/bin/make -f CMakeFiles/bezier.dir/build.make CMakeFiles/bezier.dir/build
+make[2]: Entering directory '/var/code/bezier/.nox/libbezier-debug/build'
+make[2]: Nothing to be done for 'CMakeFiles/bezier.dir/build'.
+make[2]: Leaving directory '/var/code/bezier/.nox/libbezier-debug/build'
+[100%] Built target bezier
+make[1]: Leaving directory '/var/code/bezier/.nox/libbezier-debug/build'
+/root/.pyenv/versions/3.8.0/lib/python3.8/site-packages/cmake/data/bin/cmake -E cmake_progress_start /var/code/bezier/.nox/libbezier-debug/build/CMakeFiles 0
+/usr/bin/make -f CMakeFiles/Makefile2 preinstall
+make[1]: Entering directory '/var/code/bezier/.nox/libbezier-debug/build'
+make[1]: Nothing to be done for 'preinstall'.
+make[1]: Leaving directory '/var/code/bezier/.nox/libbezier-debug/build'
+Install the project...
+/root/.pyenv/versions/3.8.0/lib/python3.8/site-packages/cmake/data/bin/cmake -P cmake_install.cmake
+-- Install configuration: "Debug"
+-- Up-to-date: /var/code/bezier/.nox/libbezier-debug/usr/lib/libbezier.so.2020.5.19
+-- Up-to-date: /var/code/bezier/.nox/libbezier-debug/usr/lib/libbezier.so.2020
+-- Up-to-date: /var/code/bezier/.nox/libbezier-debug/usr/lib/libbezier.so
+-- Up-to-date: /var/code/bezier/.nox/libbezier-debug/usr/include
+-- Up-to-date: /var/code/bezier/.nox/libbezier-debug/usr/include/bezier
+-- Up-to-date: /var/code/bezier/.nox/libbezier-debug/usr/include/bezier/status.h
+-- Up-to-date: /var/code/bezier/.nox/libbezier-debug/usr/include/bezier/triangle.h
+-- Up-to-date: /var/code/bezier/.nox/libbezier-debug/usr/include/bezier/helpers.h
+-- Up-to-date: /var/code/bezier/.nox/libbezier-debug/usr/include/bezier/curve_intersection.h
+-- Up-to-date: /var/code/bezier/.nox/libbezier-debug/usr/include/bezier/curve.h
+-- Up-to-date: /var/code/bezier/.nox/libbezier-debug/usr/include/bezier/triangle_intersection.h
+-- Up-to-date: /var/code/bezier/.nox/libbezier-debug/usr/include/bezier.h
+-- Up-to-date: /var/code/bezier/.nox/libbezier-debug/usr/share/bezier/cmake/BezierConfig.cmake
+-- Installing: /var/code/bezier/.nox/libbezier-debug/usr/share/bezier/cmake/BezierConfig-debug.cmake
+nox > cmake -L /var/code/bezier/.nox/libbezier-debug/build
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /var/code/bezier/.nox/libbezier-debug/build
+-- Cache values
+BUILD_SHARED_LIBS:BOOL=ON
+CMAKE_BUILD_TYPE:STRING=Debug
+CMAKE_INSTALL_PREFIX:PATH=/var/code/bezier/.nox/libbezier-debug/usr
+TARGET_NATIVE_ARCH:BOOL=ON
+nox > pip install .
+nox > pytest /var/code/bezier/tests/unit
+============================= test session starts ==============================
+platform linux -- Python 3.7.5, pytest-5.4.2, py-1.8.1, pluggy-0.13.1
+rootdir: /var/code/bezier, inifile: setup.cfg
+collecting ... collecting 46 items                                                            collecting 160 items                                                           collecting 668 items                                                           collected 902 items                                                            
+
+tests/unit/test___config__.py ..........                                 [  1%]
+tests/unit/test___init__.py ..                                           [  1%]
+tests/unit/test__base.py ...........                                     [  2%]
+tests/unit/test__clipping.py ................                            [  4%]
+tests/unit/test__curve_helpers.py ...................................... [  8%]
+............                                                             [  9%]
+tests/unit/test__geometric_intersection.py ...................x.         [ 12%]
+tests/unit/test__helpers.py .....................................        [ 16%]
+tests/unit/test__intersection_helpers.py ......                          [ 16%]
+tests/unit/test__legacy.py .                                             [ 17%]
+tests/unit/test__plot_helpers.py ....                                    [ 17%]
+tests/unit/test__symbolic.py ........                                    [ 18%]
+tests/unit/test__triangle_helpers.py ................................... [ 22%]
+.                                                                        [ 22%]
+tests/unit/test__triangle_intersection.py ....................x.         [ 24%]
+tests/unit/test_curve.py ................................                [ 28%]
+tests/unit/test_curved_polygon.py ............                           [ 29%]
+tests/unit/test_triangle.py ............................................ [ 34%]
+..................                                                       [ 36%]
+tests/unit/hazmat/test_algebraic_intersection.py ....................... [ 39%]
+........................................................................ [ 47%]
+....                                                                     [ 47%]
+tests/unit/hazmat/test_curve_helpers.py ................................ [ 51%]
+................................                                         [ 54%]
+tests/unit/hazmat/test_geometric_intersection.py ....................... [ 57%]
+........................................................................ [ 65%]
+.............                                                            [ 66%]
+tests/unit/hazmat/test_helpers.py ...................................... [ 70%]
+................                                                         [ 72%]
+tests/unit/hazmat/test_intersection_helpers.py ......................... [ 75%]
+.........                                                                [ 76%]
+tests/unit/hazmat/test_triangle_helpers.py ............................. [ 79%]
+........................................................................ [ 87%]
+.............................................                            [ 92%]
+tests/unit/hazmat/test_triangle_intersection.py ........................ [ 95%]
+...........................................                              [100%]
+
+======================== 900 passed, 2 xfailed in 9.83s ========================
+nox > Session unit-3.7 was successful.

@@ -1,0 +1,8 @@
+nox > Running session update_generated(check=True)
+nox > Creating virtual environment (virtualenv) using python3.8 in .nox/update_generated-check-true
+nox > pip install Cython >= 0.29.18
+nox > python /var/code/bezier/scripts/remove_cython_files.py
+nox > cython /var/code/bezier/src/python/bezier/_speedup.pyx
+nox > python /var/code/bezier/scripts/clean_cython.py --filename /var/code/bezier/src/python/bezier/_speedup.c --virtualenv-dirname update_generated-check-true
+nox > python /var/code/bezier/scripts/cython_update_check.py
+nox > Session update_generated(check=True) was successful.

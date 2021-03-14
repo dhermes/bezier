@@ -1,0 +1,30 @@
+Using build environment variables:
+  BASH_ENV=/tmp/.bash_env-5ec4b1f490915960709ff62d-0-build
+  CI=true
+  CIRCLECI=true
+  CIRCLE_BRANCH=master
+  CIRCLE_BUILD_NUM=1800
+  CIRCLE_BUILD_URL=https://circleci.com/gh/dhermes/bezier/1800
+  CIRCLE_COMPARE_URL=
+  CIRCLE_JOB=build
+  CIRCLE_NODE_INDEX=0
+  CIRCLE_NODE_TOTAL=1
+  CIRCLE_PREVIOUS_BUILD_NUM=1799
+  CIRCLE_PROJECT_REPONAME=bezier
+  CIRCLE_PROJECT_USERNAME=dhermes
+  CIRCLE_REPOSITORY_URL=git@github.com:dhermes/bezier.git
+  CIRCLE_SHA1=ab4575d1827daf8b0d51fdab8c28762ea328199c
+  CIRCLE_SHELL_ENV=/tmp/.bash_env-5ec4b1f490915960709ff62d-0-build
+  CIRCLE_STAGE=build
+  CIRCLE_USERNAME=dhermes
+  CIRCLE_WORKFLOW_ID=50ee7e2e-755f-4b0e-94f9-ed74502a32bf
+  CIRCLE_WORKFLOW_JOB_ID=aed35abf-ce06-4be9-b9eb-b5e2b77fcf38
+  CIRCLE_WORKFLOW_UPSTREAM_JOB_IDS=
+  CIRCLE_WORKFLOW_WORKSPACE_ID=50ee7e2e-755f-4b0e-94f9-ed74502a32bf
+  CIRCLE_WORKING_DIRECTORY=/var/code/bezier/
+
+Using environment variables from project settings and/or contexts:
+  CIRCLE_JOB=**REDACTED**
+  COVERALLS_REPO_TOKEN=**REDACTED**
+
+The redacted variables listed above will be masked in run step output.

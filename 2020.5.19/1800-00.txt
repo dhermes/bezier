@@ -1,0 +1,50 @@
+Build-agent version 1.0.32640-09af5a4d (2020-05-18T16:33:40+0000)
+Docker Engine Version: 18.09.6
+Kernel Version: Linux 7260bbc35dec 4.15.0-1052-aws #54-Ubuntu SMP Tue Oct 1 15:43:26 UTC 2019 x86_64 Linux
+Starting container dhermes/bezier:latest
+  image cache not found on this host, downloading dhermes/bezier:latest
+latest: Pulling from dhermes/bezier
+22e816666fd6: Already exists
+079b6d2a1e53: Already exists
+11048ebae908: Already exists
+c58094023a2e: Already exists
+d537602a3e58: Pulling fs layer
+be6e588a697e: Pulling fs layer
+dde7fd10255b: Pulling fs layer
+6ef6e4b9402d: Pulling fs layer
+59f54bac0972: Pulling fs layer
+4d399049f5ca: Pulling fs layer
+28df164fe5ac: Pulling fs layer
+7305b53df586: Pulling fs layer
+6ef6e4b9402d: Waiting
+28df164fe5ac: Waiting
+59f54bac0972: Waiting
+7305b53df586: Waiting
+4d399049f5ca: Waiting
+be6e588a697e: Verifying Checksum
+be6e588a697e: Download complete
+6ef6e4b9402d: Verifying Checksum
+6ef6e4b9402d: Download complete
+59f54bac0972: Verifying Checksum
+59f54bac0972: Download complete
+4d399049f5ca: Verifying Checksum
+4d399049f5ca: Download complete
+28df164fe5ac: Verifying Checksum
+28df164fe5ac: Download complete
+d537602a3e58: Verifying Checksum
+d537602a3e58: Download complete
+dde7fd10255b: Verifying Checksum
+dde7fd10255b: Download complete
+7305b53df586: Verifying Checksum
+7305b53df586: Download complete
+d537602a3e58: Pull complete
+be6e588a697e: Pull complete
+dde7fd10255b: Pull complete
+6ef6e4b9402d: Pull complete
+59f54bac0972: Pull complete
+4d399049f5ca: Pull complete
+28df164fe5ac: Pull complete
+7305b53df586: Pull complete
+Digest: sha256:9fb15726ec205b8db779afac5439a4cac6c96279af592dd1ffecd120eaa7daeb
+Status: Downloaded newer image for dhermes/bezier:latest
+  using image dhermes/bezier@sha256:9fb15726ec205b8db779afac5439a4cac6c96279af592dd1ffecd120eaa7daeb
