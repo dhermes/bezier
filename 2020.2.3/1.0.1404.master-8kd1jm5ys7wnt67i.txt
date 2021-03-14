@@ -1,0 +1,492 @@
+[00:00:00] Build started
+[00:00:00] git clone -q --branch=master https://github.com/dhermes/bezier.git C:\projects\bezier
+[00:00:02] git checkout -qf 1c55dc4e1422783d7f55fcb98823b402fa4d6d99
+[00:00:07] Restoring build cache
+[00:00:07] 
+[00:00:07] Cache 'C:\Users\appveyor\AppData\Local\pip\Cache' - Downloading (68,597,341 bytes)...1%
+[00:00:07] Cache 'C:\Users\appveyor\AppData\Local\pip\Cache' - Downloading (68,597,341 bytes)...10%
+[00:00:07] Cache 'C:\Users\appveyor\AppData\Local\pip\Cache' - Downloading (68,597,341 bytes)...20%
+[00:00:08] Cache 'C:\Users\appveyor\AppData\Local\pip\Cache' - Downloading (68,597,341 bytes)...30%
+[00:00:08] Cache 'C:\Users\appveyor\AppData\Local\pip\Cache' - Downloading (68,597,341 bytes)...40%
+[00:00:08] Cache 'C:\Users\appveyor\AppData\Local\pip\Cache' - Downloading (68,597,341 bytes)...50%
+[00:00:08] Cache 'C:\Users\appveyor\AppData\Local\pip\Cache' - Downloading (68,597,341 bytes)...60%
+[00:00:08] Cache 'C:\Users\appveyor\AppData\Local\pip\Cache' - Downloading (68,597,341 bytes)...70%
+[00:00:08] Cache 'C:\Users\appveyor\AppData\Local\pip\Cache' - Downloading (68,597,341 bytes)...80%
+[00:00:08] Cache 'C:\Users\appveyor\AppData\Local\pip\Cache' - Downloading (68,597,341 bytes)...90%
+[00:00:08] Cache 'C:\Users\appveyor\AppData\Local\pip\Cache' - Downloading (68,597,341 bytes)...100%
+[00:00:09] Cache 'C:\Users\appveyor\AppData\Local\pip\Cache' - Unzipping...
+[00:00:09] Cache 'C:\Users\appveyor\AppData\Local\pip\Cache' - Restored
+[00:00:09] Running Install scripts
+[00:00:09] echo "Filesystem root:"
+[00:00:09] "Filesystem root:"
+[00:00:09] dir C:\
+[00:00:09]  Volume in drive C is Windows
+[00:00:09]  Volume Serial Number is D4AB-4044
+[00:00:09] 
+[00:00:09]  Directory of C:\
+[00:00:09] 
+[00:00:09] 04/20/2016  03:18 AM    <DIR>          avvm
+[00:00:09] 01/17/2020  04:27 AM    <DIR>          cygwin
+[00:00:09] 01/17/2020  04:30 AM    <DIR>          cygwin64
+[00:00:09] 11/03/2019  03:11 AM    <JUNCTION>     go [C:\go113]
+[00:00:09] 11/03/2019  03:11 AM    <JUNCTION>     go-x86 [C:\go113-x86]
+[00:00:09] 01/23/2019  07:57 PM    <DIR>          go110
+[00:00:09] 01/23/2019  07:57 PM    <DIR>          go110-x86
+[00:00:09] 08/13/2019  04:52 PM    <DIR>          go111
+[00:00:09] 08/13/2019  04:52 PM    <DIR>          go111-x86
+[00:00:09] 10/17/2019  09:55 PM    <DIR>          go112
+[00:00:09] 10/17/2019  09:55 PM    <DIR>          go112-x86
+[00:00:09] 10/17/2019  10:02 PM    <DIR>          go113
+[00:00:09] 10/17/2019  10:04 PM    <DIR>          go113-x86
+[00:00:09] 09/23/2015  04:44 AM    <DIR>          go14
+[00:00:09] 09/23/2015  04:44 AM    <DIR>          go14-x86
+[00:00:09] 04/12/2016  12:28 AM    <DIR>          go15
+[00:00:09] 04/12/2016  12:27 AM    <DIR>          go15-x86
+[00:00:09] 12/01/2016  09:24 PM    <DIR>          go16
+[00:00:09] 12/01/2016  09:24 PM    <DIR>          go16-x86
+[00:00:09] 05/23/2017  06:44 PM    <DIR>          go17
+[00:00:09] 05/23/2017  06:44 PM    <DIR>          go17-x86
+[00:00:09] 02/07/2018  05:41 PM    <DIR>          go18
+[00:00:09] 02/07/2018  05:42 PM    <DIR>          go18-x86
+[00:00:09] 06/06/2018  07:50 PM    <DIR>          go19
+[00:00:09] 06/06/2018  07:50 PM    <DIR>          go19-x86
+[00:00:09] 03/09/2016  04:25 AM    <DIR>          inetpub
+[00:00:09] 07/21/2015  07:31 PM    <DIR>          jruby-9.0.0.0
+[00:00:09] 02/03/2019  07:46 PM    <DIR>          Libraries
+[00:00:09] 02/19/2017  07:06 PM    <DIR>          MinGW
+[00:00:09] 01/19/2018  02:40 AM    <DIR>          mingw-w64
+[00:00:09] 11/03/2019  02:55 AM    <DIR>          Miniconda
+[00:00:09] 11/03/2019  02:55 AM    <DIR>          Miniconda-x64
+[00:00:09] 11/03/2019  02:57 AM    <JUNCTION>     Miniconda3 [C:\Miniconda37]
+[00:00:09] 11/03/2019  02:57 AM    <JUNCTION>     Miniconda3-x64 [C:\Miniconda37-x64]
+[00:00:09] 11/03/2019  02:57 AM    <DIR>          Miniconda34
+[00:00:09] 11/03/2019  02:57 AM    <DIR>          Miniconda34-x64
+[00:00:09] 11/03/2019  02:57 AM    <DIR>          Miniconda35
+[00:00:09] 11/03/2019  02:57 AM    <DIR>          Miniconda35-x64
+[00:00:09] 11/03/2019  02:57 AM    <DIR>          Miniconda36
+[00:00:09] 11/03/2019  02:56 AM    <DIR>          Miniconda36-x64
+[00:00:09] 11/03/2019  02:57 AM    <DIR>          Miniconda37
+[00:00:09] 11/03/2019  02:57 AM    <DIR>          Miniconda37-x64
+[00:00:09] 08/31/2018  08:12 PM    <DIR>          MongoDB
+[00:00:09] 07/25/2019  07:29 PM    <DIR>          msys64
+[00:00:09] 01/17/2020  12:18 AM    <DIR>          OpenSSL-v11-Win32
+[00:00:09] 01/17/2020  12:18 AM    <DIR>          OpenSSL-v11-Win64
+[00:00:09] 01/17/2020  12:18 AM    <DIR>          OpenSSL-v111-Win32
+[00:00:09] 01/17/2020  12:19 AM    <DIR>          OpenSSL-v111-Win64
+[00:00:09] 01/17/2020  12:19 AM    <DIR>          OpenSSL-Win32
+[00:00:09] 01/17/2020  12:19 AM    <DIR>          OpenSSL-Win64
+[00:00:09] 08/22/2013  03:52 PM    <DIR>          PerfLogs
+[00:00:09] 04/20/2016  03:06 AM    <DIR>          Perl
+[00:00:09] 01/17/2020  12:35 AM    <DIR>          Program Files
+[00:00:09] 01/17/2020  09:52 PM    <DIR>          Program Files (x86)
+[00:00:09] 02/04/2020  06:32 AM    <DIR>          projects
+[00:00:09] 04/20/2016  02:59 AM    <DIR>          Python26
+[00:00:09] 04/20/2016  02:59 AM    <DIR>          Python26-x64
+[00:00:09] 11/03/2019  02:40 AM    <DIR>          Python27
+[00:00:09] 11/03/2019  02:40 AM    <DIR>          Python27-x64
+[00:00:09] 04/20/2016  02:59 AM    <DIR>          Python33
+[00:00:09] 04/20/2016  02:59 AM    <DIR>          Python33-x64
+[00:00:09] 08/05/2016  02:35 AM    <DIR>          Python34
+[00:00:09] 08/05/2016  02:35 AM    <DIR>          Python34-x64
+[00:00:09] 09/14/2018  01:53 AM    <DIR>          Python35
+[00:00:09] 09/14/2018  01:53 AM    <DIR>          Python35-x64
+[00:00:09] 02/03/2019  06:14 PM    <DIR>          Python36
+[00:00:09] 02/03/2019  06:15 PM    <DIR>          Python36-x64
+[00:00:09] 11/03/2019  02:42 AM    <DIR>          Python37
+[00:00:09] 11/03/2019  02:43 AM    <DIR>          Python37-x64
+[00:00:09] 11/03/2019  02:44 AM    <DIR>          Python38
+[00:00:09] 11/03/2019  02:44 AM    <DIR>          Python38-x64
+[00:00:09] 01/17/2020  04:24 AM    <DIR>          Qt
+[00:00:09] 07/25/2019  06:50 PM    <DIR>          Ruby193
+[00:00:09] 01/13/2016  04:29 AM    <DIR>          Ruby200
+[00:00:09] 01/14/2016  02:52 PM    <DIR>          Ruby200-x64
+[00:00:09] 07/16/2016  08:11 PM    <DIR>          Ruby21
+[00:00:09] 07/16/2016  11:23 PM    <DIR>          Ruby21-x64
+[00:00:09] 12/06/2016  12:50 AM    <DIR>          Ruby22
+[00:00:09] 12/06/2016  01:32 AM    <DIR>          Ruby22-x64
+[00:00:09] 07/25/2019  06:51 PM    <DIR>          Ruby23
+[00:00:09] 07/25/2019  06:52 PM    <DIR>          Ruby23-x64
+[00:00:09] 07/25/2019  06:52 PM    <DIR>          Ruby24
+[00:00:09] 07/25/2019  06:52 PM    <DIR>          Ruby24-x64
+[00:00:09] 07/25/2019  06:53 PM    <DIR>          Ruby25
+[00:00:09] 07/25/2019  06:53 PM    <DIR>          Ruby25-x64
+[00:00:09] 07/25/2019  06:53 PM    <DIR>          Ruby26
+[00:00:09] 07/25/2019  06:53 PM    <DIR>          Ruby26-x64
+[00:00:09] 01/17/2020  12:21 AM    <DIR>          Tools
+[00:00:09] 11/14/2017  10:57 PM    <DIR>          Users
+[00:00:09] 04/17/2016  09:44 PM    <DIR>          WinDDK
+[00:00:09] 01/16/2020  01:15 AM    <DIR>          Windows
+[00:00:09]                0 File(s)              0 bytes
+[00:00:09]               91 Dir(s)  43,996,581,888 bytes free
+[00:00:09] echo "Installed SDKs:"
+[00:00:09] "Installed SDKs:"
+[00:00:09] dir "C:/Program Files/Microsoft SDKs/Windows"
+[00:00:09]  Volume in drive C is Windows
+[00:00:09]  Volume Serial Number is D4AB-4044
+[00:00:09] 
+[00:00:09]  Directory of C:\Program Files\Microsoft SDKs\Windows
+[00:00:09] 
+[00:00:09] 04/17/2016  09:04 PM    <DIR>          .
+[00:00:09] 04/17/2016  09:04 PM    <DIR>          ..
+[00:00:09] 04/15/2016  03:06 AM    <DIR>          v6.0A
+[00:00:09] 04/17/2016  08:52 PM    <DIR>          v7.0
+[00:00:09] 04/17/2016  09:05 PM    <DIR>          v7.1
+[00:00:09]                0 File(s)              0 bytes
+[00:00:09]                5 Dir(s)  43,996,581,888 bytes free
+[00:00:09] SET PATH=%DEFAULT_PYTHON%;%DEFAULT_PYTHON%\Scripts;%PATH%
+[00:00:09] set PATH=%PATH:C:\Program Files (x86)\Git\bin;=%
+[00:00:09] set PATH=%PATH:C:\Program Files\Git\usr\bin;=%
+[00:00:09] $NOX_SESSION = $env:NOX_SESSION
+[00:00:09] If ($NOX_SESSION.EndsWith("-32")) {
+[00:00:09]     $MINGW = $env:MINGW_32
+[00:00:09] } Else {
+[00:00:09]     $MINGW = $env:MINGW_64
+[00:00:09] }
+[00:00:09] $env:Path += ";$MINGW"
+[00:00:09] 
+[00:00:09] python -m pip install --upgrade "pip !=20.0,!=20.0.1" setuptools
+[00:00:11] Collecting pip!=20.0,!=20.0.1
+[00:00:11]   Using cached https://files.pythonhosted.org/packages/54/0c/d01aa759fdc501a58f431eb594a17495f15b88da142ce14b5845662c13f3/pip-20.0.2-py2.py3-none-any.whl
+[00:00:11] Collecting setuptools
+[00:00:11]   Using cached https://files.pythonhosted.org/packages/a7/c5/6c1acea1b4ea88b86b03280f3fde1efa04fefecd4e7d2af13e602661cde4/setuptools-45.1.0-py3-none-any.whl
+[00:00:12] Installing collected packages: pip, setuptools
+[00:00:12]   Found existing installation: pip 19.3.1
+[00:00:12]     Uninstalling pip-19.3.1:
+[00:00:12]       Successfully uninstalled pip-19.3.1
+[00:00:14]   Found existing installation: setuptools 41.2.0
+[00:00:14]     Uninstalling setuptools-41.2.0:
+[00:00:14]       Successfully uninstalled setuptools-41.2.0
+[00:00:14] Successfully installed pip-20.0.2 setuptools-45.1.0
+[00:00:14] python -m pip install --upgrade wheel
+[00:00:15] Collecting wheel
+[00:00:15]   Using cached wheel-0.34.2-py2.py3-none-any.whl (26 kB)
+[00:00:15] Installing collected packages: wheel
+[00:00:15] Successfully installed wheel-0.34.2
+[00:00:15] python -m pip install --upgrade "nox >= 2019.11.9"
+[00:00:16] Collecting nox>=2019.11.9
+[00:00:16]   Using cached nox-2019.11.9-py2.py3-none-any.whl (38 kB)
+[00:00:16] Collecting argcomplete<2.0,>=1.9.4
+[00:00:16]   Using cached argcomplete-1.11.1-py2.py3-none-any.whl (36 kB)
+[00:00:16] Requirement already satisfied, skipping upgrade: virtualenv>=14.0.0 in c:\python38-x64\lib\site-packages (from nox>=2019.11.9) (16.7.7)
+[00:00:16] Collecting colorlog<5.0.0,>=2.6.1
+[00:00:16]   Using cached colorlog-4.1.0-py2.py3-none-any.whl (14 kB)
+[00:00:16] Collecting py<2.0.0,>=1.4.0
+[00:00:16]   Using cached py-1.8.1-py2.py3-none-any.whl (83 kB)
+[00:00:16] Collecting colorama; sys_platform == "win32"
+[00:00:16]   Using cached colorama-0.4.3-py2.py3-none-any.whl (15 kB)
+[00:00:16] Installing collected packages: argcomplete, colorama, colorlog, py, nox
+[00:00:16] Successfully installed argcomplete-1.11.1 colorama-0.4.3 colorlog-4.1.0 nox-2019.11.9 py-1.8.1
+[00:00:16] python -m nox -s %NOX_SESSION%
+[00:00:17] nox > Running session unit-3.8-32
+[00:00:17] nox > Creating virtual environment (virtualenv) using python.exe in .nox\unit-3-8-32
+[00:00:25] nox > pip install numpy >= 1.18.1 pytest >= 5.3.2 sympy >= 1.5.1 scipy >= 1.4.1
+[00:00:51] nox > <function makedirs at 0x0000004C9A584EE0>(args=('C:\\projects\\bezier\\.nox\\libbezier-debug',), kwargs={'exist_ok': True})
+[00:00:51] nox > <built-in function print>(args=('Using pre-installed ``cmake``',), kwargs={})
+[00:00:51] Using pre-installed ``cmake``
+[00:00:51] nox > cmake --version
+[00:00:52] cmake version 3.16.2
+[00:00:52] 
+[00:00:52] CMake suite maintained and supported by Kitware (kitware.com/cmake).
+[00:00:52] nox > <function makedirs at 0x0000004C9A584EE0>(args=('C:\\projects\\bezier\\.nox\\libbezier-debug\\build',), kwargs={'exist_ok': True})
+[00:00:52] nox > cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_INSTALL_PREFIX:PATH=C:\projects\bezier\.nox\libbezier-debug\usr -DCMAKE_VERBOSE_MAKEFILE:BOOL=ON -G MinGW Makefiles -S src\fortran -B C:\projects\bezier\.nox\libbezier-debug\build
+[00:00:52] -- The Fortran compiler identification is GNU 6.3.0
+[00:00:53] -- The C compiler identification is GNU 6.3.0
+[00:00:53] -- Check for working Fortran compiler: C:/mingw-w64/i686-6.3.0-posix-dwarf-rt_v5-rev1/mingw32/bin/gfortran.exe
+[00:00:53] -- Check for working Fortran compiler: C:/mingw-w64/i686-6.3.0-posix-dwarf-rt_v5-rev1/mingw32/bin/gfortran.exe  -- works
+[00:00:53] -- Detecting Fortran compiler ABI info
+[00:00:53] -- Detecting Fortran compiler ABI info - done
+[00:00:53] -- Checking whether C:/mingw-w64/i686-6.3.0-posix-dwarf-rt_v5-rev1/mingw32/bin/gfortran.exe supports Fortran 90
+[00:00:54] -- Checking whether C:/mingw-w64/i686-6.3.0-posix-dwarf-rt_v5-rev1/mingw32/bin/gfortran.exe supports Fortran 90 -- yes
+[00:00:54] -- Check for working C compiler: C:/mingw-w64/i686-6.3.0-posix-dwarf-rt_v5-rev1/mingw32/bin/gcc.exe
+[00:00:54] -- Check for working C compiler: C:/mingw-w64/i686-6.3.0-posix-dwarf-rt_v5-rev1/mingw32/bin/gcc.exe -- works
+[00:00:54] -- Detecting C compiler ABI info
+[00:00:54] -- Detecting C compiler ABI info - done
+[00:00:54] -- Detecting C compile features
+[00:00:54] -- Detecting C compile features - done
+[00:00:54] -- Configuring done
+[00:00:54] -- Generating done
+[00:00:54] -- Build files have been written to: C:/projects/bezier/.nox/libbezier-debug/build
+[00:00:54] nox > cmake --build C:\projects\bezier\.nox\libbezier-debug\build --config Debug --target install
+[00:00:54] "C:\Program Files (x86)\CMake\bin\cmake.exe" -SC:\projects\bezier\src\fortran -BC:\projects\bezier\.nox\libbezier-debug\build --check-build-system CMakeFiles\Makefile.cmake 0
+[00:00:54] "C:\Program Files (x86)\CMake\bin\cmake.exe" -E cmake_progress_start C:\projects\bezier\.nox\libbezier-debug\build\CMakeFiles C:\projects\bezier\.nox\libbezier-debug\build\CMakeFiles\progress.marks
+[00:00:54] C:/mingw-w64/i686-6.3.0-posix-dwarf-rt_v5-rev1/mingw32/bin/mingw32-make.exe -f CMakeFiles\Makefile2 all
+[00:00:54] mingw32-make.exe[1]: Entering directory 'C:/projects/bezier/.nox/libbezier-debug/build'
+[00:00:54] C:/mingw-w64/i686-6.3.0-posix-dwarf-rt_v5-rev1/mingw32/bin/mingw32-make.exe -f quadpack\CMakeFiles\quadpack.dir\build.make quadpack/CMakeFiles/quadpack.dir/depend
+[00:00:54] mingw32-make.exe[2]: Entering directory 'C:/projects/bezier/.nox/libbezier-debug/build'
+[00:00:54] "C:\Program Files (x86)\CMake\bin\cmake.exe" -E cmake_depends "MinGW Makefiles" C:\projects\bezier\src\fortran C:\projects\bezier\src\fortran\quadpack C:\projects\bezier\.nox\libbezier-debug\build C:\projects\bezier\.nox\libbezier-debug\build\quadpack C:\projects\bezier\.nox\libbezier-debug\build\quadpack\CMakeFiles\quadpack.dir\DependInfo.cmake --color=
+[00:00:54] Dependee "C:\projects\bezier\.nox\libbezier-debug\build\quadpack\CMakeFiles\quadpack.dir\DependInfo.cmake" is newer than depender "C:/projects/bezier/.nox/libbezier-debug/build/quadpack/CMakeFiles/quadpack.dir/depend.internal".
+[00:00:54] Dependee "C:/projects/bezier/.nox/libbezier-debug/build/quadpack/CMakeFiles/CMakeDirectoryInformation.cmake" is newer than depender "C:/projects/bezier/.nox/libbezier-debug/build/quadpack/CMakeFiles/quadpack.dir/depend.internal".
+[00:00:54] Scanning dependencies of target quadpack
+[00:00:54] mingw32-make.exe[2]: Leaving directory 'C:/projects/bezier/.nox/libbezier-debug/build'
+[00:00:54] C:/mingw-w64/i686-6.3.0-posix-dwarf-rt_v5-rev1/mingw32/bin/mingw32-make.exe -f quadpack\CMakeFiles\quadpack.dir\build.make quadpack/CMakeFiles/quadpack.dir/build
+[00:00:54] mingw32-make.exe[2]: Entering directory 'C:/projects/bezier/.nox/libbezier-debug/build'
+[00:00:54] [  7%] Building Fortran object quadpack/CMakeFiles/quadpack.dir/d1mach.f.obj
+[00:00:54] cd /d C:\projects\bezier\.nox\libbezier-debug\build\quadpack && C:\mingw-w64\i686-6.3.0-posix-dwarf-rt_v5-rev1\mingw32\bin\gfortran.exe   -g   -fno-second-underscore -Wall -Wextra -Wno-compare-reals -Wimplicit-interface -fmax-errors=1 -std=f2008 -fcheck=all -fbacktrace -fimplicit-none -pedantic -g -ffixed-form -c C:\projects\bezier\src\fortran\quadpack\d1mach.f -o CMakeFiles\quadpack.dir\d1mach.f.obj
+[00:00:54] C:\projects\bezier\src\fortran\quadpack\d1mach.f:157:72:
+[00:00:54] 
+[00:00:54]                    CALL I1MCRY(SMALL(1), J, 8285, 8388608, 0)
+[00:00:54]                                                                         1
+[00:00:54] Warning: Procedure 'i1mcry' called with an implicit interface at (1) [-Wimplicit-interface]
+[00:00:54] C:\projects\bezier\src\fortran\quadpack\d1mach.f:159:72:
+[00:00:54] 
+[00:00:54]                    CALL I1MCRY(LARGE(1), J, 24574, 16777215, 16777215)
+[00:00:54]                                                                         1
+[00:00:54] Warning: Procedure 'i1mcry' called with an implicit interface at (1) [-Wimplicit-interface]
+[00:00:54] C:\projects\bezier\src\fortran\quadpack\d1mach.f:160:72:
+[00:00:54] 
+[00:00:54]                    CALL I1MCRY(LARGE(2), J, 0, 16777215, 16777214)
+[00:00:54]                                                                         1
+[00:00:54] Warning: Procedure 'i1mcry' called with an implicit interface at (1) [-Wimplicit-interface]
+[00:00:54] C:\projects\bezier\src\fortran\quadpack\d1mach.f:161:72:
+[00:00:54] 
+[00:00:54]                    CALL I1MCRY(RIGHT(1), J, 16291, 8388608, 0)
+[00:00:54]                                                                         1
+[00:00:54] Warning: Procedure 'i1mcry' called with an implicit interface at (1) [-Wimplicit-interface]
+[00:00:54] C:\projects\bezier\src\fortran\quadpack\d1mach.f:163:72:
+[00:00:54] 
+[00:00:54]                    CALL I1MCRY(DIVER(1), J, 16292, 8388608, 0)
+[00:00:54]                                                                         1
+[00:00:54] Warning: Procedure 'i1mcry' called with an implicit interface at (1) [-Wimplicit-interface]
+[00:00:54] C:\projects\bezier\src\fortran\quadpack\d1mach.f:165:72:
+[00:00:54] 
+[00:00:54]                    CALL I1MCRY(LOG10(1), J, 16383, 10100890, 8715215)
+[00:00:54]                                                                         1
+[00:00:54] Warning: Procedure 'i1mcry' called with an implicit interface at (1) [-Wimplicit-interface]
+[00:00:54] C:\projects\bezier\src\fortran\quadpack\d1mach.f:166:72:
+[00:00:54] 
+[00:00:54]                    CALL I1MCRY(LOG10(2), J, 0, 16226447, 9001388)
+[00:00:54]                                                                         1
+[00:00:54] Warning: Procedure 'i1mcry' called with an implicit interface at (1) [-Wimplicit-interface]
+[00:00:54] [ 15%] Building Fortran object quadpack/CMakeFiles/quadpack.dir/dqagse.f.obj
+[00:00:54] cd /d C:\projects\bezier\.nox\libbezier-debug\build\quadpack && C:\mingw-w64\i686-6.3.0-posix-dwarf-rt_v5-rev1\mingw32\bin\gfortran.exe   -g   -fno-second-underscore -Wall -Wextra -Wno-compare-reals -Wimplicit-interface -fmax-errors=1 -std=f2008 -fcheck=all -fbacktrace -fimplicit-none -pedantic -g -ffixed-form -c C:\projects\bezier\src\fortran\quadpack\dqagse.f -o CMakeFiles\quadpack.dir\dqagse.f.obj
+[00:00:54] C:\projects\bezier\src\fortran\quadpack\dqagse.f:218:15:
+[00:00:54] 
+[00:00:54]        epmach = d1mach(4)
+[00:00:54]                1
+[00:00:54] Warning: Procedure 'd1mach' called with an implicit interface at (1) [-Wimplicit-interface]
+[00:00:54] C:\projects\bezier\src\fortran\quadpack\dqagse.f:238:14:
+[00:00:54] 
+[00:00:54]        uflow = d1mach(1)
+[00:00:54]               1
+[00:00:54] Warning: Procedure 'd1mach' called with an implicit interface at (1) [-Wimplicit-interface]
+[00:00:54] C:\projects\bezier\src\fortran\quadpack\dqagse.f:239:14:
+[00:00:54] 
+[00:00:54]        oflow = d1mach(2)
+[00:00:54]               1
+[00:00:54] Warning: Procedure 'd1mach' called with an implicit interface at (1) [-Wimplicit-interface]
+[00:00:54] C:\projects\bezier\src\fortran\quadpack\dqagse.f:241:72:
+[00:00:54] 
+[00:00:54]        call dqk21(f,a,b,result,abserr,defabs,resabs)
+[00:00:54]                                                                         1
+[00:00:54] Warning: Procedure 'dqk21' called with an implicit interface at (1) [-Wimplicit-interface]
+[00:00:54] C:\projects\bezier\src\fortran\quadpack\dqagse.f:290:72:
+[00:00:54] 
+[00:00:54]          call dqk21(f,a1,b1,area1,error1,resabs,defab1)
+[00:00:54]                                                                         1
+[00:00:54] Warning: Procedure 'dqk21' called with an implicit interface at (1) [-Wimplicit-interface]
+[00:00:54] C:\projects\bezier\src\fortran\quadpack\dqagse.f:291:72:
+[00:00:54] 
+[00:00:54]          call dqk21(f,a2,b2,area2,error2,resabs,defab2)
+[00:00:54]                                                                         1
+[00:00:54] Warning: Procedure 'dqk21' called with an implicit interface at (1) [-Wimplicit-interface]
+[00:00:54] C:\projects\bezier\src\fortran\quadpack\dqagse.f:347:72:
+[00:00:54] 
+[00:00:54]     30   call dqpsrt(limit,last,maxerr,errmax,elist,iord,nrmax)
+[00:00:54]                                                                         1
+[00:00:54] Warning: Procedure 'dqpsrt' called with an implicit interface at (1) [-Wimplicit-interface]
+[00:00:54] C:\projects\bezier\src\fortran\quadpack\dqagse.f:385:72:
+[00:00:54] 
+[00:00:54]          call dqelg(numrl2,rlist2,reseps,abseps,res3la,nres)
+[00:00:54]                                                                         1
+[00:00:54] Warning: Procedure 'dqelg' called with an implicit interface at (1) [-Wimplicit-interface]
+[00:00:54] [ 23%] Building Fortran object quadpack/CMakeFiles/quadpack.dir/dqelg.f.obj
+[00:00:54] cd /d C:\projects\bezier\.nox\libbezier-debug\build\quadpack && C:\mingw-w64\i686-6.3.0-posix-dwarf-rt_v5-rev1\mingw32\bin\gfortran.exe   -g   -fno-second-underscore -Wall -Wextra -Wno-compare-reals -Wimplicit-interface -fmax-errors=1 -std=f2008 -fcheck=all -fbacktrace -fimplicit-none -pedantic -g -ffixed-form -c C:\projects\bezier\src\fortran\quadpack\dqelg.f -o CMakeFiles\quadpack.dir\dqelg.f.obj
+[00:00:54] C:\projects\bezier\src\fortran\quadpack\dqelg.f:83:15:
+[00:00:54] 
+[00:00:54]        epmach = d1mach(4)
+[00:00:54]                1
+[00:00:54] Warning: Procedure 'd1mach' called with an implicit interface at (1) [-Wimplicit-interface]
+[00:00:54] C:\projects\bezier\src\fortran\quadpack\dqelg.f:84:14:
+[00:00:54] 
+[00:00:54]        oflow = d1mach(2)
+[00:00:54]               1
+[00:00:54] Warning: Procedure 'd1mach' called with an implicit interface at (1) [-Wimplicit-interface]
+[00:00:55] [ 30%] Building Fortran object quadpack/CMakeFiles/quadpack.dir/dqk21.f.obj
+[00:00:55] cd /d C:\projects\bezier\.nox\libbezier-debug\build\quadpack && C:\mingw-w64\i686-6.3.0-posix-dwarf-rt_v5-rev1\mingw32\bin\gfortran.exe   -g   -fno-second-underscore -Wall -Wextra -Wno-compare-reals -Wimplicit-interface -fmax-errors=1 -std=f2008 -fcheck=all -fbacktrace -fimplicit-none -pedantic -g -ffixed-form -c C:\projects\bezier\src\fortran\quadpack\dqk21.f -o CMakeFiles\quadpack.dir\dqk21.f.obj
+[00:00:55] C:\projects\bezier\src\fortran\quadpack\dqk21.f:132:15:
+[00:00:55] 
+[00:00:55]        epmach = d1mach(4)
+[00:00:55]                1
+[00:00:55] Warning: Procedure 'd1mach' called with an implicit interface at (1) [-Wimplicit-interface]
+[00:00:55] C:\projects\bezier\src\fortran\quadpack\dqk21.f:133:14:
+[00:00:55] 
+[00:00:55]        uflow = d1mach(1)
+[00:00:55]               1
+[00:00:55] Warning: Procedure 'd1mach' called with an implicit interface at (1) [-Wimplicit-interface]
+[00:00:55] C:\projects\bezier\src\fortran\quadpack\dqk21.f:143:11:
+[00:00:55] 
+[00:00:55]        fc = f(centr)
+[00:00:55]            1
+[00:00:55] Warning: Procedure 'f' called with an implicit interface at (1) [-Wimplicit-interface]
+[00:00:55] C:\projects\bezier\src\fortran\quadpack\dqk21.f:149:16:
+[00:00:55] 
+[00:00:55]          fval1 = f(centr-absc)
+[00:00:55]                 1
+[00:00:55] Warning: Procedure 'f' called with an implicit interface at (1) [-Wimplicit-interface]
+[00:00:55] C:\projects\bezier\src\fortran\quadpack\dqk21.f:150:16:
+[00:00:55] 
+[00:00:55]          fval2 = f(centr+absc)
+[00:00:55]                 1
+[00:00:55] Warning: Procedure 'f' called with an implicit interface at (1) [-Wimplicit-interface]
+[00:00:55] C:\projects\bezier\src\fortran\quadpack\dqk21.f:161:16:
+[00:00:55] 
+[00:00:55]          fval1 = f(centr-absc)
+[00:00:55]                 1
+[00:00:55] Warning: Procedure 'f' called with an implicit interface at (1) [-Wimplicit-interface]
+[00:00:55] C:\projects\bezier\src\fortran\quadpack\dqk21.f:162:16:
+[00:00:55] 
+[00:00:55]          fval2 = f(centr+absc)
+[00:00:55]                 1
+[00:00:55] Warning: Procedure 'f' called with an implicit interface at (1) [-Wimplicit-interface]
+[00:00:55] [ 38%] Building Fortran object quadpack/CMakeFiles/quadpack.dir/dqpsrt.f.obj
+[00:00:55] cd /d C:\projects\bezier\.nox\libbezier-debug\build\quadpack && C:\mingw-w64\i686-6.3.0-posix-dwarf-rt_v5-rev1\mingw32\bin\gfortran.exe   -g   -fno-second-underscore -Wall -Wextra -Wno-compare-reals -Wimplicit-interface -fmax-errors=1 -std=f2008 -fcheck=all -fbacktrace -fimplicit-none -pedantic -g -ffixed-form -c C:\projects\bezier\src\fortran\quadpack\dqpsrt.f -o CMakeFiles\quadpack.dir\dqpsrt.f.obj
+[00:00:55] mingw32-make.exe[2]: Leaving directory 'C:/projects/bezier/.nox/libbezier-debug/build'
+[00:00:55] [ 38%] Built target quadpack
+[00:00:55] C:/mingw-w64/i686-6.3.0-posix-dwarf-rt_v5-rev1/mingw32/bin/mingw32-make.exe -f CMakeFiles\bezier.dir\build.make CMakeFiles/bezier.dir/depend
+[00:00:55] mingw32-make.exe[2]: Entering directory 'C:/projects/bezier/.nox/libbezier-debug/build'
+[00:00:55] "C:\Program Files (x86)\CMake\bin\cmake.exe" -E cmake_depends "MinGW Makefiles" C:\projects\bezier\src\fortran C:\projects\bezier\src\fortran C:\projects\bezier\.nox\libbezier-debug\build C:\projects\bezier\.nox\libbezier-debug\build C:\projects\bezier\.nox\libbezier-debug\build\CMakeFiles\bezier.dir\DependInfo.cmake --color=
+[00:00:55] Dependee "C:\projects\bezier\.nox\libbezier-debug\build\CMakeFiles\bezier.dir\DependInfo.cmake" is newer than depender "C:/projects/bezier/.nox/libbezier-debug/build/CMakeFiles/bezier.dir/depend.internal".
+[00:00:55] Dependee "C:/projects/bezier/.nox/libbezier-debug/build/CMakeFiles/CMakeDirectoryInformation.cmake" is newer than depender "C:/projects/bezier/.nox/libbezier-debug/build/CMakeFiles/bezier.dir/depend.internal".
+[00:00:55] Scanning dependencies of target bezier
+[00:00:55] mingw32-make.exe[2]: Leaving directory 'C:/projects/bezier/.nox/libbezier-debug/build'
+[00:00:55] C:/mingw-w64/i686-6.3.0-posix-dwarf-rt_v5-rev1/mingw32/bin/mingw32-make.exe -f CMakeFiles\bezier.dir\build.make CMakeFiles/bezier.dir/build
+[00:00:55] mingw32-make.exe[2]: Entering directory 'C:/projects/bezier/.nox/libbezier-debug/build'
+[00:00:55] [ 46%] Building Fortran object CMakeFiles/bezier.dir/types.f90.obj
+[00:00:55] C:\mingw-w64\i686-6.3.0-posix-dwarf-rt_v5-rev1\mingw32\bin\gfortran.exe -Dbezier_EXPORTS  -g   -fno-second-underscore -Wall -Wextra -Wno-compare-reals -Wimplicit-interface -fmax-errors=1 -std=f2008 -fcheck=all -fbacktrace -fimplicit-none -pedantic -g -c C:\projects\bezier\src\fortran\types.f90 -o CMakeFiles\bezier.dir\types.f90.obj
+[00:00:55] "C:\Program Files (x86)\CMake\bin\cmake.exe" -E cmake_copy_f90_mod types.mod CMakeFiles\bezier.dir\types.mod.stamp GNU
+[00:00:55] [ 53%] Building Fortran object CMakeFiles/bezier.dir/helpers.f90.obj
+[00:00:55] C:\mingw-w64\i686-6.3.0-posix-dwarf-rt_v5-rev1\mingw32\bin\gfortran.exe -Dbezier_EXPORTS  -g   -fno-second-underscore -Wall -Wextra -Wno-compare-reals -Wimplicit-interface -fmax-errors=1 -std=f2008 -fcheck=all -fbacktrace -fimplicit-none -pedantic -g -c C:\projects\bezier\src\fortran\helpers.f90 -o CMakeFiles\bezier.dir\helpers.f90.obj
+[00:00:55] "C:\Program Files (x86)\CMake\bin\cmake.exe" -E cmake_copy_f90_mod helpers.mod CMakeFiles\bezier.dir\helpers.mod.stamp GNU
+[00:00:55] [ 61%] Building Fortran object CMakeFiles/bezier.dir/curve.f90.obj
+[00:00:55] C:\mingw-w64\i686-6.3.0-posix-dwarf-rt_v5-rev1\mingw32\bin\gfortran.exe -Dbezier_EXPORTS  -g   -fno-second-underscore -Wall -Wextra -Wno-compare-reals -Wimplicit-interface -fmax-errors=1 -std=f2008 -fcheck=all -fbacktrace -fimplicit-none -pedantic -g -c C:\projects\bezier\src\fortran\curve.f90 -o CMakeFiles\bezier.dir\curve.f90.obj
+[00:00:55] "C:\Program Files (x86)\CMake\bin\cmake.exe" -E cmake_copy_f90_mod curve.mod CMakeFiles\bezier.dir\curve.mod.stamp GNU
+[00:00:55] "C:\Program Files (x86)\CMake\bin\cmake.exe" -E touch CMakeFiles/bezier.dir/curve.f90.obj.provides.build
+[00:00:55] [ 69%] Building Fortran object CMakeFiles/bezier.dir/status.f90.obj
+[00:00:55] C:\mingw-w64\i686-6.3.0-posix-dwarf-rt_v5-rev1\mingw32\bin\gfortran.exe -Dbezier_EXPORTS  -g   -fno-second-underscore -Wall -Wextra -Wno-compare-reals -Wimplicit-interface -fmax-errors=1 -std=f2008 -fcheck=all -fbacktrace -fimplicit-none -pedantic -g -c C:\projects\bezier\src\fortran\status.f90 -o CMakeFiles\bezier.dir\status.f90.obj
+[00:00:56] "C:\Program Files (x86)\CMake\bin\cmake.exe" -E cmake_copy_f90_mod status.mod CMakeFiles\bezier.dir\status.mod.stamp GNU
+[00:00:56] [ 76%] Building Fortran object CMakeFiles/bezier.dir/curve_intersection.f90.obj
+[00:00:56] C:\mingw-w64\i686-6.3.0-posix-dwarf-rt_v5-rev1\mingw32\bin\gfortran.exe -Dbezier_EXPORTS  -g   -fno-second-underscore -Wall -Wextra -Wno-compare-reals -Wimplicit-interface -fmax-errors=1 -std=f2008 -fcheck=all -fbacktrace -fimplicit-none -pedantic -g -c C:\projects\bezier\src\fortran\curve_intersection.f90 -o CMakeFiles\bezier.dir\curve_intersection.f90.obj
+[00:00:56] "C:\Program Files (x86)\CMake\bin\cmake.exe" -E cmake_copy_f90_mod curve_intersection.mod CMakeFiles\bezier.dir\curve_intersection.mod.stamp GNU
+[00:00:56] "C:\Program Files (x86)\CMake\bin\cmake.exe" -E touch CMakeFiles/bezier.dir/curve_intersection.f90.obj.provides.build
+[00:00:56] "C:\Program Files (x86)\CMake\bin\cmake.exe" -E touch CMakeFiles/bezier.dir/helpers.f90.obj.provides.build
+[00:00:56] "C:\Program Files (x86)\CMake\bin\cmake.exe" -E touch CMakeFiles/bezier.dir/status.f90.obj.provides.build
+[00:00:56] [ 84%] Building Fortran object CMakeFiles/bezier.dir/triangle.f90.obj
+[00:00:56] C:\mingw-w64\i686-6.3.0-posix-dwarf-rt_v5-rev1\mingw32\bin\gfortran.exe -Dbezier_EXPORTS  -g   -fno-second-underscore -Wall -Wextra -Wno-compare-reals -Wimplicit-interface -fmax-errors=1 -std=f2008 -fcheck=all -fbacktrace -fimplicit-none -pedantic -g -c C:\projects\bezier\src\fortran\triangle.f90 -o CMakeFiles\bezier.dir\triangle.f90.obj
+[00:00:57] "C:\Program Files (x86)\CMake\bin\cmake.exe" -E cmake_copy_f90_mod triangle.mod CMakeFiles\bezier.dir\triangle.mod.stamp GNU
+[00:00:57] "C:\Program Files (x86)\CMake\bin\cmake.exe" -E touch CMakeFiles/bezier.dir/triangle.f90.obj.provides.build
+[00:00:57] [ 92%] Building Fortran object CMakeFiles/bezier.dir/triangle_intersection.f90.obj
+[00:00:57] C:\mingw-w64\i686-6.3.0-posix-dwarf-rt_v5-rev1\mingw32\bin\gfortran.exe -Dbezier_EXPORTS  -g   -fno-second-underscore -Wall -Wextra -Wno-compare-reals -Wimplicit-interface -fmax-errors=1 -std=f2008 -fcheck=all -fbacktrace -fimplicit-none -pedantic -g -c C:\projects\bezier\src\fortran\triangle_intersection.f90 -o CMakeFiles\bezier.dir\triangle_intersection.f90.obj
+[00:00:57] "C:\Program Files (x86)\CMake\bin\cmake.exe" -E cmake_copy_f90_mod triangle_intersection.mod CMakeFiles\bezier.dir\triangle_intersection.mod.stamp GNU
+[00:00:57] "C:\Program Files (x86)\CMake\bin\cmake.exe" -E touch CMakeFiles/bezier.dir/triangle_intersection.f90.obj.provides.build
+[00:00:57] "C:\Program Files (x86)\CMake\bin\cmake.exe" -E touch CMakeFiles/bezier.dir/types.f90.obj.provides.build
+[00:00:57] [100%] Linking Fortran shared library bezier.dll
+[00:00:57] "C:\Program Files (x86)\CMake\bin\cmake.exe" -E cmake_link_script CMakeFiles\bezier.dir\link.txt --verbose=1
+[00:00:57] "C:\Program Files (x86)\CMake\bin\cmake.exe" -E remove -f CMakeFiles\bezier.dir/objects.a
+[00:00:57] C:\mingw-w64\i686-6.3.0-posix-dwarf-rt_v5-rev1\mingw32\bin\ar.exe cr CMakeFiles\bezier.dir/objects.a @CMakeFiles\bezier.dir\objects1.rsp
+[00:00:57] C:\mingw-w64\i686-6.3.0-posix-dwarf-rt_v5-rev1\mingw32\bin\gfortran.exe  -g  -static -shared -o bezier.dll -Wl,--out-implib,bezier.lib -Wl,--major-image-version,2020,--minor-image-version,2 -Wl,--whole-archive CMakeFiles\bezier.dir/objects.a -Wl,--no-whole-archive 
+[00:00:58] mingw32-make.exe[2]: Leaving directory 'C:/projects/bezier/.nox/libbezier-debug/build'
+[00:00:58] [100%] Built target bezier
+[00:00:58] mingw32-make.exe[1]: Leaving directory 'C:/projects/bezier/.nox/libbezier-debug/build'
+[00:00:58] "C:\Program Files (x86)\CMake\bin\cmake.exe" -E cmake_progress_start C:\projects\bezier\.nox\libbezier-debug\build\CMakeFiles 0
+[00:00:58] C:/mingw-w64/i686-6.3.0-posix-dwarf-rt_v5-rev1/mingw32/bin/mingw32-make.exe -f CMakeFiles\Makefile2 preinstall
+[00:00:58] mingw32-make.exe[1]: Entering directory 'C:/projects/bezier/.nox/libbezier-debug/build'
+[00:00:58] mingw32-make.exe[1]: Nothing to be done for 'preinstall'.
+[00:00:58] mingw32-make.exe[1]: Leaving directory 'C:/projects/bezier/.nox/libbezier-debug/build'
+[00:00:58] Install the project...
+[00:00:58] "C:\Program Files (x86)\CMake\bin\cmake.exe" -P cmake_install.cmake
+[00:00:58] -- Install configuration: "Debug"
+[00:00:58] -- Installing: C:/projects/bezier/.nox/libbezier-debug/usr/lib/bezier.lib
+[00:00:58] -- Installing: C:/projects/bezier/.nox/libbezier-debug/usr/bin/bezier.dll
+[00:00:58] -- Installing: C:/projects/bezier/.nox/libbezier-debug/usr/include
+[00:00:58] -- Installing: C:/projects/bezier/.nox/libbezier-debug/usr/include/bezier
+[00:00:58] -- Installing: C:/projects/bezier/.nox/libbezier-debug/usr/include/bezier/curve.h
+[00:00:58] -- Installing: C:/projects/bezier/.nox/libbezier-debug/usr/include/bezier/curve_intersection.h
+[00:00:58] -- Installing: C:/projects/bezier/.nox/libbezier-debug/usr/include/bezier/helpers.h
+[00:00:58] -- Installing: C:/projects/bezier/.nox/libbezier-debug/usr/include/bezier/status.h
+[00:00:58] -- Installing: C:/projects/bezier/.nox/libbezier-debug/usr/include/bezier/triangle.h
+[00:00:58] -- Installing: C:/projects/bezier/.nox/libbezier-debug/usr/include/bezier/triangle_intersection.h
+[00:00:58] -- Installing: C:/projects/bezier/.nox/libbezier-debug/usr/include/bezier.h
+[00:00:58] -- Installing: C:/projects/bezier/.nox/libbezier-debug/usr/share/bezier/cmake/BezierConfig.cmake
+[00:00:58] -- Installing: C:/projects/bezier/.nox/libbezier-debug/usr/share/bezier/cmake/BezierConfig-debug.cmake
+[00:00:58] nox > cmake -L C:\projects\bezier\.nox\libbezier-debug\build
+[00:00:58] -- Configuring done
+[00:00:58] -- Generating done
+[00:00:58] -- Build files have been written to: C:/projects/bezier/.nox/libbezier-debug/build
+[00:00:58] -- Cache values
+[00:00:58] BUILD_SHARED_LIBS:BOOL=ON
+[00:00:58] CMAKE_BUILD_TYPE:STRING=Debug
+[00:00:58] CMAKE_GNUtoMS:BOOL=OFF
+[00:00:58] CMAKE_INSTALL_PREFIX:PATH=C:/projects/bezier/.nox/libbezier-debug/usr
+[00:00:58] TARGET_NATIVE_ARCH:BOOL=ON
+[00:00:58] nox > pip install .
+[00:01:03] nox > pytest C:\projects\bezier\tests\unit
+[00:01:04] ============================= test session starts =============================
+[00:01:04] platform win32 -- Python 3.8.0, pytest-5.3.5, py-1.8.1, pluggy-0.13.1
+[00:01:04] rootdir: C:\projects\bezier, inifile: setup.cfg
+[00:01:06] collected 900 items
+[00:01:06] 
+[00:01:06] tests\unit\test___config__.py ........                                   [  0%]
+[00:01:06] tests\unit\test___init__.py ..                                           [  1%]
+[00:01:06] tests\unit\test__algebraic_intersection.py ............................. [  4%]
+[00:01:06] ......................................................................   [ 12%]
+[00:01:06] tests\unit\test__base.py ...........                                     [ 13%]
+[00:01:06] tests\unit\test__clipping.py ................                            [ 15%]
+[00:01:06] tests\unit\test__curve_helpers.py ...................................... [ 19%]
+[00:01:06] ............                                                             [ 20%]
+[00:01:06] tests\unit\test__geometric_intersection.py ...................x.         [ 23%]
+[00:01:06] tests\unit\test__helpers.py .....................................        [ 27%]
+[00:01:06] tests\unit\test__intersection_helpers.py ......                          [ 27%]
+[00:01:06] tests\unit\test__legacy.py .                                             [ 27%]
+[00:01:06] tests\unit\test__plot_helpers.py ....                                    [ 28%]
+[00:01:06] tests\unit\test__py_curve_helpers.py ................................... [ 32%]
+[00:01:06] .............................                                            [ 35%]
+[00:01:06] tests\unit\test__py_geometric_intersection.py .......................... [ 38%]
+[00:01:08] ........ss.............................................................. [ 46%]
+[00:01:08] ..........                                                               [ 47%]
+[00:01:08] tests\unit\test__py_helpers.py ......................................... [ 52%]
+[00:01:08] .............                                                            [ 53%]
+[00:01:08] tests\unit\test__py_intersection_helpers.py ............................ [ 56%]
+[00:01:08] ......                                                                   [ 57%]
+[00:01:11] tests\unit\test__py_triangle_helpers.py ................................ [ 60%]
+[00:01:11] ........................................................................ [ 68%]
+[00:01:12] ..........................................                               [ 73%]
+[00:01:12] tests\unit\test__py_triangle_intersection.py ........................... [ 76%]
+[00:01:12] ........................................                                 [ 80%]
+[00:01:12] tests\unit\test__symbolic.py ........                                    [ 81%]
+[00:01:12] tests\unit\test__triangle_helpers.py ................................... [ 85%]
+[00:01:12] .                                                                        [ 85%]
+[00:01:12] tests\unit\test__triangle_intersection.py ....................x.         [ 88%]
+[00:01:13] tests\unit\test_curve.py ................................                [ 91%]
+[00:01:13] tests\unit\test_curved_polygon.py ............                           [ 93%]
+[00:01:13] tests\unit\test_triangle.py ............................................ [ 98%]
+[00:01:13] ..................                                                       [100%]
+[00:01:13] 
+[00:01:13] ================== 896 passed, 2 skipped, 2 xfailed in 9.09s ==================
+[00:01:13] nox > Session unit-3.8-32 was successful.
+[00:01:13] Updating build cache...
+[00:01:13] 
+[00:01:14] Cache 'C:\Users\appveyor\AppData\Local\pip\Cache' - Calculating checksum...
+[00:01:15] Cache 'C:\Users\appveyor\AppData\Local\pip\Cache' - Zipping...
+[00:01:15] Cache 'C:\Users\appveyor\AppData\Local\pip\Cache' - Uploading (68,597,343 bytes)...1%
+[00:01:15] Cache 'C:\Users\appveyor\AppData\Local\pip\Cache' - Uploading (68,597,343 bytes)...10%
+[00:01:15] Cache 'C:\Users\appveyor\AppData\Local\pip\Cache' - Uploading (68,597,343 bytes)...20%
+[00:01:16] Cache 'C:\Users\appveyor\AppData\Local\pip\Cache' - Uploading (68,597,343 bytes)...30%
+[00:01:16] Cache 'C:\Users\appveyor\AppData\Local\pip\Cache' - Uploading (68,597,343 bytes)...40%
+[00:01:16] Cache 'C:\Users\appveyor\AppData\Local\pip\Cache' - Uploading (68,597,343 bytes)...50%
+[00:01:16] Cache 'C:\Users\appveyor\AppData\Local\pip\Cache' - Uploading (68,597,343 bytes)...60%
+[00:01:16] Cache 'C:\Users\appveyor\AppData\Local\pip\Cache' - Uploading (68,597,343 bytes)...70%
+[00:01:16] Cache 'C:\Users\appveyor\AppData\Local\pip\Cache' - Uploading (68,597,343 bytes)...80%
+[00:01:16] Cache 'C:\Users\appveyor\AppData\Local\pip\Cache' - Uploading (68,597,343 bytes)...90%
+[00:01:16] Cache 'C:\Users\appveyor\AppData\Local\pip\Cache' - Uploading (68,597,343 bytes)...100%
+[00:01:16] Cache 'C:\Users\appveyor\AppData\Local\pip\Cache' - Updated
+[00:01:16] Build success

@@ -1,0 +1,87 @@
+nox > Running session functional-3.8
+nox > Creating virtual environment (virtualenv) using python3.8 in .nox/functional-3-8
+nox > pip install numpy >= 1.18.1 pytest >= 5.3.2
+nox > <function makedirs at 0x7fcd1f8eadc0>(args=('/var/code/bezier/.nox/libbezier-debug',), kwargs={'exist_ok': True})
+nox > <built-in function print>(args=('Using pre-installed ``cmake``',), kwargs={})
+Using pre-installed ``cmake``
+nox > cmake --version
+cmake version 3.15.3
+
+CMake suite maintained and supported by Kitware (kitware.com/cmake).
+nox > <function makedirs at 0x7fcd1f8eadc0>(args=('/var/code/bezier/.nox/libbezier-debug/build',), kwargs={'exist_ok': True})
+nox > cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_INSTALL_PREFIX:PATH=/var/code/bezier/.nox/libbezier-debug/usr -DCMAKE_VERBOSE_MAKEFILE:BOOL=ON -S src/fortran -B /var/code/bezier/.nox/libbezier-debug/build
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /var/code/bezier/.nox/libbezier-debug/build
+nox > cmake --build /var/code/bezier/.nox/libbezier-debug/build --config Debug --target install
+/root/.pyenv/versions/3.8.0/lib/python3.8/site-packages/cmake/data/bin/cmake -S/var/code/bezier/src/fortran -B/var/code/bezier/.nox/libbezier-debug/build --check-build-system CMakeFiles/Makefile.cmake 0
+/root/.pyenv/versions/3.8.0/lib/python3.8/site-packages/cmake/data/bin/cmake -E cmake_progress_start /var/code/bezier/.nox/libbezier-debug/build/CMakeFiles /var/code/bezier/.nox/libbezier-debug/build/CMakeFiles/progress.marks
+/usr/bin/make -f CMakeFiles/Makefile2 all
+make[1]: Entering directory '/var/code/bezier/.nox/libbezier-debug/build'
+/usr/bin/make -f quadpack/CMakeFiles/quadpack.dir/build.make quadpack/CMakeFiles/quadpack.dir/depend
+make[2]: Entering directory '/var/code/bezier/.nox/libbezier-debug/build'
+cd /var/code/bezier/.nox/libbezier-debug/build && /root/.pyenv/versions/3.8.0/lib/python3.8/site-packages/cmake/data/bin/cmake -E cmake_depends "Unix Makefiles" /var/code/bezier/src/fortran /var/code/bezier/src/fortran/quadpack /var/code/bezier/.nox/libbezier-debug/build /var/code/bezier/.nox/libbezier-debug/build/quadpack /var/code/bezier/.nox/libbezier-debug/build/quadpack/CMakeFiles/quadpack.dir/DependInfo.cmake --color=
+make[2]: Leaving directory '/var/code/bezier/.nox/libbezier-debug/build'
+/usr/bin/make -f quadpack/CMakeFiles/quadpack.dir/build.make quadpack/CMakeFiles/quadpack.dir/build
+make[2]: Entering directory '/var/code/bezier/.nox/libbezier-debug/build'
+make[2]: Nothing to be done for 'quadpack/CMakeFiles/quadpack.dir/build'.
+make[2]: Leaving directory '/var/code/bezier/.nox/libbezier-debug/build'
+[ 38%] Built target quadpack
+/usr/bin/make -f CMakeFiles/bezier.dir/build.make CMakeFiles/bezier.dir/depend
+make[2]: Entering directory '/var/code/bezier/.nox/libbezier-debug/build'
+cd /var/code/bezier/.nox/libbezier-debug/build && /root/.pyenv/versions/3.8.0/lib/python3.8/site-packages/cmake/data/bin/cmake -E cmake_depends "Unix Makefiles" /var/code/bezier/src/fortran /var/code/bezier/src/fortran /var/code/bezier/.nox/libbezier-debug/build /var/code/bezier/.nox/libbezier-debug/build /var/code/bezier/.nox/libbezier-debug/build/CMakeFiles/bezier.dir/DependInfo.cmake --color=
+make[2]: Leaving directory '/var/code/bezier/.nox/libbezier-debug/build'
+/usr/bin/make -f CMakeFiles/bezier.dir/build.make CMakeFiles/bezier.dir/build
+make[2]: Entering directory '/var/code/bezier/.nox/libbezier-debug/build'
+make[2]: Nothing to be done for 'CMakeFiles/bezier.dir/build'.
+make[2]: Leaving directory '/var/code/bezier/.nox/libbezier-debug/build'
+[100%] Built target bezier
+make[1]: Leaving directory '/var/code/bezier/.nox/libbezier-debug/build'
+/root/.pyenv/versions/3.8.0/lib/python3.8/site-packages/cmake/data/bin/cmake -E cmake_progress_start /var/code/bezier/.nox/libbezier-debug/build/CMakeFiles 0
+/usr/bin/make -f CMakeFiles/Makefile2 preinstall
+make[1]: Entering directory '/var/code/bezier/.nox/libbezier-debug/build'
+make[1]: Nothing to be done for 'preinstall'.
+make[1]: Leaving directory '/var/code/bezier/.nox/libbezier-debug/build'
+Install the project...
+/root/.pyenv/versions/3.8.0/lib/python3.8/site-packages/cmake/data/bin/cmake -P cmake_install.cmake
+-- Install configuration: "Debug"
+-- Up-to-date: /var/code/bezier/.nox/libbezier-debug/usr/lib/libbezier.so.2020.2.3
+-- Up-to-date: /var/code/bezier/.nox/libbezier-debug/usr/lib/libbezier.so.2020
+-- Up-to-date: /var/code/bezier/.nox/libbezier-debug/usr/lib/libbezier.so
+-- Up-to-date: /var/code/bezier/.nox/libbezier-debug/usr/include
+-- Up-to-date: /var/code/bezier/.nox/libbezier-debug/usr/include/bezier.h
+-- Up-to-date: /var/code/bezier/.nox/libbezier-debug/usr/include/bezier
+-- Up-to-date: /var/code/bezier/.nox/libbezier-debug/usr/include/bezier/curve.h
+-- Up-to-date: /var/code/bezier/.nox/libbezier-debug/usr/include/bezier/helpers.h
+-- Up-to-date: /var/code/bezier/.nox/libbezier-debug/usr/include/bezier/status.h
+-- Up-to-date: /var/code/bezier/.nox/libbezier-debug/usr/include/bezier/triangle_intersection.h
+-- Up-to-date: /var/code/bezier/.nox/libbezier-debug/usr/include/bezier/triangle.h
+-- Up-to-date: /var/code/bezier/.nox/libbezier-debug/usr/include/bezier/curve_intersection.h
+-- Up-to-date: /var/code/bezier/.nox/libbezier-debug/usr/share/bezier/cmake/BezierConfig.cmake
+-- Installing: /var/code/bezier/.nox/libbezier-debug/usr/share/bezier/cmake/BezierConfig-debug.cmake
+nox > cmake -L /var/code/bezier/.nox/libbezier-debug/build
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /var/code/bezier/.nox/libbezier-debug/build
+-- Cache values
+BUILD_SHARED_LIBS:BOOL=ON
+CMAKE_BUILD_TYPE:STRING=Debug
+CMAKE_INSTALL_PREFIX:PATH=/var/code/bezier/.nox/libbezier-debug/usr
+TARGET_NATIVE_ARCH:BOOL=ON
+nox > pip install .
+nox > pytest /var/code/bezier/tests/functional
+============================= test session starts ==============================
+platform linux -- Python 3.8.0, pytest-5.3.5, py-1.8.1, pluggy-0.13.1
+rootdir: /var/code/bezier, inifile: setup.cfg
+collecting ... collected 293 items                                                            
+
+tests/functional/test_curve_curve.py ................................... [ 11%]
+.......................................................................  [ 36%]
+tests/functional/test_segment_box.py ..................................  [ 47%]
+tests/functional/test_triangle_locate.py .........                       [ 50%]
+tests/functional/test_triangle_triangle.py ............................. [ 60%]
+........................................................................ [ 85%]
+...........................................                              [100%]
+
+============================= 293 passed in 0.79s ==============================
+nox > Session functional-3.8 was successful.

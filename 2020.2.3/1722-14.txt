@@ -1,0 +1,32 @@
++ [[ -z master ]]
++ [[ master != \m\a\s\t\e\r ]]
++ .nox/cover/bin/python -m pip install coveralls
+Collecting coveralls
+  Downloading https://files.pythonhosted.org/packages/8d/1f/fef169beefbdeca7566ba481d3c75d96855915731accbcf5c75155d0ee6f/coveralls-1.10.0-py2.py3-none-any.whl
+Collecting docopt>=0.6.1
+  Downloading https://files.pythonhosted.org/packages/a2/55/8f8cab2afd404cf578136ef2cc5dfb50baa1761b68c9da1fb1e4eed343c9/docopt-0.6.2.tar.gz
+Requirement already satisfied: coverage<6.0,>=3.6 in ./.nox/cover/lib/python3.8/site-packages (from coveralls) (5.0.3)
+Collecting requests>=1.0.0
+  Using cached https://files.pythonhosted.org/packages/51/bd/23c926cd341ea6b7dd0b2a00aba99ae0f828be89d72b2190f27c11d4b7fb/requests-2.22.0-py2.py3-none-any.whl
+Collecting idna<2.9,>=2.5
+  Using cached https://files.pythonhosted.org/packages/14/2c/cd551d81dbe15200be1cf41cd03869a46fe7226e7450af7a6545bfc474c9/idna-2.8-py2.py3-none-any.whl
+Collecting urllib3!=1.25.0,!=1.25.1,<1.26,>=1.21.1
+  Using cached https://files.pythonhosted.org/packages/e8/74/6e4f91745020f967d09332bb2b8b9b10090957334692eb88ea4afe91b77f/urllib3-1.25.8-py2.py3-none-any.whl
+Collecting certifi>=2017.4.17
+  Using cached https://files.pythonhosted.org/packages/b9/63/df50cac98ea0d5b006c55a399c3bf1db9da7b5a24de7890bc9cfd5dd9e99/certifi-2019.11.28-py2.py3-none-any.whl
+Collecting chardet<3.1.0,>=3.0.2
+  Using cached https://files.pythonhosted.org/packages/bc/a9/01ffebfb562e4274b6487b4bb1ddec7ca55ec7510b22e4c51f14098443b8/chardet-3.0.4-py2.py3-none-any.whl
+Building wheels for collected packages: docopt
+  Building wheel for docopt (setup.py) ... - done
+  Created wheel for docopt: filename=docopt-0.6.2-py2.py3-none-any.whl size=13704 sha256=0885c613e47196c35c5f4b641521f6096d02145e4372cea5e257bd90d800e646
+  Stored in directory: /root/.cache/pip/wheels/9b/04/dd/7daf4150b6d9b12949298737de9431a324d4b797ffd63f526e
+Successfully built docopt
+Installing collected packages: docopt, idna, urllib3, certifi, chardet, requests, coveralls
+Successfully installed certifi-2019.11.28 chardet-3.0.4 coveralls-1.10.0 docopt-0.6.2 idna-2.8 requests-2.22.0 urllib3-1.25.8
+WARNING: You are using pip version 19.3.1; however, version 20.0.2 is available.
+You should consider upgrading via the 'pip install --upgrade pip' command.
++ .nox/cover/bin/coveralls
+Submitting coverage to coveralls.io...
+Coverage submitted!
+Job #1722.1
+https://coveralls.io/jobs/58563430

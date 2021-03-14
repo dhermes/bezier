@@ -1,0 +1,98 @@
+nox > Running session lint
+nox > Creating virtual environment (virtualenv) using python3.8 in .nox/lint
+nox > pip install numpy >= 1.18.1 pytest >= 5.3.2 black >= 19.10b0 cmake-format >= 0.6.5 docutils flake8 flake8-import-order matplotlib >= 3.1.2 Pygments pylint >= 2.4.4 scipy >= 1.4.1 seaborn >= 0.9.0 sympy >= 1.5.1
+nox > <function makedirs at 0x7fef2e1aedc0>(args=('/var/code/bezier/.nox/libbezier-release',), kwargs={'exist_ok': True})
+nox > <built-in function print>(args=('Using pre-installed ``cmake``',), kwargs={})
+Using pre-installed ``cmake``
+nox > cmake --version
+cmake version 3.15.3
+
+CMake suite maintained and supported by Kitware (kitware.com/cmake).
+nox > <function makedirs at 0x7fef2e1aedc0>(args=('/var/code/bezier/.nox/libbezier-release/build',), kwargs={'exist_ok': True})
+nox > cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX:PATH=/var/code/bezier/.nox/libbezier-release/usr -DCMAKE_VERBOSE_MAKEFILE:BOOL=ON -S src/fortran -B /var/code/bezier/.nox/libbezier-release/build
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /var/code/bezier/.nox/libbezier-release/build
+nox > cmake --build /var/code/bezier/.nox/libbezier-release/build --config Release --target install
+/root/.pyenv/versions/3.8.0/lib/python3.8/site-packages/cmake/data/bin/cmake -S/var/code/bezier/src/fortran -B/var/code/bezier/.nox/libbezier-release/build --check-build-system CMakeFiles/Makefile.cmake 0
+/root/.pyenv/versions/3.8.0/lib/python3.8/site-packages/cmake/data/bin/cmake -E cmake_progress_start /var/code/bezier/.nox/libbezier-release/build/CMakeFiles /var/code/bezier/.nox/libbezier-release/build/CMakeFiles/progress.marks
+/usr/bin/make -f CMakeFiles/Makefile2 all
+make[1]: Entering directory '/var/code/bezier/.nox/libbezier-release/build'
+/usr/bin/make -f quadpack/CMakeFiles/quadpack.dir/build.make quadpack/CMakeFiles/quadpack.dir/depend
+make[2]: Entering directory '/var/code/bezier/.nox/libbezier-release/build'
+cd /var/code/bezier/.nox/libbezier-release/build && /root/.pyenv/versions/3.8.0/lib/python3.8/site-packages/cmake/data/bin/cmake -E cmake_depends "Unix Makefiles" /var/code/bezier/src/fortran /var/code/bezier/src/fortran/quadpack /var/code/bezier/.nox/libbezier-release/build /var/code/bezier/.nox/libbezier-release/build/quadpack /var/code/bezier/.nox/libbezier-release/build/quadpack/CMakeFiles/quadpack.dir/DependInfo.cmake --color=
+make[2]: Leaving directory '/var/code/bezier/.nox/libbezier-release/build'
+/usr/bin/make -f quadpack/CMakeFiles/quadpack.dir/build.make quadpack/CMakeFiles/quadpack.dir/build
+make[2]: Entering directory '/var/code/bezier/.nox/libbezier-release/build'
+make[2]: Nothing to be done for 'quadpack/CMakeFiles/quadpack.dir/build'.
+make[2]: Leaving directory '/var/code/bezier/.nox/libbezier-release/build'
+[ 38%] Built target quadpack
+/usr/bin/make -f CMakeFiles/bezier.dir/build.make CMakeFiles/bezier.dir/depend
+make[2]: Entering directory '/var/code/bezier/.nox/libbezier-release/build'
+cd /var/code/bezier/.nox/libbezier-release/build && /root/.pyenv/versions/3.8.0/lib/python3.8/site-packages/cmake/data/bin/cmake -E cmake_depends "Unix Makefiles" /var/code/bezier/src/fortran /var/code/bezier/src/fortran /var/code/bezier/.nox/libbezier-release/build /var/code/bezier/.nox/libbezier-release/build /var/code/bezier/.nox/libbezier-release/build/CMakeFiles/bezier.dir/DependInfo.cmake --color=
+make[2]: Leaving directory '/var/code/bezier/.nox/libbezier-release/build'
+/usr/bin/make -f CMakeFiles/bezier.dir/build.make CMakeFiles/bezier.dir/build
+make[2]: Entering directory '/var/code/bezier/.nox/libbezier-release/build'
+make[2]: Nothing to be done for 'CMakeFiles/bezier.dir/build'.
+make[2]: Leaving directory '/var/code/bezier/.nox/libbezier-release/build'
+[100%] Built target bezier
+make[1]: Leaving directory '/var/code/bezier/.nox/libbezier-release/build'
+/root/.pyenv/versions/3.8.0/lib/python3.8/site-packages/cmake/data/bin/cmake -E cmake_progress_start /var/code/bezier/.nox/libbezier-release/build/CMakeFiles 0
+/usr/bin/make -f CMakeFiles/Makefile2 preinstall
+make[1]: Entering directory '/var/code/bezier/.nox/libbezier-release/build'
+make[1]: Nothing to be done for 'preinstall'.
+make[1]: Leaving directory '/var/code/bezier/.nox/libbezier-release/build'
+Install the project...
+/root/.pyenv/versions/3.8.0/lib/python3.8/site-packages/cmake/data/bin/cmake -P cmake_install.cmake
+-- Install configuration: "Release"
+-- Up-to-date: /var/code/bezier/.nox/libbezier-release/usr/lib/libbezier.so.2020.2.3
+-- Up-to-date: /var/code/bezier/.nox/libbezier-release/usr/lib/libbezier.so.2020
+-- Up-to-date: /var/code/bezier/.nox/libbezier-release/usr/lib/libbezier.so
+-- Up-to-date: /var/code/bezier/.nox/libbezier-release/usr/include
+-- Up-to-date: /var/code/bezier/.nox/libbezier-release/usr/include/bezier.h
+-- Up-to-date: /var/code/bezier/.nox/libbezier-release/usr/include/bezier
+-- Up-to-date: /var/code/bezier/.nox/libbezier-release/usr/include/bezier/curve.h
+-- Up-to-date: /var/code/bezier/.nox/libbezier-release/usr/include/bezier/helpers.h
+-- Up-to-date: /var/code/bezier/.nox/libbezier-release/usr/include/bezier/status.h
+-- Up-to-date: /var/code/bezier/.nox/libbezier-release/usr/include/bezier/triangle_intersection.h
+-- Up-to-date: /var/code/bezier/.nox/libbezier-release/usr/include/bezier/triangle.h
+-- Up-to-date: /var/code/bezier/.nox/libbezier-release/usr/include/bezier/curve_intersection.h
+-- Up-to-date: /var/code/bezier/.nox/libbezier-release/usr/share/bezier/cmake/BezierConfig.cmake
+-- Installing: /var/code/bezier/.nox/libbezier-release/usr/share/bezier/cmake/BezierConfig-release.cmake
+nox > cmake -L /var/code/bezier/.nox/libbezier-release/build
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /var/code/bezier/.nox/libbezier-release/build
+-- Cache values
+BUILD_SHARED_LIBS:BOOL=ON
+CMAKE_BUILD_TYPE:STRING=Release
+CMAKE_INSTALL_PREFIX:PATH=/var/code/bezier/.nox/libbezier-release/usr
+TARGET_NATIVE_ARCH:BOOL=ON
+nox > pip install .
+nox > python /var/code/bezier/scripts/check_doc_templates.py
+README contents are as expected.
+README.rst.release.template contents are as expected.
+docs/index.rst contents are as expected.
+docs/index.rst.release.template contents are as expected.
+DEVELOPMENT.rst contents are as expected.
+nox > python /var/code/bezier/setup.py check --metadata --restructuredtext --strict
+The BEZIER_NO_EXTENSION environment variable has been used to explicitly disable the
+building of the binary extension module.
+
+running check
+nox > python /var/code/bezier/scripts/black_check_all_files.py
+All done! ✨ 🍰 ✨
+78 files would be left unchanged.
+nox > flake8 --import-order-style=google --application-import-names=bezier,tests /var/code/bezier/src/python/bezier /var/code/bezier/tests
+nox > pylint --rcfile pylintrc --max-module-lines=3035 /var/code/bezier/src/python/bezier
+
+------------------------------------
+Your code has been rated at 10.00/10
+
+nox > pylint --rcfile pylintrc --disable=missing-docstring --disable=protected-access --disable=too-many-public-methods --disable=import-outside-toplevel --disable=arguments-out-of-order --max-module-lines=2473 /var/code/bezier/tests
+
+------------------------------------
+Your code has been rated at 10.00/10
+
+nox > cmake-format --in-place /var/code/bezier/src/fortran/CMakeLists.txt /var/code/bezier/src/fortran/quadpack/CMakeLists.txt
+nox > Session lint was successful.
