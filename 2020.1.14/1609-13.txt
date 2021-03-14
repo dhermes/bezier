@@ -1,0 +1,8 @@
+nox > Running session check_journal(machine='circleci')
+nox > Creating virtual environment (virtualenv) using python3.8 in .nox/check_journal-machine-circleci
+nox > pip install numpy >= 1.18.1
+nox > pip install .
+nox > python /var/code/bezier/scripts/post_process_journal.py --journal-filename /tmp/tmpyj2t_8py-journal.txt --machine circleci
+nox > python /var/code/bezier/scripts/diff.py /tmp/tmpyj2t_8py-journal.txt /var/code/bezier/.circleci/expected_journal.txt
+/tmp/tmpyj2t_8py-journal.txt and /var/code/bezier/.circleci/expected_journal.txt are identical
+nox > Session check_journal(machine='circleci') was successful.
