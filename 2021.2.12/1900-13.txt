@@ -1,0 +1,5 @@
+nox > Running session validate_functional_test_cases
+nox > Creating virtual environment (virtualenv) using python3.9 in .nox/validate_functional_test_cases
+nox > python -m pip install jsonschema >= 3.2.0
+nox > python /var/code/bezier/scripts/validate_functional_test_cases.py
+nox > Session validate_functional_test_cases was successful.

@@ -1,0 +1,21 @@
+Allocating a remote Docker Engine
+Requesting version: default
+
+Assigned Docker Engine request id: 10972994
+  provisioning: .
+Remote Docker engine created. Using VM 'default-72bca11e-f976-400e-9dd9-31934a809277'
+Created container accessible with:
+  DOCKER_CERT_PATH=/tmp/docker-certs591125708
+  DOCKER_HOST=tcp://35.227.119.242:2376
+  DOCKER_MACHINE_NAME=10972994
+  DOCKER_TLS_VERIFY=1
+  NO_PROXY=127.0.0.1,localhost,circleci-internal-outer-build-agent,35.227.119.242:2376
+
+Server Engine Details:
+  Version:          17.09.0-ce
+  API version:      1.32 (minimum version 1.12)
+  Go version:       go1.8.3
+  Git commit:       afdb6d4
+  Built:            2017-09-26T22:40:56.000000000+00:00
+  OS/Arch:          linux/amd64
+  Experimental:     false

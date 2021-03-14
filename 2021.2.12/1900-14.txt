@@ -1,0 +1,30 @@
++ [[ -z main ]]
++ [[ main != \m\a\i\n ]]
++ .nox/cover/bin/python -m pip install coveralls
+Collecting coveralls
+  Downloading coveralls-3.0.0-py2.py3-none-any.whl (13 kB)
+Collecting requests>=1.0.0
+  Using cached requests-2.25.1-py2.py3-none-any.whl (61 kB)
+Requirement already satisfied: coverage<6.0,>=4.1 in ./.nox/cover/lib/python3.9/site-packages (from coveralls) (5.4)
+Collecting docopt>=0.6.1
+  Downloading docopt-0.6.2.tar.gz (25 kB)
+Collecting idna<3,>=2.5
+  Using cached idna-2.10-py2.py3-none-any.whl (58 kB)
+Collecting chardet<5,>=3.0.2
+  Using cached chardet-4.0.0-py2.py3-none-any.whl (178 kB)
+Collecting certifi>=2017.4.17
+  Using cached certifi-2020.12.5-py2.py3-none-any.whl (147 kB)
+Collecting urllib3<1.27,>=1.21.1
+  Using cached urllib3-1.26.3-py2.py3-none-any.whl (137 kB)
+Building wheels for collected packages: docopt
+  Building wheel for docopt (setup.py) ... - done
+  Created wheel for docopt: filename=docopt-0.6.2-py2.py3-none-any.whl size=13705 sha256=9c627618f202db635c6e569ff269b2ad12ef2abc9d576815096b34598f80336f
+  Stored in directory: /root/.cache/pip/wheels/70/4a/46/1309fc853b8d395e60bafaf1b6df7845bdd82c95fd59dd8d2b
+Successfully built docopt
+Installing collected packages: urllib3, idna, chardet, certifi, requests, docopt, coveralls
+Successfully installed certifi-2020.12.5 chardet-4.0.0 coveralls-3.0.0 docopt-0.6.2 idna-2.10 requests-2.25.1 urllib3-1.26.3
++ .nox/cover/bin/coveralls
+Submitting coverage to coveralls.io...
+Coverage submitted!
+Job #5d898fe2-24d4-49ce-b043-f01c3c4f6a18.1
+https://coveralls.io/jobs/75084199

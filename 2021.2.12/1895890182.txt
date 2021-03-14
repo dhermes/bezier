@@ -1,0 +1,2021 @@
+2021-02-14T02:16:46.8618069Z ##[section]Starting: Request a runner to run this job
+2021-02-14T02:16:47.7797475Z Can't find any online and idle self-hosted runner in current repository that matches the required labels: 'macos-latest'
+2021-02-14T02:16:47.7797578Z Can't find any online and idle self-hosted runner in current repository's account/organization that matches the required labels: 'macos-latest'
+2021-02-14T02:16:47.8051309Z Found online and idle hosted runner in current repository's account/organization that matches the required labels: 'macos-latest'
+2021-02-14T02:16:48.0566654Z ##[section]Finishing: Request a runner to run this job
+2021-02-14T02:17:09.0620730Z Current runner version: '2.277.1'
+2021-02-14T02:17:09.1069090Z ##[group]Operating System
+2021-02-14T02:17:09.1070190Z Mac OS X
+2021-02-14T02:17:09.1070630Z 10.15.7
+2021-02-14T02:17:09.1071080Z 19H512
+2021-02-14T02:17:09.1071510Z ##[endgroup]
+2021-02-14T02:17:09.1072160Z ##[group]Virtual Environment
+2021-02-14T02:17:09.1072770Z Environment: macos-10.15
+2021-02-14T02:17:09.1073290Z Version: 20210207.2
+2021-02-14T02:17:09.1077500Z Included Software: https://github.com/actions/virtual-environments/blob/macOS-10.15/20210207.2/images/macos/macos-10.15-Readme.md
+2021-02-14T02:17:09.1078630Z ##[endgroup]
+2021-02-14T02:17:09.1082310Z ##[group]GITHUB_TOKEN Permissions
+2021-02-14T02:17:09.1085100Z Actions: write
+2021-02-14T02:17:09.1085570Z Checks: write
+2021-02-14T02:17:09.1092130Z Contents: write
+2021-02-14T02:17:09.1092950Z Deployments: write
+2021-02-14T02:17:09.1093570Z Issues: write
+2021-02-14T02:17:09.1094070Z Metadata: read
+2021-02-14T02:17:09.1094600Z OrganizationPackages: write
+2021-02-14T02:17:09.1095700Z Packages: write
+2021-02-14T02:17:09.1096290Z PullRequests: write
+2021-02-14T02:17:09.1096990Z RepositoryProjects: write
+2021-02-14T02:17:09.1097570Z SecurityEvents: write
+2021-02-14T02:17:09.1098050Z Statuses: write
+2021-02-14T02:17:09.1098810Z ##[endgroup]
+2021-02-14T02:17:09.1129930Z Prepare workflow directory
+2021-02-14T02:17:09.3086280Z Prepare all required actions
+2021-02-14T02:17:09.3100540Z Getting action download info
+2021-02-14T02:17:09.5426700Z Download action repository 'actions/checkout@v2'
+2021-02-14T02:17:14.0925010Z ##[group]Run actions/checkout@v2
+2021-02-14T02:17:14.0926010Z with:
+2021-02-14T02:17:14.0926430Z   repository: dhermes/bezier
+2021-02-14T02:17:14.0927290Z   token: ***
+2021-02-14T02:17:14.0927660Z   ssh-strict: true
+2021-02-14T02:17:14.0928100Z   persist-credentials: true
+2021-02-14T02:17:14.0928540Z   clean: true
+2021-02-14T02:17:14.0928890Z   fetch-depth: 1
+2021-02-14T02:17:14.0929230Z   lfs: false
+2021-02-14T02:17:14.0929590Z   submodules: false
+2021-02-14T02:17:14.0929920Z env:
+2021-02-14T02:17:14.0930370Z   VIRTUALENV_NO_DOWNLOAD: true
+2021-02-14T02:17:14.0930760Z   PY_VERSION: 3.9
+2021-02-14T02:17:14.0931350Z   PY_BIN_DIR: /Library/Frameworks/Python.framework/Versions/3.9/bin
+2021-02-14T02:17:14.0931890Z ##[endgroup]
+2021-02-14T02:17:15.2743450Z Syncing repository: dhermes/bezier
+2021-02-14T02:17:15.2771280Z ##[group]Getting Git version info
+2021-02-14T02:17:15.2784650Z Working directory is '/Users/runner/work/bezier/bezier'
+2021-02-14T02:17:15.2816020Z [command]/usr/local/bin/git version
+2021-02-14T02:17:15.5074860Z git version 2.30.0
+2021-02-14T02:17:15.5107420Z ##[endgroup]
+2021-02-14T02:17:15.5115840Z Deleting the contents of '/Users/runner/work/bezier/bezier'
+2021-02-14T02:17:15.5121330Z ##[group]Initializing the repository
+2021-02-14T02:17:15.5127010Z [command]/usr/local/bin/git init /Users/runner/work/bezier/bezier
+2021-02-14T02:17:15.7884480Z hint: Using 'master' as the name for the initial branch. This default branch name
+2021-02-14T02:17:15.7885990Z hint: is subject to change. To configure the initial branch name to use in all
+2021-02-14T02:17:15.7896200Z hint: of your new repositories, which will suppress this warning, call:
+2021-02-14T02:17:15.7952730Z hint: 
+2021-02-14T02:17:15.7955370Z hint: 	git config --global init.defaultBranch <name>
+2021-02-14T02:17:15.7957750Z hint: 
+2021-02-14T02:17:15.7960600Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2021-02-14T02:17:15.7963470Z hint: 'development'. The just-created branch can be renamed via this command:
+2021-02-14T02:17:15.7966220Z hint: 
+2021-02-14T02:17:15.8064940Z hint: 	git branch -m <name>
+2021-02-14T02:17:15.8066440Z Initialized empty Git repository in /Users/runner/work/bezier/bezier/.git/
+2021-02-14T02:17:15.8068320Z [command]/usr/local/bin/git remote add origin https://github.com/dhermes/bezier
+2021-02-14T02:17:15.8095770Z ##[endgroup]
+2021-02-14T02:17:15.8097810Z ##[group]Disabling automatic garbage collection
+2021-02-14T02:17:15.8102260Z [command]/usr/local/bin/git config --local gc.auto 0
+2021-02-14T02:17:15.8212250Z ##[endgroup]
+2021-02-14T02:17:15.8223210Z ##[group]Setting up auth
+2021-02-14T02:17:15.8232490Z [command]/usr/local/bin/git config --local --name-only --get-regexp core\.sshCommand
+2021-02-14T02:17:15.8328420Z [command]/usr/local/bin/git submodule foreach --recursive git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :
+2021-02-14T02:17:16.0215130Z [command]/usr/local/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2021-02-14T02:17:16.0310470Z [command]/usr/local/bin/git submodule foreach --recursive git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :
+2021-02-14T02:17:16.1334830Z [command]/usr/local/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2021-02-14T02:17:16.2673790Z ##[endgroup]
+2021-02-14T02:17:16.2675690Z ##[group]Fetching the repository
+2021-02-14T02:17:16.2688260Z [command]/usr/local/bin/git -c protocol.version=2 fetch --no-tags --prune --progress --no-recurse-submodules --depth=1 origin +140cea60f249ef09c3e05d41e85bee2e50f9cb62:refs/remotes/origin/main
+2021-02-14T02:17:18.1855380Z remote: Enumerating objects: 502, done.        
+2021-02-14T02:17:18.1857750Z remote: Counting objects:   0% (1/502)        
+2021-02-14T02:17:18.1860010Z remote: Counting objects:   1% (6/502)        
+2021-02-14T02:17:18.1863200Z remote: Counting objects:   2% (11/502)        
+2021-02-14T02:17:18.1865560Z remote: Counting objects:   3% (16/502)        
+2021-02-14T02:17:18.1866980Z remote: Counting objects:   4% (21/502)        
+2021-02-14T02:17:18.1868070Z remote: Counting objects:   5% (26/502)        
+2021-02-14T02:17:18.1868820Z remote: Counting objects:   6% (31/502)        
+2021-02-14T02:17:18.1869670Z remote: Counting objects:   7% (36/502)        
+2021-02-14T02:17:18.1870220Z remote: Counting objects:   8% (41/502)        
+2021-02-14T02:17:18.1871000Z remote: Counting objects:   9% (46/502)        
+2021-02-14T02:17:18.1871490Z remote: Counting objects:  10% (51/502)        
+2021-02-14T02:17:18.1872950Z remote: Counting objects:  11% (56/502)        
+2021-02-14T02:17:18.1873500Z remote: Counting objects:  12% (61/502)        
+2021-02-14T02:17:18.1874650Z remote: Counting objects:  13% (66/502)        
+2021-02-14T02:17:18.1875160Z remote: Counting objects:  14% (71/502)        
+2021-02-14T02:17:18.1875690Z remote: Counting objects:  15% (76/502)        
+2021-02-14T02:17:18.1876190Z remote: Counting objects:  16% (81/502)        
+2021-02-14T02:17:18.1876700Z remote: Counting objects:  17% (86/502)        
+2021-02-14T02:17:18.1877190Z remote: Counting objects:  18% (91/502)        
+2021-02-14T02:17:18.1877670Z remote: Counting objects:  19% (96/502)        
+2021-02-14T02:17:18.1878190Z remote: Counting objects:  20% (101/502)        
+2021-02-14T02:17:18.1878670Z remote: Counting objects:  21% (106/502)        
+2021-02-14T02:17:18.1879200Z remote: Counting objects:  22% (111/502)        
+2021-02-14T02:17:18.1879680Z remote: Counting objects:  23% (116/502)        
+2021-02-14T02:17:18.1880200Z remote: Counting objects:  24% (121/502)        
+2021-02-14T02:17:18.1880680Z remote: Counting objects:  25% (126/502)        
+2021-02-14T02:17:18.1881190Z remote: Counting objects:  26% (131/502)        
+2021-02-14T02:17:18.1881680Z remote: Counting objects:  27% (136/502)        
+2021-02-14T02:17:18.1882170Z remote: Counting objects:  28% (141/502)        
+2021-02-14T02:17:18.1882700Z remote: Counting objects:  29% (146/502)        
+2021-02-14T02:17:18.1883180Z remote: Counting objects:  30% (151/502)        
+2021-02-14T02:17:18.1883690Z remote: Counting objects:  31% (156/502)        
+2021-02-14T02:17:18.1884360Z remote: Counting objects:  32% (161/502)        
+2021-02-14T02:17:18.1884890Z remote: Counting objects:  33% (166/502)        
+2021-02-14T02:17:18.1885370Z remote: Counting objects:  34% (171/502)        
+2021-02-14T02:17:18.1885890Z remote: Counting objects:  35% (176/502)        
+2021-02-14T02:17:18.1886880Z remote: Counting objects:  36% (181/502)        
+2021-02-14T02:17:18.1887390Z remote: Counting objects:  37% (186/502)        
+2021-02-14T02:17:18.1887880Z remote: Counting objects:  38% (191/502)        
+2021-02-14T02:17:18.1888360Z remote: Counting objects:  39% (196/502)        
+2021-02-14T02:17:18.1888880Z remote: Counting objects:  40% (201/502)        
+2021-02-14T02:17:18.1889370Z remote: Counting objects:  41% (206/502)        
+2021-02-14T02:17:18.1889890Z remote: Counting objects:  42% (211/502)        
+2021-02-14T02:17:18.1890370Z remote: Counting objects:  43% (216/502)        
+2021-02-14T02:17:18.1890880Z remote: Counting objects:  44% (221/502)        
+2021-02-14T02:17:18.1891360Z remote: Counting objects:  45% (226/502)        
+2021-02-14T02:17:18.1891870Z remote: Counting objects:  46% (231/502)        
+2021-02-14T02:17:18.1892360Z remote: Counting objects:  47% (236/502)        
+2021-02-14T02:17:18.1892830Z remote: Counting objects:  48% (241/502)        
+2021-02-14T02:17:18.1893360Z remote: Counting objects:  49% (246/502)        
+2021-02-14T02:17:18.1893840Z remote: Counting objects:  50% (251/502)        
+2021-02-14T02:17:18.1894360Z remote: Counting objects:  51% (257/502)        
+2021-02-14T02:17:18.1894840Z remote: Counting objects:  52% (262/502)        
+2021-02-14T02:17:18.1895350Z remote: Counting objects:  53% (267/502)        
+2021-02-14T02:17:18.1895830Z remote: Counting objects:  54% (272/502)        
+2021-02-14T02:17:18.1896600Z remote: Counting objects:  55% (277/502)        
+2021-02-14T02:17:18.1897150Z remote: Counting objects:  56% (282/502)        
+2021-02-14T02:17:18.1897830Z remote: Counting objects:  57% (287/502)        
+2021-02-14T02:17:18.1898350Z remote: Counting objects:  58% (292/502)        
+2021-02-14T02:17:18.1898830Z remote: Counting objects:  59% (297/502)        
+2021-02-14T02:17:18.1899350Z remote: Counting objects:  60% (302/502)        
+2021-02-14T02:17:18.1899830Z remote: Counting objects:  61% (307/502)        
+2021-02-14T02:17:18.1900360Z remote: Counting objects:  62% (312/502)        
+2021-02-14T02:17:18.1900850Z remote: Counting objects:  63% (317/502)        
+2021-02-14T02:17:18.1901370Z remote: Counting objects:  64% (322/502)        
+2021-02-14T02:17:18.1901850Z remote: Counting objects:  65% (327/502)        
+2021-02-14T02:17:18.1902320Z remote: Counting objects:  66% (332/502)        
+2021-02-14T02:17:18.1902840Z remote: Counting objects:  67% (337/502)        
+2021-02-14T02:17:18.1903330Z remote: Counting objects:  68% (342/502)        
+2021-02-14T02:17:18.1903850Z remote: Counting objects:  69% (347/502)        
+2021-02-14T02:17:18.1904330Z remote: Counting objects:  70% (352/502)        
+2021-02-14T02:17:18.1904850Z remote: Counting objects:  71% (357/502)        
+2021-02-14T02:17:18.1905330Z remote: Counting objects:  72% (362/502)        
+2021-02-14T02:17:18.1905800Z remote: Counting objects:  73% (367/502)        
+2021-02-14T02:17:18.1906330Z remote: Counting objects:  74% (372/502)        
+2021-02-14T02:17:18.1906820Z remote: Counting objects:  75% (377/502)        
+2021-02-14T02:17:18.1907330Z remote: Counting objects:  76% (382/502)        
+2021-02-14T02:17:18.1907820Z remote: Counting objects:  77% (387/502)        
+2021-02-14T02:17:18.1908330Z remote: Counting objects:  78% (392/502)        
+2021-02-14T02:17:18.1908810Z remote: Counting objects:  79% (397/502)        
+2021-02-14T02:17:18.1909320Z remote: Counting objects:  80% (402/502)        
+2021-02-14T02:17:18.1909810Z remote: Counting objects:  81% (407/502)        
+2021-02-14T02:17:18.1910290Z remote: Counting objects:  82% (412/502)        
+2021-02-14T02:17:18.1910810Z remote: Counting objects:  83% (417/502)        
+2021-02-14T02:17:18.1911290Z remote: Counting objects:  84% (422/502)        
+2021-02-14T02:17:18.1911800Z remote: Counting objects:  85% (427/502)        
+2021-02-14T02:17:18.1912280Z remote: Counting objects:  86% (432/502)        
+2021-02-14T02:17:18.1912790Z remote: Counting objects:  87% (437/502)        
+2021-02-14T02:17:18.1913600Z remote: Counting objects:  88% (442/502)        
+2021-02-14T02:17:18.1914110Z remote: Counting objects:  89% (447/502)        
+2021-02-14T02:17:18.1914590Z remote: Counting objects:  90% (452/502)        
+2021-02-14T02:17:18.1915080Z remote: Counting objects:  91% (457/502)        
+2021-02-14T02:17:18.1915990Z remote: Counting objects:  92% (462/502)        
+2021-02-14T02:17:18.1916480Z remote: Counting objects:  93% (467/502)        
+2021-02-14T02:17:18.1917000Z remote: Counting objects:  94% (472/502)        
+2021-02-14T02:17:18.1917490Z remote: Counting objects:  95% (477/502)        
+2021-02-14T02:17:18.1918030Z remote: Counting objects:  96% (482/502)        
+2021-02-14T02:17:18.1918510Z remote: Counting objects:  97% (487/502)        
+2021-02-14T02:17:18.1919020Z remote: Counting objects:  98% (492/502)        
+2021-02-14T02:17:18.1919500Z remote: Counting objects:  99% (497/502)        
+2021-02-14T02:17:18.1920010Z remote: Counting objects: 100% (502/502)        
+2021-02-14T02:17:18.1920530Z remote: Counting objects: 100% (502/502), done.        
+2021-02-14T02:17:18.1921090Z remote: Compressing objects:   0% (1/483)        
+2021-02-14T02:17:18.1921620Z remote: Compressing objects:   1% (5/483)        
+2021-02-14T02:17:18.1922180Z remote: Compressing objects:   2% (10/483)        
+2021-02-14T02:17:18.1922710Z remote: Compressing objects:   3% (15/483)        
+2021-02-14T02:17:18.1923230Z remote: Compressing objects:   4% (20/483)        
+2021-02-14T02:17:18.1924050Z remote: Compressing objects:   5% (25/483)        
+2021-02-14T02:17:18.1924640Z remote: Compressing objects:   6% (29/483)        
+2021-02-14T02:17:18.1925210Z remote: Compressing objects:   7% (34/483)        
+2021-02-14T02:17:18.1925730Z remote: Compressing objects:   8% (39/483)        
+2021-02-14T02:17:18.1926290Z remote: Compressing objects:   9% (44/483)        
+2021-02-14T02:17:18.1926820Z remote: Compressing objects:  10% (49/483)        
+2021-02-14T02:17:18.1927390Z remote: Compressing objects:  11% (54/483)        
+2021-02-14T02:17:18.1927930Z remote: Compressing objects:  12% (58/483)        
+2021-02-14T02:17:18.1928450Z remote: Compressing objects:  13% (63/483)        
+2021-02-14T02:17:18.1929010Z remote: Compressing objects:  14% (68/483)        
+2021-02-14T02:17:18.1929850Z remote: Compressing objects:  15% (73/483)        
+2021-02-14T02:17:18.1930460Z remote: Compressing objects:  16% (78/483)        
+2021-02-14T02:17:18.1930990Z remote: Compressing objects:  17% (83/483)        
+2021-02-14T02:17:18.1931550Z remote: Compressing objects:  18% (87/483)        
+2021-02-14T02:17:18.1932190Z remote: Compressing objects:  19% (92/483)        
+2021-02-14T02:17:18.1932750Z remote: Compressing objects:  20% (97/483)        
+2021-02-14T02:17:18.1933280Z remote: Compressing objects:  21% (102/483)        
+2021-02-14T02:17:18.1933810Z remote: Compressing objects:  22% (107/483)        
+2021-02-14T02:17:18.1934370Z remote: Compressing objects:  23% (112/483)        
+2021-02-14T02:17:18.2454020Z remote: Compressing objects:  24% (116/483)        
+2021-02-14T02:17:18.2454780Z remote: Compressing objects:  25% (121/483)        
+2021-02-14T02:17:18.2455320Z remote: Compressing objects:  26% (126/483)        
+2021-02-14T02:17:18.2456430Z remote: Compressing objects:  27% (131/483)        
+2021-02-14T02:17:18.2457220Z remote: Compressing objects:  28% (136/483)        
+2021-02-14T02:17:18.2457950Z remote: Compressing objects:  29% (141/483)        
+2021-02-14T02:17:18.2458500Z remote: Compressing objects:  30% (145/483)        
+2021-02-14T02:17:18.2459070Z remote: Compressing objects:  31% (150/483)        
+2021-02-14T02:17:18.2459610Z remote: Compressing objects:  32% (155/483)        
+2021-02-14T02:17:18.2460170Z remote: Compressing objects:  33% (160/483)        
+2021-02-14T02:17:18.2460690Z remote: Compressing objects:  34% (165/483)        
+2021-02-14T02:17:18.2461220Z remote: Compressing objects:  35% (170/483)        
+2021-02-14T02:17:18.2461770Z remote: Compressing objects:  36% (174/483)        
+2021-02-14T02:17:18.2463090Z remote: Compressing objects:  37% (179/483)        
+2021-02-14T02:17:18.2463660Z remote: Compressing objects:  38% (184/483)        
+2021-02-14T02:17:18.2464180Z remote: Compressing objects:  39% (189/483)        
+2021-02-14T02:17:18.2464750Z remote: Compressing objects:  40% (194/483)        
+2021-02-14T02:17:18.2465610Z remote: Compressing objects:  41% (199/483)        
+2021-02-14T02:17:18.2466400Z remote: Compressing objects:  42% (203/483)        
+2021-02-14T02:17:18.2467170Z remote: Compressing objects:  43% (208/483)        
+2021-02-14T02:17:18.2467980Z remote: Compressing objects:  44% (213/483)        
+2021-02-14T02:17:18.2469060Z remote: Compressing objects:  45% (218/483)        
+2021-02-14T02:17:18.2470560Z remote: Compressing objects:  46% (223/483)        
+2021-02-14T02:17:18.2471510Z remote: Compressing objects:  47% (228/483)        
+2021-02-14T02:17:18.2472550Z remote: Compressing objects:  48% (232/483)        
+2021-02-14T02:17:18.2473330Z remote: Compressing objects:  49% (237/483)        
+2021-02-14T02:17:18.2474150Z remote: Compressing objects:  50% (242/483)        
+2021-02-14T02:17:18.2474900Z remote: Compressing objects:  51% (247/483)        
+2021-02-14T02:17:18.2475850Z remote: Compressing objects:  52% (252/483)        
+2021-02-14T02:17:18.2476600Z remote: Compressing objects:  53% (256/483)        
+2021-02-14T02:17:18.2477700Z remote: Compressing objects:  54% (261/483)        
+2021-02-14T02:17:18.2478450Z remote: Compressing objects:  55% (266/483)        
+2021-02-14T02:17:18.2479630Z remote: Compressing objects:  56% (271/483)        
+2021-02-14T02:17:18.2480480Z remote: Compressing objects:  57% (276/483)        
+2021-02-14T02:17:18.2481650Z remote: Compressing objects:  58% (281/483)        
+2021-02-14T02:17:18.2482460Z remote: Compressing objects:  59% (285/483)        
+2021-02-14T02:17:18.2483240Z remote: Compressing objects:  60% (290/483)        
+2021-02-14T02:17:18.2483990Z remote: Compressing objects:  61% (295/483)        
+2021-02-14T02:17:18.2485080Z remote: Compressing objects:  62% (300/483)        
+2021-02-14T02:17:18.2485890Z remote: Compressing objects:  63% (305/483)        
+2021-02-14T02:17:18.2486680Z remote: Compressing objects:  64% (310/483)        
+2021-02-14T02:17:18.2487790Z remote: Compressing objects:  65% (314/483)        
+2021-02-14T02:17:18.2488650Z remote: Compressing objects:  66% (319/483)        
+2021-02-14T02:17:18.2489400Z remote: Compressing objects:  67% (324/483)        
+2021-02-14T02:17:18.2490220Z remote: Compressing objects:  68% (329/483)        
+2021-02-14T02:17:18.2490970Z remote: Compressing objects:  69% (334/483)        
+2021-02-14T02:17:18.2491770Z remote: Compressing objects:  70% (339/483)        
+2021-02-14T02:17:18.2492510Z remote: Compressing objects:  71% (343/483)        
+2021-02-14T02:17:18.2493300Z remote: Compressing objects:  72% (348/483)        
+2021-02-14T02:17:18.2494040Z remote: Compressing objects:  73% (353/483)        
+2021-02-14T02:17:18.2495000Z remote: Compressing objects:  74% (358/483)        
+2021-02-14T02:17:18.2496340Z remote: Compressing objects:  75% (363/483)        
+2021-02-14T02:17:18.2497140Z remote: Compressing objects:  76% (368/483)        
+2021-02-14T02:17:18.2497880Z remote: Compressing objects:  77% (372/483)        
+2021-02-14T02:17:18.2499180Z remote: Compressing objects:  78% (377/483)        
+2021-02-14T02:17:18.2499750Z remote: Compressing objects:  79% (382/483)        
+2021-02-14T02:17:18.2500310Z remote: Compressing objects:  80% (387/483)        
+2021-02-14T02:17:18.2500850Z remote: Compressing objects:  81% (392/483)        
+2021-02-14T02:17:18.2501420Z remote: Compressing objects:  82% (397/483)        
+2021-02-14T02:17:18.2501940Z remote: Compressing objects:  83% (401/483)        
+2021-02-14T02:17:18.2502500Z remote: Compressing objects:  84% (406/483)        
+2021-02-14T02:17:18.2503020Z remote: Compressing objects:  85% (411/483)        
+2021-02-14T02:17:18.2503540Z remote: Compressing objects:  86% (416/483)        
+2021-02-14T02:17:18.2504100Z remote: Compressing objects:  87% (421/483)        
+2021-02-14T02:17:18.2505570Z remote: Compressing objects:  88% (426/483)        
+2021-02-14T02:17:18.2506130Z remote: Compressing objects:  89% (430/483)        
+2021-02-14T02:17:18.2506820Z remote: Compressing objects:  90% (435/483)        
+2021-02-14T02:17:18.2507380Z remote: Compressing objects:  91% (440/483)        
+2021-02-14T02:17:18.2507910Z remote: Compressing objects:  92% (445/483)        
+2021-02-14T02:17:18.2509090Z remote: Compressing objects:  93% (450/483)        
+2021-02-14T02:17:18.2509640Z remote: Compressing objects:  94% (455/483)        
+2021-02-14T02:17:18.2510160Z remote: Compressing objects:  95% (459/483)        
+2021-02-14T02:17:18.2510730Z remote: Compressing objects:  96% (464/483)        
+2021-02-14T02:17:18.2524310Z remote: Compressing objects:  97% (469/483)        
+2021-02-14T02:17:18.2525350Z remote: Compressing objects:  98% (474/483)        
+2021-02-14T02:17:18.2526170Z remote: Compressing objects:  99% (479/483)        
+2021-02-14T02:17:18.2526780Z remote: Compressing objects: 100% (483/483)        
+2021-02-14T02:17:18.2527650Z remote: Compressing objects: 100% (483/483), done.        
+2021-02-14T02:17:18.2601570Z Receiving objects:   0% (1/502)
+2021-02-14T02:17:18.2602540Z Receiving objects:   1% (6/502)
+2021-02-14T02:17:18.3157460Z Receiving objects:   2% (11/502)
+2021-02-14T02:17:18.3214810Z Receiving objects:   3% (16/502)
+2021-02-14T02:17:18.3217510Z Receiving objects:   4% (21/502)
+2021-02-14T02:17:18.3221360Z Receiving objects:   5% (26/502)
+2021-02-14T02:17:18.3222540Z Receiving objects:   6% (31/502)
+2021-02-14T02:17:18.3223420Z Receiving objects:   7% (36/502)
+2021-02-14T02:17:18.3835780Z Receiving objects:   8% (41/502)
+2021-02-14T02:17:18.3838950Z Receiving objects:   9% (46/502)
+2021-02-14T02:17:18.3841050Z Receiving objects:  10% (51/502)
+2021-02-14T02:17:18.4406130Z Receiving objects:  11% (56/502)
+2021-02-14T02:17:18.4583780Z Receiving objects:  12% (61/502)
+2021-02-14T02:17:18.5265440Z Receiving objects:  13% (66/502)
+2021-02-14T02:17:18.5909960Z Receiving objects:  14% (71/502)
+2021-02-14T02:17:18.5916180Z Receiving objects:  15% (76/502)
+2021-02-14T02:17:18.5950600Z Receiving objects:  16% (81/502)
+2021-02-14T02:17:18.6586720Z Receiving objects:  17% (86/502)
+2021-02-14T02:17:18.6606710Z Receiving objects:  18% (91/502)
+2021-02-14T02:17:18.7277240Z Receiving objects:  19% (96/502)
+2021-02-14T02:17:18.7292190Z Receiving objects:  20% (101/502)
+2021-02-14T02:17:18.7315640Z Receiving objects:  21% (106/502)
+2021-02-14T02:17:18.7338490Z Receiving objects:  22% (111/502)
+2021-02-14T02:17:18.7340220Z Receiving objects:  23% (116/502)
+2021-02-14T02:17:18.7348410Z Receiving objects:  24% (121/502)
+2021-02-14T02:17:18.7970800Z Receiving objects:  25% (126/502)
+2021-02-14T02:17:18.7983970Z Receiving objects:  26% (131/502), 1.29 MiB | 2.39 MiB/s
+2021-02-14T02:17:18.7996840Z Receiving objects:  27% (136/502), 1.29 MiB | 2.39 MiB/s
+2021-02-14T02:17:18.8020330Z Receiving objects:  28% (141/502), 1.29 MiB | 2.39 MiB/s
+2021-02-14T02:17:18.8031720Z Receiving objects:  29% (146/502), 1.29 MiB | 2.39 MiB/s
+2021-02-14T02:17:18.8215490Z Receiving objects:  30% (151/502), 1.29 MiB | 2.39 MiB/s
+2021-02-14T02:17:18.8219380Z Receiving objects:  31% (156/502), 1.29 MiB | 2.39 MiB/s
+2021-02-14T02:17:18.8221750Z Receiving objects:  32% (161/502), 1.29 MiB | 2.39 MiB/s
+2021-02-14T02:17:18.8654750Z Receiving objects:  33% (166/502), 1.29 MiB | 2.39 MiB/s
+2021-02-14T02:17:18.8669120Z Receiving objects:  34% (171/502), 1.29 MiB | 2.39 MiB/s
+2021-02-14T02:17:18.8674850Z Receiving objects:  35% (176/502), 1.29 MiB | 2.39 MiB/s
+2021-02-14T02:17:18.8686490Z Receiving objects:  36% (181/502), 1.29 MiB | 2.39 MiB/s
+2021-02-14T02:17:18.8697980Z Receiving objects:  37% (186/502), 1.29 MiB | 2.39 MiB/s
+2021-02-14T02:17:18.8715590Z Receiving objects:  38% (191/502), 1.29 MiB | 2.39 MiB/s
+2021-02-14T02:17:18.8723660Z Receiving objects:  39% (196/502), 1.29 MiB | 2.39 MiB/s
+2021-02-14T02:17:18.8734820Z Receiving objects:  40% (201/502), 1.29 MiB | 2.39 MiB/s
+2021-02-14T02:17:18.8750770Z Receiving objects:  41% (206/502), 1.29 MiB | 2.39 MiB/s
+2021-02-14T02:17:18.9352090Z Receiving objects:  42% (211/502), 1.29 MiB | 2.39 MiB/s
+2021-02-14T02:17:18.9454430Z Receiving objects:  43% (216/502), 1.29 MiB | 2.39 MiB/s
+2021-02-14T02:17:18.9459510Z Receiving objects:  44% (221/502), 1.29 MiB | 2.39 MiB/s
+2021-02-14T02:17:18.9460300Z Receiving objects:  45% (226/502), 1.29 MiB | 2.39 MiB/s
+2021-02-14T02:17:18.9461180Z Receiving objects:  46% (231/502), 1.29 MiB | 2.39 MiB/s
+2021-02-14T02:17:18.9462040Z Receiving objects:  47% (236/502), 1.29 MiB | 2.39 MiB/s
+2021-02-14T02:17:18.9462670Z Receiving objects:  48% (241/502), 1.29 MiB | 2.39 MiB/s
+2021-02-14T02:17:18.9584290Z Receiving objects:  49% (246/502), 1.29 MiB | 2.39 MiB/s
+2021-02-14T02:17:18.9597440Z Receiving objects:  50% (251/502), 1.29 MiB | 2.39 MiB/s
+2021-02-14T02:17:18.9624900Z Receiving objects:  51% (257/502), 1.29 MiB | 2.39 MiB/s
+2021-02-14T02:17:19.0046010Z Receiving objects:  52% (262/502), 1.29 MiB | 2.39 MiB/s
+2021-02-14T02:17:19.0069230Z Receiving objects:  53% (267/502), 1.29 MiB | 2.39 MiB/s
+2021-02-14T02:17:19.0097400Z Receiving objects:  54% (272/502), 1.29 MiB | 2.39 MiB/s
+2021-02-14T02:17:19.0108610Z Receiving objects:  55% (277/502), 1.29 MiB | 2.39 MiB/s
+2021-02-14T02:17:19.0114180Z Receiving objects:  56% (282/502), 1.29 MiB | 2.39 MiB/s
+2021-02-14T02:17:19.0115110Z Receiving objects:  57% (287/502), 1.29 MiB | 2.39 MiB/s
+2021-02-14T02:17:19.0115900Z Receiving objects:  58% (292/502), 1.29 MiB | 2.39 MiB/s
+2021-02-14T02:17:19.0126510Z Receiving objects:  59% (297/502), 1.29 MiB | 2.39 MiB/s
+2021-02-14T02:17:19.0127680Z Receiving objects:  60% (302/502), 1.29 MiB | 2.39 MiB/s
+2021-02-14T02:17:19.0132710Z Receiving objects:  61% (307/502), 1.29 MiB | 2.39 MiB/s
+2021-02-14T02:17:19.0133240Z Receiving objects:  62% (312/502), 1.29 MiB | 2.39 MiB/s
+2021-02-14T02:17:19.0133740Z Receiving objects:  63% (317/502), 1.29 MiB | 2.39 MiB/s
+2021-02-14T02:17:19.0134230Z Receiving objects:  64% (322/502), 1.29 MiB | 2.39 MiB/s
+2021-02-14T02:17:19.0135040Z Receiving objects:  65% (327/502), 1.29 MiB | 2.39 MiB/s
+2021-02-14T02:17:19.0135520Z Receiving objects:  66% (332/502), 1.29 MiB | 2.39 MiB/s
+2021-02-14T02:17:19.0136370Z Receiving objects:  67% (337/502), 1.29 MiB | 2.39 MiB/s
+2021-02-14T02:17:19.0137000Z Receiving objects:  68% (342/502), 1.29 MiB | 2.39 MiB/s
+2021-02-14T02:17:19.0145850Z Receiving objects:  69% (347/502), 1.29 MiB | 2.39 MiB/s
+2021-02-14T02:17:19.0147060Z Receiving objects:  70% (352/502), 1.29 MiB | 2.39 MiB/s
+2021-02-14T02:17:19.0148840Z Receiving objects:  71% (357/502), 1.29 MiB | 2.39 MiB/s
+2021-02-14T02:17:19.0153110Z Receiving objects:  72% (362/502), 1.29 MiB | 2.39 MiB/s
+2021-02-14T02:17:19.0160480Z Receiving objects:  73% (367/502), 1.29 MiB | 2.39 MiB/s
+2021-02-14T02:17:19.0167990Z Receiving objects:  74% (372/502), 1.29 MiB | 2.39 MiB/s
+2021-02-14T02:17:19.0170250Z Receiving objects:  75% (377/502), 1.29 MiB | 2.39 MiB/s
+2021-02-14T02:17:19.0172660Z Receiving objects:  76% (382/502), 1.29 MiB | 2.39 MiB/s
+2021-02-14T02:17:19.0174450Z Receiving objects:  77% (387/502), 1.29 MiB | 2.39 MiB/s
+2021-02-14T02:17:19.0175270Z Receiving objects:  78% (392/502), 1.29 MiB | 2.39 MiB/s
+2021-02-14T02:17:19.0176860Z Receiving objects:  79% (397/502), 1.29 MiB | 2.39 MiB/s
+2021-02-14T02:17:19.0177770Z Receiving objects:  80% (402/502), 1.29 MiB | 2.39 MiB/s
+2021-02-14T02:17:19.0179390Z Receiving objects:  81% (407/502), 1.29 MiB | 2.39 MiB/s
+2021-02-14T02:17:19.0180650Z Receiving objects:  82% (412/502), 1.29 MiB | 2.39 MiB/s
+2021-02-14T02:17:19.0181630Z Receiving objects:  83% (417/502), 1.29 MiB | 2.39 MiB/s
+2021-02-14T02:17:19.0275120Z Receiving objects:  84% (422/502), 1.29 MiB | 2.39 MiB/s
+2021-02-14T02:17:19.0282660Z Receiving objects:  85% (427/502), 1.29 MiB | 2.39 MiB/s
+2021-02-14T02:17:19.0295200Z Receiving objects:  86% (432/502), 1.29 MiB | 2.39 MiB/s
+2021-02-14T02:17:19.0303810Z Receiving objects:  87% (437/502), 1.29 MiB | 2.39 MiB/s
+2021-02-14T02:17:19.0305600Z Receiving objects:  88% (442/502), 1.29 MiB | 2.39 MiB/s
+2021-02-14T02:17:19.0311890Z Receiving objects:  89% (447/502), 1.29 MiB | 2.39 MiB/s
+2021-02-14T02:17:19.0325990Z Receiving objects:  90% (452/502), 1.29 MiB | 2.39 MiB/s
+2021-02-14T02:17:19.0328320Z Receiving objects:  91% (457/502), 1.29 MiB | 2.39 MiB/s
+2021-02-14T02:17:19.0334120Z Receiving objects:  92% (462/502), 1.29 MiB | 2.39 MiB/s
+2021-02-14T02:17:19.0335140Z Receiving objects:  93% (467/502), 1.29 MiB | 2.39 MiB/s
+2021-02-14T02:17:19.0343930Z Receiving objects:  94% (472/502), 1.29 MiB | 2.39 MiB/s
+2021-02-14T02:17:19.0344970Z Receiving objects:  95% (477/502), 1.29 MiB | 2.39 MiB/s
+2021-02-14T02:17:19.0346710Z remote: Total 502 (delta 63), reused 278 (delta 12), pack-reused 0        
+2021-02-14T02:17:19.0355740Z Receiving objects:  96% (482/502), 1.29 MiB | 2.39 MiB/s
+2021-02-14T02:17:19.0358840Z Receiving objects:  97% (487/502), 1.29 MiB | 2.39 MiB/s
+2021-02-14T02:17:19.0359710Z Receiving objects:  98% (492/502), 1.29 MiB | 2.39 MiB/s
+2021-02-14T02:17:19.0362980Z Receiving objects:  99% (497/502), 1.29 MiB | 2.39 MiB/s
+2021-02-14T02:17:19.0364250Z Receiving objects: 100% (502/502), 1.29 MiB | 2.39 MiB/s
+2021-02-14T02:17:19.0369160Z Receiving objects: 100% (502/502), 4.35 MiB | 5.60 MiB/s, done.
+2021-02-14T02:17:19.0370880Z Resolving deltas:   0% (0/63)
+2021-02-14T02:17:19.0372860Z Resolving deltas:   1% (1/63)
+2021-02-14T02:17:19.0381190Z Resolving deltas:   3% (2/63)
+2021-02-14T02:17:19.0387280Z Resolving deltas:   4% (3/63)
+2021-02-14T02:17:19.0388070Z Resolving deltas:   6% (4/63)
+2021-02-14T02:17:19.0408140Z Resolving deltas:   7% (5/63)
+2021-02-14T02:17:19.0409380Z Resolving deltas:   9% (6/63)
+2021-02-14T02:17:19.0409790Z Resolving deltas:  11% (7/63)
+2021-02-14T02:17:19.0410310Z Resolving deltas:  12% (8/63)
+2021-02-14T02:17:19.0410720Z Resolving deltas:  14% (9/63)
+2021-02-14T02:17:19.0411120Z Resolving deltas:  15% (10/63)
+2021-02-14T02:17:19.0411500Z Resolving deltas:  17% (11/63)
+2021-02-14T02:17:19.0411900Z Resolving deltas:  19% (12/63)
+2021-02-14T02:17:19.0412280Z Resolving deltas:  20% (13/63)
+2021-02-14T02:17:19.0412680Z Resolving deltas:  22% (14/63)
+2021-02-14T02:17:19.0413070Z Resolving deltas:  23% (15/63)
+2021-02-14T02:17:19.0413460Z Resolving deltas:  25% (16/63)
+2021-02-14T02:17:19.0413850Z Resolving deltas:  26% (17/63)
+2021-02-14T02:17:19.0414230Z Resolving deltas:  28% (18/63)
+2021-02-14T02:17:19.0414620Z Resolving deltas:  30% (19/63)
+2021-02-14T02:17:19.0415080Z Resolving deltas:  31% (20/63)
+2021-02-14T02:17:19.0415500Z Resolving deltas:  33% (21/63)
+2021-02-14T02:17:19.0415930Z Resolving deltas:  34% (22/63)
+2021-02-14T02:17:19.0416320Z Resolving deltas:  36% (23/63)
+2021-02-14T02:17:19.0416710Z Resolving deltas:  38% (24/63)
+2021-02-14T02:17:19.0417090Z Resolving deltas:  39% (25/63)
+2021-02-14T02:17:19.0417490Z Resolving deltas:  41% (26/63)
+2021-02-14T02:17:19.0417870Z Resolving deltas:  42% (27/63)
+2021-02-14T02:17:19.0418250Z Resolving deltas:  44% (28/63)
+2021-02-14T02:17:19.0418650Z Resolving deltas:  46% (29/63)
+2021-02-14T02:17:19.0419030Z Resolving deltas:  47% (30/63)
+2021-02-14T02:17:19.0419430Z Resolving deltas:  49% (31/63)
+2021-02-14T02:17:19.0419810Z Resolving deltas:  50% (32/63)
+2021-02-14T02:17:19.0420200Z Resolving deltas:  52% (33/63)
+2021-02-14T02:17:19.0420580Z Resolving deltas:  53% (34/63)
+2021-02-14T02:17:19.0420970Z Resolving deltas:  55% (35/63)
+2021-02-14T02:17:19.0421360Z Resolving deltas:  57% (36/63)
+2021-02-14T02:17:19.0421740Z Resolving deltas:  58% (37/63)
+2021-02-14T02:17:19.0422130Z Resolving deltas:  60% (38/63)
+2021-02-14T02:17:19.0422520Z Resolving deltas:  61% (39/63)
+2021-02-14T02:17:19.0422910Z Resolving deltas:  63% (40/63)
+2021-02-14T02:17:19.0423290Z Resolving deltas:  65% (41/63)
+2021-02-14T02:17:19.0423670Z Resolving deltas:  66% (42/63)
+2021-02-14T02:17:19.0424070Z Resolving deltas:  68% (43/63)
+2021-02-14T02:17:19.0424450Z Resolving deltas:  69% (44/63)
+2021-02-14T02:17:19.0424840Z Resolving deltas:  71% (45/63)
+2021-02-14T02:17:19.0425230Z Resolving deltas:  73% (46/63)
+2021-02-14T02:17:19.0425620Z Resolving deltas:  74% (47/63)
+2021-02-14T02:17:19.0426450Z Resolving deltas:  76% (48/63)
+2021-02-14T02:17:19.0426840Z Resolving deltas:  77% (49/63)
+2021-02-14T02:17:19.0427220Z Resolving deltas:  79% (50/63)
+2021-02-14T02:17:19.0427600Z Resolving deltas:  80% (51/63)
+2021-02-14T02:17:19.0427990Z Resolving deltas:  82% (52/63)
+2021-02-14T02:17:19.0428370Z Resolving deltas:  84% (53/63)
+2021-02-14T02:17:19.0428760Z Resolving deltas:  85% (54/63)
+2021-02-14T02:17:19.0429140Z Resolving deltas:  87% (55/63)
+2021-02-14T02:17:19.0429540Z Resolving deltas:  88% (56/63)
+2021-02-14T02:17:19.0429930Z Resolving deltas:  90% (57/63)
+2021-02-14T02:17:19.0430310Z Resolving deltas:  92% (58/63)
+2021-02-14T02:17:19.0430700Z Resolving deltas:  93% (59/63)
+2021-02-14T02:17:19.0431080Z Resolving deltas:  95% (60/63)
+2021-02-14T02:17:19.0431480Z Resolving deltas:  96% (61/63)
+2021-02-14T02:17:19.0431860Z Resolving deltas:  98% (62/63)
+2021-02-14T02:17:19.1210720Z Resolving deltas: 100% (63/63)
+2021-02-14T02:17:19.1211360Z Resolving deltas: 100% (63/63), done.
+2021-02-14T02:17:19.4675820Z From https://github.com/dhermes/bezier
+2021-02-14T02:17:19.4677490Z  * [new ref]         140cea60f249ef09c3e05d41e85bee2e50f9cb62 -> origin/main
+2021-02-14T02:17:19.5165300Z ##[endgroup]
+2021-02-14T02:17:19.5166470Z ##[group]Determining the checkout info
+2021-02-14T02:17:19.5170870Z ##[endgroup]
+2021-02-14T02:17:19.5172040Z ##[group]Checking out the ref
+2021-02-14T02:17:19.5177360Z [command]/usr/local/bin/git checkout --progress --force -B main refs/remotes/origin/main
+2021-02-14T02:17:21.2148940Z Updating files:  39% (185/474)
+2021-02-14T02:17:21.5434170Z Updating files:  40% (190/474)
+2021-02-14T02:17:21.9227150Z Updating files:  41% (195/474)
+2021-02-14T02:17:22.1718260Z Updating files:  42% (200/474)
+2021-02-14T02:17:22.2617130Z Updating files:  43% (204/474)
+2021-02-14T02:17:22.2619350Z Updating files:  44% (209/474)
+2021-02-14T02:17:22.2621480Z Updating files:  45% (214/474)
+2021-02-14T02:17:22.2624780Z Updating files:  46% (219/474)
+2021-02-14T02:17:22.2646490Z Updating files:  47% (223/474)
+2021-02-14T02:17:22.2664370Z Updating files:  48% (228/474)
+2021-02-14T02:17:22.2695540Z Updating files:  49% (233/474)
+2021-02-14T02:17:22.2714490Z Updating files:  50% (237/474)
+2021-02-14T02:17:22.2775760Z Updating files:  51% (242/474)
+2021-02-14T02:17:22.2825800Z Updating files:  52% (247/474)
+2021-02-14T02:17:22.2826930Z Updating files:  53% (252/474)
+2021-02-14T02:17:22.2848850Z Updating files:  54% (256/474)
+2021-02-14T02:17:22.2869250Z Updating files:  55% (261/474)
+2021-02-14T02:17:22.2882560Z Updating files:  56% (266/474)
+2021-02-14T02:17:22.2910270Z Updating files:  57% (271/474)
+2021-02-14T02:17:22.2937060Z Updating files:  58% (275/474)
+2021-02-14T02:17:22.2951550Z Updating files:  59% (280/474)
+2021-02-14T02:17:22.3011660Z Updating files:  60% (285/474)
+2021-02-14T02:17:22.3012160Z Updating files:  61% (290/474)
+2021-02-14T02:17:22.3012550Z Updating files:  62% (294/474)
+2021-02-14T02:17:22.4249290Z Updating files:  63% (299/474)
+2021-02-14T02:17:22.5468960Z Updating files:  64% (304/474)
+2021-02-14T02:17:22.7131780Z Updating files:  64% (306/474)
+2021-02-14T02:17:22.7174770Z Updating files:  65% (309/474)
+2021-02-14T02:17:22.7249480Z Updating files:  66% (313/474)
+2021-02-14T02:17:22.7287630Z Updating files:  67% (318/474)
+2021-02-14T02:17:22.7288480Z Updating files:  68% (323/474)
+2021-02-14T02:17:22.7367670Z Updating files:  69% (328/474)
+2021-02-14T02:17:22.7379050Z Updating files:  70% (332/474)
+2021-02-14T02:17:22.7379810Z Updating files:  71% (337/474)
+2021-02-14T02:17:22.7380550Z Updating files:  72% (342/474)
+2021-02-14T02:17:22.7383050Z Updating files:  73% (347/474)
+2021-02-14T02:17:22.7383760Z Updating files:  74% (351/474)
+2021-02-14T02:17:22.7384420Z Updating files:  75% (356/474)
+2021-02-14T02:17:22.7724640Z Updating files:  76% (361/474)
+2021-02-14T02:17:22.7754300Z Updating files:  77% (365/474)
+2021-02-14T02:17:22.7760820Z Updating files:  78% (370/474)
+2021-02-14T02:17:22.7831250Z Updating files:  79% (375/474)
+2021-02-14T02:17:22.7910000Z Updating files:  80% (380/474)
+2021-02-14T02:17:22.7917940Z Updating files:  81% (384/474)
+2021-02-14T02:17:22.7920480Z Updating files:  82% (389/474)
+2021-02-14T02:17:22.8271230Z Updating files:  83% (394/474)
+2021-02-14T02:17:22.8377430Z Updating files:  84% (399/474)
+2021-02-14T02:17:22.8409010Z Updating files:  85% (403/474)
+2021-02-14T02:17:22.8410580Z Updating files:  86% (408/474)
+2021-02-14T02:17:22.8411330Z Updating files:  87% (413/474)
+2021-02-14T02:17:22.8411970Z Updating files:  88% (418/474)
+2021-02-14T02:17:22.8412630Z Updating files:  89% (422/474)
+2021-02-14T02:17:22.8413270Z Updating files:  90% (427/474)
+2021-02-14T02:17:22.8785310Z Updating files:  91% (432/474)
+2021-02-14T02:17:22.8812740Z Updating files:  92% (437/474)
+2021-02-14T02:17:22.8820320Z Updating files:  93% (441/474)
+2021-02-14T02:17:22.8894640Z Updating files:  94% (446/474)
+2021-02-14T02:17:22.8902850Z Updating files:  95% (451/474)
+2021-02-14T02:17:22.8936190Z Updating files:  96% (456/474)
+2021-02-14T02:17:22.8937010Z Updating files:  97% (460/474)
+2021-02-14T02:17:22.8938910Z Updating files:  98% (465/474)
+2021-02-14T02:17:22.8939610Z Updating files:  99% (470/474)
+2021-02-14T02:17:22.8940170Z Updating files: 100% (474/474)
+2021-02-14T02:17:22.8940590Z Updating files: 100% (474/474), done.
+2021-02-14T02:17:22.9368190Z Switched to a new branch 'main'
+2021-02-14T02:17:22.9410720Z Branch 'main' set up to track remote branch 'main' from 'origin'.
+2021-02-14T02:17:22.9422960Z ##[endgroup]
+2021-02-14T02:17:22.9529220Z [command]/usr/local/bin/git log -1 --format='%H'
+2021-02-14T02:17:22.9693910Z '140cea60f249ef09c3e05d41e85bee2e50f9cb62'
+2021-02-14T02:17:23.0743590Z ##[group]Run brew install gcc && brew unlink gcc && brew link gcc
+2021-02-14T02:17:23.0744340Z [36;1mbrew install gcc && brew unlink gcc && brew link gcc[0m
+2021-02-14T02:17:23.0947840Z shell: /bin/bash -e {0}
+2021-02-14T02:17:23.0948200Z env:
+2021-02-14T02:17:23.0948570Z   VIRTUALENV_NO_DOWNLOAD: true
+2021-02-14T02:17:23.0948960Z   PY_VERSION: 3.9
+2021-02-14T02:17:23.0949500Z   PY_BIN_DIR: /Library/Frameworks/Python.framework/Versions/3.9/bin
+2021-02-14T02:17:23.0950500Z ##[endgroup]
+2021-02-14T02:18:55.0360530Z [33mWarning:[0m gcc 10.2.0_3 is already installed and up-to-date.
+2021-02-14T02:18:55.0362890Z To reinstall 10.2.0_3, run:
+2021-02-14T02:18:55.0363320Z   brew reinstall gcc
+2021-02-14T02:18:59.2281790Z Unlinking /usr/local/Cellar/gcc/10.2.0_3... 34 symlinks removed.
+2021-02-14T02:19:01.1548310Z Linking /usr/local/Cellar/gcc/10.2.0_3... 35 symlinks created.
+2021-02-14T02:19:01.2902040Z ##[group]Run scripts/macos/setup.sh
+2021-02-14T02:19:01.2902760Z [36;1mscripts/macos/setup.sh[0m
+2021-02-14T02:19:01.3176600Z shell: /bin/bash -e {0}
+2021-02-14T02:19:01.3177030Z env:
+2021-02-14T02:19:01.3177430Z   VIRTUALENV_NO_DOWNLOAD: true
+2021-02-14T02:19:01.3177880Z   PY_VERSION: 3.9
+2021-02-14T02:19:01.3178440Z   PY_BIN_DIR: /Library/Frameworks/Python.framework/Versions/3.9/bin
+2021-02-14T02:19:01.3179000Z ##[endgroup]
+2021-02-14T02:19:01.4534160Z + MB_COMMON_UTILS=https://raw.githubusercontent.com/matthew-brett/multibuild/devel/common_utils.sh
+2021-02-14T02:19:01.4536750Z + MB_OSX_UTILS=https://raw.githubusercontent.com/matthew-brett/multibuild/devel/osx_utils.sh
+2021-02-14T02:19:01.4543010Z + [[ -z 3.9 ]]
+2021-02-14T02:19:01.4553720Z + curl -O https://raw.githubusercontent.com/matthew-brett/multibuild/devel/common_utils.sh
+2021-02-14T02:19:01.6781160Z   % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+2021-02-14T02:19:01.6795420Z                                  Dload  Upload   Total   Spent    Left  Speed
+2021-02-14T02:19:01.6812930Z 
+2021-02-14T02:19:03.3327960Z   0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+2021-02-14T02:19:03.3971300Z   0     0    0     0    0     0      0      0 --:--:--  0:00:01 --:--:--     0
+2021-02-14T02:19:03.3974280Z 100 19365  100 19365    0     0  11265      0  0:00:01  0:00:01 --:--:-- 11265
+2021-02-14T02:19:03.4421680Z + source common_utils.sh
+2021-02-14T02:19:03.4430730Z ++ '[' -n '' ']'
+2021-02-14T02:19:03.4431890Z ++ COMMON_UTILS_SOURCED=1
+2021-02-14T02:19:03.4432730Z ++ set -e
+2021-02-14T02:19:03.4436230Z +++ dirname common_utils.sh
+2021-02-14T02:19:03.4465440Z ++ MULTIBUILD_DIR=.
+2021-02-14T02:19:03.4466590Z ++ DOWNLOADS_SDIR=downloads
+2021-02-14T02:19:03.4467570Z ++ PYPY_URL=https://downloads.python.org/pypy
+2021-02-14T02:19:03.4469520Z ++ GET_PIP_URL=https://bootstrap.pypa.io/get-pip.py
+2021-02-14T02:19:03.4470180Z ++ UNICODE_WIDTH=32
+2021-02-14T02:19:03.4473700Z +++ uname
+2021-02-14T02:19:03.4513950Z ++ '[' Darwin == Darwin ']'
+2021-02-14T02:19:03.4514480Z ++ IS_MACOS=1
+2021-02-14T02:19:03.4514800Z ++ IS_OSX=1
+2021-02-14T02:19:03.4515500Z ++ unset -f cd
+2021-02-14T02:19:03.4516250Z ++ unset -f pushd
+2021-02-14T02:19:03.4516940Z ++ unset -f popd
+2021-02-14T02:19:03.4517760Z ++ alias gh-clone=gh_clone
+2021-02-14T02:19:03.4532840Z +++ get_platform
+2021-02-14T02:19:03.4535690Z +++ python -c 'import platform; print(platform.uname()[4])'
+2021-02-14T02:19:08.6492340Z ++ '[' x86_64 == x86_64 ']'
+2021-02-14T02:19:08.6493280Z ++ IS_X86=1
+2021-02-14T02:19:08.6494850Z ++ LATEST_PP_5p0=5.0.1
+2021-02-14T02:19:08.6495480Z ++ LATEST_PP_5p1=5.1.1
+2021-02-14T02:19:08.6495860Z ++ LATEST_PP_5p3=5.3.1
+2021-02-14T02:19:08.6496250Z ++ LATEST_PP_5p4=5.4.1
+2021-02-14T02:19:08.6496610Z ++ LATEST_PP_5p6=5.6.0
+2021-02-14T02:19:08.6497000Z ++ LATEST_PP_5p7=5.7.1
+2021-02-14T02:19:08.6497350Z ++ LATEST_PP_5p8=5.8.0
+2021-02-14T02:19:08.6497700Z ++ LATEST_PP_5p9=5.9.0
+2021-02-14T02:19:08.6498090Z ++ LATEST_PP_5=5.9.0
+2021-02-14T02:19:08.6498450Z ++ LATEST_PP_6p0=6.0.0
+2021-02-14T02:19:08.6498950Z ++ LATEST_PP_6=6.0.0
+2021-02-14T02:19:08.6499300Z ++ LATEST_PP_7p0=7.0.0
+2021-02-14T02:19:08.6499640Z ++ LATEST_PP_7p1=7.1.1
+2021-02-14T02:19:08.6500060Z ++ LATEST_PP_7p2=7.2.0
+2021-02-14T02:19:08.6500410Z ++ LATEST_PP_7p3=7.3.3
+2021-02-14T02:19:08.6500800Z ++ LATEST_PP_7=7.3.3
+2021-02-14T02:19:08.6507270Z + curl -O https://raw.githubusercontent.com/matthew-brett/multibuild/devel/osx_utils.sh
+2021-02-14T02:19:08.6644790Z   % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+2021-02-14T02:19:08.6646930Z                                  Dload  Upload   Total   Spent    Left  Speed
+2021-02-14T02:19:08.6651490Z 
+2021-02-14T02:19:08.7119950Z   0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+2021-02-14T02:19:08.7124120Z 100 17467  100 17467    0     0   362k      0 --:--:-- --:--:-- --:--:--  362k
+2021-02-14T02:19:08.7567320Z + source osx_utils.sh
+2021-02-14T02:19:08.7572840Z ++ set -e
+2021-02-14T02:19:08.7579590Z +++ dirname osx_utils.sh
+2021-02-14T02:19:08.7604780Z ++ MULTIBUILD_DIR=.
+2021-02-14T02:19:08.7605860Z ++ source ./common_utils.sh
+2021-02-14T02:19:08.7607300Z +++ '[' -n 1 ']'
+2021-02-14T02:19:08.7608120Z +++ return
+2021-02-14T02:19:08.7609200Z ++ MACPYTHON_URL=https://www.python.org/ftp/python
+2021-02-14T02:19:08.7610440Z ++ MACPYTHON_PY_PREFIX=/Library/Frameworks/Python.framework/Versions
+2021-02-14T02:19:08.7611450Z ++ WORKING_SDIR=working
+2021-02-14T02:19:08.7612250Z ++ LATEST_2p7=2.7.18
+2021-02-14T02:19:08.7613000Z ++ LATEST_3p5=3.5.4
+2021-02-14T02:19:08.7613720Z ++ LATEST_3p6=3.6.8
+2021-02-14T02:19:08.7614480Z ++ LATEST_3p7=3.7.9
+2021-02-14T02:19:08.7615190Z ++ LATEST_3p8=3.8.7
+2021-02-14T02:19:08.7615970Z ++ LATEST_3p9=3.9.1
+2021-02-14T02:19:08.7623660Z + get_macpython_environment 3.9
+2021-02-14T02:19:08.7624610Z + local version=3.9
+2021-02-14T02:19:08.7625350Z + local venv_dir=
+2021-02-14T02:19:08.7625940Z + local py_osx_ver=
+2021-02-14T02:19:08.7627800Z + '[' '' == 1 ']'
+2021-02-14T02:19:08.7628610Z + remove_travis_ve_pip
+2021-02-14T02:19:08.7632000Z ++ sudo which virtualenv
+2021-02-14T02:19:09.3366410Z + '[' '' == /usr/local/bin/virtualenv ']'
+2021-02-14T02:19:09.3372220Z ++ sudo which pip
+2021-02-14T02:19:09.3654990Z + '[' /usr/local/bin/pip == /usr/local/bin/pip ']'
+2021-02-14T02:19:09.3656010Z + sudo pip uninstall -y pip
+2021-02-14T02:19:49.5657590Z DEPRECATION: Python 2.7 reached the end of its life on January 1st, 2020. Please upgrade your Python as Python 2.7 is no longer maintained. pip 21.0 will drop support for Python 2.7 in January 2021. More details about Python 2 support in pip can be found at https://pip.pypa.io/en/latest/development/release-process/#python-2-support pip 21.0 will remove support for this functionality.
+2021-02-14T02:19:49.5691110Z WARNING: The directory '/Users/runner/Library/Caches/pip' or its parent directory is not owned or is not writable by the current user. The cache has been disabled. Check the permissions and owner of that directory. If executing pip with sudo, you may want sudo's -H flag.
+2021-02-14T02:19:49.5815310Z Found existing installation: pip 20.3.4
+2021-02-14T02:19:49.9463540Z Uninstalling pip-20.3.4:
+2021-02-14T02:19:50.0521500Z   Successfully uninstalled pip-20.3.4
+2021-02-14T02:19:50.9559970Z + install_macpython 3.9
+2021-02-14T02:19:50.9561020Z + local version=3.9
+2021-02-14T02:19:50.9562200Z + local py_osx_ver=
+2021-02-14T02:19:50.9569120Z ++ macpython_impl_for_version 3.9
+2021-02-14T02:19:50.9571880Z ++ local version=3.9
+2021-02-14T02:19:50.9572340Z ++ check_var 3.9
+2021-02-14T02:19:50.9578900Z ++ '[' -z 3.9 ']'
+2021-02-14T02:19:50.9580030Z ++ [[ 3.9 =~ ^pypy ]]
+2021-02-14T02:19:50.9581680Z ++ [[ 3.9 =~ ([0-9\.]+) ]]
+2021-02-14T02:19:50.9582110Z ++ echo cp
+2021-02-14T02:19:50.9582450Z + local impl=cp
+2021-02-14T02:19:50.9582980Z + [[ cp == \p\p ]]
+2021-02-14T02:19:50.9583340Z + [[ cp == \c\p ]]
+2021-02-14T02:19:50.9583980Z ++ strip_macpython_ver_prefix 3.9
+2021-02-14T02:19:50.9584450Z ++ local version=3.9
+2021-02-14T02:19:50.9584860Z ++ check_var 3.9
+2021-02-14T02:19:50.9585640Z ++ '[' -z 3.9 ']'
+2021-02-14T02:19:50.9586340Z ++ [[ 3.9 =~ (pypy-)?([0-9\.]+) ]]
+2021-02-14T02:19:50.9586760Z ++ echo 3.9
+2021-02-14T02:19:50.9589980Z + local stripped_ver=3.9
+2021-02-14T02:19:50.9590470Z + install_mac_cpython 3.9
+2021-02-14T02:19:50.9599550Z ++ fill_pyver 3.9
+2021-02-14T02:19:50.9600000Z ++ local ver=3.9
+2021-02-14T02:19:50.9600360Z ++ check_var 3.9
+2021-02-14T02:19:50.9601240Z ++ '[' -z 3.9 ']'
+2021-02-14T02:19:50.9602020Z ++ [[ 3.9 =~ [0-9]+\.[0-9]+\.[0-9]+ ]]
+2021-02-14T02:19:50.9602800Z ++ '[' 3.9 == 2 ']'
+2021-02-14T02:19:50.9603440Z ++ '[' 3.9 == 2.7 ']'
+2021-02-14T02:19:50.9604140Z ++ '[' 3.9 == 3 ']'
+2021-02-14T02:19:50.9604780Z ++ '[' 3.9 == 3.9 ']'
+2021-02-14T02:19:50.9605100Z ++ echo 3.9.1
+2021-02-14T02:19:50.9605510Z + local py_version=3.9.1
+2021-02-14T02:19:50.9605890Z + local py_osx_ver=
+2021-02-14T02:19:50.9612290Z ++ strip_ver_suffix 3.9.1
+2021-02-14T02:19:50.9623410Z ++++ lex_ver 3.9.1
+2021-02-14T02:19:50.9629100Z ++++ echo 3.9.1
+2021-02-14T02:19:50.9631900Z ++++ awk -F . '{printf "%03d%03d%03d", $1, $2, $3}'
+2021-02-14T02:19:50.9679290Z +++ unlex_ver 003009001
+2021-02-14T02:19:50.9679770Z +++ echo 3.9.1
+2021-02-14T02:19:50.9682630Z ++ echo 3.9.1
+2021-02-14T02:19:50.9685800Z + local py_stripped=3.9.1
+2021-02-14T02:19:50.9693050Z ++ pyinst_fname_for_version 3.9.1
+2021-02-14T02:19:50.9693630Z ++ local py_version=3.9.1
+2021-02-14T02:19:50.9701650Z +++ macpython_sdk_for_version 3.9.1
+2021-02-14T02:19:50.9712460Z +++ awk '-F ' '{print $NF}'
+2021-02-14T02:19:50.9713560Z ++++ macpython_sdk_list_for_version 3.9.1
+2021-02-14T02:19:50.9725630Z +++++ fill_pyver 3.9.1
+2021-02-14T02:19:50.9726520Z +++++ local ver=3.9.1
+2021-02-14T02:19:50.9727340Z +++++ check_var 3.9.1
+2021-02-14T02:19:50.9728920Z +++++ '[' -z 3.9.1 ']'
+2021-02-14T02:19:50.9731930Z +++++ [[ 3.9.1 =~ [0-9]+\.[0-9]+\.[0-9]+ ]]
+2021-02-14T02:19:50.9732830Z +++++ echo 3.9.1
+2021-02-14T02:19:50.9733710Z ++++ local _ver=3.9.1
+2021-02-14T02:19:50.9734160Z ++++ local _major=3
+2021-02-14T02:19:50.9735680Z ++++ local _return
+2021-02-14T02:19:50.9736730Z ++++ '[' '' = arm64 ']'
+2021-02-14T02:19:50.9737490Z ++++ '[' 3 -eq 2 ']'
+2021-02-14T02:19:50.9738440Z ++++ '[' 3 -eq 3 ']'
+2021-02-14T02:19:50.9740280Z +++++ lex_ver 3.9.1
+2021-02-14T02:19:50.9746320Z +++++ echo 3.9.1
+2021-02-14T02:19:50.9750530Z +++++ awk -F . '{printf "%03d%03d%03d", $1, $2, $3}'
+2021-02-14T02:19:50.9784470Z +++++ lex_ver 3.8
+2021-02-14T02:19:50.9790800Z +++++ echo 3.8
+2021-02-14T02:19:50.9799600Z +++++ awk -F . '{printf "%03d%03d%03d", $1, $2, $3}'
+2021-02-14T02:19:50.9830070Z ++++ '[' 003009001 -lt 003008000 ']'
+2021-02-14T02:19:50.9835910Z +++++ lex_ver 3.9.1
+2021-02-14T02:19:50.9844640Z +++++ echo 3.9.1
+2021-02-14T02:19:50.9846470Z +++++ awk -F . '{printf "%03d%03d%03d", $1, $2, $3}'
+2021-02-14T02:19:50.9896020Z +++++ lex_ver 3.6.5
+2021-02-14T02:19:50.9900800Z +++++ echo 3.6.5
+2021-02-14T02:19:50.9905510Z +++++ awk -F . '{printf "%03d%03d%03d", $1, $2, $3}'
+2021-02-14T02:19:50.9936440Z ++++ '[' 003009001 -ge 003006005 ']'
+2021-02-14T02:19:50.9938220Z ++++ _return=' 10.9'
+2021-02-14T02:19:50.9938910Z ++++ echo 10.9
+2021-02-14T02:19:50.9939680Z +++ echo 10.9
+2021-02-14T02:19:50.9948370Z ++ local py_osx_ver=10.9
+2021-02-14T02:19:50.9955890Z +++ pyinst_ext_for_version 3.9.1
+2021-02-14T02:19:50.9956470Z +++ local py_version=3.9.1
+2021-02-14T02:19:50.9957870Z +++ check_var 3.9.1
+2021-02-14T02:19:50.9959900Z +++ '[' -z 3.9.1 ']'
+2021-02-14T02:19:50.9962900Z ++++ fill_pyver 3.9.1
+2021-02-14T02:19:50.9963960Z ++++ local ver=3.9.1
+2021-02-14T02:19:50.9964860Z ++++ check_var 3.9.1
+2021-02-14T02:19:50.9966010Z ++++ '[' -z 3.9.1 ']'
+2021-02-14T02:19:50.9967950Z ++++ [[ 3.9.1 =~ [0-9]+\.[0-9]+\.[0-9]+ ]]
+2021-02-14T02:19:50.9968310Z ++++ echo 3.9.1
+2021-02-14T02:19:50.9968690Z +++ py_version=3.9.1
+2021-02-14T02:19:50.9969070Z +++ local py_0=3
+2021-02-14T02:19:50.9969770Z +++ '[' 3 -eq 2 ']'
+2021-02-14T02:19:50.9970510Z +++ '[' 3 -ge 3 ']'
+2021-02-14T02:19:50.9970850Z +++ echo pkg
+2021-02-14T02:19:50.9972000Z ++ local inst_ext=pkg
+2021-02-14T02:19:50.9974270Z ++ '[' '' == arm64 ']'
+2021-02-14T02:19:50.9975250Z ++ '[' '' == universal2 ']'
+2021-02-14T02:19:50.9976500Z ++ echo python-3.9.1-macosx10.9.pkg
+2021-02-14T02:19:50.9977870Z + local py_inst=python-3.9.1-macosx10.9.pkg
+2021-02-14T02:19:50.9979670Z + local inst_path=downloads/python-3.9.1-macosx10.9.pkg
+2021-02-14T02:19:50.9982050Z + mkdir -p downloads
+2021-02-14T02:19:51.0006040Z + curl https://www.python.org/ftp/python/3.9.1/python-3.9.1-macosx10.9.pkg
+2021-02-14T02:19:51.0134550Z   % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+2021-02-14T02:19:51.0135410Z                                  Dload  Upload   Total   Spent    Left  Speed
+2021-02-14T02:19:51.0135760Z 
+2021-02-14T02:19:51.2713810Z   0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+2021-02-14T02:19:52.2969700Z  11 28.4M   11 3399k    0     0  12.8M      0  0:00:02 --:--:--  0:00:02 12.8M
+2021-02-14T02:19:52.6894940Z  62 28.4M   62 17.7M    0     0  13.8M      0  0:00:02  0:00:01  0:00:01 13.8M
+2021-02-14T02:19:52.6897370Z 100 28.4M  100 28.4M    0     0  16.9M      0  0:00:01  0:00:01 --:--:-- 16.9M
+2021-02-14T02:19:52.6968560Z + '[' pkg == dmg ']'
+2021-02-14T02:19:52.6969700Z + sudo installer -pkg downloads/python-3.9.1-macosx10.9.pkg -target /
+2021-02-14T02:21:38.6300860Z installer: Package name is Python
+2021-02-14T02:21:38.6316170Z installer: Upgrading at base path /
+2021-02-14T02:21:38.6317150Z installer: The upgrade was successful.
+2021-02-14T02:21:38.6464490Z + local py_mm=3.9
+2021-02-14T02:21:38.6643290Z + PYTHON_EXE=/Library/Frameworks/Python.framework/Versions/3.9/bin/python3.9
+2021-02-14T02:21:38.6680560Z + local 'inst_cmd=/Applications/Python 3.9/Install Certificates.command'
+2021-02-14T02:21:38.6708550Z + '[' -e '/Applications/Python 3.9/Install Certificates.command' ']'
+2021-02-14T02:21:38.6735850Z + sh '/Applications/Python 3.9/Install Certificates.command'
+2021-02-14T02:21:40.5015450Z Collecting certifi
+2021-02-14T02:21:40.5893830Z   Using cached certifi-2020.12.5-py2.py3-none-any.whl (147 kB)
+2021-02-14T02:21:40.6790170Z Installing collected packages: certifi
+2021-02-14T02:21:40.7028050Z Successfully installed certifi-2020.12.5
+2021-02-14T02:21:41.8861130Z WARNING: You are using pip version 20.2.3; however, version 21.0.1 is available.
+2021-02-14T02:21:41.8889940Z You should consider upgrading via the '/Library/Frameworks/Python.framework/Versions/3.9/bin/python3.9 -m pip install --upgrade pip' command.
+2021-02-14T02:21:42.0021410Z  -- pip install --upgrade certifi
+2021-02-14T02:21:42.0028230Z  -- removing any existing file or link
+2021-02-14T02:21:42.0029740Z  -- creating symlink to certifi certificate bundle
+2021-02-14T02:21:42.0031460Z  -- setting permissions
+2021-02-14T02:21:42.0032720Z  -- update complete
+2021-02-14T02:21:42.0138450Z + PIP_CMD='/Library/Frameworks/Python.framework/Versions/3.9/bin/python3.9 -m pip'
+2021-02-14T02:21:42.0151490Z ++ get_py_mm
+2021-02-14T02:21:42.0157470Z ++ check_python
+2021-02-14T02:21:42.0169300Z ++ '[' -z /Library/Frameworks/Python.framework/Versions/3.9/bin/python3.9 ']'
+2021-02-14T02:21:42.0171360Z ++ /Library/Frameworks/Python.framework/Versions/3.9/bin/python3.9 -c 'import sys; print('\''{0}.{1}'\''.format(*sys.version_info[0:2]))'
+2021-02-14T02:21:42.0781680Z + '[' 3.9 == 3.5 ']'
+2021-02-14T02:21:42.0793290Z + /Library/Frameworks/Python.framework/Versions/3.9/bin/python3.9 -m ensurepip
+2021-02-14T02:21:45.6207830Z Looking in links: /var/folders/24/8k48jl6d249_n_qfxwsl6xvm0000gn/T/tmpuimiftyn
+2021-02-14T02:21:45.6210240Z Requirement already satisfied: setuptools in /Library/Frameworks/Python.framework/Versions/3.9/lib/python3.9/site-packages (49.2.1)
+2021-02-14T02:21:45.6629800Z Requirement already satisfied: pip in /Library/Frameworks/Python.framework/Versions/3.9/lib/python3.9/site-packages (20.2.3)
+2021-02-14T02:21:45.7541460Z + /Library/Frameworks/Python.framework/Versions/3.9/bin/python3.9 -m pip install --upgrade pip
+2021-02-14T02:21:49.1790080Z Collecting pip
+2021-02-14T02:21:49.2096580Z   Using cached pip-21.0.1-py3-none-any.whl (1.5 MB)
+2021-02-14T02:21:49.3200030Z Installing collected packages: pip
+2021-02-14T02:21:49.3201140Z   Attempting uninstall: pip
+2021-02-14T02:21:49.3202520Z     Found existing installation: pip 20.2.3
+2021-02-14T02:21:50.6380190Z     Uninstalling pip-20.2.3:
+2021-02-14T02:21:52.1565160Z       Successfully uninstalled pip-20.2.3
+2021-02-14T02:21:54.9161460Z Successfully installed pip-21.0.1
+2021-02-14T02:21:54.9805530Z + '[' -n '' ']'
+2021-02-14T02:21:54.9824810Z ++ dirname /Library/Frameworks/Python.framework/Versions/3.9/bin/python3.9
+2021-02-14T02:21:54.9975990Z + export PATH=/Library/Frameworks/Python.framework/Versions/3.9/bin:/usr/local/opt/pipx_bin:/Users/runner/.cargo/bin:/usr/local/lib/ruby/gems/2.7.0/bin:/usr/local/opt/ruby@2.7/bin:/usr/local/opt/curl/bin:/usr/local/bin:/usr/local/sbin:/Users/runner/bin:/Users/runner/.yarn/bin:/usr/local/go/bin:/Users/runner/Library/Android/sdk/tools:/Users/runner/Library/Android/sdk/platform-tools:/Users/runner/Library/Android/sdk/ndk-bundle:/Library/Frameworks/Mono.framework/Versions/Current/Commands:/usr/bin:/bin:/usr/sbin:/sbin:/Users/runner/.dotnet/tools:/Users/runner/.ghcup/bin:/Users/runner/hostedtoolcache/stack/2.5.1/x64
+2021-02-14T02:21:54.9978500Z PYTHON_EXE=/Library/Frameworks/Python.framework/Versions/3.9/bin/python3.9
+2021-02-14T02:21:55.0076020Z + PATH=/Library/Frameworks/Python.framework/Versions/3.9/bin:/usr/local/opt/pipx_bin:/Users/runner/.cargo/bin:/usr/local/lib/ruby/gems/2.7.0/bin:/usr/local/opt/ruby@2.7/bin:/usr/local/opt/curl/bin:/usr/local/bin:/usr/local/sbin:/Users/runner/bin:/Users/runner/.yarn/bin:/usr/local/go/bin:/Users/runner/Library/Android/sdk/tools:/Users/runner/Library/Android/sdk/platform-tools:/Users/runner/Library/Android/sdk/ndk-bundle:/Library/Frameworks/Mono.framework/Versions/Current/Commands:/usr/bin:/bin:/usr/sbin:/sbin:/Users/runner/.dotnet/tools:/Users/runner/.ghcup/bin:/Users/runner/hostedtoolcache/stack/2.5.1/x64
+2021-02-14T02:21:55.0078900Z PIP_CMD=/Library/Frameworks/Python.framework/Versions/3.9/bin/python3.9 -m pip
+2021-02-14T02:21:55.0180690Z + export PYTHON_EXE PIP_CMD
+2021-02-14T02:21:55.0193020Z + echo PYTHON_EXE=/Library/Frameworks/Python.framework/Versions/3.9/bin/python3.9
+2021-02-14T02:21:55.0248000Z + PIP_CMD='/Library/Frameworks/Python.framework/Versions/3.9/bin/python3.9 -m pip'
+2021-02-14T02:21:55.0350890Z + echo 'PIP_CMD=/Library/Frameworks/Python.framework/Versions/3.9/bin/python3.9 -m pip'
+2021-02-14T02:21:55.0421640Z + /Library/Frameworks/Python.framework/Versions/3.9/bin/python3.9 -m pip install --ignore-installed virtualenv 'pip !=20.0,!=20.0.1'
+2021-02-14T02:21:56.6289830Z Collecting virtualenv
+2021-02-14T02:21:56.6803700Z   Downloading virtualenv-20.4.2-py2.py3-none-any.whl (7.2 MB)
+2021-02-14T02:21:57.7412170Z Collecting pip!=20.0,!=20.0.1
+2021-02-14T02:21:57.7922850Z   Using cached pip-21.0.1-py3-none-any.whl (1.5 MB)
+2021-02-14T02:21:58.0187530Z Collecting six<2,>=1.9.0
+2021-02-14T02:21:58.0306980Z   Downloading six-1.15.0-py2.py3-none-any.whl (10 kB)
+2021-02-14T02:21:58.0804510Z Collecting appdirs<2,>=1.4.3
+2021-02-14T02:21:58.0911050Z   Downloading appdirs-1.4.4-py2.py3-none-any.whl (9.6 kB)
+2021-02-14T02:21:58.1331810Z Collecting distlib<1,>=0.3.1
+2021-02-14T02:21:58.1504130Z   Downloading distlib-0.3.1-py2.py3-none-any.whl (335 kB)
+2021-02-14T02:21:58.2123500Z Collecting filelock<4,>=3.0.0
+2021-02-14T02:21:58.2244990Z   Downloading filelock-3.0.12-py3-none-any.whl (7.6 kB)
+2021-02-14T02:21:58.3135490Z Installing collected packages: six, filelock, distlib, appdirs, virtualenv, pip
+2021-02-14T02:22:01.3550890Z Successfully installed appdirs-1.4.4 distlib-0.3.1 filelock-3.0.12 pip-21.0.1 six-1.15.0 virtualenv-20.4.2
+2021-02-14T02:22:01.4845920Z + /Library/Frameworks/Python.framework/Versions/3.9/bin/python3.9 -m pip install --upgrade 'nox >= 2020.12.31' numpy
+2021-02-14T02:22:02.8039390Z Collecting nox>=2020.12.31
+2021-02-14T02:22:02.9105460Z   Downloading nox-2020.12.31-py3-none-any.whl (45 kB)
+2021-02-14T02:22:04.6278970Z Collecting numpy
+2021-02-14T02:22:04.6411270Z   Downloading numpy-1.20.1-cp39-cp39-macosx_10_9_x86_64.whl (16.1 MB)
+2021-02-14T02:22:05.6604740Z Collecting argcomplete<2.0,>=1.9.4
+2021-02-14T02:22:05.6741280Z   Downloading argcomplete-1.12.2-py2.py3-none-any.whl (38 kB)
+2021-02-14T02:22:05.8745170Z Collecting py<2.0.0,>=1.4.0
+2021-02-14T02:22:05.8884160Z   Downloading py-1.10.0-py2.py3-none-any.whl (97 kB)
+2021-02-14T02:22:06.2185730Z Collecting colorlog<5.0.0,>=2.6.1
+2021-02-14T02:22:06.2335620Z   Downloading colorlog-4.7.2-py2.py3-none-any.whl (10 kB)
+2021-02-14T02:22:06.2439350Z Requirement already satisfied: virtualenv>=14.0.0 in /Library/Frameworks/Python.framework/Versions/3.9/lib/python3.9/site-packages (from nox>=2020.12.31) (20.4.2)
+2021-02-14T02:22:06.3234740Z Requirement already satisfied: filelock<4,>=3.0.0 in /Library/Frameworks/Python.framework/Versions/3.9/lib/python3.9/site-packages (from virtualenv>=14.0.0->nox>=2020.12.31) (3.0.12)
+2021-02-14T02:22:06.3250770Z Requirement already satisfied: distlib<1,>=0.3.1 in /Library/Frameworks/Python.framework/Versions/3.9/lib/python3.9/site-packages (from virtualenv>=14.0.0->nox>=2020.12.31) (0.3.1)
+2021-02-14T02:22:06.3281260Z Requirement already satisfied: six<2,>=1.9.0 in /Library/Frameworks/Python.framework/Versions/3.9/lib/python3.9/site-packages (from virtualenv>=14.0.0->nox>=2020.12.31) (1.15.0)
+2021-02-14T02:22:06.3283180Z Requirement already satisfied: appdirs<2,>=1.4.3 in /Library/Frameworks/Python.framework/Versions/3.9/lib/python3.9/site-packages (from virtualenv>=14.0.0->nox>=2020.12.31) (1.4.4)
+2021-02-14T02:22:06.4054720Z Installing collected packages: py, colorlog, argcomplete, numpy, nox
+2021-02-14T02:22:10.1623670Z Successfully installed argcomplete-1.12.2 colorlog-4.7.2 nox-2020.12.31 numpy-1.20.1 py-1.10.0
+2021-02-14T02:22:10.2461050Z + /Library/Frameworks/Python.framework/Versions/3.9/bin/python3.9 -m pip install --upgrade 'cmake >= 3.18.4.post1'
+2021-02-14T02:22:11.3460110Z Collecting cmake>=3.18.4.post1
+2021-02-14T02:22:11.4280320Z   Downloading cmake-3.18.4.post1-py3-none-macosx_10_6_x86_64.whl (42.8 MB)
+2021-02-14T02:22:13.2802260Z Installing collected packages: cmake
+2021-02-14T02:22:19.0008320Z Successfully installed cmake-3.18.4.post1
+2021-02-14T02:22:19.0941690Z + command -v cmake
+2021-02-14T02:22:19.0942300Z /Library/Frameworks/Python.framework/Versions/3.9/bin/cmake
+2021-02-14T02:22:19.0984910Z ++ dirname /Library/Frameworks/Python.framework/Versions/3.9/bin/python3.9
+2021-02-14T02:22:19.1450290Z + PY_BIN_DIR=/Library/Frameworks/Python.framework/Versions/3.9/bin
+2021-02-14T02:22:19.1451560Z PY_BIN_DIR=/Library/Frameworks/Python.framework/Versions/3.9/bin
+2021-02-14T02:22:19.1453520Z + echo PY_BIN_DIR=/Library/Frameworks/Python.framework/Versions/3.9/bin
+2021-02-14T02:22:19.1524920Z ##[group]Run scripts/macos/test.sh
+2021-02-14T02:22:19.1525490Z [36;1mscripts/macos/test.sh[0m
+2021-02-14T02:22:19.2115190Z shell: /bin/bash -e {0}
+2021-02-14T02:22:19.2115560Z env:
+2021-02-14T02:22:19.2116020Z   VIRTUALENV_NO_DOWNLOAD: true
+2021-02-14T02:22:19.2116420Z   PY_VERSION: 3.9
+2021-02-14T02:22:19.2116950Z   PY_BIN_DIR: /Library/Frameworks/Python.framework/Versions/3.9/bin
+2021-02-14T02:22:19.2117510Z ##[endgroup]
+2021-02-14T02:22:19.3181980Z + [[ -z 3.9 ]]
+2021-02-14T02:22:19.3183470Z + [[ -z /Library/Frameworks/Python.framework/Versions/3.9/bin ]]
+2021-02-14T02:22:19.3184010Z + [[ 3.9 == \3\.\7 ]]
+2021-02-14T02:22:19.3184350Z + [[ 3.9 == \3\.\8 ]]
+2021-02-14T02:22:19.3184640Z + [[ 3.9 == \3\.\9 ]]
+2021-02-14T02:22:19.3185630Z + /Library/Frameworks/Python.framework/Versions/3.9/bin/nox -s cover
+2021-02-14T02:22:19.5257950Z nox > Running session cover
+2021-02-14T02:22:19.5343600Z nox > Creating virtual environment (virtualenv) using python3.9 in .nox/cover
+2021-02-14T02:22:22.8155080Z nox > python -m pip install numpy >= 1.20.1 pytest >= 6.2.2 importlib-metadata; python_version<"3.8" scipy >= 1.6.0 sympy >= 1.7.1 pytest-cov coverage
+2021-02-14T02:22:59.7036000Z nox > <function makedirs at 0x7f9dc6663430>(args=('/Users/runner/work/bezier/bezier/.nox/libbezier-debug',), kwargs={'exist_ok': True})
+2021-02-14T02:22:59.7084840Z nox > <built-in function print>(args=('Using pre-installed ``cmake``',), kwargs={})
+2021-02-14T02:22:59.7092270Z nox > cmake --version
+2021-02-14T02:22:59.7984190Z cmake version 3.19.4
+2021-02-14T02:22:59.7987780Z 
+2021-02-14T02:22:59.7988390Z CMake suite maintained and supported by Kitware (kitware.com/cmake).
+2021-02-14T02:22:59.7990880Z Using pre-installed ``cmake``
+2021-02-14T02:22:59.7995460Z nox > <function makedirs at 0x7f9dc6663430>(args=('/Users/runner/work/bezier/bezier/.nox/libbezier-debug/build',), kwargs={'exist_ok': True})
+2021-02-14T02:22:59.8010370Z nox > cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_INSTALL_PREFIX:PATH=/Users/runner/work/bezier/bezier/.nox/libbezier-debug/usr -DCMAKE_VERBOSE_MAKEFILE:BOOL=ON -S src/fortran -B /Users/runner/work/bezier/bezier/.nox/libbezier-debug/build
+2021-02-14T02:23:04.0090380Z -- The Fortran compiler identification is GNU 10.2.0
+2021-02-14T02:23:05.3831270Z -- The C compiler identification is AppleClang 12.0.0.12000032
+2021-02-14T02:23:05.4305120Z -- Checking whether Fortran compiler has -isysroot
+2021-02-14T02:23:05.4977110Z -- Checking whether Fortran compiler has -isysroot - yes
+2021-02-14T02:23:05.4979420Z -- Checking whether Fortran compiler supports OSX deployment target flag
+2021-02-14T02:23:05.5687450Z -- Checking whether Fortran compiler supports OSX deployment target flag - yes
+2021-02-14T02:23:05.5802680Z -- Detecting Fortran compiler ABI info
+2021-02-14T02:23:06.8821380Z -- Detecting Fortran compiler ABI info - done
+2021-02-14T02:23:06.9004430Z -- Check for working Fortran compiler: /usr/local/bin/gfortran - skipped
+2021-02-14T02:23:06.9005830Z -- Checking whether /usr/local/bin/gfortran supports Fortran 90
+2021-02-14T02:23:07.2687600Z -- Checking whether /usr/local/bin/gfortran supports Fortran 90 - yes
+2021-02-14T02:23:07.2911870Z -- Detecting C compiler ABI info
+2021-02-14T02:23:07.5122100Z -- Detecting C compiler ABI info - done
+2021-02-14T02:23:07.5240320Z -- Check for working C compiler: /Applications/Xcode_12.3.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc - skipped
+2021-02-14T02:23:07.5266530Z -- Detecting C compile features
+2021-02-14T02:23:07.5287540Z -- Detecting C compile features - done
+2021-02-14T02:23:07.5419550Z -- Configuring done
+2021-02-14T02:23:07.5673830Z -- Generating done
+2021-02-14T02:23:07.5721310Z -- Build files have been written to: /Users/runner/work/bezier/bezier/.nox/libbezier-debug/build
+2021-02-14T02:23:07.5799710Z nox > cmake --build /Users/runner/work/bezier/bezier/.nox/libbezier-debug/build --config Debug --target install
+2021-02-14T02:23:07.6132840Z /usr/local/Cellar/cmake/3.19.4/bin/cmake -S/Users/runner/work/bezier/bezier/src/fortran -B/Users/runner/work/bezier/bezier/.nox/libbezier-debug/build --check-build-system CMakeFiles/Makefile.cmake 0
+2021-02-14T02:23:07.6259800Z /usr/local/Cellar/cmake/3.19.4/bin/cmake -E cmake_progress_start /Users/runner/work/bezier/bezier/.nox/libbezier-debug/build/CMakeFiles /Users/runner/work/bezier/bezier/.nox/libbezier-debug/build//CMakeFiles/progress.marks
+2021-02-14T02:23:07.6368780Z /Applications/Xcode_12.3.app/Contents/Developer/usr/bin/make  -f CMakeFiles/Makefile2 all
+2021-02-14T02:23:07.6408020Z /Applications/Xcode_12.3.app/Contents/Developer/usr/bin/make  -f quadpack/CMakeFiles/quadpack.dir/build.make quadpack/CMakeFiles/quadpack.dir/depend
+2021-02-14T02:23:07.6448730Z cd /Users/runner/work/bezier/bezier/.nox/libbezier-debug/build && /usr/local/Cellar/cmake/3.19.4/bin/cmake -E cmake_depends "Unix Makefiles" /Users/runner/work/bezier/bezier/src/fortran /Users/runner/work/bezier/bezier/src/fortran/quadpack /Users/runner/work/bezier/bezier/.nox/libbezier-debug/build /Users/runner/work/bezier/bezier/.nox/libbezier-debug/build/quadpack /Users/runner/work/bezier/bezier/.nox/libbezier-debug/build/quadpack/CMakeFiles/quadpack.dir/DependInfo.cmake --color=
+2021-02-14T02:23:07.6566640Z Dependee "/Users/runner/work/bezier/bezier/.nox/libbezier-debug/build/quadpack/CMakeFiles/quadpack.dir/DependInfo.cmake" is newer than depender "/Users/runner/work/bezier/bezier/.nox/libbezier-debug/build/quadpack/CMakeFiles/quadpack.dir/depend.internal".
+2021-02-14T02:23:07.6569790Z Dependee "/Users/runner/work/bezier/bezier/.nox/libbezier-debug/build/quadpack/CMakeFiles/CMakeDirectoryInformation.cmake" is newer than depender "/Users/runner/work/bezier/bezier/.nox/libbezier-debug/build/quadpack/CMakeFiles/quadpack.dir/depend.internal".
+2021-02-14T02:23:07.6599100Z Scanning dependencies of target quadpack
+2021-02-14T02:23:07.6608160Z /Applications/Xcode_12.3.app/Contents/Developer/usr/bin/make  -f quadpack/CMakeFiles/quadpack.dir/build.make quadpack/CMakeFiles/quadpack.dir/build
+2021-02-14T02:23:07.6776970Z [  7%] Building Fortran object quadpack/CMakeFiles/quadpack.dir/d1mach.f.o
+2021-02-14T02:23:07.6784050Z cd /Users/runner/work/bezier/bezier/.nox/libbezier-debug/build/quadpack && /usr/local/bin/gfortran   -g -isysroot /Applications/Xcode_12.3.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.1.sdk -mmacosx-version-min=10.15 -fPIC -fno-second-underscore -Wall -Wextra -Wno-compare-reals -Wimplicit-interface -fmax-errors=1 -std=f2008 -fcheck=all -fbacktrace -fimplicit-none -pedantic -g -ffixed-form -c /Users/runner/work/bezier/bezier/src/fortran/quadpack/d1mach.f -o CMakeFiles/quadpack.dir/d1mach.f.o
+2021-02-14T02:23:07.7037650Z /Users/runner/work/bezier/bezier/src/fortran/quadpack/d1mach.f:157:72:
+2021-02-14T02:23:07.7038220Z 
+2021-02-14T02:23:07.7038640Z   157 |                   CALL I1MCRY(SMALL(1), J, 8285, 8388608, 0)
+2021-02-14T02:23:07.7039940Z       |                                                                        1
+2021-02-14T02:23:07.7041940Z Warning: Procedure 'i1mcry' called with an implicit interface at (1) [-Wimplicit-interface]
+2021-02-14T02:23:07.7043170Z /Users/runner/work/bezier/bezier/src/fortran/quadpack/d1mach.f:159:72:
+2021-02-14T02:23:07.7043570Z 
+2021-02-14T02:23:07.7043990Z   159 |                   CALL I1MCRY(LARGE(1), J, 24574, 16777215, 16777215)
+2021-02-14T02:23:07.7044420Z       |                                                                        1
+2021-02-14T02:23:07.7045820Z Warning: Procedure 'i1mcry' called with an implicit interface at (1) [-Wimplicit-interface]
+2021-02-14T02:23:07.7046670Z /Users/runner/work/bezier/bezier/src/fortran/quadpack/d1mach.f:160:72:
+2021-02-14T02:23:07.7047280Z 
+2021-02-14T02:23:07.7047670Z   160 |                   CALL I1MCRY(LARGE(2), J, 0, 16777215, 16777214)
+2021-02-14T02:23:07.7048130Z       |                                                                        1
+2021-02-14T02:23:07.7049860Z Warning: Procedure 'i1mcry' called with an implicit interface at (1) [-Wimplicit-interface]
+2021-02-14T02:23:07.7051100Z /Users/runner/work/bezier/bezier/src/fortran/quadpack/d1mach.f:161:72:
+2021-02-14T02:23:07.7051520Z 
+2021-02-14T02:23:07.7052060Z   161 |                   CALL I1MCRY(RIGHT(1), J, 16291, 8388608, 0)
+2021-02-14T02:23:07.7052500Z       |                                                                        1
+2021-02-14T02:23:07.7053860Z Warning: Procedure 'i1mcry' called with an implicit interface at (1) [-Wimplicit-interface]
+2021-02-14T02:23:07.7054730Z /Users/runner/work/bezier/bezier/src/fortran/quadpack/d1mach.f:163:72:
+2021-02-14T02:23:07.7055340Z 
+2021-02-14T02:23:07.7055750Z   163 |                   CALL I1MCRY(DIVER(1), J, 16292, 8388608, 0)
+2021-02-14T02:23:07.7056300Z       |                                                                        1
+2021-02-14T02:23:07.7057430Z Warning: Procedure 'i1mcry' called with an implicit interface at (1) [-Wimplicit-interface]
+2021-02-14T02:23:07.7058360Z /Users/runner/work/bezier/bezier/src/fortran/quadpack/d1mach.f:165:72:
+2021-02-14T02:23:07.7058790Z 
+2021-02-14T02:23:07.7059180Z   165 |                   CALL I1MCRY(LOG10(1), J, 16383, 10100890, 8715215)
+2021-02-14T02:23:07.7059640Z       |                                                                        1
+2021-02-14T02:23:07.7061030Z Warning: Procedure 'i1mcry' called with an implicit interface at (1) [-Wimplicit-interface]
+2021-02-14T02:23:07.7062060Z /Users/runner/work/bezier/bezier/src/fortran/quadpack/d1mach.f:166:72:
+2021-02-14T02:23:07.7062500Z 
+2021-02-14T02:23:07.7063060Z   166 |                   CALL I1MCRY(LOG10(2), J, 0, 16226447, 9001388)
+2021-02-14T02:23:07.7063480Z       |                                                                        1
+2021-02-14T02:23:07.7064660Z Warning: Procedure 'i1mcry' called with an implicit interface at (1) [-Wimplicit-interface]
+2021-02-14T02:23:07.7739250Z [ 15%] Building Fortran object quadpack/CMakeFiles/quadpack.dir/dqagse.f.o
+2021-02-14T02:23:07.7746450Z cd /Users/runner/work/bezier/bezier/.nox/libbezier-debug/build/quadpack && /usr/local/bin/gfortran   -g -isysroot /Applications/Xcode_12.3.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.1.sdk -mmacosx-version-min=10.15 -fPIC -fno-second-underscore -Wall -Wextra -Wno-compare-reals -Wimplicit-interface -fmax-errors=1 -std=f2008 -fcheck=all -fbacktrace -fimplicit-none -pedantic -g -ffixed-form -c /Users/runner/work/bezier/bezier/src/fortran/quadpack/dqagse.f -o CMakeFiles/quadpack.dir/dqagse.f.o
+2021-02-14T02:23:07.8016500Z /Users/runner/work/bezier/bezier/src/fortran/quadpack/dqagse.f:218:15:
+2021-02-14T02:23:07.8016980Z 
+2021-02-14T02:23:07.8017800Z   218 |       epmach = d1mach(4)
+2021-02-14T02:23:07.8032480Z       |               1
+2021-02-14T02:23:07.8034130Z Warning: Procedure 'd1mach' called with an implicit interface at (1) [-Wimplicit-interface]
+2021-02-14T02:23:07.8035000Z /Users/runner/work/bezier/bezier/src/fortran/quadpack/dqagse.f:238:14:
+2021-02-14T02:23:07.8035460Z 
+2021-02-14T02:23:07.8035780Z   238 |       uflow = d1mach(1)
+2021-02-14T02:23:07.8036140Z       |              1
+2021-02-14T02:23:07.8037200Z Warning: Procedure 'd1mach' called with an implicit interface at (1) [-Wimplicit-interface]
+2021-02-14T02:23:07.8038090Z /Users/runner/work/bezier/bezier/src/fortran/quadpack/dqagse.f:239:14:
+2021-02-14T02:23:07.8038530Z 
+2021-02-14T02:23:07.8038840Z   239 |       oflow = d1mach(2)
+2021-02-14T02:23:07.8039170Z       |              1
+2021-02-14T02:23:07.8040260Z Warning: Procedure 'd1mach' called with an implicit interface at (1) [-Wimplicit-interface]
+2021-02-14T02:23:07.8041100Z /Users/runner/work/bezier/bezier/src/fortran/quadpack/dqagse.f:241:72:
+2021-02-14T02:23:07.8041520Z 
+2021-02-14T02:23:07.8042080Z   241 |       call dqk21(f,a,b,result,abserr,defabs,resabs)
+2021-02-14T02:23:07.8042720Z       |                                                                        1
+2021-02-14T02:23:07.8043780Z Warning: Procedure 'dqk21' called with an implicit interface at (1) [-Wimplicit-interface]
+2021-02-14T02:23:07.8045100Z /Users/runner/work/bezier/bezier/src/fortran/quadpack/dqagse.f:290:72:
+2021-02-14T02:23:07.8045890Z 
+2021-02-14T02:23:07.8046480Z   290 |         call dqk21(f,a1,b1,area1,error1,resabs,defab1)
+2021-02-14T02:23:07.8047060Z       |                                                                        1
+2021-02-14T02:23:07.8048210Z Warning: Procedure 'dqk21' called with an implicit interface at (1) [-Wimplicit-interface]
+2021-02-14T02:23:07.8049050Z /Users/runner/work/bezier/bezier/src/fortran/quadpack/dqagse.f:291:72:
+2021-02-14T02:23:07.8049470Z 
+2021-02-14T02:23:07.8050040Z   291 |         call dqk21(f,a2,b2,area2,error2,resabs,defab2)
+2021-02-14T02:23:07.8050610Z       |                                                                        1
+2021-02-14T02:23:07.8051710Z Warning: Procedure 'dqk21' called with an implicit interface at (1) [-Wimplicit-interface]
+2021-02-14T02:23:07.8052540Z /Users/runner/work/bezier/bezier/src/fortran/quadpack/dqagse.f:347:72:
+2021-02-14T02:23:07.8052970Z 
+2021-02-14T02:23:07.8053690Z   347 |    30   call dqpsrt(limit,last,maxerr,errmax,elist,iord,nrmax)
+2021-02-14T02:23:07.8054470Z       |                                                                        1
+2021-02-14T02:23:07.8055550Z Warning: Procedure 'dqpsrt' called with an implicit interface at (1) [-Wimplicit-interface]
+2021-02-14T02:23:07.8056600Z /Users/runner/work/bezier/bezier/src/fortran/quadpack/dqagse.f:385:72:
+2021-02-14T02:23:07.8057000Z 
+2021-02-14T02:23:07.8057690Z   385 |         call dqelg(numrl2,rlist2,reseps,abseps,res3la,nres)
+2021-02-14T02:23:07.8058390Z       |                                                                        1
+2021-02-14T02:23:07.8059520Z Warning: Procedure 'dqelg' called with an implicit interface at (1) [-Wimplicit-interface]
+2021-02-14T02:23:07.8981220Z [ 23%] Building Fortran object quadpack/CMakeFiles/quadpack.dir/dqelg.f.o
+2021-02-14T02:23:07.8986560Z cd /Users/runner/work/bezier/bezier/.nox/libbezier-debug/build/quadpack && /usr/local/bin/gfortran   -g -isysroot /Applications/Xcode_12.3.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.1.sdk -mmacosx-version-min=10.15 -fPIC -fno-second-underscore -Wall -Wextra -Wno-compare-reals -Wimplicit-interface -fmax-errors=1 -std=f2008 -fcheck=all -fbacktrace -fimplicit-none -pedantic -g -ffixed-form -c /Users/runner/work/bezier/bezier/src/fortran/quadpack/dqelg.f -o CMakeFiles/quadpack.dir/dqelg.f.o
+2021-02-14T02:23:07.9234710Z /Users/runner/work/bezier/bezier/src/fortran/quadpack/dqelg.f:83:15:
+2021-02-14T02:23:07.9235300Z 
+2021-02-14T02:23:07.9235640Z    83 |       epmach = d1mach(4)
+2021-02-14T02:23:07.9235980Z       |               1
+2021-02-14T02:23:07.9240970Z Warning: Procedure 'd1mach' called with an implicit interface at (1) [-Wimplicit-interface]
+2021-02-14T02:23:07.9241850Z /Users/runner/work/bezier/bezier/src/fortran/quadpack/dqelg.f:84:14:
+2021-02-14T02:23:07.9242280Z 
+2021-02-14T02:23:07.9242630Z    84 |       oflow = d1mach(2)
+2021-02-14T02:23:07.9242980Z       |              1
+2021-02-14T02:23:07.9245380Z Warning: Procedure 'd1mach' called with an implicit interface at (1) [-Wimplicit-interface]
+2021-02-14T02:23:07.9997630Z [ 30%] Building Fortran object quadpack/CMakeFiles/quadpack.dir/dqk21.f.o
+2021-02-14T02:23:08.0003870Z cd /Users/runner/work/bezier/bezier/.nox/libbezier-debug/build/quadpack && /usr/local/bin/gfortran   -g -isysroot /Applications/Xcode_12.3.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.1.sdk -mmacosx-version-min=10.15 -fPIC -fno-second-underscore -Wall -Wextra -Wno-compare-reals -Wimplicit-interface -fmax-errors=1 -std=f2008 -fcheck=all -fbacktrace -fimplicit-none -pedantic -g -ffixed-form -c /Users/runner/work/bezier/bezier/src/fortran/quadpack/dqk21.f -o CMakeFiles/quadpack.dir/dqk21.f.o
+2021-02-14T02:23:08.0271710Z /Users/runner/work/bezier/bezier/src/fortran/quadpack/dqk21.f:132:15:
+2021-02-14T02:23:08.0272770Z 
+2021-02-14T02:23:08.0273480Z   132 |       epmach = d1mach(4)
+2021-02-14T02:23:08.0274350Z       |               1
+2021-02-14T02:23:08.0276280Z Warning: Procedure 'd1mach' called with an implicit interface at (1) [-Wimplicit-interface]
+2021-02-14T02:23:08.0277250Z /Users/runner/work/bezier/bezier/src/fortran/quadpack/dqk21.f:133:14:
+2021-02-14T02:23:08.0277630Z 
+2021-02-14T02:23:08.0277990Z   133 |       uflow = d1mach(1)
+2021-02-14T02:23:08.0278320Z       |              1
+2021-02-14T02:23:08.0279440Z Warning: Procedure 'd1mach' called with an implicit interface at (1) [-Wimplicit-interface]
+2021-02-14T02:23:08.0280280Z /Users/runner/work/bezier/bezier/src/fortran/quadpack/dqk21.f:143:11:
+2021-02-14T02:23:08.0280690Z 
+2021-02-14T02:23:08.0281000Z   143 |       fc = f(centr)
+2021-02-14T02:23:08.0281350Z       |           1
+2021-02-14T02:23:08.0282350Z Warning: Procedure 'f' called with an implicit interface at (1) [-Wimplicit-interface]
+2021-02-14T02:23:08.0283210Z /Users/runner/work/bezier/bezier/src/fortran/quadpack/dqk21.f:149:16:
+2021-02-14T02:23:08.0283580Z 
+2021-02-14T02:23:08.0284350Z   149 |         fval1 = f(centr-absc)
+2021-02-14T02:23:08.0284720Z       |                1
+2021-02-14T02:23:08.0285770Z Warning: Procedure 'f' called with an implicit interface at (1) [-Wimplicit-interface]
+2021-02-14T02:23:08.0286590Z /Users/runner/work/bezier/bezier/src/fortran/quadpack/dqk21.f:150:16:
+2021-02-14T02:23:08.0287000Z 
+2021-02-14T02:23:08.0287340Z   150 |         fval2 = f(centr+absc)
+2021-02-14T02:23:08.0287730Z       |                1
+2021-02-14T02:23:08.0288730Z Warning: Procedure 'f' called with an implicit interface at (1) [-Wimplicit-interface]
+2021-02-14T02:23:08.0289600Z /Users/runner/work/bezier/bezier/src/fortran/quadpack/dqk21.f:161:16:
+2021-02-14T02:23:08.0289980Z 
+2021-02-14T02:23:08.0290720Z   161 |         fval1 = f(centr-absc)
+2021-02-14T02:23:08.0291090Z       |                1
+2021-02-14T02:23:08.0292120Z Warning: Procedure 'f' called with an implicit interface at (1) [-Wimplicit-interface]
+2021-02-14T02:23:08.0292930Z /Users/runner/work/bezier/bezier/src/fortran/quadpack/dqk21.f:162:16:
+2021-02-14T02:23:08.0293350Z 
+2021-02-14T02:23:08.0293680Z   162 |         fval2 = f(centr+absc)
+2021-02-14T02:23:08.0294070Z       |                1
+2021-02-14T02:23:08.0295060Z Warning: Procedure 'f' called with an implicit interface at (1) [-Wimplicit-interface]
+2021-02-14T02:23:08.0994280Z [ 38%] Building Fortran object quadpack/CMakeFiles/quadpack.dir/dqpsrt.f.o
+2021-02-14T02:23:08.0999160Z cd /Users/runner/work/bezier/bezier/.nox/libbezier-debug/build/quadpack && /usr/local/bin/gfortran   -g -isysroot /Applications/Xcode_12.3.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.1.sdk -mmacosx-version-min=10.15 -fPIC -fno-second-underscore -Wall -Wextra -Wno-compare-reals -Wimplicit-interface -fmax-errors=1 -std=f2008 -fcheck=all -fbacktrace -fimplicit-none -pedantic -g -ffixed-form -c /Users/runner/work/bezier/bezier/src/fortran/quadpack/dqpsrt.f -o CMakeFiles/quadpack.dir/dqpsrt.f.o
+2021-02-14T02:23:08.1966220Z [ 38%] Built target quadpack
+2021-02-14T02:23:08.1971170Z /Applications/Xcode_12.3.app/Contents/Developer/usr/bin/make  -f CMakeFiles/bezier.dir/build.make CMakeFiles/bezier.dir/depend
+2021-02-14T02:23:08.2017700Z cd /Users/runner/work/bezier/bezier/.nox/libbezier-debug/build && /usr/local/Cellar/cmake/3.19.4/bin/cmake -E cmake_depends "Unix Makefiles" /Users/runner/work/bezier/bezier/src/fortran /Users/runner/work/bezier/bezier/src/fortran /Users/runner/work/bezier/bezier/.nox/libbezier-debug/build /Users/runner/work/bezier/bezier/.nox/libbezier-debug/build /Users/runner/work/bezier/bezier/.nox/libbezier-debug/build/CMakeFiles/bezier.dir/DependInfo.cmake --color=
+2021-02-14T02:23:08.2176300Z Dependee "/Users/runner/work/bezier/bezier/.nox/libbezier-debug/build/CMakeFiles/bezier.dir/DependInfo.cmake" is newer than depender "/Users/runner/work/bezier/bezier/.nox/libbezier-debug/build/CMakeFiles/bezier.dir/depend.internal".
+2021-02-14T02:23:08.2179800Z Dependee "/Users/runner/work/bezier/bezier/.nox/libbezier-debug/build/CMakeFiles/CMakeDirectoryInformation.cmake" is newer than depender "/Users/runner/work/bezier/bezier/.nox/libbezier-debug/build/CMakeFiles/bezier.dir/depend.internal".
+2021-02-14T02:23:08.2268080Z Scanning dependencies of target bezier
+2021-02-14T02:23:08.2281590Z /Applications/Xcode_12.3.app/Contents/Developer/usr/bin/make  -f CMakeFiles/bezier.dir/build.make CMakeFiles/bezier.dir/build
+2021-02-14T02:23:08.2535560Z [ 46%] Building Fortran object CMakeFiles/bezier.dir/types.f90.o
+2021-02-14T02:23:08.2542860Z /usr/local/bin/gfortran -Dbezier_EXPORTS  -g -isysroot /Applications/Xcode_12.3.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.1.sdk -mmacosx-version-min=10.15 -fPIC -fno-second-underscore -Wall -Wextra -Wno-compare-reals -Wno-conversion -Wimplicit-interface -fmax-errors=1 -std=f2008 -fcheck=all -fbacktrace -fimplicit-none -pedantic -g -c /Users/runner/work/bezier/bezier/src/fortran/types.f90 -o CMakeFiles/bezier.dir/types.f90.o
+2021-02-14T02:23:08.3078270Z /usr/local/Cellar/cmake/3.19.4/bin/cmake -E cmake_copy_f90_mod types.mod CMakeFiles/bezier.dir/types.mod.stamp GNU
+2021-02-14T02:23:08.3287140Z [ 53%] Building Fortran object CMakeFiles/bezier.dir/helpers.f90.o
+2021-02-14T02:23:08.3293060Z /usr/local/bin/gfortran -Dbezier_EXPORTS  -g -isysroot /Applications/Xcode_12.3.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.1.sdk -mmacosx-version-min=10.15 -fPIC -fno-second-underscore -Wall -Wextra -Wno-compare-reals -Wno-conversion -Wimplicit-interface -fmax-errors=1 -std=f2008 -fcheck=all -fbacktrace -fimplicit-none -pedantic -g -c /Users/runner/work/bezier/bezier/src/fortran/helpers.f90 -o CMakeFiles/bezier.dir/helpers.f90.o
+2021-02-14T02:23:08.5670570Z /usr/local/Cellar/cmake/3.19.4/bin/cmake -E cmake_copy_f90_mod helpers.mod CMakeFiles/bezier.dir/helpers.mod.stamp GNU
+2021-02-14T02:23:08.5939150Z [ 61%] Building Fortran object CMakeFiles/bezier.dir/curve.f90.o
+2021-02-14T02:23:08.5943450Z /usr/local/bin/gfortran -Dbezier_EXPORTS  -g -isysroot /Applications/Xcode_12.3.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.1.sdk -mmacosx-version-min=10.15 -fPIC -fno-second-underscore -Wall -Wextra -Wno-compare-reals -Wno-conversion -Wimplicit-interface -fmax-errors=1 -std=f2008 -fcheck=all -fbacktrace -fimplicit-none -pedantic -g -c /Users/runner/work/bezier/bezier/src/fortran/curve.f90 -o CMakeFiles/bezier.dir/curve.f90.o
+2021-02-14T02:23:09.4641390Z /usr/local/Cellar/cmake/3.19.4/bin/cmake -E cmake_copy_f90_mod curve.mod CMakeFiles/bezier.dir/curve.mod.stamp GNU
+2021-02-14T02:23:09.4746430Z /usr/local/Cellar/cmake/3.19.4/bin/cmake -E touch CMakeFiles/bezier.dir/curve.f90.o.provides.build
+2021-02-14T02:23:09.4969520Z [ 69%] Building Fortran object CMakeFiles/bezier.dir/status.f90.o
+2021-02-14T02:23:09.4976880Z /usr/local/bin/gfortran -Dbezier_EXPORTS  -g -isysroot /Applications/Xcode_12.3.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.1.sdk -mmacosx-version-min=10.15 -fPIC -fno-second-underscore -Wall -Wextra -Wno-compare-reals -Wno-conversion -Wimplicit-interface -fmax-errors=1 -std=f2008 -fcheck=all -fbacktrace -fimplicit-none -pedantic -g -c /Users/runner/work/bezier/bezier/src/fortran/status.f90 -o CMakeFiles/bezier.dir/status.f90.o
+2021-02-14T02:23:09.5591580Z /usr/local/Cellar/cmake/3.19.4/bin/cmake -E cmake_copy_f90_mod status.mod CMakeFiles/bezier.dir/status.mod.stamp GNU
+2021-02-14T02:23:09.5801290Z [ 76%] Building Fortran object CMakeFiles/bezier.dir/curve_intersection.f90.o
+2021-02-14T02:23:09.5806740Z /usr/local/bin/gfortran -Dbezier_EXPORTS  -g -isysroot /Applications/Xcode_12.3.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.1.sdk -mmacosx-version-min=10.15 -fPIC -fno-second-underscore -Wall -Wextra -Wno-compare-reals -Wno-conversion -Wimplicit-interface -fmax-errors=1 -std=f2008 -fcheck=all -fbacktrace -fimplicit-none -pedantic -g -c /Users/runner/work/bezier/bezier/src/fortran/curve_intersection.f90 -o CMakeFiles/bezier.dir/curve_intersection.f90.o
+2021-02-14T02:23:10.2916710Z /usr/local/Cellar/cmake/3.19.4/bin/cmake -E cmake_copy_f90_mod curve_intersection.mod CMakeFiles/bezier.dir/curve_intersection.mod.stamp GNU
+2021-02-14T02:23:10.3008010Z /usr/local/Cellar/cmake/3.19.4/bin/cmake -E touch CMakeFiles/bezier.dir/curve_intersection.f90.o.provides.build
+2021-02-14T02:23:10.3086780Z /usr/local/Cellar/cmake/3.19.4/bin/cmake -E touch CMakeFiles/bezier.dir/helpers.f90.o.provides.build
+2021-02-14T02:23:10.3177470Z /usr/local/Cellar/cmake/3.19.4/bin/cmake -E touch CMakeFiles/bezier.dir/status.f90.o.provides.build
+2021-02-14T02:23:10.3407100Z [ 84%] Building Fortran object CMakeFiles/bezier.dir/triangle.f90.o
+2021-02-14T02:23:10.3412610Z /usr/local/bin/gfortran -Dbezier_EXPORTS  -g -isysroot /Applications/Xcode_12.3.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.1.sdk -mmacosx-version-min=10.15 -fPIC -fno-second-underscore -Wall -Wextra -Wno-compare-reals -Wno-conversion -Wimplicit-interface -fmax-errors=1 -std=f2008 -fcheck=all -fbacktrace -fimplicit-none -pedantic -g -c /Users/runner/work/bezier/bezier/src/fortran/triangle.f90 -o CMakeFiles/bezier.dir/triangle.f90.o
+2021-02-14T02:23:11.8012230Z /usr/local/Cellar/cmake/3.19.4/bin/cmake -E cmake_copy_f90_mod triangle.mod CMakeFiles/bezier.dir/triangle.mod.stamp GNU
+2021-02-14T02:23:11.8113470Z /usr/local/Cellar/cmake/3.19.4/bin/cmake -E touch CMakeFiles/bezier.dir/triangle.f90.o.provides.build
+2021-02-14T02:23:11.8304720Z [ 92%] Building Fortran object CMakeFiles/bezier.dir/triangle_intersection.f90.o
+2021-02-14T02:23:11.8310140Z /usr/local/bin/gfortran -Dbezier_EXPORTS  -g -isysroot /Applications/Xcode_12.3.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.1.sdk -mmacosx-version-min=10.15 -fPIC -fno-second-underscore -Wall -Wextra -Wno-compare-reals -Wno-conversion -Wimplicit-interface -fmax-errors=1 -std=f2008 -fcheck=all -fbacktrace -fimplicit-none -pedantic -g -c /Users/runner/work/bezier/bezier/src/fortran/triangle_intersection.f90 -o CMakeFiles/bezier.dir/triangle_intersection.f90.o
+2021-02-14T02:23:12.2988580Z /usr/local/Cellar/cmake/3.19.4/bin/cmake -E cmake_copy_f90_mod triangle_intersection.mod CMakeFiles/bezier.dir/triangle_intersection.mod.stamp GNU
+2021-02-14T02:23:12.3075760Z /usr/local/Cellar/cmake/3.19.4/bin/cmake -E touch CMakeFiles/bezier.dir/triangle_intersection.f90.o.provides.build
+2021-02-14T02:23:12.3167630Z /usr/local/Cellar/cmake/3.19.4/bin/cmake -E touch CMakeFiles/bezier.dir/types.f90.o.provides.build
+2021-02-14T02:23:12.3387120Z [100%] Linking Fortran shared library libbezier.dylib
+2021-02-14T02:23:12.3390370Z /usr/local/Cellar/cmake/3.19.4/bin/cmake -E cmake_link_script CMakeFiles/bezier.dir/link.txt --verbose=1
+2021-02-14T02:23:12.3462960Z /usr/local/bin/gfortran -g -isysroot /Applications/Xcode_12.3.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.1.sdk -mmacosx-version-min=10.15 -dynamiclib -Wl,-headerpad_max_install_names -compatibility_version 2021.0.0 -current_version 2021.2.12 -o libbezier.2021.2.12.dylib -install_name @rpath/libbezier.2021.dylib CMakeFiles/bezier.dir/curve.f90.o CMakeFiles/bezier.dir/curve_intersection.f90.o CMakeFiles/bezier.dir/helpers.f90.o CMakeFiles/bezier.dir/status.f90.o CMakeFiles/bezier.dir/triangle.f90.o CMakeFiles/bezier.dir/triangle_intersection.f90.o CMakeFiles/bezier.dir/types.f90.o quadpack/CMakeFiles/quadpack.dir/d1mach.f.o quadpack/CMakeFiles/quadpack.dir/dqagse.f.o quadpack/CMakeFiles/quadpack.dir/dqelg.f.o quadpack/CMakeFiles/quadpack.dir/dqk21.f.o quadpack/CMakeFiles/quadpack.dir/dqpsrt.f.o 
+2021-02-14T02:23:12.4247080Z /usr/local/Cellar/cmake/3.19.4/bin/cmake -E cmake_symlink_library libbezier.2021.2.12.dylib libbezier.2021.dylib libbezier.dylib
+2021-02-14T02:23:12.4547110Z [100%] Built target bezier
+2021-02-14T02:23:12.4554470Z /usr/local/Cellar/cmake/3.19.4/bin/cmake -E cmake_progress_start /Users/runner/work/bezier/bezier/.nox/libbezier-debug/build/CMakeFiles 0
+2021-02-14T02:23:12.4648100Z /Applications/Xcode_12.3.app/Contents/Developer/usr/bin/make  -f CMakeFiles/Makefile2 preinstall
+2021-02-14T02:23:12.4684690Z make[1]: Nothing to be done for `preinstall'.
+2021-02-14T02:23:12.4799280Z Install the project...
+2021-02-14T02:23:12.4805920Z /usr/local/Cellar/cmake/3.19.4/bin/cmake -P cmake_install.cmake
+2021-02-14T02:23:12.4887160Z -- Install configuration: "Debug"
+2021-02-14T02:23:12.4890570Z -- Installing: /Users/runner/work/bezier/bezier/.nox/libbezier-debug/usr/lib/libbezier.2021.2.12.dylib
+2021-02-14T02:23:12.4934260Z -- Installing: /Users/runner/work/bezier/bezier/.nox/libbezier-debug/usr/lib/libbezier.2021.dylib
+2021-02-14T02:23:12.4938160Z -- Installing: /Users/runner/work/bezier/bezier/.nox/libbezier-debug/usr/lib/libbezier.dylib
+2021-02-14T02:23:12.4940030Z -- Installing: /Users/runner/work/bezier/bezier/.nox/libbezier-debug/usr/include
+2021-02-14T02:23:12.4942970Z -- Installing: /Users/runner/work/bezier/bezier/.nox/libbezier-debug/usr/include/bezier
+2021-02-14T02:23:12.4945400Z -- Installing: /Users/runner/work/bezier/bezier/.nox/libbezier-debug/usr/include/bezier/status.h
+2021-02-14T02:23:12.4951410Z -- Installing: /Users/runner/work/bezier/bezier/.nox/libbezier-debug/usr/include/bezier/curve_intersection.h
+2021-02-14T02:23:12.4955850Z -- Installing: /Users/runner/work/bezier/bezier/.nox/libbezier-debug/usr/include/bezier/triangle_intersection.h
+2021-02-14T02:23:12.4960320Z -- Installing: /Users/runner/work/bezier/bezier/.nox/libbezier-debug/usr/include/bezier/curve.h
+2021-02-14T02:23:12.4965650Z -- Installing: /Users/runner/work/bezier/bezier/.nox/libbezier-debug/usr/include/bezier/triangle.h
+2021-02-14T02:23:12.4969710Z -- Installing: /Users/runner/work/bezier/bezier/.nox/libbezier-debug/usr/include/bezier/helpers.h
+2021-02-14T02:23:12.4975160Z -- Installing: /Users/runner/work/bezier/bezier/.nox/libbezier-debug/usr/include/bezier.h
+2021-02-14T02:23:12.4984040Z -- Installing: /Users/runner/work/bezier/bezier/.nox/libbezier-debug/usr/share/bezier/cmake/BezierConfig.cmake
+2021-02-14T02:23:12.4992650Z -- Installing: /Users/runner/work/bezier/bezier/.nox/libbezier-debug/usr/share/bezier/cmake/BezierConfig-debug.cmake
+2021-02-14T02:23:12.5064800Z nox > cmake -L /Users/runner/work/bezier/bezier/.nox/libbezier-debug/build
+2021-02-14T02:23:12.5619420Z -- Configuring done
+2021-02-14T02:23:12.5890700Z -- Generating done
+2021-02-14T02:23:12.5942870Z -- Build files have been written to: /Users/runner/work/bezier/bezier/.nox/libbezier-debug/build
+2021-02-14T02:23:12.5944000Z -- Cache values
+2021-02-14T02:23:12.5944470Z BUILD_SHARED_LIBS:BOOL=ON
+2021-02-14T02:23:12.5944900Z CMAKE_BUILD_TYPE:STRING=Debug
+2021-02-14T02:23:12.5945390Z CMAKE_EXECUTABLE_FORMAT:STRING=MACHO
+2021-02-14T02:23:12.5946500Z CMAKE_INSTALL_PREFIX:PATH=/Users/runner/work/bezier/bezier/.nox/libbezier-debug/usr
+2021-02-14T02:23:12.5947230Z CMAKE_OSX_ARCHITECTURES:STRING=
+2021-02-14T02:23:12.5947740Z CMAKE_OSX_DEPLOYMENT_TARGET:STRING=10.15
+2021-02-14T02:23:12.5948590Z CMAKE_OSX_SYSROOT:PATH=/Applications/Xcode_12.3.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.1.sdk
+2021-02-14T02:23:12.5949430Z TARGET_NATIVE_ARCH:BOOL=ON
+2021-02-14T02:23:12.5977320Z nox > python -m pip install .
+2021-02-14T02:23:34.1045260Z nox > pytest --cov=bezier --cov=tests.unit /Users/runner/work/bezier/bezier/tests/unit
+2021-02-14T02:23:51.5936090Z ============================= test session starts ==============================
+2021-02-14T02:23:51.5941310Z platform darwin -- Python 3.9.1, pytest-6.2.2, py-1.10.0, pluggy-0.13.1
+2021-02-14T02:23:51.5942740Z rootdir: /Users/runner/work/bezier/bezier, configfile: setup.cfg
+2021-02-14T02:23:51.5944400Z plugins: cov-2.11.1
+2021-02-14T02:23:51.5948050Z collected 902 items
+2021-02-14T02:23:51.5949090Z 
+2021-02-14T02:23:51.6218320Z tests/unit/test___config__.py ..........                                 [  1%]
+2021-02-14T02:23:51.6286380Z tests/unit/test___init__.py ..                                           [  1%]
+2021-02-14T02:23:51.6536720Z tests/unit/test__base.py ...........                                     [  2%]
+2021-02-14T02:23:51.7677520Z tests/unit/test__curve_helpers.py ...................................... [  6%]
+2021-02-14T02:23:51.8028320Z ............                                                             [  8%]
+2021-02-14T02:23:51.8741860Z tests/unit/test__geometric_intersection.py ...................x.         [ 10%]
+2021-02-14T02:23:51.9509630Z tests/unit/test__helpers.py .....................................        [ 14%]
+2021-02-14T02:23:51.9632120Z tests/unit/test__intersection_helpers.py ......                          [ 15%]
+2021-02-14T02:23:51.9658670Z tests/unit/test__legacy.py .                                             [ 15%]
+2021-02-14T02:23:51.9832810Z tests/unit/test__plot_helpers.py ....                                    [ 15%]
+2021-02-14T02:23:52.7187930Z tests/unit/test__symbolic.py ........                                    [ 16%]
+2021-02-14T02:23:52.8204150Z tests/unit/test__triangle_helpers.py ................................... [ 20%]
+2021-02-14T02:23:52.8227480Z .                                                                        [ 20%]
+2021-02-14T02:23:52.8816380Z tests/unit/test__triangle_intersection.py ....................x.         [ 23%]
+2021-02-14T02:23:53.1709910Z tests/unit/test_curve.py ................................                [ 26%]
+2021-02-14T02:23:53.1979580Z tests/unit/test_curved_polygon.py ............                           [ 27%]
+2021-02-14T02:23:53.3540920Z tests/unit/test_triangle.py ............................................ [ 32%]
+2021-02-14T02:23:53.4226440Z ..................                                                       [ 34%]
+2021-02-14T02:23:53.4965760Z tests/unit/hazmat/test_algebraic_intersection.py ....................... [ 37%]
+2021-02-14T02:23:53.6887030Z ........................................................................ [ 45%]
+2021-02-14T02:23:53.6981340Z ....                                                                     [ 45%]
+2021-02-14T02:23:53.7324990Z tests/unit/hazmat/test_clipping.py ................                      [ 47%]
+2021-02-14T02:23:53.8286560Z tests/unit/hazmat/test_curve_helpers.py ................................ [ 51%]
+2021-02-14T02:23:53.9362470Z ................................                                         [ 54%]
+2021-02-14T02:23:53.9902220Z tests/unit/hazmat/test_geometric_intersection.py ....................... [ 57%]
+2021-02-14T02:23:56.2542370Z ........................................................................ [ 65%]
+2021-02-14T02:23:56.2827570Z .............                                                            [ 66%]
+2021-02-14T02:23:56.3834720Z tests/unit/hazmat/test_helpers.py ...................................... [ 70%]
+2021-02-14T02:23:56.4178360Z ................                                                         [ 72%]
+2021-02-14T02:23:56.5052510Z tests/unit/hazmat/test_intersection_helpers.py ......................... [ 75%]
+2021-02-14T02:23:56.5395060Z .........                                                                [ 76%]
+2021-02-14T02:24:03.0200820Z tests/unit/hazmat/test_triangle_helpers.py ............................. [ 79%]
+2021-02-14T02:24:05.8567920Z ........................................................................ [ 87%]
+2021-02-14T02:24:06.1131600Z .............................................                            [ 92%]
+2021-02-14T02:24:06.2634300Z tests/unit/hazmat/test_triangle_intersection.py ........................ [ 95%]
+2021-02-14T02:24:10.3462040Z ...........................................                              [100%]
+2021-02-14T02:24:10.3463200Z 
+2021-02-14T02:24:10.3465070Z ---------- coverage: platform darwin, python 3.9.1-final-0 -----------
+2021-02-14T02:24:10.3465840Z Name                                                                             Stmts   Miss Branch BrPart  Cover   Missing
+2021-02-14T02:24:10.3467280Z ----------------------------------------------------------------------------------------------------------------------------
+2021-02-14T02:24:10.3468750Z .nox/cover/lib/python3.9/site-packages/bezier/__config__.py                         40      0     14      0   100%
+2021-02-14T02:24:10.3469880Z .nox/cover/lib/python3.9/site-packages/bezier/__init__.py                           13      0      0      0   100%
+2021-02-14T02:24:10.3472510Z .nox/cover/lib/python3.9/site-packages/bezier/_base.py                              35      0      8      0   100%
+2021-02-14T02:24:10.3473980Z .nox/cover/lib/python3.9/site-packages/bezier/_curve_helpers.py                     16      0      0      0   100%
+2021-02-14T02:24:10.3475530Z .nox/cover/lib/python3.9/site-packages/bezier/_geometric_intersection.py             8      0      0      0   100%
+2021-02-14T02:24:10.3476770Z .nox/cover/lib/python3.9/site-packages/bezier/_helpers.py                           12      0      0      0   100%
+2021-02-14T02:24:10.3477950Z .nox/cover/lib/python3.9/site-packages/bezier/_intersection_helpers.py               5      0      0      0   100%
+2021-02-14T02:24:10.3479140Z .nox/cover/lib/python3.9/site-packages/bezier/_legacy.py                             8      0      0      0   100%
+2021-02-14T02:24:10.3480280Z .nox/cover/lib/python3.9/site-packages/bezier/_plot_helpers.py                      33      0      4      0   100%
+2021-02-14T02:24:10.3481460Z .nox/cover/lib/python3.9/site-packages/bezier/_symbolic.py                          56      0     14      0   100%
+2021-02-14T02:24:10.3482630Z .nox/cover/lib/python3.9/site-packages/bezier/_triangle_helpers.py                  14      0      0      0   100%
+2021-02-14T02:24:10.3485040Z .nox/cover/lib/python3.9/site-packages/bezier/_triangle_intersection.py              9      0      0      0   100%
+2021-02-14T02:24:10.3486520Z .nox/cover/lib/python3.9/site-packages/bezier/curve.py                              98      0     24      0   100%
+2021-02-14T02:24:10.3487860Z .nox/cover/lib/python3.9/site-packages/bezier/curved_polygon.py                     45      0     14      0   100%
+2021-02-14T02:24:10.3489310Z .nox/cover/lib/python3.9/site-packages/bezier/hazmat/__init__.py                     1      0      0      0   100%
+2021-02-14T02:24:10.3490710Z .nox/cover/lib/python3.9/site-packages/bezier/hazmat/algebraic_intersection.py     310      0    110      0   100%
+2021-02-14T02:24:10.3491990Z .nox/cover/lib/python3.9/site-packages/bezier/hazmat/clipping.py                    62      0     24      0   100%
+2021-02-14T02:24:10.3493730Z .nox/cover/lib/python3.9/site-packages/bezier/hazmat/curve_helpers.py              212      0     66      0   100%
+2021-02-14T02:24:10.3495470Z .nox/cover/lib/python3.9/site-packages/bezier/hazmat/geometric_intersection.py     343      0    142      0   100%
+2021-02-14T02:24:10.3496860Z .nox/cover/lib/python3.9/site-packages/bezier/hazmat/helpers.py                    147      0     67      0   100%
+2021-02-14T02:24:10.3498260Z .nox/cover/lib/python3.9/site-packages/bezier/hazmat/intersection_helpers.py       152      0     34      0   100%
+2021-02-14T02:24:10.3499690Z .nox/cover/lib/python3.9/site-packages/bezier/hazmat/triangle_helpers.py           509      0    210      0   100%
+2021-02-14T02:24:10.3501260Z .nox/cover/lib/python3.9/site-packages/bezier/hazmat/triangle_intersection.py      199      0    102      0   100%
+2021-02-14T02:24:10.3502900Z .nox/cover/lib/python3.9/site-packages/bezier/triangle.py                          197      0     76      0   100%
+2021-02-14T02:24:10.3503870Z tests/unit/__init__.py                                                               0      0      0      0   100%
+2021-02-14T02:24:10.3504590Z tests/unit/hazmat/__init__.py                                                        0      0      0      0   100%
+2021-02-14T02:24:10.3505210Z tests/unit/hazmat/test_algebraic_intersection.py                                   834      0     48      0   100%
+2021-02-14T02:24:10.3505960Z tests/unit/hazmat/test_clipping.py                                                 136      0      0      0   100%
+2021-02-14T02:24:10.3506550Z tests/unit/hazmat/test_curve_helpers.py                                            488      0      6      0   100%
+2021-02-14T02:24:10.3507390Z tests/unit/hazmat/test_geometric_intersection.py                                  1069      0     28      0   100%
+2021-02-14T02:24:10.3509080Z tests/unit/hazmat/test_helpers.py                                                  403      0      4      0   100%
+2021-02-14T02:24:10.3509750Z tests/unit/hazmat/test_intersection_helpers.py                                     434      0      6      0   100%
+2021-02-14T02:24:10.3510400Z tests/unit/hazmat/test_triangle_helpers.py                                        1197      0     34      0   100%
+2021-02-14T02:24:10.3511050Z tests/unit/hazmat/test_triangle_intersection.py                                    608      0      6      0   100%
+2021-02-14T02:24:10.3511640Z tests/unit/test___config__.py                                                      103      0      0      0   100%
+2021-02-14T02:24:10.3512120Z tests/unit/test___init__.py                                                         17      0      0      0   100%
+2021-02-14T02:24:10.3512780Z tests/unit/test__base.py                                                            77      0      0      0   100%
+2021-02-14T02:24:10.3513350Z tests/unit/test__curve_helpers.py                                                   78      0     24      0   100%
+2021-02-14T02:24:10.3514170Z tests/unit/test__geometric_intersection.py                                         119      0      8      0   100%
+2021-02-14T02:24:10.3514780Z tests/unit/test__helpers.py                                                         52      0     16      0   100%
+2021-02-14T02:24:10.3515480Z tests/unit/test__intersection_helpers.py                                             8      0      2      0   100%
+2021-02-14T02:24:10.3516060Z tests/unit/test__legacy.py                                                          18      0      0      0   100%
+2021-02-14T02:24:10.3516770Z tests/unit/test__plot_helpers.py                                                    98      0      4      0   100%
+2021-02-14T02:24:10.3517320Z tests/unit/test__symbolic.py                                                        98      0      0      0   100%
+2021-02-14T02:24:10.3517890Z tests/unit/test__triangle_helpers.py                                                76      0     20      0   100%
+2021-02-14T02:24:10.3518510Z tests/unit/test__triangle_intersection.py                                          144      0     12      0   100%
+2021-02-14T02:24:10.3519090Z tests/unit/test_curve.py                                                           258      0      0      0   100%
+2021-02-14T02:24:10.3519620Z tests/unit/test_curved_polygon.py                                                  101      0      0      0   100%
+2021-02-14T02:24:10.3520160Z tests/unit/test_triangle.py                                                        559      0      4      0   100%
+2021-02-14T02:24:10.3520660Z tests/unit/utils.py                                                                 65      0      4      0   100%
+2021-02-14T02:24:10.3521970Z ----------------------------------------------------------------------------------------------------------------------------
+2021-02-14T02:24:10.3522660Z TOTAL                                                                             9564      0   1135      0   100%
+2021-02-14T02:24:10.3522930Z 
+2021-02-14T02:24:10.3523370Z Required test coverage of 100.0% reached. Total coverage: 100.00%
+2021-02-14T02:24:10.3523740Z 
+2021-02-14T02:24:10.3524100Z ======================= 900 passed, 2 xfailed in 35.37s ========================
+2021-02-14T02:24:10.5594600Z nox > Session cover was successful.
+2021-02-14T02:24:10.5752370Z + /Library/Frameworks/Python.framework/Versions/3.9/bin/nox -s functional-3.9
+2021-02-14T02:24:10.7093030Z nox > Running session functional-3.9
+2021-02-14T02:24:10.7169800Z nox > Creating virtual environment (virtualenv) using python3.9 in .nox/functional-3-9
+2021-02-14T02:24:11.3339130Z nox > python -m pip install numpy >= 1.20.1 pytest >= 6.2.2 importlib-metadata; python_version<"3.8"
+2021-02-14T02:24:19.2945410Z nox > <function makedirs at 0x7fbec4663430>(args=('/Users/runner/work/bezier/bezier/.nox/libbezier-debug',), kwargs={'exist_ok': True})
+2021-02-14T02:24:19.2953550Z nox > <built-in function print>(args=('Using pre-installed ``cmake``',), kwargs={})
+2021-02-14T02:24:19.2962130Z nox > cmake --version
+2021-02-14T02:24:19.3598320Z cmake version 3.19.4
+2021-02-14T02:24:19.3599140Z 
+2021-02-14T02:24:19.3600090Z CMake suite maintained and supported by Kitware (kitware.com/cmake).
+2021-02-14T02:24:19.3601780Z Using pre-installed ``cmake``
+2021-02-14T02:24:19.3609360Z nox > <function makedirs at 0x7fbec4663430>(args=('/Users/runner/work/bezier/bezier/.nox/libbezier-debug/build',), kwargs={'exist_ok': True})
+2021-02-14T02:24:19.3618520Z nox > cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_INSTALL_PREFIX:PATH=/Users/runner/work/bezier/bezier/.nox/libbezier-debug/usr -DCMAKE_VERBOSE_MAKEFILE:BOOL=ON -S src/fortran -B /Users/runner/work/bezier/bezier/.nox/libbezier-debug/build
+2021-02-14T02:24:19.5043340Z -- Configuring done
+2021-02-14T02:24:19.5500250Z -- Generating done
+2021-02-14T02:24:19.5586040Z -- Build files have been written to: /Users/runner/work/bezier/bezier/.nox/libbezier-debug/build
+2021-02-14T02:24:19.5674620Z nox > cmake --build /Users/runner/work/bezier/bezier/.nox/libbezier-debug/build --config Debug --target install
+2021-02-14T02:24:19.6630780Z /usr/local/Cellar/cmake/3.19.4/bin/cmake -S/Users/runner/work/bezier/bezier/src/fortran -B/Users/runner/work/bezier/bezier/.nox/libbezier-debug/build --check-build-system CMakeFiles/Makefile.cmake 0
+2021-02-14T02:24:19.6768720Z /usr/local/Cellar/cmake/3.19.4/bin/cmake -E cmake_progress_start /Users/runner/work/bezier/bezier/.nox/libbezier-debug/build/CMakeFiles /Users/runner/work/bezier/bezier/.nox/libbezier-debug/build//CMakeFiles/progress.marks
+2021-02-14T02:24:19.6883630Z /Applications/Xcode_12.3.app/Contents/Developer/usr/bin/make  -f CMakeFiles/Makefile2 all
+2021-02-14T02:24:19.6926040Z /Applications/Xcode_12.3.app/Contents/Developer/usr/bin/make  -f quadpack/CMakeFiles/quadpack.dir/build.make quadpack/CMakeFiles/quadpack.dir/depend
+2021-02-14T02:24:19.7011650Z cd /Users/runner/work/bezier/bezier/.nox/libbezier-debug/build && /usr/local/Cellar/cmake/3.19.4/bin/cmake -E cmake_depends "Unix Makefiles" /Users/runner/work/bezier/bezier/src/fortran /Users/runner/work/bezier/bezier/src/fortran/quadpack /Users/runner/work/bezier/bezier/.nox/libbezier-debug/build /Users/runner/work/bezier/bezier/.nox/libbezier-debug/build/quadpack /Users/runner/work/bezier/bezier/.nox/libbezier-debug/build/quadpack/CMakeFiles/quadpack.dir/DependInfo.cmake --color=
+2021-02-14T02:24:19.7166620Z /Applications/Xcode_12.3.app/Contents/Developer/usr/bin/make  -f quadpack/CMakeFiles/quadpack.dir/build.make quadpack/CMakeFiles/quadpack.dir/build
+2021-02-14T02:24:19.7222760Z make[2]: Nothing to be done for `quadpack/CMakeFiles/quadpack.dir/build'.
+2021-02-14T02:24:19.7400050Z [ 38%] Built target quadpack
+2021-02-14T02:24:19.7406070Z /Applications/Xcode_12.3.app/Contents/Developer/usr/bin/make  -f CMakeFiles/bezier.dir/build.make CMakeFiles/bezier.dir/depend
+2021-02-14T02:24:19.7453610Z cd /Users/runner/work/bezier/bezier/.nox/libbezier-debug/build && /usr/local/Cellar/cmake/3.19.4/bin/cmake -E cmake_depends "Unix Makefiles" /Users/runner/work/bezier/bezier/src/fortran /Users/runner/work/bezier/bezier/src/fortran /Users/runner/work/bezier/bezier/.nox/libbezier-debug/build /Users/runner/work/bezier/bezier/.nox/libbezier-debug/build /Users/runner/work/bezier/bezier/.nox/libbezier-debug/build/CMakeFiles/bezier.dir/DependInfo.cmake --color=
+2021-02-14T02:24:19.7636510Z /Applications/Xcode_12.3.app/Contents/Developer/usr/bin/make  -f CMakeFiles/bezier.dir/build.make CMakeFiles/bezier.dir/build
+2021-02-14T02:24:19.7676050Z make[2]: Nothing to be done for `CMakeFiles/bezier.dir/build'.
+2021-02-14T02:24:19.7816270Z [100%] Built target bezier
+2021-02-14T02:24:19.7826230Z /usr/local/Cellar/cmake/3.19.4/bin/cmake -E cmake_progress_start /Users/runner/work/bezier/bezier/.nox/libbezier-debug/build/CMakeFiles 0
+2021-02-14T02:24:19.7912930Z /Applications/Xcode_12.3.app/Contents/Developer/usr/bin/make  -f CMakeFiles/Makefile2 preinstall
+2021-02-14T02:24:19.7956190Z make[1]: Nothing to be done for `preinstall'.
+2021-02-14T02:24:19.8099380Z Install the project...
+2021-02-14T02:24:19.8107050Z /usr/local/Cellar/cmake/3.19.4/bin/cmake -P cmake_install.cmake
+2021-02-14T02:24:19.8237370Z -- Install configuration: "Debug"
+2021-02-14T02:24:19.8242580Z -- Up-to-date: /Users/runner/work/bezier/bezier/.nox/libbezier-debug/usr/lib/libbezier.2021.2.12.dylib
+2021-02-14T02:24:19.8247450Z -- Up-to-date: /Users/runner/work/bezier/bezier/.nox/libbezier-debug/usr/lib/libbezier.2021.dylib
+2021-02-14T02:24:19.8251820Z -- Up-to-date: /Users/runner/work/bezier/bezier/.nox/libbezier-debug/usr/lib/libbezier.dylib
+2021-02-14T02:24:19.8253350Z -- Up-to-date: /Users/runner/work/bezier/bezier/.nox/libbezier-debug/usr/include
+2021-02-14T02:24:19.8254640Z -- Up-to-date: /Users/runner/work/bezier/bezier/.nox/libbezier-debug/usr/include/bezier
+2021-02-14T02:24:19.8256250Z -- Up-to-date: /Users/runner/work/bezier/bezier/.nox/libbezier-debug/usr/include/bezier/status.h
+2021-02-14T02:24:19.8257710Z -- Up-to-date: /Users/runner/work/bezier/bezier/.nox/libbezier-debug/usr/include/bezier/curve_intersection.h
+2021-02-14T02:24:19.8262990Z -- Up-to-date: /Users/runner/work/bezier/bezier/.nox/libbezier-debug/usr/include/bezier/triangle_intersection.h
+2021-02-14T02:24:19.8265560Z -- Up-to-date: /Users/runner/work/bezier/bezier/.nox/libbezier-debug/usr/include/bezier/curve.h
+2021-02-14T02:24:19.8267080Z -- Up-to-date: /Users/runner/work/bezier/bezier/.nox/libbezier-debug/usr/include/bezier/triangle.h
+2021-02-14T02:24:19.8268650Z -- Up-to-date: /Users/runner/work/bezier/bezier/.nox/libbezier-debug/usr/include/bezier/helpers.h
+2021-02-14T02:24:19.8270910Z -- Up-to-date: /Users/runner/work/bezier/bezier/.nox/libbezier-debug/usr/include/bezier.h
+2021-02-14T02:24:19.8273660Z -- Up-to-date: /Users/runner/work/bezier/bezier/.nox/libbezier-debug/usr/share/bezier/cmake/BezierConfig.cmake
+2021-02-14T02:24:19.8275830Z -- Installing: /Users/runner/work/bezier/bezier/.nox/libbezier-debug/usr/share/bezier/cmake/BezierConfig-debug.cmake
+2021-02-14T02:24:19.8294940Z nox > cmake -L /Users/runner/work/bezier/bezier/.nox/libbezier-debug/build
+2021-02-14T02:24:19.8974160Z -- Configuring done
+2021-02-14T02:24:19.9293320Z -- Generating done
+2021-02-14T02:24:19.9333730Z -- Build files have been written to: /Users/runner/work/bezier/bezier/.nox/libbezier-debug/build
+2021-02-14T02:24:19.9334880Z -- Cache values
+2021-02-14T02:24:19.9335450Z BUILD_SHARED_LIBS:BOOL=ON
+2021-02-14T02:24:19.9335880Z CMAKE_BUILD_TYPE:STRING=Debug
+2021-02-14T02:24:19.9336530Z CMAKE_EXECUTABLE_FORMAT:STRING=MACHO
+2021-02-14T02:24:19.9337670Z CMAKE_INSTALL_PREFIX:PATH=/Users/runner/work/bezier/bezier/.nox/libbezier-debug/usr
+2021-02-14T02:24:19.9338350Z CMAKE_OSX_ARCHITECTURES:STRING=
+2021-02-14T02:24:19.9339080Z CMAKE_OSX_DEPLOYMENT_TARGET:STRING=10.15
+2021-02-14T02:24:19.9340160Z CMAKE_OSX_SYSROOT:PATH=/Applications/Xcode_12.3.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.1.sdk
+2021-02-14T02:24:19.9341010Z TARGET_NATIVE_ARCH:BOOL=ON
+2021-02-14T02:24:19.9357520Z nox > python -m pip install .
+2021-02-14T02:24:36.8712070Z nox > pytest /Users/runner/work/bezier/bezier/tests/functional
+2021-02-14T02:24:37.6649820Z ============================= test session starts ==============================
+2021-02-14T02:24:37.6652080Z platform darwin -- Python 3.9.1, pytest-6.2.2, py-1.10.0, pluggy-0.13.1
+2021-02-14T02:24:37.6652820Z rootdir: /Users/runner/work/bezier/bezier, configfile: setup.cfg
+2021-02-14T02:24:37.6653390Z collected 293 items
+2021-02-14T02:24:37.6653650Z 
+2021-02-14T02:24:37.7483430Z tests/functional/test_curve_curve.py ................................... [ 11%]
+2021-02-14T02:24:37.9575550Z .......................................................................  [ 36%]
+2021-02-14T02:24:38.0137730Z tests/functional/test_segment_box.py ..................................  [ 47%]
+2021-02-14T02:24:38.0342500Z tests/functional/test_triangle_locate.py .........                       [ 50%]
+2021-02-14T02:24:38.1175250Z tests/functional/test_triangle_triangle.py ............................. [ 60%]
+2021-02-14T02:24:38.4209450Z ........................................................................ [ 85%]
+2021-02-14T02:24:38.6449990Z ...........................................                              [100%]
+2021-02-14T02:24:38.6450960Z 
+2021-02-14T02:24:38.6451730Z ============================= 293 passed in 1.39s ==============================
+2021-02-14T02:24:38.6952170Z nox > Session functional-3.9 was successful.
+2021-02-14T02:24:38.7103270Z + /Library/Frameworks/Python.framework/Versions/3.9/bin/nox -s doctest
+2021-02-14T02:24:38.8199520Z nox > Running session doctest
+2021-02-14T02:24:38.8258180Z nox > Creating virtual environment (virtualenv) using python3.9 in .nox/doctest
+2021-02-14T02:24:39.3839890Z nox > python -m pip install sympy >= 1.7.1 --requirement /Users/runner/work/bezier/bezier/docs/requirements.txt
+2021-02-14T02:25:11.0540820Z nox > <function makedirs at 0x7fd1a4e63430>(args=('/Users/runner/work/bezier/bezier/.nox/libbezier-release',), kwargs={'exist_ok': True})
+2021-02-14T02:25:11.0542490Z nox > <built-in function print>(args=('Using pre-installed ``cmake``',), kwargs={})
+2021-02-14T02:25:11.0543420Z nox > cmake --version
+2021-02-14T02:25:11.1056440Z cmake version 3.19.4
+2021-02-14T02:25:11.1056780Z 
+2021-02-14T02:25:11.1057290Z CMake suite maintained and supported by Kitware (kitware.com/cmake).
+2021-02-14T02:25:11.1060900Z Using pre-installed ``cmake``
+2021-02-14T02:25:11.1066790Z nox > <function makedirs at 0x7fd1a4e63430>(args=('/Users/runner/work/bezier/bezier/.nox/libbezier-release/build',), kwargs={'exist_ok': True})
+2021-02-14T02:25:11.1078500Z nox > cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX:PATH=/Users/runner/work/bezier/bezier/.nox/libbezier-release/usr -DCMAKE_VERBOSE_MAKEFILE:BOOL=ON -S src/fortran -B /Users/runner/work/bezier/bezier/.nox/libbezier-release/build
+2021-02-14T02:25:11.4083330Z -- The Fortran compiler identification is GNU 10.2.0
+2021-02-14T02:25:11.5462090Z -- The C compiler identification is AppleClang 12.0.0.12000032
+2021-02-14T02:25:11.5576240Z -- Checking whether Fortran compiler has -isysroot
+2021-02-14T02:25:11.6183980Z -- Checking whether Fortran compiler has -isysroot - yes
+2021-02-14T02:25:11.6185810Z -- Checking whether Fortran compiler supports OSX deployment target flag
+2021-02-14T02:25:11.6830250Z -- Checking whether Fortran compiler supports OSX deployment target flag - yes
+2021-02-14T02:25:11.6874470Z -- Detecting Fortran compiler ABI info
+2021-02-14T02:25:12.0493990Z -- Detecting Fortran compiler ABI info - done
+2021-02-14T02:25:12.0659740Z -- Check for working Fortran compiler: /usr/local/bin/gfortran - skipped
+2021-02-14T02:25:12.0662960Z -- Checking whether /usr/local/bin/gfortran supports Fortran 90
+2021-02-14T02:25:12.4067190Z -- Checking whether /usr/local/bin/gfortran supports Fortran 90 - yes
+2021-02-14T02:25:12.4160170Z -- Detecting C compiler ABI info
+2021-02-14T02:25:12.6614000Z -- Detecting C compiler ABI info - done
+2021-02-14T02:25:12.6743690Z -- Check for working C compiler: /Applications/Xcode_12.3.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc - skipped
+2021-02-14T02:25:12.6746720Z -- Detecting C compile features
+2021-02-14T02:25:12.6754720Z -- Detecting C compile features - done
+2021-02-14T02:25:12.6962140Z -- Configuring done
+2021-02-14T02:25:12.7352670Z -- Generating done
+2021-02-14T02:25:12.7419070Z -- Build files have been written to: /Users/runner/work/bezier/bezier/.nox/libbezier-release/build
+2021-02-14T02:25:12.7488880Z nox > cmake --build /Users/runner/work/bezier/bezier/.nox/libbezier-release/build --config Release --target install
+2021-02-14T02:25:12.8163890Z /usr/local/Cellar/cmake/3.19.4/bin/cmake -S/Users/runner/work/bezier/bezier/src/fortran -B/Users/runner/work/bezier/bezier/.nox/libbezier-release/build --check-build-system CMakeFiles/Makefile.cmake 0
+2021-02-14T02:25:12.8286170Z /usr/local/Cellar/cmake/3.19.4/bin/cmake -E cmake_progress_start /Users/runner/work/bezier/bezier/.nox/libbezier-release/build/CMakeFiles /Users/runner/work/bezier/bezier/.nox/libbezier-release/build//CMakeFiles/progress.marks
+2021-02-14T02:25:12.8369570Z /Applications/Xcode_12.3.app/Contents/Developer/usr/bin/make  -f CMakeFiles/Makefile2 all
+2021-02-14T02:25:12.8407800Z /Applications/Xcode_12.3.app/Contents/Developer/usr/bin/make  -f quadpack/CMakeFiles/quadpack.dir/build.make quadpack/CMakeFiles/quadpack.dir/depend
+2021-02-14T02:25:12.8474310Z cd /Users/runner/work/bezier/bezier/.nox/libbezier-release/build && /usr/local/Cellar/cmake/3.19.4/bin/cmake -E cmake_depends "Unix Makefiles" /Users/runner/work/bezier/bezier/src/fortran /Users/runner/work/bezier/bezier/src/fortran/quadpack /Users/runner/work/bezier/bezier/.nox/libbezier-release/build /Users/runner/work/bezier/bezier/.nox/libbezier-release/build/quadpack /Users/runner/work/bezier/bezier/.nox/libbezier-release/build/quadpack/CMakeFiles/quadpack.dir/DependInfo.cmake --color=
+2021-02-14T02:25:12.8615750Z Dependee "/Users/runner/work/bezier/bezier/.nox/libbezier-release/build/quadpack/CMakeFiles/quadpack.dir/DependInfo.cmake" is newer than depender "/Users/runner/work/bezier/bezier/.nox/libbezier-release/build/quadpack/CMakeFiles/quadpack.dir/depend.internal".
+2021-02-14T02:25:12.8619590Z Dependee "/Users/runner/work/bezier/bezier/.nox/libbezier-release/build/quadpack/CMakeFiles/CMakeDirectoryInformation.cmake" is newer than depender "/Users/runner/work/bezier/bezier/.nox/libbezier-release/build/quadpack/CMakeFiles/quadpack.dir/depend.internal".
+2021-02-14T02:25:12.8640340Z Scanning dependencies of target quadpack
+2021-02-14T02:25:12.8645940Z /Applications/Xcode_12.3.app/Contents/Developer/usr/bin/make  -f quadpack/CMakeFiles/quadpack.dir/build.make quadpack/CMakeFiles/quadpack.dir/build
+2021-02-14T02:25:12.8826070Z [  7%] Building Fortran object quadpack/CMakeFiles/quadpack.dir/d1mach.f.o
+2021-02-14T02:25:12.8831980Z cd /Users/runner/work/bezier/bezier/.nox/libbezier-release/build/quadpack && /usr/local/bin/gfortran   -O3 -DNDEBUG -O3 -isysroot /Applications/Xcode_12.3.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.1.sdk -mmacosx-version-min=10.15 -fPIC -fno-second-underscore -Wall -Wextra -Wno-compare-reals -Wimplicit-interface -fmax-errors=1 -std=f2008 -march=native -DNDEBUG -O3 -funroll-loops -ffixed-form -c /Users/runner/work/bezier/bezier/src/fortran/quadpack/d1mach.f -o CMakeFiles/quadpack.dir/d1mach.f.o
+2021-02-14T02:25:12.9188640Z /Users/runner/work/bezier/bezier/src/fortran/quadpack/d1mach.f:157:72:
+2021-02-14T02:25:12.9192930Z 
+2021-02-14T02:25:12.9193760Z   157 |                   CALL I1MCRY(SMALL(1), J, 8285, 8388608, 0)
+2021-02-14T02:25:12.9194560Z       |                                                                        1
+2021-02-14T02:25:12.9206680Z Warning: Procedure 'i1mcry' called with an implicit interface at (1) [-Wimplicit-interface]
+2021-02-14T02:25:12.9207520Z /Users/runner/work/bezier/bezier/src/fortran/quadpack/d1mach.f:159:72:
+2021-02-14T02:25:12.9210260Z 
+2021-02-14T02:25:12.9210660Z   159 |                   CALL I1MCRY(LARGE(1), J, 24574, 16777215, 16777215)
+2021-02-14T02:25:12.9211080Z       |                                                                        1
+2021-02-14T02:25:12.9212400Z Warning: Procedure 'i1mcry' called with an implicit interface at (1) [-Wimplicit-interface]
+2021-02-14T02:25:12.9213240Z /Users/runner/work/bezier/bezier/src/fortran/quadpack/d1mach.f:160:72:
+2021-02-14T02:25:12.9213770Z 
+2021-02-14T02:25:12.9214130Z   160 |                   CALL I1MCRY(LARGE(2), J, 0, 16777215, 16777214)
+2021-02-14T02:25:12.9214510Z       |                                                                        1
+2021-02-14T02:25:12.9215590Z Warning: Procedure 'i1mcry' called with an implicit interface at (1) [-Wimplicit-interface]
+2021-02-14T02:25:12.9216390Z /Users/runner/work/bezier/bezier/src/fortran/quadpack/d1mach.f:161:72:
+2021-02-14T02:25:12.9216950Z 
+2021-02-14T02:25:12.9217290Z   161 |                   CALL I1MCRY(RIGHT(1), J, 16291, 8388608, 0)
+2021-02-14T02:25:12.9217670Z       |                                                                        1
+2021-02-14T02:25:12.9220110Z Warning: Procedure 'i1mcry' called with an implicit interface at (1) [-Wimplicit-interface]
+2021-02-14T02:25:12.9220990Z /Users/runner/work/bezier/bezier/src/fortran/quadpack/d1mach.f:163:72:
+2021-02-14T02:25:12.9221600Z 
+2021-02-14T02:25:12.9221950Z   163 |                   CALL I1MCRY(DIVER(1), J, 16292, 8388608, 0)
+2021-02-14T02:25:12.9222310Z       |                                                                        1
+2021-02-14T02:25:12.9223420Z Warning: Procedure 'i1mcry' called with an implicit interface at (1) [-Wimplicit-interface]
+2021-02-14T02:25:12.9224390Z /Users/runner/work/bezier/bezier/src/fortran/quadpack/d1mach.f:165:72:
+2021-02-14T02:25:12.9224780Z 
+2021-02-14T02:25:12.9225110Z   165 |                   CALL I1MCRY(LOG10(1), J, 16383, 10100890, 8715215)
+2021-02-14T02:25:12.9225490Z       |                                                                        1
+2021-02-14T02:25:12.9226760Z Warning: Procedure 'i1mcry' called with an implicit interface at (1) [-Wimplicit-interface]
+2021-02-14T02:25:12.9227730Z /Users/runner/work/bezier/bezier/src/fortran/quadpack/d1mach.f:166:72:
+2021-02-14T02:25:12.9228140Z 
+2021-02-14T02:25:12.9228470Z   166 |                   CALL I1MCRY(LOG10(2), J, 0, 16226447, 9001388)
+2021-02-14T02:25:12.9228850Z       |                                                                        1
+2021-02-14T02:25:12.9229910Z Warning: Procedure 'i1mcry' called with an implicit interface at (1) [-Wimplicit-interface]
+2021-02-14T02:25:13.0081900Z [ 15%] Building Fortran object quadpack/CMakeFiles/quadpack.dir/dqagse.f.o
+2021-02-14T02:25:13.0105710Z cd /Users/runner/work/bezier/bezier/.nox/libbezier-release/build/quadpack && /usr/local/bin/gfortran   -O3 -DNDEBUG -O3 -isysroot /Applications/Xcode_12.3.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.1.sdk -mmacosx-version-min=10.15 -fPIC -fno-second-underscore -Wall -Wextra -Wno-compare-reals -Wimplicit-interface -fmax-errors=1 -std=f2008 -march=native -DNDEBUG -O3 -funroll-loops -ffixed-form -c /Users/runner/work/bezier/bezier/src/fortran/quadpack/dqagse.f -o CMakeFiles/quadpack.dir/dqagse.f.o
+2021-02-14T02:25:13.0860440Z /Users/runner/work/bezier/bezier/src/fortran/quadpack/dqagse.f:218:15:
+2021-02-14T02:25:13.0861000Z 
+2021-02-14T02:25:13.0861330Z   218 |       epmach = d1mach(4)
+2021-02-14T02:25:13.0861650Z       |               1
+2021-02-14T02:25:13.0863140Z Warning: Procedure 'd1mach' called with an implicit interface at (1) [-Wimplicit-interface]
+2021-02-14T02:25:13.0863970Z /Users/runner/work/bezier/bezier/src/fortran/quadpack/dqagse.f:238:14:
+2021-02-14T02:25:13.0864370Z 
+2021-02-14T02:25:13.0864660Z   238 |       uflow = d1mach(1)
+2021-02-14T02:25:13.0864970Z       |              1
+2021-02-14T02:25:13.0865980Z Warning: Procedure 'd1mach' called with an implicit interface at (1) [-Wimplicit-interface]
+2021-02-14T02:25:13.0866780Z /Users/runner/work/bezier/bezier/src/fortran/quadpack/dqagse.f:239:14:
+2021-02-14T02:25:13.0867200Z 
+2021-02-14T02:25:13.0867500Z   239 |       oflow = d1mach(2)
+2021-02-14T02:25:13.0867800Z       |              1
+2021-02-14T02:25:13.0868810Z Warning: Procedure 'd1mach' called with an implicit interface at (1) [-Wimplicit-interface]
+2021-02-14T02:25:13.0869700Z /Users/runner/work/bezier/bezier/src/fortran/quadpack/dqagse.f:241:72:
+2021-02-14T02:25:13.0870100Z 
+2021-02-14T02:25:13.0870630Z   241 |       call dqk21(f,a,b,result,abserr,defabs,resabs)
+2021-02-14T02:25:13.0871200Z       |                                                                        1
+2021-02-14T02:25:13.0872240Z Warning: Procedure 'dqk21' called with an implicit interface at (1) [-Wimplicit-interface]
+2021-02-14T02:25:13.0873050Z /Users/runner/work/bezier/bezier/src/fortran/quadpack/dqagse.f:290:72:
+2021-02-14T02:25:13.0873440Z 
+2021-02-14T02:25:13.0873950Z   290 |         call dqk21(f,a1,b1,area1,error1,resabs,defab1)
+2021-02-14T02:25:13.0874500Z       |                                                                        1
+2021-02-14T02:25:13.0876140Z Warning: Procedure 'dqk21' called with an implicit interface at (1) [-Wimplicit-interface]
+2021-02-14T02:25:13.0877290Z /Users/runner/work/bezier/bezier/src/fortran/quadpack/dqagse.f:291:72:
+2021-02-14T02:25:13.0877740Z 
+2021-02-14T02:25:13.0878260Z   291 |         call dqk21(f,a2,b2,area2,error2,resabs,defab2)
+2021-02-14T02:25:13.0878810Z       |                                                                        1
+2021-02-14T02:25:13.0879870Z Warning: Procedure 'dqk21' called with an implicit interface at (1) [-Wimplicit-interface]
+2021-02-14T02:25:13.0880690Z /Users/runner/work/bezier/bezier/src/fortran/quadpack/dqagse.f:347:72:
+2021-02-14T02:25:13.0881080Z 
+2021-02-14T02:25:13.0881760Z   347 |    30   call dqpsrt(limit,last,maxerr,errmax,elist,iord,nrmax)
+2021-02-14T02:25:13.0882480Z       |                                                                        1
+2021-02-14T02:25:13.0883510Z Warning: Procedure 'dqpsrt' called with an implicit interface at (1) [-Wimplicit-interface]
+2021-02-14T02:25:13.0884400Z /Users/runner/work/bezier/bezier/src/fortran/quadpack/dqagse.f:385:72:
+2021-02-14T02:25:13.0884800Z 
+2021-02-14T02:25:13.0885440Z   385 |         call dqelg(numrl2,rlist2,reseps,abseps,res3la,nres)
+2021-02-14T02:25:13.0886110Z       |                                                                        1
+2021-02-14T02:25:13.0887150Z Warning: Procedure 'dqelg' called with an implicit interface at (1) [-Wimplicit-interface]
+2021-02-14T02:25:13.1713510Z /Users/runner/work/bezier/bezier/src/fortran/quadpack/dqagse.f:405:0:
+2021-02-14T02:25:13.1716190Z 
+2021-02-14T02:25:13.1716980Z   405 |         small = small*0.5d+00
+2021-02-14T02:25:13.1717680Z       | 
+2021-02-14T02:25:13.1719520Z Warning: 'small' may be used uninitialized in this function [-Wmaybe-uninitialized]
+2021-02-14T02:25:13.1720780Z /Users/runner/work/bezier/bezier/src/fortran/quadpack/dqagse.f:364:0:
+2021-02-14T02:25:13.1721540Z 
+2021-02-14T02:25:13.1722420Z   364 |    40   if(ierro.eq.3.or.erlarg.le.ertest) go to 60
+2021-02-14T02:25:13.1723320Z       | 
+2021-02-14T02:25:13.1724770Z Warning: 'ertest' may be used uninitialized in this function [-Wmaybe-uninitialized]
+2021-02-14T02:25:13.1726000Z /Users/runner/work/bezier/bezier/src/fortran/quadpack/dqagse.f:354:0:
+2021-02-14T02:25:13.1726760Z 
+2021-02-14T02:25:13.1727920Z   354 |         erlarg = erlarg-erlast
+2021-02-14T02:25:13.1728700Z       | 
+2021-02-14T02:25:13.1730100Z Warning: 'erlarg' may be used uninitialized in this function [-Wmaybe-uninitialized]
+2021-02-14T02:25:13.1731430Z /Users/runner/work/bezier/bezier/src/fortran/quadpack/dqagse.f:419:0:
+2021-02-14T02:25:13.1732180Z 
+2021-02-14T02:25:13.1732970Z   419 |       if(ierro.eq.3) abserr = abserr+correc
+2021-02-14T02:25:13.1733750Z       | 
+2021-02-14T02:25:13.1735120Z Warning: 'correc' may be used uninitialized in this function [-Wmaybe-uninitialized]
+2021-02-14T02:25:13.3754940Z [ 23%] Building Fortran object quadpack/CMakeFiles/quadpack.dir/dqelg.f.o
+2021-02-14T02:25:13.3759060Z cd /Users/runner/work/bezier/bezier/.nox/libbezier-release/build/quadpack && /usr/local/bin/gfortran   -O3 -DNDEBUG -O3 -isysroot /Applications/Xcode_12.3.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.1.sdk -mmacosx-version-min=10.15 -fPIC -fno-second-underscore -Wall -Wextra -Wno-compare-reals -Wimplicit-interface -fmax-errors=1 -std=f2008 -march=native -DNDEBUG -O3 -funroll-loops -ffixed-form -c /Users/runner/work/bezier/bezier/src/fortran/quadpack/dqelg.f -o CMakeFiles/quadpack.dir/dqelg.f.o
+2021-02-14T02:25:13.4001490Z /Users/runner/work/bezier/bezier/src/fortran/quadpack/dqelg.f:83:15:
+2021-02-14T02:25:13.4002540Z 
+2021-02-14T02:25:13.4003220Z    83 |       epmach = d1mach(4)
+2021-02-14T02:25:13.4003800Z       |               1
+2021-02-14T02:25:13.4005690Z Warning: Procedure 'd1mach' called with an implicit interface at (1) [-Wimplicit-interface]
+2021-02-14T02:25:13.4010190Z /Users/runner/work/bezier/bezier/src/fortran/quadpack/dqelg.f:84:14:
+2021-02-14T02:25:13.4011100Z 
+2021-02-14T02:25:13.4012320Z    84 |       oflow = d1mach(2)
+2021-02-14T02:25:13.4012900Z       |              1
+2021-02-14T02:25:13.4015030Z Warning: Procedure 'd1mach' called with an implicit interface at (1) [-Wimplicit-interface]
+2021-02-14T02:25:13.5476360Z [ 30%] Building Fortran object quadpack/CMakeFiles/quadpack.dir/dqk21.f.o
+2021-02-14T02:25:13.5481440Z cd /Users/runner/work/bezier/bezier/.nox/libbezier-release/build/quadpack && /usr/local/bin/gfortran   -O3 -DNDEBUG -O3 -isysroot /Applications/Xcode_12.3.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.1.sdk -mmacosx-version-min=10.15 -fPIC -fno-second-underscore -Wall -Wextra -Wno-compare-reals -Wimplicit-interface -fmax-errors=1 -std=f2008 -march=native -DNDEBUG -O3 -funroll-loops -ffixed-form -c /Users/runner/work/bezier/bezier/src/fortran/quadpack/dqk21.f -o CMakeFiles/quadpack.dir/dqk21.f.o
+2021-02-14T02:25:13.5787300Z /Users/runner/work/bezier/bezier/src/fortran/quadpack/dqk21.f:132:15:
+2021-02-14T02:25:13.5788390Z 
+2021-02-14T02:25:13.5789180Z   132 |       epmach = d1mach(4)
+2021-02-14T02:25:13.5789910Z       |               1
+2021-02-14T02:25:13.5792380Z Warning: Procedure 'd1mach' called with an implicit interface at (1) [-Wimplicit-interface]
+2021-02-14T02:25:13.5793760Z /Users/runner/work/bezier/bezier/src/fortran/quadpack/dqk21.f:133:14:
+2021-02-14T02:25:13.5794530Z 
+2021-02-14T02:25:13.5795230Z   133 |       uflow = d1mach(1)
+2021-02-14T02:25:13.5796290Z       |              1
+2021-02-14T02:25:13.5798090Z Warning: Procedure 'd1mach' called with an implicit interface at (1) [-Wimplicit-interface]
+2021-02-14T02:25:13.5799360Z /Users/runner/work/bezier/bezier/src/fortran/quadpack/dqk21.f:143:11:
+2021-02-14T02:25:13.5800330Z 
+2021-02-14T02:25:13.5801310Z   143 |       fc = f(centr)
+2021-02-14T02:25:13.5803580Z       |           1
+2021-02-14T02:25:13.5805070Z Warning: Procedure 'f' called with an implicit interface at (1) [-Wimplicit-interface]
+2021-02-14T02:25:13.5806310Z /Users/runner/work/bezier/bezier/src/fortran/quadpack/dqk21.f:149:16:
+2021-02-14T02:25:13.5807630Z 
+2021-02-14T02:25:13.5810330Z   149 |         fval1 = f(centr-absc)
+2021-02-14T02:25:13.5811150Z       |                1
+2021-02-14T02:25:13.5813190Z Warning: Procedure 'f' called with an implicit interface at (1) [-Wimplicit-interface]
+2021-02-14T02:25:13.5814370Z /Users/runner/work/bezier/bezier/src/fortran/quadpack/dqk21.f:150:16:
+2021-02-14T02:25:13.5814820Z 
+2021-02-14T02:25:13.5815150Z   150 |         fval2 = f(centr+absc)
+2021-02-14T02:25:13.5815480Z       |                1
+2021-02-14T02:25:13.5816510Z Warning: Procedure 'f' called with an implicit interface at (1) [-Wimplicit-interface]
+2021-02-14T02:25:13.5817300Z /Users/runner/work/bezier/bezier/src/fortran/quadpack/dqk21.f:161:16:
+2021-02-14T02:25:13.5817680Z 
+2021-02-14T02:25:13.5818350Z   161 |         fval1 = f(centr-absc)
+2021-02-14T02:25:13.5818690Z       |                1
+2021-02-14T02:25:13.5819650Z Warning: Procedure 'f' called with an implicit interface at (1) [-Wimplicit-interface]
+2021-02-14T02:25:13.5820440Z /Users/runner/work/bezier/bezier/src/fortran/quadpack/dqk21.f:162:16:
+2021-02-14T02:25:13.5820820Z 
+2021-02-14T02:25:13.5821150Z   162 |         fval2 = f(centr+absc)
+2021-02-14T02:25:13.5821480Z       |                1
+2021-02-14T02:25:13.5822440Z Warning: Procedure 'f' called with an implicit interface at (1) [-Wimplicit-interface]
+2021-02-14T02:25:13.6890660Z [ 38%] Building Fortran object quadpack/CMakeFiles/quadpack.dir/dqpsrt.f.o
+2021-02-14T02:25:13.6895690Z cd /Users/runner/work/bezier/bezier/.nox/libbezier-release/build/quadpack && /usr/local/bin/gfortran   -O3 -DNDEBUG -O3 -isysroot /Applications/Xcode_12.3.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.1.sdk -mmacosx-version-min=10.15 -fPIC -fno-second-underscore -Wall -Wextra -Wno-compare-reals -Wimplicit-interface -fmax-errors=1 -std=f2008 -march=native -DNDEBUG -O3 -funroll-loops -ffixed-form -c /Users/runner/work/bezier/bezier/src/fortran/quadpack/dqpsrt.f -o CMakeFiles/quadpack.dir/dqpsrt.f.o
+2021-02-14T02:25:13.8684160Z [ 38%] Built target quadpack
+2021-02-14T02:25:13.8691240Z /Applications/Xcode_12.3.app/Contents/Developer/usr/bin/make  -f CMakeFiles/bezier.dir/build.make CMakeFiles/bezier.dir/depend
+2021-02-14T02:25:13.8726530Z cd /Users/runner/work/bezier/bezier/.nox/libbezier-release/build && /usr/local/Cellar/cmake/3.19.4/bin/cmake -E cmake_depends "Unix Makefiles" /Users/runner/work/bezier/bezier/src/fortran /Users/runner/work/bezier/bezier/src/fortran /Users/runner/work/bezier/bezier/.nox/libbezier-release/build /Users/runner/work/bezier/bezier/.nox/libbezier-release/build /Users/runner/work/bezier/bezier/.nox/libbezier-release/build/CMakeFiles/bezier.dir/DependInfo.cmake --color=
+2021-02-14T02:25:13.8862130Z Dependee "/Users/runner/work/bezier/bezier/.nox/libbezier-release/build/CMakeFiles/bezier.dir/DependInfo.cmake" is newer than depender "/Users/runner/work/bezier/bezier/.nox/libbezier-release/build/CMakeFiles/bezier.dir/depend.internal".
+2021-02-14T02:25:13.8865390Z Dependee "/Users/runner/work/bezier/bezier/.nox/libbezier-release/build/CMakeFiles/CMakeDirectoryInformation.cmake" is newer than depender "/Users/runner/work/bezier/bezier/.nox/libbezier-release/build/CMakeFiles/bezier.dir/depend.internal".
+2021-02-14T02:25:13.8931270Z Scanning dependencies of target bezier
+2021-02-14T02:25:13.8940900Z /Applications/Xcode_12.3.app/Contents/Developer/usr/bin/make  -f CMakeFiles/bezier.dir/build.make CMakeFiles/bezier.dir/build
+2021-02-14T02:25:13.9132540Z [ 46%] Building Fortran object CMakeFiles/bezier.dir/types.f90.o
+2021-02-14T02:25:13.9138240Z /usr/local/bin/gfortran -Dbezier_EXPORTS  -O3 -DNDEBUG -O3 -isysroot /Applications/Xcode_12.3.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.1.sdk -mmacosx-version-min=10.15 -fPIC -fno-second-underscore -Wall -Wextra -Wno-compare-reals -Wno-conversion -Wimplicit-interface -fmax-errors=1 -std=f2008 -Werror -march=native -DNDEBUG -O3 -funroll-loops -c /Users/runner/work/bezier/bezier/src/fortran/types.f90 -o CMakeFiles/bezier.dir/types.f90.o
+2021-02-14T02:25:13.9759940Z /usr/local/Cellar/cmake/3.19.4/bin/cmake -E cmake_copy_f90_mod types.mod CMakeFiles/bezier.dir/types.mod.stamp GNU
+2021-02-14T02:25:13.9957270Z [ 53%] Building Fortran object CMakeFiles/bezier.dir/helpers.f90.o
+2021-02-14T02:25:13.9962740Z /usr/local/bin/gfortran -Dbezier_EXPORTS  -O3 -DNDEBUG -O3 -isysroot /Applications/Xcode_12.3.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.1.sdk -mmacosx-version-min=10.15 -fPIC -fno-second-underscore -Wall -Wextra -Wno-compare-reals -Wno-conversion -Wimplicit-interface -fmax-errors=1 -std=f2008 -Werror -march=native -DNDEBUG -O3 -funroll-loops -c /Users/runner/work/bezier/bezier/src/fortran/helpers.f90 -o CMakeFiles/bezier.dir/helpers.f90.o
+2021-02-14T02:25:14.4896810Z /usr/local/Cellar/cmake/3.19.4/bin/cmake -E cmake_copy_f90_mod helpers.mod CMakeFiles/bezier.dir/helpers.mod.stamp GNU
+2021-02-14T02:25:14.5169710Z [ 61%] Building Fortran object CMakeFiles/bezier.dir/curve.f90.o
+2021-02-14T02:25:14.5176250Z /usr/local/bin/gfortran -Dbezier_EXPORTS  -O3 -DNDEBUG -O3 -isysroot /Applications/Xcode_12.3.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.1.sdk -mmacosx-version-min=10.15 -fPIC -fno-second-underscore -Wall -Wextra -Wno-compare-reals -Wno-conversion -Wimplicit-interface -fmax-errors=1 -std=f2008 -Werror -march=native -DNDEBUG -O3 -funroll-loops -c /Users/runner/work/bezier/bezier/src/fortran/curve.f90 -o CMakeFiles/bezier.dir/curve.f90.o
+2021-02-14T02:25:17.2330880Z /usr/local/Cellar/cmake/3.19.4/bin/cmake -E cmake_copy_f90_mod curve.mod CMakeFiles/bezier.dir/curve.mod.stamp GNU
+2021-02-14T02:25:17.2425140Z /usr/local/Cellar/cmake/3.19.4/bin/cmake -E touch CMakeFiles/bezier.dir/curve.f90.o.provides.build
+2021-02-14T02:25:17.2629900Z [ 69%] Building Fortran object CMakeFiles/bezier.dir/status.f90.o
+2021-02-14T02:25:17.2635830Z /usr/local/bin/gfortran -Dbezier_EXPORTS  -O3 -DNDEBUG -O3 -isysroot /Applications/Xcode_12.3.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.1.sdk -mmacosx-version-min=10.15 -fPIC -fno-second-underscore -Wall -Wextra -Wno-compare-reals -Wno-conversion -Wimplicit-interface -fmax-errors=1 -std=f2008 -Werror -march=native -DNDEBUG -O3 -funroll-loops -c /Users/runner/work/bezier/bezier/src/fortran/status.f90 -o CMakeFiles/bezier.dir/status.f90.o
+2021-02-14T02:25:17.3149110Z /usr/local/Cellar/cmake/3.19.4/bin/cmake -E cmake_copy_f90_mod status.mod CMakeFiles/bezier.dir/status.mod.stamp GNU
+2021-02-14T02:25:17.3407090Z [ 76%] Building Fortran object CMakeFiles/bezier.dir/curve_intersection.f90.o
+2021-02-14T02:25:17.3413690Z /usr/local/bin/gfortran -Dbezier_EXPORTS  -O3 -DNDEBUG -O3 -isysroot /Applications/Xcode_12.3.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.1.sdk -mmacosx-version-min=10.15 -fPIC -fno-second-underscore -Wall -Wextra -Wno-compare-reals -Wno-conversion -Wimplicit-interface -fmax-errors=1 -std=f2008 -Werror -march=native -DNDEBUG -O3 -funroll-loops -c /Users/runner/work/bezier/bezier/src/fortran/curve_intersection.f90 -o CMakeFiles/bezier.dir/curve_intersection.f90.o
+2021-02-14T02:25:19.3344070Z /usr/local/Cellar/cmake/3.19.4/bin/cmake -E cmake_copy_f90_mod curve_intersection.mod CMakeFiles/bezier.dir/curve_intersection.mod.stamp GNU
+2021-02-14T02:25:19.3427770Z /usr/local/Cellar/cmake/3.19.4/bin/cmake -E touch CMakeFiles/bezier.dir/curve_intersection.f90.o.provides.build
+2021-02-14T02:25:19.3507450Z /usr/local/Cellar/cmake/3.19.4/bin/cmake -E touch CMakeFiles/bezier.dir/helpers.f90.o.provides.build
+2021-02-14T02:25:19.3589430Z /usr/local/Cellar/cmake/3.19.4/bin/cmake -E touch CMakeFiles/bezier.dir/status.f90.o.provides.build
+2021-02-14T02:25:19.3809750Z [ 84%] Building Fortran object CMakeFiles/bezier.dir/triangle.f90.o
+2021-02-14T02:25:19.3816130Z /usr/local/bin/gfortran -Dbezier_EXPORTS  -O3 -DNDEBUG -O3 -isysroot /Applications/Xcode_12.3.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.1.sdk -mmacosx-version-min=10.15 -fPIC -fno-second-underscore -Wall -Wextra -Wno-compare-reals -Wno-conversion -Wimplicit-interface -fmax-errors=1 -std=f2008 -Werror -march=native -DNDEBUG -O3 -funroll-loops -c /Users/runner/work/bezier/bezier/src/fortran/triangle.f90 -o CMakeFiles/bezier.dir/triangle.f90.o
+2021-02-14T02:25:24.5229880Z /usr/local/Cellar/cmake/3.19.4/bin/cmake -E cmake_copy_f90_mod triangle.mod CMakeFiles/bezier.dir/triangle.mod.stamp GNU
+2021-02-14T02:25:24.5327430Z /usr/local/Cellar/cmake/3.19.4/bin/cmake -E touch CMakeFiles/bezier.dir/triangle.f90.o.provides.build
+2021-02-14T02:25:24.5597570Z [ 92%] Building Fortran object CMakeFiles/bezier.dir/triangle_intersection.f90.o
+2021-02-14T02:25:24.5604610Z /usr/local/bin/gfortran -Dbezier_EXPORTS  -O3 -DNDEBUG -O3 -isysroot /Applications/Xcode_12.3.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.1.sdk -mmacosx-version-min=10.15 -fPIC -fno-second-underscore -Wall -Wextra -Wno-compare-reals -Wno-conversion -Wimplicit-interface -fmax-errors=1 -std=f2008 -Werror -march=native -DNDEBUG -O3 -funroll-loops -c /Users/runner/work/bezier/bezier/src/fortran/triangle_intersection.f90 -o CMakeFiles/bezier.dir/triangle_intersection.f90.o
+2021-02-14T02:25:26.8278280Z /usr/local/Cellar/cmake/3.19.4/bin/cmake -E cmake_copy_f90_mod triangle_intersection.mod CMakeFiles/bezier.dir/triangle_intersection.mod.stamp GNU
+2021-02-14T02:25:26.8725020Z /usr/local/Cellar/cmake/3.19.4/bin/cmake -E touch CMakeFiles/bezier.dir/triangle_intersection.f90.o.provides.build
+2021-02-14T02:25:26.8805790Z /usr/local/Cellar/cmake/3.19.4/bin/cmake -E touch CMakeFiles/bezier.dir/types.f90.o.provides.build
+2021-02-14T02:25:26.9008220Z [100%] Linking Fortran shared library libbezier.dylib
+2021-02-14T02:25:26.9012780Z /usr/local/Cellar/cmake/3.19.4/bin/cmake -E cmake_link_script CMakeFiles/bezier.dir/link.txt --verbose=1
+2021-02-14T02:25:26.9096550Z /usr/local/bin/gfortran -O3 -DNDEBUG -O3 -isysroot /Applications/Xcode_12.3.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.1.sdk -mmacosx-version-min=10.15 -dynamiclib -Wl,-headerpad_max_install_names -compatibility_version 2021.0.0 -current_version 2021.2.12 -o libbezier.2021.2.12.dylib -install_name @rpath/libbezier.2021.dylib CMakeFiles/bezier.dir/curve.f90.o CMakeFiles/bezier.dir/curve_intersection.f90.o CMakeFiles/bezier.dir/helpers.f90.o CMakeFiles/bezier.dir/status.f90.o CMakeFiles/bezier.dir/triangle.f90.o CMakeFiles/bezier.dir/triangle_intersection.f90.o CMakeFiles/bezier.dir/types.f90.o quadpack/CMakeFiles/quadpack.dir/d1mach.f.o quadpack/CMakeFiles/quadpack.dir/dqagse.f.o quadpack/CMakeFiles/quadpack.dir/dqelg.f.o quadpack/CMakeFiles/quadpack.dir/dqk21.f.o quadpack/CMakeFiles/quadpack.dir/dqpsrt.f.o 
+2021-02-14T02:25:26.9930320Z /usr/local/Cellar/cmake/3.19.4/bin/cmake -E cmake_symlink_library libbezier.2021.2.12.dylib libbezier.2021.dylib libbezier.dylib
+2021-02-14T02:25:27.0277870Z [100%] Built target bezier
+2021-02-14T02:25:27.0286760Z /usr/local/Cellar/cmake/3.19.4/bin/cmake -E cmake_progress_start /Users/runner/work/bezier/bezier/.nox/libbezier-release/build/CMakeFiles 0
+2021-02-14T02:25:27.0514370Z /Applications/Xcode_12.3.app/Contents/Developer/usr/bin/make  -f CMakeFiles/Makefile2 preinstall
+2021-02-14T02:25:27.0610960Z make[1]: Nothing to be done for `preinstall'.
+2021-02-14T02:25:27.0770580Z Install the project...
+2021-02-14T02:25:27.0776680Z /usr/local/Cellar/cmake/3.19.4/bin/cmake -P cmake_install.cmake
+2021-02-14T02:25:27.0918660Z -- Install configuration: "Release"
+2021-02-14T02:25:27.0923990Z -- Installing: /Users/runner/work/bezier/bezier/.nox/libbezier-release/usr/lib/libbezier.2021.2.12.dylib
+2021-02-14T02:25:27.0950920Z -- Installing: /Users/runner/work/bezier/bezier/.nox/libbezier-release/usr/lib/libbezier.2021.dylib
+2021-02-14T02:25:27.0955670Z -- Installing: /Users/runner/work/bezier/bezier/.nox/libbezier-release/usr/lib/libbezier.dylib
+2021-02-14T02:25:27.0960770Z -- Installing: /Users/runner/work/bezier/bezier/.nox/libbezier-release/usr/include
+2021-02-14T02:25:27.0963110Z -- Installing: /Users/runner/work/bezier/bezier/.nox/libbezier-release/usr/include/bezier
+2021-02-14T02:25:27.0965780Z -- Installing: /Users/runner/work/bezier/bezier/.nox/libbezier-release/usr/include/bezier/status.h
+2021-02-14T02:25:27.0975430Z -- Installing: /Users/runner/work/bezier/bezier/.nox/libbezier-release/usr/include/bezier/curve_intersection.h
+2021-02-14T02:25:27.0980380Z -- Installing: /Users/runner/work/bezier/bezier/.nox/libbezier-release/usr/include/bezier/triangle_intersection.h
+2021-02-14T02:25:27.0982300Z -- Installing: /Users/runner/work/bezier/bezier/.nox/libbezier-release/usr/include/bezier/curve.h
+2021-02-14T02:25:27.0986330Z -- Installing: /Users/runner/work/bezier/bezier/.nox/libbezier-release/usr/include/bezier/triangle.h
+2021-02-14T02:25:27.0991100Z -- Installing: /Users/runner/work/bezier/bezier/.nox/libbezier-release/usr/include/bezier/helpers.h
+2021-02-14T02:25:27.0994980Z -- Installing: /Users/runner/work/bezier/bezier/.nox/libbezier-release/usr/include/bezier.h
+2021-02-14T02:25:27.1004620Z -- Installing: /Users/runner/work/bezier/bezier/.nox/libbezier-release/usr/share/bezier/cmake/BezierConfig.cmake
+2021-02-14T02:25:27.1009770Z -- Installing: /Users/runner/work/bezier/bezier/.nox/libbezier-release/usr/share/bezier/cmake/BezierConfig-release.cmake
+2021-02-14T02:25:27.1060330Z nox > cmake -L /Users/runner/work/bezier/bezier/.nox/libbezier-release/build
+2021-02-14T02:25:27.1869400Z -- Configuring done
+2021-02-14T02:25:27.2522010Z -- Generating done
+2021-02-14T02:25:27.2584790Z -- Build files have been written to: /Users/runner/work/bezier/bezier/.nox/libbezier-release/build
+2021-02-14T02:25:27.2585920Z -- Cache values
+2021-02-14T02:25:27.2586330Z BUILD_SHARED_LIBS:BOOL=ON
+2021-02-14T02:25:27.2586760Z CMAKE_BUILD_TYPE:STRING=Release
+2021-02-14T02:25:27.2587240Z CMAKE_EXECUTABLE_FORMAT:STRING=MACHO
+2021-02-14T02:25:27.2588340Z CMAKE_INSTALL_PREFIX:PATH=/Users/runner/work/bezier/bezier/.nox/libbezier-release/usr
+2021-02-14T02:25:27.2589030Z CMAKE_OSX_ARCHITECTURES:STRING=
+2021-02-14T02:25:27.2589520Z CMAKE_OSX_DEPLOYMENT_TARGET:STRING=10.15
+2021-02-14T02:25:27.2590380Z CMAKE_OSX_SYSROOT:PATH=/Applications/Xcode_12.3.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.1.sdk
+2021-02-14T02:25:27.2592060Z TARGET_NATIVE_ARCH:BOOL=ON
+2021-02-14T02:25:27.2611340Z nox > /Users/runner/work/bezier/bezier/scripts/macos/nox-install-for-doctest.sh 
+2021-02-14T02:25:27.4410860Z + python -m pip install --upgrade delocate
+2021-02-14T02:25:28.4533100Z Collecting delocate
+2021-02-14T02:25:28.5077080Z   Downloading delocate-0.8.2.tar.gz (91 kB)
+2021-02-14T02:25:29.1294410Z Requirement already satisfied: wheel in ./.nox/doctest/lib/python3.9/site-packages (from delocate) (0.36.2)
+2021-02-14T02:25:29.1359010Z Building wheels for collected packages: delocate
+2021-02-14T02:25:29.1371330Z   Building wheel for delocate (setup.py): started
+2021-02-14T02:25:29.7866670Z   Building wheel for delocate (setup.py): finished with status 'done'
+2021-02-14T02:25:29.7878960Z   Created wheel for delocate: filename=delocate-0.8.2-py3-none-any.whl size=102755 sha256=fd02f22d8ec8bf44334398bab78ffd3b3e12af02bffc76ff26711356307b3bed
+2021-02-14T02:25:29.7880760Z   Stored in directory: /Users/runner/Library/Caches/pip/wheels/7c/4d/63/eae074c30d0e76b0bb95f3fb434604f0c7e04095cf19ee863f
+2021-02-14T02:25:29.7938190Z Successfully built delocate
+2021-02-14T02:25:29.9545290Z Installing collected packages: delocate
+2021-02-14T02:25:30.1019500Z Successfully installed delocate-0.8.2
+2021-02-14T02:25:30.2096430Z ++ mktemp -d
+2021-02-14T02:25:30.2907560Z + BASIC_DIR=/var/folders/24/8k48jl6d249_n_qfxwsl6xvm0000gn/T/tmp.vGMkpwFx
+2021-02-14T02:25:30.2909390Z + python -m pip wheel . --wheel-dir /var/folders/24/8k48jl6d249_n_qfxwsl6xvm0000gn/T/tmp.vGMkpwFx
+2021-02-14T02:25:30.8076970Z Processing /Users/runner/work/bezier/bezier
+2021-02-14T02:25:34.5219130Z Collecting numpy>=1.20.1
+2021-02-14T02:25:34.6022850Z   Using cached numpy-1.20.1-cp39-cp39-macosx_10_9_x86_64.whl (16.1 MB)
+2021-02-14T02:25:34.8063470Z Saved /private/var/folders/24/8k48jl6d249_n_qfxwsl6xvm0000gn/T/tmp.vGMkpwFx/numpy-1.20.1-cp39-cp39-macosx_10_9_x86_64.whl
+2021-02-14T02:25:34.8071220Z Building wheels for collected packages: bezier
+2021-02-14T02:25:34.8081450Z   Building wheel for bezier (setup.py): started
+2021-02-14T02:25:51.5033570Z   Building wheel for bezier (setup.py): finished with status 'done'
+2021-02-14T02:25:51.5062590Z   Created wheel for bezier: filename=bezier-2021.2.12-cp39-cp39-macosx_10_9_x86_64.whl size=345989 sha256=1109fbd2f63997d9893249351bc1c184c4dc9e1dc7869d17079e0730ead61d99
+2021-02-14T02:25:51.5066530Z   Stored in directory: /private/var/folders/24/8k48jl6d249_n_qfxwsl6xvm0000gn/T/pip-ephem-wheel-cache-m2lrql8j/wheels/46/bc/6e/46bcd5d0377082861d712a4d258a218d46336778971f8eb8ab
+2021-02-14T02:25:51.5095260Z Successfully built bezier
+2021-02-14T02:25:51.7028760Z ++ mktemp -d
+2021-02-14T02:25:51.7090280Z + DELOCATED_DIR=/var/folders/24/8k48jl6d249_n_qfxwsl6xvm0000gn/T/tmp.TXPLUOw4
+2021-02-14T02:25:51.7097610Z + delocate-wheel --wheel-dir /var/folders/24/8k48jl6d249_n_qfxwsl6xvm0000gn/T/tmp.TXPLUOw4 --verbose /var/folders/24/8k48jl6d249_n_qfxwsl6xvm0000gn/T/tmp.vGMkpwFx/bezier-2021.2.12-cp39-cp39-macosx_10_9_x86_64.whl
+2021-02-14T02:25:59.5854030Z Fixing: /var/folders/24/8k48jl6d249_n_qfxwsl6xvm0000gn/T/tmp.vGMkpwFx/bezier-2021.2.12-cp39-cp39-macosx_10_9_x86_64.whl
+2021-02-14T02:25:59.5855230Z Copied to package .dylibs directory:
+2021-02-14T02:25:59.5856960Z   /Users/runner/work/bezier/bezier/.nox/libbezier-release/usr/lib/libbezier.2021.2.12.dylib
+2021-02-14T02:25:59.5858180Z   /usr/local/Cellar/gcc/10.2.0_3/lib/gcc/10/libgcc_s.1.dylib
+2021-02-14T02:25:59.5858750Z   /usr/local/Cellar/gcc/10.2.0_3/lib/gcc/10/libgfortran.5.dylib
+2021-02-14T02:25:59.5859500Z   /usr/local/Cellar/gcc/10.2.0_3/lib/gcc/10/libquadmath.0.dylib
+2021-02-14T02:25:59.5965180Z + python -m pip install bezier --no-index --find-links /var/folders/24/8k48jl6d249_n_qfxwsl6xvm0000gn/T/tmp.TXPLUOw4
+2021-02-14T02:26:00.0643590Z Looking in links: /var/folders/24/8k48jl6d249_n_qfxwsl6xvm0000gn/T/tmp.TXPLUOw4
+2021-02-14T02:26:00.0908850Z Processing /private/var/folders/24/8k48jl6d249_n_qfxwsl6xvm0000gn/T/tmp.TXPLUOw4/bezier-2021.2.12-cp39-cp39-macosx_10_9_x86_64.whl
+2021-02-14T02:26:00.1129660Z Requirement already satisfied: numpy>=1.20.1 in ./.nox/doctest/lib/python3.9/site-packages (from bezier) (1.20.1)
+2021-02-14T02:26:00.2972640Z Installing collected packages: bezier
+2021-02-14T02:26:00.4470050Z Successfully installed bezier-2021.2.12
+2021-02-14T02:26:00.4927400Z + rm -fr /var/folders/24/8k48jl6d249_n_qfxwsl6xvm0000gn/T/tmp.vGMkpwFx
+2021-02-14T02:26:00.4987520Z + rm -fr /var/folders/24/8k48jl6d249_n_qfxwsl6xvm0000gn/T/tmp.TXPLUOw4
+2021-02-14T02:26:00.5027030Z nox > sphinx-build -W -b doctest -d /Users/runner/work/bezier/bezier/docs/build/doctrees /Users/runner/work/bezier/bezier/docs /Users/runner/work/bezier/bezier/docs/build/doctest
+2021-02-14T02:26:01.0580740Z Running Sphinx v2.4.4
+2021-02-14T02:26:02.0182530Z making output directory... done
+2021-02-14T02:26:02.0371080Z loading intersphinx inventory from https://matplotlib.org/objects.inv...
+2021-02-14T02:26:02.0381220Z loading intersphinx inventory from https://numpy.org/doc/stable/objects.inv...
+2021-02-14T02:26:02.0387960Z loading intersphinx inventory from https://docs.python.org/3/objects.inv...
+2021-02-14T02:26:02.0393980Z loading intersphinx inventory from https://docs.sympy.org/latest/objects.inv...
+2021-02-14T02:26:03.0965970Z building [mo]: targets for 0 po files that are out of date
+2021-02-14T02:26:03.0968820Z building [doctest]: targets for 58 source files that are out of date
+2021-02-14T02:26:03.1035680Z updating environment: [new config] 58 added, 0 changed, 0 removed
+2021-02-14T02:26:03.1038000Z reading sources... [  1%] abi/curve
+2021-02-14T02:26:03.4860680Z reading sources... [  3%] abi/curve_intersection
+2021-02-14T02:26:03.5962020Z reading sources... [  5%] abi/helpers
+2021-02-14T02:26:03.7112140Z reading sources... [  6%] abi/index
+2021-02-14T02:26:03.7234290Z reading sources... [  8%] abi/installation
+2021-02-14T02:26:03.7413950Z reading sources... [ 10%] abi/status
+2021-02-14T02:26:03.7731940Z reading sources... [ 12%] abi/triangle
+2021-02-14T02:26:03.9955580Z reading sources... [ 13%] abi/triangle_intersection
+2021-02-14T02:26:04.1659430Z reading sources... [ 15%] algorithms/curve-curve-intersection
+2021-02-14T02:26:04.2377090Z reading sources... [ 17%] algorithms/geometric-curve-intersection
+2021-02-14T02:26:04.2651890Z reading sources... [ 18%] algorithms/index
+2021-02-14T02:26:04.2744550Z reading sources... [ 20%] development
+2021-02-14T02:26:04.3995700Z reading sources... [ 22%] index
+2021-02-14T02:26:04.4593590Z reading sources... [ 24%] python/binary-extension
+2021-02-14T02:26:04.5424570Z reading sources... [ 25%] python/index
+2021-02-14T02:26:04.5534540Z reading sources... [ 27%] python/pxd/curve
+2021-02-14T02:26:04.5682140Z reading sources... [ 29%] python/pxd/curve_intersection
+2021-02-14T02:26:04.5780540Z reading sources... [ 31%] python/pxd/helpers
+2021-02-14T02:26:04.5900940Z reading sources... [ 32%] python/pxd/index
+2021-02-14T02:26:04.6004430Z reading sources... [ 34%] python/pxd/status
+2021-02-14T02:26:04.6083870Z reading sources... [ 36%] python/pxd/triangle
+2021-02-14T02:26:04.6165040Z reading sources... [ 37%] python/pxd/triangle_intersection
+2021-02-14T02:26:04.6709520Z reading sources... [ 39%] python/reference/bezier
+2021-02-14T02:26:04.7062120Z reading sources... [ 41%] python/reference/bezier.curve
+2021-02-14T02:26:05.0608520Z reading sources... [ 43%] python/reference/bezier.curved_polygon
+2021-02-14T02:26:05.2363020Z reading sources... [ 44%] python/reference/bezier.hazmat
+2021-02-14T02:26:05.2527350Z reading sources... [ 46%] python/reference/bezier.hazmat.algebraic_intersection
+2021-02-14T02:26:05.6469140Z reading sources... [ 48%] python/reference/bezier.hazmat.clipping
+2021-02-14T02:26:05.7590520Z reading sources... [ 50%] python/reference/bezier.hazmat.curve_helpers
+2021-02-14T02:26:06.1101470Z reading sources... [ 51%] python/reference/bezier.hazmat.geometric_intersection
+2021-02-14T02:26:06.7193530Z reading sources... [ 53%] python/reference/bezier.hazmat.helpers
+2021-02-14T02:26:06.9751940Z reading sources... [ 55%] python/reference/bezier.hazmat.intersection_helpers
+2021-02-14T02:26:07.2868790Z reading sources... [ 56%] python/reference/bezier.hazmat.triangle_helpers
+2021-02-14T02:26:08.4365780Z reading sources... [ 58%] python/reference/bezier.hazmat.triangle_intersection
+2021-02-14T02:26:08.8711780Z reading sources... [ 60%] python/reference/bezier.triangle
+2021-02-14T02:26:09.3194150Z reading sources... [ 62%] releases/0.0.1
+2021-02-14T02:26:09.3284370Z reading sources... [ 63%] releases/0.1.0
+2021-02-14T02:26:09.3398930Z reading sources... [ 65%] releases/0.1.1
+2021-02-14T02:26:09.3581180Z reading sources... [ 67%] releases/0.10.0
+2021-02-14T02:26:09.4087800Z reading sources... [ 68%] releases/0.11.0
+2021-02-14T02:26:09.4558210Z reading sources... [ 70%] releases/0.2.0
+2021-02-14T02:26:09.4827040Z reading sources... [ 72%] releases/0.2.1
+2021-02-14T02:26:09.4994110Z reading sources... [ 74%] releases/0.3.0
+2021-02-14T02:26:09.5373650Z reading sources... [ 75%] releases/0.4.0
+2021-02-14T02:26:09.5855800Z reading sources... [ 77%] releases/0.5.0
+2021-02-14T02:26:09.6223370Z reading sources... [ 79%] releases/0.6.0
+2021-02-14T02:26:09.7223600Z reading sources... [ 81%] releases/0.6.1
+2021-02-14T02:26:09.7559280Z reading sources... [ 82%] releases/0.6.2
+2021-02-14T02:26:09.8472740Z reading sources... [ 84%] releases/0.6.3
+2021-02-14T02:26:09.8632710Z reading sources... [ 86%] releases/0.6.4
+2021-02-14T02:26:09.8810150Z reading sources... [ 87%] releases/0.7.0
+2021-02-14T02:26:09.9012140Z reading sources... [ 89%] releases/0.8.0
+2021-02-14T02:26:09.9752090Z reading sources... [ 91%] releases/0.9.0
+2021-02-14T02:26:10.0360540Z reading sources... [ 93%] releases/2020.1.14
+2021-02-14T02:26:10.0557650Z reading sources... [ 94%] releases/2020.2.3
+2021-02-14T02:26:10.1068280Z reading sources... [ 96%] releases/2020.5.19
+2021-02-14T02:26:10.1430890Z reading sources... [ 98%] releases/index
+2021-02-14T02:26:10.1508470Z reading sources... [100%] releases/latest
+2021-02-14T02:26:10.1656300Z 
+2021-02-14T02:26:10.1659270Z looking for now-outdated files... none found
+2021-02-14T02:26:10.2192440Z pickling environment... done
+2021-02-14T02:26:10.2196800Z checking consistency... done
+2021-02-14T02:26:10.2197260Z running tests...
+2021-02-14T02:26:10.2654400Z 
+2021-02-14T02:26:10.2655380Z Document: python/reference/bezier.hazmat.geometric_intersection
+2021-02-14T02:26:10.2657370Z ---------------------------------------------------------------
+2021-02-14T02:26:10.4241270Z 9 items passed all tests:
+2021-02-14T02:26:10.4318510Z    2 tests in linearization-error
+2021-02-14T02:26:10.4320000Z    2 tests in linearization-error-fail
+2021-02-14T02:26:10.4322310Z    6 tests in parallel-different1
+2021-02-14T02:26:10.4327730Z    7 tests in parallel-different2
+2021-02-14T02:26:10.4329990Z    5 tests in parallel-different3
+2021-02-14T02:26:10.4350210Z    5 tests in parallel-different4
+2021-02-14T02:26:10.4351800Z    7 tests in segment-intersection1
+2021-02-14T02:26:10.4353130Z    6 tests in segment-intersection2
+2021-02-14T02:26:10.4366430Z    2 tests in segment-intersection2-continued
+2021-02-14T02:26:10.4371830Z 42 tests in 9 items.
+2021-02-14T02:26:10.4372500Z 42 passed and 0 failed.
+2021-02-14T02:26:10.4373280Z Test passed.
+2021-02-14T02:26:10.4374090Z 7 items passed all tests:
+2021-02-14T02:26:10.4375980Z    1 tests in linearization-error (cleanup code)
+2021-02-14T02:26:10.4377540Z    1 tests in parallel-different1 (cleanup code)
+2021-02-14T02:26:10.4380210Z    1 tests in parallel-different2 (cleanup code)
+2021-02-14T02:26:10.4381700Z    1 tests in parallel-different3 (cleanup code)
+2021-02-14T02:26:10.4383070Z    1 tests in parallel-different4 (cleanup code)
+2021-02-14T02:26:10.4384780Z    1 tests in segment-intersection1 (cleanup code)
+2021-02-14T02:26:10.4386390Z    1 tests in segment-intersection2 (cleanup code)
+2021-02-14T02:26:10.4387240Z 7 tests in 7 items.
+2021-02-14T02:26:10.4387870Z 7 passed and 0 failed.
+2021-02-14T02:26:10.4388480Z Test passed.
+2021-02-14T02:26:10.4434480Z 
+2021-02-14T02:26:10.4442360Z Document: python/reference/bezier.curve
+2021-02-14T02:26:10.4445790Z ---------------------------------------
+2021-02-14T02:26:11.5670420Z 14 items passed all tests:
+2021-02-14T02:26:11.5672900Z    4 tests in curve-constructor
+2021-02-14T02:26:11.5674440Z    5 tests in curve-elevate
+2021-02-14T02:26:11.5675430Z    3 tests in curve-eval
+2021-02-14T02:26:11.5676240Z    5 tests in curve-eval-multi
+2021-02-14T02:26:11.5677140Z    3 tests in curve-evaluate-hodograph
+2021-02-14T02:26:11.5678050Z    3 tests in curve-implicitize
+2021-02-14T02:26:11.5678860Z    8 tests in curve-intersect
+2021-02-14T02:26:11.5679620Z    8 tests in curve-locate
+2021-02-14T02:26:11.5680390Z    5 tests in curve-reduce
+2021-02-14T02:26:11.5681200Z    5 tests in curve-reduce-approx
+2021-02-14T02:26:11.5682050Z    4 tests in curve-specialize
+2021-02-14T02:26:11.5682870Z    5 tests in curve-specialize2
+2021-02-14T02:26:11.5683700Z    5 tests in curve-subdivide
+2021-02-14T02:26:11.5684560Z    3 tests in curve-to-symbolic
+2021-02-14T02:26:11.5684990Z 66 tests in 14 items.
+2021-02-14T02:26:11.5685370Z 66 passed and 0 failed.
+2021-02-14T02:26:11.5685720Z Test passed.
+2021-02-14T02:26:11.5686100Z 10 items passed all tests:
+2021-02-14T02:26:11.5686960Z    1 tests in curve-constructor (cleanup code)
+2021-02-14T02:26:11.5687880Z    1 tests in curve-elevate (cleanup code)
+2021-02-14T02:26:11.5688730Z    1 tests in curve-eval (cleanup code)
+2021-02-14T02:26:11.5689700Z    1 tests in curve-evaluate-hodograph (cleanup code)
+2021-02-14T02:26:11.5690690Z    1 tests in curve-intersect (cleanup code)
+2021-02-14T02:26:11.5691570Z    1 tests in curve-locate (cleanup code)
+2021-02-14T02:26:11.5692430Z    1 tests in curve-reduce (cleanup code)
+2021-02-14T02:26:11.5693350Z    1 tests in curve-reduce-approx (cleanup code)
+2021-02-14T02:26:11.5694320Z    1 tests in curve-specialize (cleanup code)
+2021-02-14T02:26:11.5695220Z    1 tests in curve-subdivide (cleanup code)
+2021-02-14T02:26:11.5695690Z 10 tests in 10 items.
+2021-02-14T02:26:11.5696040Z 10 passed and 0 failed.
+2021-02-14T02:26:11.5696540Z Test passed.
+2021-02-14T02:26:11.5731140Z 
+2021-02-14T02:26:11.5733340Z Document: abi/installation
+2021-02-14T02:26:11.5734970Z --------------------------
+2021-02-14T02:26:11.5808810Z 2 items had no tests:
+2021-02-14T02:26:11.5810850Z     libbezier-linux
+2021-02-14T02:26:11.5811740Z     libbezier-windows
+2021-02-14T02:26:11.5812220Z 1 items passed all tests:
+2021-02-14T02:26:11.5813030Z    1 tests in libbezier-macos
+2021-02-14T02:26:11.5813440Z 1 tests in 3 items.
+2021-02-14T02:26:11.5814050Z 1 passed and 0 failed.
+2021-02-14T02:26:11.5814420Z Test passed.
+2021-02-14T02:26:11.6896760Z 
+2021-02-14T02:26:11.6897950Z Document: python/reference/bezier.hazmat.triangle_intersection
+2021-02-14T02:26:11.6899660Z --------------------------------------------------------------
+2021-02-14T02:26:11.6930420Z 1 items passed all tests:
+2021-02-14T02:26:11.6931770Z    9 tests in newton-refine-triangle
+2021-02-14T02:26:11.6932310Z 9 tests in 1 items.
+2021-02-14T02:26:11.6932680Z 9 passed and 0 failed.
+2021-02-14T02:26:11.6933050Z Test passed.
+2021-02-14T02:26:11.6933410Z 1 items passed all tests:
+2021-02-14T02:26:11.6934750Z    1 tests in newton-refine-triangle (cleanup code)
+2021-02-14T02:26:11.6935300Z 1 tests in 1 items.
+2021-02-14T02:26:11.6935660Z 1 passed and 0 failed.
+2021-02-14T02:26:11.6936000Z Test passed.
+2021-02-14T02:26:11.7252710Z 
+2021-02-14T02:26:11.7253660Z Document: python/reference/bezier.hazmat.triangle_helpers
+2021-02-14T02:26:11.7255210Z ---------------------------------------------------------
+2021-02-14T02:26:11.7561760Z 10 items passed all tests:
+2021-02-14T02:26:11.7563230Z   14 tests in classify-intersection1
+2021-02-14T02:26:11.7564560Z   10 tests in classify-intersection2
+2021-02-14T02:26:11.7565850Z   10 tests in classify-intersection3
+2021-02-14T02:26:11.7567140Z   10 tests in classify-intersection4
+2021-02-14T02:26:11.7568400Z   10 tests in classify-intersection5
+2021-02-14T02:26:11.7572020Z   14 tests in classify-intersection6
+2021-02-14T02:26:11.7575970Z   16 tests in classify-intersection7
+2021-02-14T02:26:11.7581380Z   12 tests in classify-intersection8
+2021-02-14T02:26:11.7582310Z   10 tests in classify-intersection9
+2021-02-14T02:26:11.7583470Z    9 tests in jacobian-det
+2021-02-14T02:26:11.7583900Z 115 tests in 10 items.
+2021-02-14T02:26:11.7584260Z 115 passed and 0 failed.
+2021-02-14T02:26:11.7588510Z Test passed.
+2021-02-14T02:26:11.7588900Z 9 items passed all tests:
+2021-02-14T02:26:11.7590550Z    1 tests in classify-intersection1 (cleanup code)
+2021-02-14T02:26:11.7591770Z    1 tests in classify-intersection2 (cleanup code)
+2021-02-14T02:26:11.7592980Z    1 tests in classify-intersection3 (cleanup code)
+2021-02-14T02:26:11.7594280Z    1 tests in classify-intersection4 (cleanup code)
+2021-02-14T02:26:11.7595710Z    1 tests in classify-intersection5 (cleanup code)
+2021-02-14T02:26:11.7597000Z    1 tests in classify-intersection6 (cleanup code)
+2021-02-14T02:26:11.7598510Z    1 tests in classify-intersection7 (cleanup code)
+2021-02-14T02:26:11.7599720Z    1 tests in classify-intersection8 (cleanup code)
+2021-02-14T02:26:11.7601630Z    1 tests in classify-intersection9 (cleanup code)
+2021-02-14T02:26:11.7602530Z 9 tests in 9 items.
+2021-02-14T02:26:11.7603020Z 9 passed and 0 failed.
+2021-02-14T02:26:11.7605160Z Test passed.
+2021-02-14T02:26:11.7637290Z 
+2021-02-14T02:26:11.7638490Z Document: python/reference/bezier.curved_polygon
+2021-02-14T02:26:11.7641720Z ------------------------------------------------
+2021-02-14T02:26:11.7695660Z 2 items passed all tests:
+2021-02-14T02:26:11.7697190Z   11 tests in curved-polygon-constructor
+2021-02-14T02:26:11.7698400Z   10 tests in curved-polygon-constructor-invalid
+2021-02-14T02:26:11.7699020Z 21 tests in 2 items.
+2021-02-14T02:26:11.7699390Z 21 passed and 0 failed.
+2021-02-14T02:26:11.7699740Z Test passed.
+2021-02-14T02:26:11.7700110Z 2 items passed all tests:
+2021-02-14T02:26:11.7701080Z    1 tests in curved-polygon-constructor (cleanup code)
+2021-02-14T02:26:11.7703660Z    1 tests in curved-polygon-constructor-invalid (cleanup code)
+2021-02-14T02:26:11.7704430Z 2 tests in 2 items.
+2021-02-14T02:26:11.7704790Z 2 passed and 0 failed.
+2021-02-14T02:26:11.7705150Z Test passed.
+2021-02-14T02:26:11.7837460Z 
+2021-02-14T02:26:11.7857310Z Document: python/reference/bezier.hazmat.intersection_helpers
+2021-02-14T02:26:11.7859270Z -------------------------------------------------------------
+2021-02-14T02:26:11.8004060Z 5 items passed all tests:
+2021-02-14T02:26:11.8007080Z    6 tests in newton-refine1
+2021-02-14T02:26:11.8008930Z   14 tests in newton-refine2
+2021-02-14T02:26:11.8009870Z   16 tests in newton-refine3
+2021-02-14T02:26:11.8011090Z    7 tests in newton-refine3-continued
+2021-02-14T02:26:11.8013130Z   11 tests in newton-refine4
+2021-02-14T02:26:11.8013570Z 54 tests in 5 items.
+2021-02-14T02:26:11.8013940Z 54 passed and 0 failed.
+2021-02-14T02:26:11.8014290Z Test passed.
+2021-02-14T02:26:11.8014660Z 3 items passed all tests:
+2021-02-14T02:26:11.8015540Z    1 tests in newton-refine1 (cleanup code)
+2021-02-14T02:26:11.8016460Z    1 tests in newton-refine2 (cleanup code)
+2021-02-14T02:26:11.8017390Z    1 tests in newton-refine3 (cleanup code)
+2021-02-14T02:26:11.8017860Z 3 tests in 3 items.
+2021-02-14T02:26:11.8018220Z 3 passed and 0 failed.
+2021-02-14T02:26:11.8018570Z Test passed.
+2021-02-14T02:26:11.8058320Z 
+2021-02-14T02:26:11.8059200Z Document: python/reference/bezier.hazmat.clipping
+2021-02-14T02:26:11.8060670Z -------------------------------------------------
+2021-02-14T02:26:11.8125280Z 4 items passed all tests:
+2021-02-14T02:26:11.8127780Z    1 tests in clip-range
+2021-02-14T02:26:11.8129100Z    2 tests in clip-range-start
+2021-02-14T02:26:11.8130440Z    3 tests in compute-fat-line
+2021-02-14T02:26:11.8131790Z    2 tests in compute-implicit-line
+2021-02-14T02:26:11.8132990Z 8 tests in 4 items.
+2021-02-14T02:26:11.8135680Z 8 passed and 0 failed.
+2021-02-14T02:26:11.8136110Z Test passed.
+2021-02-14T02:26:11.8137300Z 3 items passed all tests:
+2021-02-14T02:26:11.8138220Z    1 tests in clip-range (cleanup code)
+2021-02-14T02:26:11.8139110Z    1 tests in compute-fat-line (cleanup code)
+2021-02-14T02:26:11.8140610Z    1 tests in compute-implicit-line (cleanup code)
+2021-02-14T02:26:11.8141390Z 3 tests in 3 items.
+2021-02-14T02:26:11.8141800Z 3 passed and 0 failed.
+2021-02-14T02:26:11.8142150Z Test passed.
+2021-02-14T02:26:11.8185370Z 
+2021-02-14T02:26:11.8191300Z Document: algorithms/curve-curve-intersection
+2021-02-14T02:26:11.8199830Z ---------------------------------------------
+2021-02-14T02:26:11.8725320Z 23 items passed all tests:
+2021-02-14T02:26:11.8726760Z   14 tests in intersect-1-13
+2021-02-14T02:26:11.8727560Z    8 tests in intersect-1-18
+2021-02-14T02:26:11.8728350Z    8 tests in intersect-1-19
+2021-02-14T02:26:11.8729110Z   14 tests in intersect-1-2
+2021-02-14T02:26:11.8729890Z    5 tests in intersect-1-24
+2021-02-14T02:26:11.8730640Z    8 tests in intersect-1-5
+2021-02-14T02:26:11.8731400Z    8 tests in intersect-1-6
+2021-02-14T02:26:11.8732150Z   14 tests in intersect-1-7
+2021-02-14T02:26:11.8732890Z    8 tests in intersect-1-8
+2021-02-14T02:26:11.8733680Z    8 tests in intersect-1-9
+2021-02-14T02:26:11.8734440Z    8 tests in intersect-10-11
+2021-02-14T02:26:11.8735240Z    8 tests in intersect-10-17
+2021-02-14T02:26:11.8736020Z    8 tests in intersect-10-23
+2021-02-14T02:26:11.8736780Z   14 tests in intersect-11-26
+2021-02-14T02:26:11.8737600Z   10 tests in intersect-12-self
+2021-02-14T02:26:11.8738390Z    8 tests in intersect-14-15
+2021-02-14T02:26:11.8739180Z    8 tests in intersect-14-16
+2021-02-14T02:26:11.8739960Z   19 tests in intersect-15-25
+2021-02-14T02:26:11.8740750Z   14 tests in intersect-21-22
+2021-02-14T02:26:11.8741530Z    8 tests in intersect-29-30
+2021-02-14T02:26:11.8742300Z    8 tests in intersect-3-4
+2021-02-14T02:26:11.8743080Z   15 tests in intersect-8-27
+2021-02-14T02:26:11.8743840Z    8 tests in intersect-8-9
+2021-02-14T02:26:11.8744250Z 231 tests in 23 items.
+2021-02-14T02:26:11.8744620Z 231 passed and 0 failed.
+2021-02-14T02:26:11.8744980Z Test passed.
+2021-02-14T02:26:12.0077390Z 
+2021-02-14T02:26:12.0078850Z Document: python/pxd/index
+2021-02-14T02:26:12.0080600Z --------------------------
+2021-02-14T02:26:12.0107680Z 1 items passed all tests:
+2021-02-14T02:26:12.0109230Z    2 tests in show-pxd
+2021-02-14T02:26:12.0109660Z 2 tests in 1 items.
+2021-02-14T02:26:12.0110180Z 2 passed and 0 failed.
+2021-02-14T02:26:12.0110720Z Test passed.
+2021-02-14T02:26:12.0187430Z 
+2021-02-14T02:26:12.0188510Z Document: python/reference/bezier.hazmat.helpers
+2021-02-14T02:26:12.0189950Z ------------------------------------------------
+2021-02-14T02:26:12.0204500Z 1 items passed all tests:
+2021-02-14T02:26:12.0205510Z    4 tests in unsupported-degree
+2021-02-14T02:26:12.0206010Z 4 tests in 1 items.
+2021-02-14T02:26:12.0206370Z 4 passed and 0 failed.
+2021-02-14T02:26:12.0206730Z Test passed.
+2021-02-14T02:26:12.0233930Z 
+2021-02-14T02:26:12.0234520Z Document: abi/status
+2021-02-14T02:26:12.0235510Z --------------------
+2021-02-14T02:26:14.0401750Z 1 items passed all tests:
+2021-02-14T02:26:14.0403420Z    1 tests in example-status
+2021-02-14T02:26:14.0403870Z 1 tests in 1 items.
+2021-02-14T02:26:14.0404260Z 1 passed and 0 failed.
+2021-02-14T02:26:14.0404630Z Test passed.
+2021-02-14T02:26:14.0507250Z 
+2021-02-14T02:26:14.0508600Z Document: python/reference/bezier.hazmat.curve_helpers
+2021-02-14T02:26:14.0510500Z ------------------------------------------------------
+2021-02-14T02:26:14.0695520Z 4 items passed all tests:
+2021-02-14T02:26:14.0700120Z    6 tests in get-curvature
+2021-02-14T02:26:14.0701220Z    7 tests in newton-refine-curve
+2021-02-14T02:26:14.0702160Z   17 tests in newton-refine-curve-cusp
+2021-02-14T02:26:14.0703280Z    6 tests in newton-refine-curve-cusp-continued
+2021-02-14T02:26:14.0703910Z 36 tests in 4 items.
+2021-02-14T02:26:14.0704270Z 36 passed and 0 failed.
+2021-02-14T02:26:14.0704730Z Test passed.
+2021-02-14T02:26:14.0705130Z 3 items passed all tests:
+2021-02-14T02:26:14.0706030Z    1 tests in get-curvature (cleanup code)
+2021-02-14T02:26:14.0706970Z    1 tests in newton-refine-curve (cleanup code)
+2021-02-14T02:26:14.0708690Z    1 tests in newton-refine-curve-cusp (cleanup code)
+2021-02-14T02:26:14.0709250Z 3 tests in 3 items.
+2021-02-14T02:26:14.0709870Z 3 passed and 0 failed.
+2021-02-14T02:26:14.0710270Z Test passed.
+2021-02-14T02:26:14.0819930Z 
+2021-02-14T02:26:14.0820730Z Document: python/reference/bezier.triangle
+2021-02-14T02:26:14.0824720Z ------------------------------------------
+2021-02-14T02:26:14.2504130Z 17 items passed all tests:
+2021-02-14T02:26:14.2509900Z    4 tests in triangle-barycentric
+2021-02-14T02:26:14.2511160Z    1 tests in triangle-barycentric-fail1
+2021-02-14T02:26:14.2512200Z    1 tests in triangle-barycentric-fail2
+2021-02-14T02:26:14.2513290Z    2 tests in triangle-barycentric-no-verify
+2021-02-14T02:26:14.2514270Z    5 tests in triangle-cartesian
+2021-02-14T02:26:14.2515150Z    4 tests in triangle-constructor
+2021-02-14T02:26:14.2515980Z    5 tests in triangle-edges
+2021-02-14T02:26:14.2517250Z    5 tests in triangle-elevate
+2021-02-14T02:26:14.2518110Z    6 tests in triangle-eval-multi1
+2021-02-14T02:26:14.2519050Z    6 tests in triangle-eval-multi2
+2021-02-14T02:26:14.2519940Z    3 tests in triangle-implicitize
+2021-02-14T02:26:14.2520810Z    3 tests in triangle-is-valid1
+2021-02-14T02:26:14.2521670Z    3 tests in triangle-is-valid2
+2021-02-14T02:26:14.2522510Z    3 tests in triangle-is-valid3
+2021-02-14T02:26:14.2523680Z    6 tests in triangle-locate
+2021-02-14T02:26:14.2524520Z    5 tests in triangle-subdivide
+2021-02-14T02:26:14.2525380Z    3 tests in triangle-to-symbolic
+2021-02-14T02:26:14.2525830Z 65 tests in 17 items.
+2021-02-14T02:26:14.2526190Z 65 passed and 0 failed.
+2021-02-14T02:26:14.2526540Z Test passed.
+2021-02-14T02:26:14.2526900Z 10 items passed all tests:
+2021-02-14T02:26:14.2527810Z    1 tests in triangle-barycentric (cleanup code)
+2021-02-14T02:26:14.2528810Z    1 tests in triangle-constructor (cleanup code)
+2021-02-14T02:26:14.2529780Z    1 tests in triangle-elevate (cleanup code)
+2021-02-14T02:26:14.2530810Z    1 tests in triangle-eval-multi1 (cleanup code)
+2021-02-14T02:26:14.2532110Z    1 tests in triangle-eval-multi2 (cleanup code)
+2021-02-14T02:26:14.2533200Z    1 tests in triangle-is-valid1 (cleanup code)
+2021-02-14T02:26:14.2534180Z    1 tests in triangle-is-valid2 (cleanup code)
+2021-02-14T02:26:14.2535220Z    1 tests in triangle-is-valid3 (cleanup code)
+2021-02-14T02:26:14.2536160Z    1 tests in triangle-locate (cleanup code)
+2021-02-14T02:26:14.2537110Z    1 tests in triangle-subdivide (cleanup code)
+2021-02-14T02:26:14.2537590Z 10 tests in 10 items.
+2021-02-14T02:26:14.2537950Z 10 passed and 0 failed.
+2021-02-14T02:26:14.2538300Z Test passed.
+2021-02-14T02:26:14.2538590Z 
+2021-02-14T02:26:14.2538900Z Document: index
+2021-02-14T02:26:14.2539580Z ---------------
+2021-02-14T02:26:14.2842770Z 1 items passed all tests:
+2021-02-14T02:26:14.2844260Z   17 tests in getting-started
+2021-02-14T02:26:14.2844740Z 17 tests in 1 items.
+2021-02-14T02:26:14.2845100Z 17 passed and 0 failed.
+2021-02-14T02:26:14.2845470Z Test passed.
+2021-02-14T02:26:14.2845830Z 1 items passed all tests:
+2021-02-14T02:26:14.2846770Z    1 tests in getting-started (cleanup code)
+2021-02-14T02:26:14.2847230Z 1 tests in 1 items.
+2021-02-14T02:26:14.2849670Z 1 passed and 0 failed.
+2021-02-14T02:26:14.2850330Z Test passed.
+2021-02-14T02:26:14.2965090Z 
+2021-02-14T02:26:14.2966660Z Document: python/binary-extension
+2021-02-14T02:26:14.2967780Z ---------------------------------
+2021-02-14T02:26:14.3699300Z 5 items had no tests:
+2021-02-14T02:26:14.3712700Z     linux-libs
+2021-02-14T02:26:14.3715150Z     linux-readelf-lib
+2021-02-14T02:26:14.3724940Z     linux-readelf-py
+2021-02-14T02:26:14.3726310Z     windows-dll
+2021-02-14T02:26:14.3727340Z     windows-extension
+2021-02-14T02:26:14.3727800Z 3 items passed all tests:
+2021-02-14T02:26:14.3729160Z    1 tests in macos-delocated-libgfortran
+2021-02-14T02:26:14.3730140Z    2 tests in macos-dylibs
+2021-02-14T02:26:14.3730910Z    1 tests in macos-extension
+2021-02-14T02:26:14.3731320Z 4 tests in 8 items.
+2021-02-14T02:26:14.3732080Z 4 passed and 0 failed.
+2021-02-14T02:26:14.3736770Z Test passed.
+2021-02-14T02:26:14.4010630Z 
+2021-02-14T02:26:14.4012250Z Document: python/reference/bezier.hazmat.algebraic_intersection
+2021-02-14T02:26:14.4014790Z ---------------------------------------------------------------
+2021-02-14T02:26:14.4118690Z 4 items passed all tests:
+2021-02-14T02:26:14.4120650Z    7 tests in bezier-roots0
+2021-02-14T02:26:14.4121980Z    6 tests in bezier-roots1
+2021-02-14T02:26:14.4123230Z    8 tests in bezier-roots2
+2021-02-14T02:26:14.4124440Z   10 tests in lu-companion
+2021-02-14T02:26:14.4125280Z 31 tests in 4 items.
+2021-02-14T02:26:14.4126010Z 31 passed and 0 failed.
+2021-02-14T02:26:14.4126750Z Test passed.
+2021-02-14T02:26:14.4348000Z 
+2021-02-14T02:26:14.4348690Z Document: abi/curve
+2021-02-14T02:26:14.4349870Z -------------------
+2021-02-14T02:26:34.8679490Z 12 items passed all tests:
+2021-02-14T02:26:34.8681030Z    1 tests in example-compute-length
+2021-02-14T02:26:34.8682090Z    1 tests in example-elevate-nodes-curve
+2021-02-14T02:26:34.8683270Z    1 tests in example-evaluate-curve-barycentric
+2021-02-14T02:26:34.8684610Z    1 tests in example-evaluate-hodograph
+2021-02-14T02:26:34.8685620Z    1 tests in example-evaluate-multi
+2021-02-14T02:26:34.8686520Z    1 tests in example-full-reduce
+2021-02-14T02:26:34.8687420Z    1 tests in example-get-curvature
+2021-02-14T02:26:34.8688370Z    1 tests in example-locate-point-curve
+2021-02-14T02:26:34.8689410Z    1 tests in example-newton-refine-curve
+2021-02-14T02:26:34.8690470Z    1 tests in example-reduce-pseudo-inverse
+2021-02-14T02:26:34.8691520Z    1 tests in example-specialize-curve
+2021-02-14T02:26:34.8692550Z    1 tests in example-subdivide-nodes-curve
+2021-02-14T02:26:34.8693120Z 12 tests in 12 items.
+2021-02-14T02:26:34.8693480Z 12 passed and 0 failed.
+2021-02-14T02:26:34.8693820Z Test passed.
+2021-02-14T02:26:34.8799050Z 
+2021-02-14T02:26:34.8800360Z Doctest summary
+2021-02-14T02:26:34.8800680Z ===============
+2021-02-14T02:26:34.8801700Z   719 tests
+2021-02-14T02:26:34.8802080Z     0 failures in tests
+2021-02-14T02:26:34.8802490Z     0 failures in setup code
+2021-02-14T02:26:34.8802910Z     0 failures in cleanup code
+2021-02-14T02:26:34.9216780Z build succeeded.
+2021-02-14T02:26:34.9217490Z 
+2021-02-14T02:26:34.9219940Z Testing of doctests in the sources finished, look at the results in docs/build/doctest/output.txt.
+2021-02-14T02:26:35.3185210Z nox > Session doctest was successful.
+2021-02-14T02:26:35.4765110Z Post job cleanup.
+2021-02-14T02:26:35.6245990Z [command]/usr/local/bin/git version
+2021-02-14T02:26:35.6319280Z git version 2.30.0
+2021-02-14T02:26:35.6369750Z [command]/usr/local/bin/git config --local --name-only --get-regexp core\.sshCommand
+2021-02-14T02:26:35.6455250Z [command]/usr/local/bin/git submodule foreach --recursive git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :
+2021-02-14T02:26:35.7581030Z [command]/usr/local/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2021-02-14T02:26:35.7682780Z http.https://github.com/.extraheader
+2021-02-14T02:26:35.7696320Z [command]/usr/local/bin/git config --local --unset-all http.https://github.com/.extraheader
+2021-02-14T02:26:35.7858910Z [command]/usr/local/bin/git submodule foreach --recursive git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :
+2021-02-14T02:26:35.9105190Z Cleaning up orphan processes

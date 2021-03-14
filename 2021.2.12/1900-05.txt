@@ -1,0 +1,294 @@
+nox > Running session unit-3.7
+nox > Creating virtual environment (virtualenv) using python3.7 in .nox/unit-3-7
+nox > python -m pip install numpy >= 1.20.1 pytest >= 6.2.2 importlib-metadata; python_version<"3.8" sympy >= 1.7.1 scipy >= 1.6.0
+nox > <function makedirs at 0x7fc4068f9040>(args=('/var/code/bezier/.nox/libbezier-debug',), kwargs={'exist_ok': True})
+nox > <built-in function print>(args=('Using pre-installed ``cmake``',), kwargs={})
+Using pre-installed ``cmake``
+nox > cmake --version
+cmake version 3.18.4
+
+CMake suite maintained and supported by Kitware (kitware.com/cmake).
+nox > <function makedirs at 0x7fc4068f9040>(args=('/var/code/bezier/.nox/libbezier-debug/build',), kwargs={'exist_ok': True})
+nox > cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_INSTALL_PREFIX:PATH=/var/code/bezier/.nox/libbezier-debug/usr -DCMAKE_VERBOSE_MAKEFILE:BOOL=ON -S src/fortran -B /var/code/bezier/.nox/libbezier-debug/build
+-- The Fortran compiler identification is GNU 9.3.0
+-- The C compiler identification is GNU 9.3.0
+-- Detecting Fortran compiler ABI info
+-- Detecting Fortran compiler ABI info - done
+-- Check for working Fortran compiler: /usr/bin/f95 - skipped
+-- Checking whether /usr/bin/f95 supports Fortran 90
+-- Checking whether /usr/bin/f95 supports Fortran 90 - yes
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Check for working C compiler: /usr/bin/cc - skipped
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /var/code/bezier/.nox/libbezier-debug/build
+nox > cmake --build /var/code/bezier/.nox/libbezier-debug/build --config Debug --target install
+/root/.pyenv/versions/3.9.1/lib/python3.9/site-packages/cmake/data/bin/cmake -S/var/code/bezier/src/fortran -B/var/code/bezier/.nox/libbezier-debug/build --check-build-system CMakeFiles/Makefile.cmake 0
+/root/.pyenv/versions/3.9.1/lib/python3.9/site-packages/cmake/data/bin/cmake -E cmake_progress_start /var/code/bezier/.nox/libbezier-debug/build/CMakeFiles /var/code/bezier/.nox/libbezier-debug/build//CMakeFiles/progress.marks
+/usr/bin/make  -f CMakeFiles/Makefile2 all
+make[1]: Entering directory '/var/code/bezier/.nox/libbezier-debug/build'
+/usr/bin/make  -f quadpack/CMakeFiles/quadpack.dir/build.make quadpack/CMakeFiles/quadpack.dir/depend
+make[2]: Entering directory '/var/code/bezier/.nox/libbezier-debug/build'
+cd /var/code/bezier/.nox/libbezier-debug/build && /root/.pyenv/versions/3.9.1/lib/python3.9/site-packages/cmake/data/bin/cmake -E cmake_depends "Unix Makefiles" /var/code/bezier/src/fortran /var/code/bezier/src/fortran/quadpack /var/code/bezier/.nox/libbezier-debug/build /var/code/bezier/.nox/libbezier-debug/build/quadpack /var/code/bezier/.nox/libbezier-debug/build/quadpack/CMakeFiles/quadpack.dir/DependInfo.cmake --color=
+Dependee "/var/code/bezier/.nox/libbezier-debug/build/quadpack/CMakeFiles/quadpack.dir/DependInfo.cmake" is newer than depender "/var/code/bezier/.nox/libbezier-debug/build/quadpack/CMakeFiles/quadpack.dir/depend.internal".
+Dependee "/var/code/bezier/.nox/libbezier-debug/build/quadpack/CMakeFiles/CMakeDirectoryInformation.cmake" is newer than depender "/var/code/bezier/.nox/libbezier-debug/build/quadpack/CMakeFiles/quadpack.dir/depend.internal".
+Scanning dependencies of target quadpack
+make[2]: Leaving directory '/var/code/bezier/.nox/libbezier-debug/build'
+/usr/bin/make  -f quadpack/CMakeFiles/quadpack.dir/build.make quadpack/CMakeFiles/quadpack.dir/build
+make[2]: Entering directory '/var/code/bezier/.nox/libbezier-debug/build'
+[  7%] Building Fortran object quadpack/CMakeFiles/quadpack.dir/d1mach.f.o
+cd /var/code/bezier/.nox/libbezier-debug/build/quadpack && /usr/bin/f95   -g -fPIC -fno-second-underscore -Wall -Wextra -Wno-compare-reals -Wimplicit-interface -fmax-errors=1 -std=f2008 -fcheck=all -fbacktrace -fimplicit-none -pedantic -g -ffixed-form -c /var/code/bezier/src/fortran/quadpack/d1mach.f -o CMakeFiles/quadpack.dir/d1mach.f.o
+/var/code/bezier/src/fortran/quadpack/d1mach.f:157:72:
+
+  157 |                   CALL I1MCRY(SMALL(1), J, 8285, 8388608, 0)
+      |                                                                        1
+Warning: Procedure ‘i1mcry’ called with an implicit interface at (1) [-Wimplicit-interface]
+/var/code/bezier/src/fortran/quadpack/d1mach.f:159:72:
+
+  159 |                   CALL I1MCRY(LARGE(1), J, 24574, 16777215, 16777215)
+      |                                                                        1
+Warning: Procedure ‘i1mcry’ called with an implicit interface at (1) [-Wimplicit-interface]
+/var/code/bezier/src/fortran/quadpack/d1mach.f:160:72:
+
+  160 |                   CALL I1MCRY(LARGE(2), J, 0, 16777215, 16777214)
+      |                                                                        1
+Warning: Procedure ‘i1mcry’ called with an implicit interface at (1) [-Wimplicit-interface]
+/var/code/bezier/src/fortran/quadpack/d1mach.f:161:72:
+
+  161 |                   CALL I1MCRY(RIGHT(1), J, 16291, 8388608, 0)
+      |                                                                        1
+Warning: Procedure ‘i1mcry’ called with an implicit interface at (1) [-Wimplicit-interface]
+/var/code/bezier/src/fortran/quadpack/d1mach.f:163:72:
+
+  163 |                   CALL I1MCRY(DIVER(1), J, 16292, 8388608, 0)
+      |                                                                        1
+Warning: Procedure ‘i1mcry’ called with an implicit interface at (1) [-Wimplicit-interface]
+/var/code/bezier/src/fortran/quadpack/d1mach.f:165:72:
+
+  165 |                   CALL I1MCRY(LOG10(1), J, 16383, 10100890, 8715215)
+      |                                                                        1
+Warning: Procedure ‘i1mcry’ called with an implicit interface at (1) [-Wimplicit-interface]
+/var/code/bezier/src/fortran/quadpack/d1mach.f:166:72:
+
+  166 |                   CALL I1MCRY(LOG10(2), J, 0, 16226447, 9001388)
+      |                                                                        1
+Warning: Procedure ‘i1mcry’ called with an implicit interface at (1) [-Wimplicit-interface]
+[ 15%] Building Fortran object quadpack/CMakeFiles/quadpack.dir/dqagse.f.o
+cd /var/code/bezier/.nox/libbezier-debug/build/quadpack && /usr/bin/f95   -g -fPIC -fno-second-underscore -Wall -Wextra -Wno-compare-reals -Wimplicit-interface -fmax-errors=1 -std=f2008 -fcheck=all -fbacktrace -fimplicit-none -pedantic -g -ffixed-form -c /var/code/bezier/src/fortran/quadpack/dqagse.f -o CMakeFiles/quadpack.dir/dqagse.f.o
+/var/code/bezier/src/fortran/quadpack/dqagse.f:218:15:
+
+  218 |       epmach = d1mach(4)
+      |               1
+Warning: Procedure ‘d1mach’ called with an implicit interface at (1) [-Wimplicit-interface]
+/var/code/bezier/src/fortran/quadpack/dqagse.f:238:14:
+
+  238 |       uflow = d1mach(1)
+      |              1
+Warning: Procedure ‘d1mach’ called with an implicit interface at (1) [-Wimplicit-interface]
+/var/code/bezier/src/fortran/quadpack/dqagse.f:239:14:
+
+  239 |       oflow = d1mach(2)
+      |              1
+Warning: Procedure ‘d1mach’ called with an implicit interface at (1) [-Wimplicit-interface]
+/var/code/bezier/src/fortran/quadpack/dqagse.f:241:72:
+
+  241 |       call dqk21(f,a,b,result,abserr,defabs,resabs)
+      |                                                                        1
+Warning: Procedure ‘dqk21’ called with an implicit interface at (1) [-Wimplicit-interface]
+/var/code/bezier/src/fortran/quadpack/dqagse.f:290:72:
+
+  290 |         call dqk21(f,a1,b1,area1,error1,resabs,defab1)
+      |                                                                        1
+Warning: Procedure ‘dqk21’ called with an implicit interface at (1) [-Wimplicit-interface]
+/var/code/bezier/src/fortran/quadpack/dqagse.f:291:72:
+
+  291 |         call dqk21(f,a2,b2,area2,error2,resabs,defab2)
+      |                                                                        1
+Warning: Procedure ‘dqk21’ called with an implicit interface at (1) [-Wimplicit-interface]
+/var/code/bezier/src/fortran/quadpack/dqagse.f:347:72:
+
+  347 |    30   call dqpsrt(limit,last,maxerr,errmax,elist,iord,nrmax)
+      |                                                                        1
+Warning: Procedure ‘dqpsrt’ called with an implicit interface at (1) [-Wimplicit-interface]
+/var/code/bezier/src/fortran/quadpack/dqagse.f:385:72:
+
+  385 |         call dqelg(numrl2,rlist2,reseps,abseps,res3la,nres)
+      |                                                                        1
+Warning: Procedure ‘dqelg’ called with an implicit interface at (1) [-Wimplicit-interface]
+[ 23%] Building Fortran object quadpack/CMakeFiles/quadpack.dir/dqelg.f.o
+cd /var/code/bezier/.nox/libbezier-debug/build/quadpack && /usr/bin/f95   -g -fPIC -fno-second-underscore -Wall -Wextra -Wno-compare-reals -Wimplicit-interface -fmax-errors=1 -std=f2008 -fcheck=all -fbacktrace -fimplicit-none -pedantic -g -ffixed-form -c /var/code/bezier/src/fortran/quadpack/dqelg.f -o CMakeFiles/quadpack.dir/dqelg.f.o
+/var/code/bezier/src/fortran/quadpack/dqelg.f:83:15:
+
+   83 |       epmach = d1mach(4)
+      |               1
+Warning: Procedure ‘d1mach’ called with an implicit interface at (1) [-Wimplicit-interface]
+/var/code/bezier/src/fortran/quadpack/dqelg.f:84:14:
+
+   84 |       oflow = d1mach(2)
+      |              1
+Warning: Procedure ‘d1mach’ called with an implicit interface at (1) [-Wimplicit-interface]
+[ 30%] Building Fortran object quadpack/CMakeFiles/quadpack.dir/dqk21.f.o
+cd /var/code/bezier/.nox/libbezier-debug/build/quadpack && /usr/bin/f95   -g -fPIC -fno-second-underscore -Wall -Wextra -Wno-compare-reals -Wimplicit-interface -fmax-errors=1 -std=f2008 -fcheck=all -fbacktrace -fimplicit-none -pedantic -g -ffixed-form -c /var/code/bezier/src/fortran/quadpack/dqk21.f -o CMakeFiles/quadpack.dir/dqk21.f.o
+/var/code/bezier/src/fortran/quadpack/dqk21.f:132:15:
+
+  132 |       epmach = d1mach(4)
+      |               1
+Warning: Procedure ‘d1mach’ called with an implicit interface at (1) [-Wimplicit-interface]
+/var/code/bezier/src/fortran/quadpack/dqk21.f:133:14:
+
+  133 |       uflow = d1mach(1)
+      |              1
+Warning: Procedure ‘d1mach’ called with an implicit interface at (1) [-Wimplicit-interface]
+/var/code/bezier/src/fortran/quadpack/dqk21.f:143:11:
+
+  143 |       fc = f(centr)
+      |           1
+Warning: Procedure ‘f’ called with an implicit interface at (1) [-Wimplicit-interface]
+/var/code/bezier/src/fortran/quadpack/dqk21.f:149:16:
+
+  149 |         fval1 = f(centr-absc)
+      |                1
+Warning: Procedure ‘f’ called with an implicit interface at (1) [-Wimplicit-interface]
+/var/code/bezier/src/fortran/quadpack/dqk21.f:150:16:
+
+  150 |         fval2 = f(centr+absc)
+      |                1
+Warning: Procedure ‘f’ called with an implicit interface at (1) [-Wimplicit-interface]
+/var/code/bezier/src/fortran/quadpack/dqk21.f:161:16:
+
+  161 |         fval1 = f(centr-absc)
+      |                1
+Warning: Procedure ‘f’ called with an implicit interface at (1) [-Wimplicit-interface]
+/var/code/bezier/src/fortran/quadpack/dqk21.f:162:16:
+
+  162 |         fval2 = f(centr+absc)
+      |                1
+Warning: Procedure ‘f’ called with an implicit interface at (1) [-Wimplicit-interface]
+[ 38%] Building Fortran object quadpack/CMakeFiles/quadpack.dir/dqpsrt.f.o
+cd /var/code/bezier/.nox/libbezier-debug/build/quadpack && /usr/bin/f95   -g -fPIC -fno-second-underscore -Wall -Wextra -Wno-compare-reals -Wimplicit-interface -fmax-errors=1 -std=f2008 -fcheck=all -fbacktrace -fimplicit-none -pedantic -g -ffixed-form -c /var/code/bezier/src/fortran/quadpack/dqpsrt.f -o CMakeFiles/quadpack.dir/dqpsrt.f.o
+make[2]: Leaving directory '/var/code/bezier/.nox/libbezier-debug/build'
+[ 38%] Built target quadpack
+/usr/bin/make  -f CMakeFiles/bezier.dir/build.make CMakeFiles/bezier.dir/depend
+make[2]: Entering directory '/var/code/bezier/.nox/libbezier-debug/build'
+cd /var/code/bezier/.nox/libbezier-debug/build && /root/.pyenv/versions/3.9.1/lib/python3.9/site-packages/cmake/data/bin/cmake -E cmake_depends "Unix Makefiles" /var/code/bezier/src/fortran /var/code/bezier/src/fortran /var/code/bezier/.nox/libbezier-debug/build /var/code/bezier/.nox/libbezier-debug/build /var/code/bezier/.nox/libbezier-debug/build/CMakeFiles/bezier.dir/DependInfo.cmake --color=
+Dependee "/var/code/bezier/.nox/libbezier-debug/build/CMakeFiles/bezier.dir/DependInfo.cmake" is newer than depender "/var/code/bezier/.nox/libbezier-debug/build/CMakeFiles/bezier.dir/depend.internal".
+Dependee "/var/code/bezier/.nox/libbezier-debug/build/CMakeFiles/CMakeDirectoryInformation.cmake" is newer than depender "/var/code/bezier/.nox/libbezier-debug/build/CMakeFiles/bezier.dir/depend.internal".
+Scanning dependencies of target bezier
+make[2]: Leaving directory '/var/code/bezier/.nox/libbezier-debug/build'
+/usr/bin/make  -f CMakeFiles/bezier.dir/build.make CMakeFiles/bezier.dir/build
+make[2]: Entering directory '/var/code/bezier/.nox/libbezier-debug/build'
+[ 46%] Building Fortran object CMakeFiles/bezier.dir/types.f90.o
+/usr/bin/f95 -Dbezier_EXPORTS  -g -fPIC -fno-second-underscore -Wall -Wextra -Wno-compare-reals -Wno-conversion -Wimplicit-interface -fmax-errors=1 -std=f2008 -fcheck=all -fbacktrace -fimplicit-none -pedantic -g -c /var/code/bezier/src/fortran/types.f90 -o CMakeFiles/bezier.dir/types.f90.o
+/root/.pyenv/versions/3.9.1/lib/python3.9/site-packages/cmake/data/bin/cmake -E cmake_copy_f90_mod types.mod CMakeFiles/bezier.dir/types.mod.stamp GNU
+[ 53%] Building Fortran object CMakeFiles/bezier.dir/helpers.f90.o
+/usr/bin/f95 -Dbezier_EXPORTS  -g -fPIC -fno-second-underscore -Wall -Wextra -Wno-compare-reals -Wno-conversion -Wimplicit-interface -fmax-errors=1 -std=f2008 -fcheck=all -fbacktrace -fimplicit-none -pedantic -g -c /var/code/bezier/src/fortran/helpers.f90 -o CMakeFiles/bezier.dir/helpers.f90.o
+/root/.pyenv/versions/3.9.1/lib/python3.9/site-packages/cmake/data/bin/cmake -E cmake_copy_f90_mod helpers.mod CMakeFiles/bezier.dir/helpers.mod.stamp GNU
+[ 61%] Building Fortran object CMakeFiles/bezier.dir/curve.f90.o
+/usr/bin/f95 -Dbezier_EXPORTS  -g -fPIC -fno-second-underscore -Wall -Wextra -Wno-compare-reals -Wno-conversion -Wimplicit-interface -fmax-errors=1 -std=f2008 -fcheck=all -fbacktrace -fimplicit-none -pedantic -g -c /var/code/bezier/src/fortran/curve.f90 -o CMakeFiles/bezier.dir/curve.f90.o
+/root/.pyenv/versions/3.9.1/lib/python3.9/site-packages/cmake/data/bin/cmake -E cmake_copy_f90_mod curve.mod CMakeFiles/bezier.dir/curve.mod.stamp GNU
+/root/.pyenv/versions/3.9.1/lib/python3.9/site-packages/cmake/data/bin/cmake -E touch CMakeFiles/bezier.dir/curve.f90.o.provides.build
+[ 69%] Building Fortran object CMakeFiles/bezier.dir/status.f90.o
+/usr/bin/f95 -Dbezier_EXPORTS  -g -fPIC -fno-second-underscore -Wall -Wextra -Wno-compare-reals -Wno-conversion -Wimplicit-interface -fmax-errors=1 -std=f2008 -fcheck=all -fbacktrace -fimplicit-none -pedantic -g -c /var/code/bezier/src/fortran/status.f90 -o CMakeFiles/bezier.dir/status.f90.o
+/root/.pyenv/versions/3.9.1/lib/python3.9/site-packages/cmake/data/bin/cmake -E cmake_copy_f90_mod status.mod CMakeFiles/bezier.dir/status.mod.stamp GNU
+[ 76%] Building Fortran object CMakeFiles/bezier.dir/curve_intersection.f90.o
+/usr/bin/f95 -Dbezier_EXPORTS  -g -fPIC -fno-second-underscore -Wall -Wextra -Wno-compare-reals -Wno-conversion -Wimplicit-interface -fmax-errors=1 -std=f2008 -fcheck=all -fbacktrace -fimplicit-none -pedantic -g -c /var/code/bezier/src/fortran/curve_intersection.f90 -o CMakeFiles/bezier.dir/curve_intersection.f90.o
+/root/.pyenv/versions/3.9.1/lib/python3.9/site-packages/cmake/data/bin/cmake -E cmake_copy_f90_mod curve_intersection.mod CMakeFiles/bezier.dir/curve_intersection.mod.stamp GNU
+/root/.pyenv/versions/3.9.1/lib/python3.9/site-packages/cmake/data/bin/cmake -E touch CMakeFiles/bezier.dir/curve_intersection.f90.o.provides.build
+/root/.pyenv/versions/3.9.1/lib/python3.9/site-packages/cmake/data/bin/cmake -E touch CMakeFiles/bezier.dir/helpers.f90.o.provides.build
+/root/.pyenv/versions/3.9.1/lib/python3.9/site-packages/cmake/data/bin/cmake -E touch CMakeFiles/bezier.dir/status.f90.o.provides.build
+[ 84%] Building Fortran object CMakeFiles/bezier.dir/triangle.f90.o
+/usr/bin/f95 -Dbezier_EXPORTS  -g -fPIC -fno-second-underscore -Wall -Wextra -Wno-compare-reals -Wno-conversion -Wimplicit-interface -fmax-errors=1 -std=f2008 -fcheck=all -fbacktrace -fimplicit-none -pedantic -g -c /var/code/bezier/src/fortran/triangle.f90 -o CMakeFiles/bezier.dir/triangle.f90.o
+/root/.pyenv/versions/3.9.1/lib/python3.9/site-packages/cmake/data/bin/cmake -E cmake_copy_f90_mod triangle.mod CMakeFiles/bezier.dir/triangle.mod.stamp GNU
+/root/.pyenv/versions/3.9.1/lib/python3.9/site-packages/cmake/data/bin/cmake -E touch CMakeFiles/bezier.dir/triangle.f90.o.provides.build
+[ 92%] Building Fortran object CMakeFiles/bezier.dir/triangle_intersection.f90.o
+/usr/bin/f95 -Dbezier_EXPORTS  -g -fPIC -fno-second-underscore -Wall -Wextra -Wno-compare-reals -Wno-conversion -Wimplicit-interface -fmax-errors=1 -std=f2008 -fcheck=all -fbacktrace -fimplicit-none -pedantic -g -c /var/code/bezier/src/fortran/triangle_intersection.f90 -o CMakeFiles/bezier.dir/triangle_intersection.f90.o
+/root/.pyenv/versions/3.9.1/lib/python3.9/site-packages/cmake/data/bin/cmake -E cmake_copy_f90_mod triangle_intersection.mod CMakeFiles/bezier.dir/triangle_intersection.mod.stamp GNU
+/root/.pyenv/versions/3.9.1/lib/python3.9/site-packages/cmake/data/bin/cmake -E touch CMakeFiles/bezier.dir/triangle_intersection.f90.o.provides.build
+/root/.pyenv/versions/3.9.1/lib/python3.9/site-packages/cmake/data/bin/cmake -E touch CMakeFiles/bezier.dir/types.f90.o.provides.build
+[100%] Linking Fortran shared library libbezier.so
+/root/.pyenv/versions/3.9.1/lib/python3.9/site-packages/cmake/data/bin/cmake -E cmake_link_script CMakeFiles/bezier.dir/link.txt --verbose=1
+/usr/bin/f95 -fPIC -g -shared -Wl,-soname,libbezier.so.2021 -o libbezier.so.2021.2.12 CMakeFiles/bezier.dir/curve.f90.o CMakeFiles/bezier.dir/curve_intersection.f90.o CMakeFiles/bezier.dir/helpers.f90.o CMakeFiles/bezier.dir/status.f90.o CMakeFiles/bezier.dir/triangle.f90.o CMakeFiles/bezier.dir/triangle_intersection.f90.o CMakeFiles/bezier.dir/types.f90.o quadpack/CMakeFiles/quadpack.dir/d1mach.f.o quadpack/CMakeFiles/quadpack.dir/dqagse.f.o quadpack/CMakeFiles/quadpack.dir/dqelg.f.o quadpack/CMakeFiles/quadpack.dir/dqk21.f.o quadpack/CMakeFiles/quadpack.dir/dqpsrt.f.o 
+/root/.pyenv/versions/3.9.1/lib/python3.9/site-packages/cmake/data/bin/cmake -E cmake_symlink_library libbezier.so.2021.2.12 libbezier.so.2021 libbezier.so
+make[2]: Leaving directory '/var/code/bezier/.nox/libbezier-debug/build'
+[100%] Built target bezier
+make[1]: Leaving directory '/var/code/bezier/.nox/libbezier-debug/build'
+/root/.pyenv/versions/3.9.1/lib/python3.9/site-packages/cmake/data/bin/cmake -E cmake_progress_start /var/code/bezier/.nox/libbezier-debug/build/CMakeFiles 0
+/usr/bin/make  -f CMakeFiles/Makefile2 preinstall
+make[1]: Entering directory '/var/code/bezier/.nox/libbezier-debug/build'
+make[1]: Nothing to be done for 'preinstall'.
+make[1]: Leaving directory '/var/code/bezier/.nox/libbezier-debug/build'
+Install the project...
+/root/.pyenv/versions/3.9.1/lib/python3.9/site-packages/cmake/data/bin/cmake -P cmake_install.cmake
+-- Install configuration: "Debug"
+-- Installing: /var/code/bezier/.nox/libbezier-debug/usr/lib/libbezier.so.2021.2.12
+-- Installing: /var/code/bezier/.nox/libbezier-debug/usr/lib/libbezier.so.2021
+-- Installing: /var/code/bezier/.nox/libbezier-debug/usr/lib/libbezier.so
+-- Installing: /var/code/bezier/.nox/libbezier-debug/usr/include
+-- Installing: /var/code/bezier/.nox/libbezier-debug/usr/include/bezier
+-- Installing: /var/code/bezier/.nox/libbezier-debug/usr/include/bezier/curve.h
+-- Installing: /var/code/bezier/.nox/libbezier-debug/usr/include/bezier/curve_intersection.h
+-- Installing: /var/code/bezier/.nox/libbezier-debug/usr/include/bezier/helpers.h
+-- Installing: /var/code/bezier/.nox/libbezier-debug/usr/include/bezier/status.h
+-- Installing: /var/code/bezier/.nox/libbezier-debug/usr/include/bezier/triangle.h
+-- Installing: /var/code/bezier/.nox/libbezier-debug/usr/include/bezier/triangle_intersection.h
+-- Installing: /var/code/bezier/.nox/libbezier-debug/usr/include/bezier.h
+-- Installing: /var/code/bezier/.nox/libbezier-debug/usr/share/bezier/cmake/BezierConfig.cmake
+-- Installing: /var/code/bezier/.nox/libbezier-debug/usr/share/bezier/cmake/BezierConfig-debug.cmake
+nox > cmake -L /var/code/bezier/.nox/libbezier-debug/build
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /var/code/bezier/.nox/libbezier-debug/build
+-- Cache values
+BUILD_SHARED_LIBS:BOOL=ON
+CMAKE_BUILD_TYPE:STRING=Debug
+CMAKE_INSTALL_PREFIX:PATH=/var/code/bezier/.nox/libbezier-debug/usr
+TARGET_NATIVE_ARCH:BOOL=ON
+nox > python -m pip install .
+nox > pytest /var/code/bezier/tests/unit
+============================= test session starts ==============================
+platform linux -- Python 3.7.9, pytest-6.2.2, py-1.10.0, pluggy-0.13.1
+rootdir: /var/code/bezier, configfile: setup.cfg
+collecting ... collecting 30 items                                                            collecting 153 items                                                           collected 902 items                                                            
+
+tests/unit/test___config__.py ..........                                 [  1%]
+tests/unit/test___init__.py ..                                           [  1%]
+tests/unit/test__base.py ...........                                     [  2%]
+tests/unit/test__curve_helpers.py ...................................... [  6%]
+............                                                             [  8%]
+tests/unit/test__geometric_intersection.py ...................x.         [ 10%]
+tests/unit/test__helpers.py .....................................        [ 14%]
+tests/unit/test__intersection_helpers.py ......                          [ 15%]
+tests/unit/test__legacy.py .                                             [ 15%]
+tests/unit/test__plot_helpers.py ....                                    [ 15%]
+tests/unit/test__symbolic.py ........                                    [ 16%]
+tests/unit/test__triangle_helpers.py ................................... [ 20%]
+.                                                                        [ 20%]
+tests/unit/test__triangle_intersection.py ....................x.         [ 23%]
+tests/unit/test_curve.py ................................                [ 26%]
+tests/unit/test_curved_polygon.py ............                           [ 27%]
+tests/unit/test_triangle.py ............................................ [ 32%]
+..................                                                       [ 34%]
+tests/unit/hazmat/test_algebraic_intersection.py ....................... [ 37%]
+........................................................................ [ 45%]
+....                                                                     [ 45%]
+tests/unit/hazmat/test_clipping.py ................                      [ 47%]
+tests/unit/hazmat/test_curve_helpers.py ................................ [ 51%]
+................................                                         [ 54%]
+tests/unit/hazmat/test_geometric_intersection.py ....................... [ 57%]
+........................................................................ [ 65%]
+.............                                                            [ 66%]
+tests/unit/hazmat/test_helpers.py ...................................... [ 70%]
+................                                                         [ 72%]
+tests/unit/hazmat/test_intersection_helpers.py ......................... [ 75%]
+.........                                                                [ 76%]
+tests/unit/hazmat/test_triangle_helpers.py ............................. [ 79%]
+........................................................................ [ 87%]
+.............................................                            [ 92%]
+tests/unit/hazmat/test_triangle_intersection.py ........................ [ 95%]
+...........................................                              [100%]
+
+======================== 900 passed, 2 xfailed in 6.54s ========================
+nox > Session unit-3.7 was successful.
