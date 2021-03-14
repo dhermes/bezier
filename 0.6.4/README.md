@@ -6,7 +6,7 @@ Build `1184`, Logs gone
 
 ## Travis CI
 
-Build `386` / `334046105` is in the release notes, but failed.
+Build `386` / `334046105`
 
 ### Build Matrix
 
