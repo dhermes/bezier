@@ -1290,6 +1290,8 @@ def jacobian_det(nodes, degree, st_vals):
     .. doctest:: jacobian-det
        :options: +NORMALIZE_WHITESPACE
 
+       >>> import bezier
+       >>> import numpy as np
        >>> nodes = np.asfortranarray([
        ...     [0.0, 1.0, 2.0, 0.0, 1.5, 0.0],
        ...     [0.0, 0.0, 0.0, 1.0, 1.5, 2.0],
