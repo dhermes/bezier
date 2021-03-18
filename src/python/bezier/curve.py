@@ -61,6 +61,7 @@ class Curve(_base.Base):
     .. doctest:: curve-constructor
 
        >>> import bezier
+       >>> import numpy as np
        >>> nodes = np.asfortranarray([
        ...     [0.0, 0.625, 1.0],
        ...     [0.0, 0.5  , 0.5],
