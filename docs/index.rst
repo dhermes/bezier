@@ -151,6 +151,8 @@ For example, to create a curve:
 
 .. doctest:: getting-started
 
+   >>> import bezier
+   >>> import numpy as np
    >>> nodes1 = np.asfortranarray([
    ...     [0.0, 0.5, 1.0],
    ...     [0.0, 1.0, 0.0],
