@@ -156,6 +156,7 @@ class Triangle(_base.Base):
     .. doctest:: triangle-constructor
 
        >>> import bezier
+       >>> import numpy as np
        >>> nodes = np.asfortranarray([
        ...     [0.0, 0.5, 1.0 , 0.125, 0.375, 0.25],
        ...     [0.0, 0.0, 0.25, 0.5  , 0.375, 1.0 ],
