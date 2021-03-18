@@ -66,12 +66,12 @@ def compute_implicit_line(nodes):
     .. testsetup:: compute-implicit-line
 
        import numpy as np
-       import bezier
        from bezier.hazmat.clipping import compute_implicit_line
 
     .. doctest:: compute-implicit-line
        :options: +NORMALIZE_WHITESPACE
 
+       >>> import numpy as np
        >>> nodes = np.asfortranarray([
        ...     [0.0, 1.0, 3.0, 4.0],
        ...     [0.0, 2.5, 0.5, 3.0],
@@ -127,7 +127,6 @@ def compute_fat_line(nodes):
     .. testsetup:: compute-fat-line
 
        import numpy as np
-       import bezier
        from bezier.hazmat.clipping import compute_fat_line
 
     .. doctest:: compute-fat-line
@@ -341,7 +340,6 @@ def clip_range(nodes1, nodes2):
     .. testsetup:: clip-range-start, clip-range
 
        import numpy as np
-       import bezier
        from bezier.hazmat.clipping import clip_range
 
        nodes1 = np.asfortranarray([

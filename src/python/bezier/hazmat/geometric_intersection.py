@@ -158,11 +158,11 @@ def linearization_error(nodes):
     .. testsetup:: linearization-error, linearization-error-fail
 
        import numpy as np
-       import bezier
        from bezier.hazmat.geometric_intersection import linearization_error
 
     .. doctest:: linearization-error
 
+       >>> import numpy as np
        >>> nodes = np.asfortranarray([
        ...     [0.0, 3.0, 9.0],
        ...     [0.0, 1.0, -2.0],

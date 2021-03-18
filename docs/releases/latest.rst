@@ -34,6 +34,13 @@ Additive Changes
    ``Curve.intersect()``
    (`doc <https://bezier.readthedocs.io/en/2021.2.13.dev1/python/reference/bezier.curve.html#bezier.curve.Curve.intersect>`__)
 
+Documentation
+-------------
+
+-  Making all docs pages import external packages at least once
+   (`#257 <https://github.com/dhermes/bezier/pull/257>`__). Fixed
+   `#210 <https://github.com/dhermes/bezier/issues/210>`__.
+
 .. |pypi| image:: https://img.shields.io/pypi/v/bezier/2021.2.13.dev1.svg
    :target: https://pypi.org/project/bezier/2021.2.13.dev1/
    :alt: PyPI link to release 2021.2.13.dev1

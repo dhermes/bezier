@@ -141,6 +141,8 @@ def newton_refine(s, nodes1, t, nodes2):
 
     .. doctest:: newton-refine1
 
+       >>> import bezier
+       >>> import numpy as np
        >>> nodes1 = np.asfortranarray([
        ...     [0.0, 2.0, 4.0],
        ...     [0.0, 4.0, 0.0],

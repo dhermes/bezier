@@ -328,7 +328,7 @@ def compute_length(nodes):
         return np.linalg.norm(first_deriv[:, 0], ord=2)
 
     # NOTE: We import SciPy at runtime to avoid the import-time cost for users
-    #       that don't pure Python curve helpers (e.g. if the ``_speedup``
+    #       that don't need pure Python curve helpers (e.g. if the ``_speedup``
     #       module is available). The ``scipy`` import is a tad expensive.
     import scipy.integrate  # pylint: disable=import-outside-toplevel
 
@@ -506,6 +506,7 @@ def get_curvature(nodes, tangent_vec, s):
     .. doctest:: get-curvature
        :options: +NORMALIZE_WHITESPACE
 
+       >>> import numpy as np
        >>> nodes = np.asfortranarray([
        ...     [1.0, 0.75,  0.5, 0.25, 0.0],
        ...     [0.0, 2.0 , -2.0, 2.0 , 0.0],
@@ -611,6 +612,7 @@ def newton_refine(nodes, point, s):
     .. doctest:: newton-refine-curve
        :options: +NORMALIZE_WHITESPACE
 
+       >>> import bezier
        >>> nodes = np.asfortranarray([
        ...     [0.0, 1.0, 3.0],
        ...     [0.0, 2.0, 1.0],

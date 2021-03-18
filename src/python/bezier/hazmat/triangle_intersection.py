@@ -154,12 +154,12 @@ def newton_refine(nodes, degree, x_val, y_val, s, t):
 
     .. testsetup:: newton-refine-triangle
 
-       import numpy as np
-       import bezier
        from bezier.hazmat.triangle_intersection import newton_refine
 
     .. doctest:: newton-refine-triangle
 
+       >>> import bezier
+       >>> import numpy as np
        >>> nodes = np.asfortranarray([
        ...     [0.0, 1.0, 2.0, 2.0, 2.0, 0.0],
        ...     [0.0, 0.0, 0.0, 1.0, 2.0, 2.0],

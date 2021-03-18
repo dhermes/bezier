@@ -965,7 +965,7 @@ def make_transform(degree, weights_a, weights_b, weights_c):
 
        This is a helper used only by :func:`specialize_triangle`.
 
-    Applies the de Casteljau to the identity matrix, thus
+    Applies the de Casteljau algorithm to the identity matrix, thus
     effectively caching the algorithm in a transformation matrix.
 
     .. note::
@@ -1290,6 +1290,8 @@ def jacobian_det(nodes, degree, st_vals):
     .. doctest:: jacobian-det
        :options: +NORMALIZE_WHITESPACE
 
+       >>> import bezier
+       >>> import numpy as np
        >>> nodes = np.asfortranarray([
        ...     [0.0, 1.0, 2.0, 0.0, 1.5, 0.0],
        ...     [0.0, 0.0, 0.0, 1.0, 1.5, 2.0],
