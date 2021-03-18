@@ -524,14 +524,11 @@ class UnsupportedDegree(NotImplementedError):
     a small subset of possible degrees, so the implementation is
     **degree-specific**:
 
-    .. testsetup:: unsupported-degree
-
-       import numpy as np
-       import bezier
-
     .. doctest:: unsupported-degree
        :options: +NORMALIZE_WHITESPACE
 
+       >>> import bezier
+       >>> import numpy as np
        >>> degree = 5
        >>> nodes = np.empty((2, degree + 1), order="F")
        >>> curve = bezier.Curve(nodes, degree=degree)
