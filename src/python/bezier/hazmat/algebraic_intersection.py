@@ -781,6 +781,7 @@ def bezier_roots(coeffs):
 
     .. doctest:: bezier-roots0
 
+       >>> import numpy as np
        >>> coeffs0 = np.asfortranarray([12.0, 11.0, 8.0])
        >>> companion0, _, _ = bernstein_companion(coeffs0)
        >>> companion0
