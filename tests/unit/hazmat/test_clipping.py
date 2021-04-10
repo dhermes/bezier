@@ -143,37 +143,6 @@ class Test__update_parameters(unittest.TestCase):
         self.assertEqual(s_max, 0.5)
 
 
-class Test__check_parameter_range(unittest.TestCase):
-    @staticmethod
-    def _call_function_under_test(s_min, s_max):
-        from bezier.hazmat import clipping
-
-        return clipping._check_parameter_range(s_min, s_max)
-
-    def test_default_both(self):
-        from bezier.hazmat import clipping
-
-        s_min, s_max = self._call_function_under_test(
-            clipping.DEFAULT_S_MIN, clipping.DEFAULT_S_MAX
-        )
-        self.assertEqual(s_min, 0.0)
-        self.assertEqual(s_max, 1.0)
-
-    def test_default_max(self):
-        from bezier.hazmat import clipping
-
-        s_min, s_max = self._call_function_under_test(
-            0.25, clipping.DEFAULT_S_MAX
-        )
-        self.assertEqual(s_min, 0.25)
-        self.assertEqual(s_max, 0.25)
-
-    def test_both_set(self):
-        s_min, s_max = self._call_function_under_test(0.25, 0.75)
-        self.assertEqual(s_min, 0.25)
-        self.assertEqual(s_max, 0.75)
-
-
 class Test_clip_range(unittest.TestCase):
     @staticmethod
     def _call_function_under_test(nodes1, nodes2):
