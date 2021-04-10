@@ -16,6 +16,13 @@ Bug Fixes
    be absent.
    (`#255 <https://github.com/dhermes/bezier/pull/255>`__). Fixed
    `#254 <https://github.com/dhermes/bezier/issues/254>`__.
+-  Bug fix for ``clip_range()``
+   (`doc <https://bezier.readthedocs.io/en/2021.2.13.dev1/python/reference/bezier.hazmat.clipping.html#bezier.hazmat.clipping.clip_range>`__).
+   Intersections with the ``t=0`` / ``t=1`` sides of the fat line were not
+   taken into account **and** a value for ``s_max`` could be accidentally left
+   unset if the intersections occurred in an order where the ``s``-value
+   decreased throughout
+   (`#259 <https://github.com/dhermes/bezier/pull/259>`__).
 
 Breaking Changes
 ~~~~~~~~~~~~~~~~
