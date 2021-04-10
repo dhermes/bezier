@@ -377,9 +377,9 @@ def clip_range(nodes1, nodes2):
     #       intersect the fat lines. In order to account for intersections
     #       at ``t = 0`` or ``t = 1``, we just check the height of ``d(t)``.
     if d_min <= polynomial[1, 0] <= d_max:
-        s_min = 0.0
+        s_min = 0.0  # NOT YET
     if d_min <= polynomial[1, degree2] <= d_max:
-        s_max = 1.0
+        s_max = 1.0  # NOT YET
     for start_index in range(degree2):
         for end_index in range(start_index + 1, degree2 + 1):
             s_min, s_max = _update_parameters(
