@@ -312,8 +312,8 @@ def clip_range(nodes1, nodes2):
        will only have one intersection in the parameter ranges
        :math:`s \in \left[0, 1\right]`, :math:`t \in \left[0, 1\right]`.
        This assumption is based on the fact that B |eacute| zier clipping
-       is meant to be used to find tangent intersections for already
-       subdivided (i.e. sufficiently zoomed in) curve segments.
+       is meant to be used (within this library) to find tangent intersections
+       for already subdivided (i.e. sufficiently zoomed in) curve segments.
 
     Two B |eacute| zier curves :math:`B_1(s)` and :math:`B_2(t)` are defined by
     ``nodes1`` and ``nodes2``. The "fat line" (see :func:`compute_fat_line`)
