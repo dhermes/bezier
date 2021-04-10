@@ -186,14 +186,6 @@ def _update_parameters(s_min, s_max, start0, end0, start1, end1):
     of the convex hull of the distance polynomial of the curve being
     clipped.
 
-    If both of ``s_min`` and ``s_max`` are "unset", then any :math:`s`
-    value that is valid for ``s_min`` would also be valid for ``s_max``.
-    Rather than adding a special case to handle this scenario, **only**
-    ``s_min`` will be updated.
-
-    In cases where a given parameter :math:`s` would be a valid update
-    for both ``s_min`` and ``s_max``, this function **only** updates ``s_min``.
-
     Args:
         s_min (float): Current start of clipped interval. If "unset", this
             value will be ``DEFAULT_S_MIN``.
