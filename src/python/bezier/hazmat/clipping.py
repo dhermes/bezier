@@ -225,12 +225,16 @@ def _update_parameters(s_min, s_max, start0, end0, start1, end1):
     if not success:
         raise NotImplementedError(NO_PARALLEL)
 
+    # NOTE: We can only **widen** the interval with a real intersection.
+    #       I.e. we can push the minimum to the left or the maximum to the
+    #       right.
+
     if _helpers.in_interval(t, 0.0, 1.0):
         if _helpers.in_interval(s, 0.0, s_min):
-            return s, s_max
+            s_min = s
 
-        elif _helpers.in_interval(s, s_max, 1.0):
-            return s_min, s
+        if _helpers.in_interval(s, s_max, 1.0):
+            s_max = s
 
     return s_min, s_max
 
