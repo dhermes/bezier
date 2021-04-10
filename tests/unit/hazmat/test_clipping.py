@@ -127,10 +127,10 @@ class Test__update_parameters(unittest.TestCase):
             s_min, s_max, start0, end0, start1, end1
         )
 
-    def test_update_s_min(self):
-        s_min, s_max = self._update_helper(1.0, -1.0)
+    def test_update_both_unset(self):
+        s_min, s_max = self._update_helper(1.0, 0.0)
         self.assertEqual(s_min, 0.25)
-        self.assertEqual(s_max, -1.0)
+        self.assertEqual(s_max, 0.25)
 
     def test_update_s_max(self):
         s_min, s_max = self._update_helper(0.125, -1.0)
