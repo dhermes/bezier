@@ -407,11 +407,17 @@ def clip_range(nodes1, nodes2):
     end_bottom = np.asfortranarray([degree2, d_min])
     start_top = np.asfortranarray([0.0, d_max])
     end_top = np.asfortranarray([degree2, d_max])
+
     s_min = DEFAULT_S_MIN
     s_max = DEFAULT_S_MAX
-    # NOTE: We avoid computing the convex hull and just compute where
-    #       all segments connecting two control points intersect the
-    #       fat lines.
+    # NOTE: We avoid computing the convex hull of ``d(t)`` / ``polynomial`` and
+    #       just compute where all segments connecting two control points
+    #       intersect the fat lines. In order to account for intersections
+    #       at ``t = 0`` or ``t = 1``, we just check the height of ``d(t)``.
+    if d_min <= polynomial[1, 0] <= d_max:
+        s_min = 0.0
+    if d_min <= polynomial[1, degree2] <= d_max:
+        s_max = 1.0
     for start_index in range(degree2):
         for end_index in range(start_index + 1, degree2 + 1):
             s_min, s_max = _update_parameters(
