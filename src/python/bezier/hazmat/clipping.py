@@ -231,44 +231,6 @@ def _update_parameters(s_min, s_max, start0, end0, start1, end1):
     return s_min, s_max
 
 
-def _check_parameter_range(s_min, s_max):
-    r"""Performs a final check on a clipped parameter range.
-
-    .. note::
-
-       This is a helper for :func:`clip_range`.
-
-    If both values are unchanged from the "unset" default, this returns
-    the whole interval :math:`\left[0.0, 1.0\right]`.
-
-    If only one of the values is set to some parameter :math:`s`, this
-    returns the "degenerate" interval :math:`\left[s, s\right]`. (We rely
-    on the fact that ``s_min`` must be the only set value, based on how
-    :func:`_update_parameters` works.)
-
-    Otherwise, this simply returns ``[s_min, s_max]``.
-
-    Args:
-        s_min (float): Current start of clipped interval. If "unset", this
-            value will be ``DEFAULT_S_MIN``.
-        s_max (float): Current end of clipped interval. If "unset", this
-            value will be ``DEFAULT_S_MAX``.
-
-    Returns:
-        Tuple[float, float]: The (possibly updated) start and end
-        of the clipped parameter range.
-    """
-    if s_min == DEFAULT_S_MIN:
-        # Based on the way ``_update_parameters`` works, we know
-        # both parameters must be unset if ``s_min``.
-        return 0.0, 1.0
-
-    if s_max == DEFAULT_S_MAX:
-        return s_min, s_min
-
-    return s_min, s_max
-
-
 def _clip_range_polynomial(nodes, coeff_a, coeff_b, coeff_c):
     r"""Compute control points for a polynomial used to clip range.
 
@@ -436,4 +398,4 @@ def clip_range(nodes1, nodes2):
                 polynomial[:, start_index],
                 polynomial[:, end_index],
             )
-    return _check_parameter_range(s_min, s_max)
+    return s_min, s_max
