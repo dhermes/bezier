@@ -186,14 +186,6 @@ def _update_parameters(s_min, s_max, start0, end0, start1, end1):
     of the convex hull of the distance polynomial of the curve being
     clipped.
 
-    If both of ``s_min`` and ``s_max`` are "unset", then any :math:`s`
-    value that is valid for ``s_min`` would also be valid for ``s_max``.
-    Rather than adding a special case to handle this scenario, **only**
-    ``s_min`` will be updated.
-
-    In cases where a given parameter :math:`s` would be a valid update
-    for both ``s_min`` and ``s_max``, this function **only** updates ``s_min``.
-
     Args:
         s_min (float): Current start of clipped interval. If "unset", this
             value will be ``DEFAULT_S_MIN``.
@@ -225,50 +217,16 @@ def _update_parameters(s_min, s_max, start0, end0, start1, end1):
     if not success:
         raise NotImplementedError(NO_PARALLEL)
 
+    # NOTE: We can only **widen** the interval with a real intersection.
+    #       I.e. we can push the minimum to the left or the maximum to the
+    #       right.
+
     if _helpers.in_interval(t, 0.0, 1.0):
         if _helpers.in_interval(s, 0.0, s_min):
-            return s, s_max
+            s_min = s
 
-        elif _helpers.in_interval(s, s_max, 1.0):
-            return s_min, s
-
-    return s_min, s_max
-
-
-def _check_parameter_range(s_min, s_max):
-    r"""Performs a final check on a clipped parameter range.
-
-    .. note::
-
-       This is a helper for :func:`clip_range`.
-
-    If both values are unchanged from the "unset" default, this returns
-    the whole interval :math:`\left[0.0, 1.0\right]`.
-
-    If only one of the values is set to some parameter :math:`s`, this
-    returns the "degenerate" interval :math:`\left[s, s\right]`. (We rely
-    on the fact that ``s_min`` must be the only set value, based on how
-    :func:`_update_parameters` works.)
-
-    Otherwise, this simply returns ``[s_min, s_max]``.
-
-    Args:
-        s_min (float): Current start of clipped interval. If "unset", this
-            value will be ``DEFAULT_S_MIN``.
-        s_max (float): Current end of clipped interval. If "unset", this
-            value will be ``DEFAULT_S_MAX``.
-
-    Returns:
-        Tuple[float, float]: The (possibly updated) start and end
-        of the clipped parameter range.
-    """
-    if s_min == DEFAULT_S_MIN:
-        # Based on the way ``_update_parameters`` works, we know
-        # both parameters must be unset if ``s_min``.
-        return 0.0, 1.0
-
-    if s_max == DEFAULT_S_MAX:
-        return s_min, s_min
+        if _helpers.in_interval(s, s_max, 1.0):
+            s_max = s
 
     return s_min, s_max
 
@@ -316,8 +274,8 @@ def clip_range(nodes1, nodes2):
        will only have one intersection in the parameter ranges
        :math:`s \in \left[0, 1\right]`, :math:`t \in \left[0, 1\right]`.
        This assumption is based on the fact that B |eacute| zier clipping
-       is meant to be used to find tangent intersections for already
-       subdivided (i.e. sufficiently zoomed in) curve segments.
+       is meant to be used (within this library) to find tangent intersections
+       for already subdivided (i.e. sufficiently zoomed in) curve segments.
 
     Two B |eacute| zier curves :math:`B_1(s)` and :math:`B_2(t)` are defined by
     ``nodes1`` and ``nodes2``. The "fat line" (see :func:`compute_fat_line`)
@@ -411,11 +369,17 @@ def clip_range(nodes1, nodes2):
     end_bottom = np.asfortranarray([degree2, d_min])
     start_top = np.asfortranarray([0.0, d_max])
     end_top = np.asfortranarray([degree2, d_max])
+
     s_min = DEFAULT_S_MIN
     s_max = DEFAULT_S_MAX
-    # NOTE: We avoid computing the convex hull and just compute where
-    #       all segments connecting two control points intersect the
-    #       fat lines.
+    # NOTE: We avoid computing the convex hull of ``d(t)`` / ``polynomial`` and
+    #       just compute where all segments connecting two control points
+    #       intersect the fat lines. In order to account for intersections
+    #       at ``t = 0`` or ``t = 1``, we just check the height of ``d(t)``.
+    if d_min <= polynomial[1, 0] <= d_max:
+        s_min = 0.0  # NOT YET
+    if d_min <= polynomial[1, degree2] <= d_max:
+        s_max = 1.0  # NOT YET
     for start_index in range(degree2):
         for end_index in range(start_index + 1, degree2 + 1):
             s_min, s_max = _update_parameters(
@@ -434,4 +398,4 @@ def clip_range(nodes1, nodes2):
                 polynomial[:, start_index],
                 polynomial[:, end_index],
             )
-    return _check_parameter_range(s_min, s_max)
+    return s_min, s_max
