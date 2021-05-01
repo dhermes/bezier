@@ -28,11 +28,11 @@ IS_LINUX = sys.platform in ("linux", "linux2")
 IS_MACOS = sys.platform == "darwin"
 IS_WINDOWS = os.name == "nt"
 DEPS = {
-    "black": "black >= 20.8b1",
+    "black": "black >= 21.4b2",
     "cmake-format": "cmake-format >= 0.6.13",
     "cmake": "cmake >= 3.18.4.post1",
     "coverage": "coverage",
-    "Cython": "Cython >= 0.29.22",
+    "Cython": "Cython >= 0.29.23",
     "docutils": "docutils",
     "flake8": "flake8",
     "flake8-import-order": "flake8-import-order",
@@ -44,7 +44,7 @@ DEPS = {
     "numpy": "numpy >= 1.20.1",
     "pycobertura": "pycobertura >= 2.0.1",
     "Pygments": "Pygments",
-    "pylint": "pylint >= 2.7.1",
+    "pylint": "pylint >= 2.8.2",
     "pytest": "pytest >= 6.2.2",
     "pytest-cov": "pytest-cov",
     "scipy": "scipy >= 1.6.0",
