@@ -1,0 +1,38 @@
+---
+name: Trigger Many
+
+on:
+  # # # Invalid workflow file:: Workflow 'Trigger Many' cannot listen to itself.
+  # workflow_run:
+  #   workflows:
+  #   - Trigger Many
+  #   types:
+  #   - completed
+  create: {}  # For a tag
+  push:
+    branches:
+    - trigger-many
+  pull_request:
+    branches:
+    - trigger-many
+  workflow_dispatch:
+    inputs:
+      reason:
+        description: 'Reason for manually triggering workflow'
+        required: true
+
+jobs:
+  ci:
+    name: Continuous Integration
+    runs-on: ubuntu-20.04
+
+    steps:
+    - name: Show env
+      run: |
+        env | grep GITHUB | sort -u
+
+    - name: Dump GitHub context
+      env:
+        GITHUB_CONTEXT: ${{ toJSON(github) }}
+      run: |
+        echo "${GITHUB_CONTEXT}"
