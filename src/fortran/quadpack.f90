@@ -438,7 +438,7 @@ subroutine dqagse(f,a,b,epsabs,epsrel,limit,result,abserr,neval, &
   140 neval = 42*last-21
 
   return
-end
+end subroutine dqagse
 
 subroutine dqelg ( n, epstab, result, abserr, res3la, nres )
 
@@ -626,7 +626,7 @@ subroutine dqelg ( n, epstab, result, abserr, res3la, nres )
   abserr =  max ( abserr, 0.5D+01*epmach* abs ( result))
 
   return
-end
+end subroutine dqelg
 
 subroutine dqk21(f,a,b,result,abserr,resabs,resasc)
 
@@ -809,7 +809,7 @@ subroutine dqk21(f,a,b,result,abserr,resabs,resasc)
     ((epmach*0.5D+02)*resabs,abserr)
 
   return
-end
+end subroutine dqk21
 
 subroutine dqpsrt ( limit, last, maxerr, ermax, elist, iord, nrmax )
 
@@ -944,6 +944,6 @@ subroutine dqpsrt ( limit, last, maxerr, ermax, elist, iord, nrmax )
   ermax = elist(maxerr)
 
   return
-end
+end subroutine dqpsrt
 
 end module quadpack
