@@ -868,8 +868,7 @@ subroutine dqpsrt ( limit, last, maxerr, ermax, elist, iord, nrmax )
   implicit none
 
   real ( kind = 8 ) elist,ermax,errmax,errmin
-  integer ( kind = 4 ) i,ibeg,ido,iord,isucc,j,jbnd,jupbn,k,last, &
-    lim
+  integer ( kind = 4 ) i,ibeg,ido,iord,isucc,j,jbnd,jupbn,k,last
   integer ( kind = 4 ) limit
   integer ( kind = 4 ) maxerr
   integer ( kind = 4 ) nrmax
