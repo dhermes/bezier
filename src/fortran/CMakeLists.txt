@@ -19,7 +19,7 @@ if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE Release)
 endif()
 
-if(WIN32 AND CMAKE_Fortran_COMPILER_ID EQUAL "GNU")
+if(WIN32 AND CMAKE_Fortran_COMPILER_ID STREQUAL "GNU")
   set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -static")
 
   # Regarding `-Wl,--default-image-base-low`, see:
@@ -77,7 +77,7 @@ endif()
 
 target_include_directories(bezier PUBLIC $<INSTALL_INTERFACE:include>)
 
-if(CMAKE_Fortran_COMPILER_ID EQUAL "GNU")
+if(CMAKE_Fortran_COMPILER_ID STREQUAL "GNU")
   # ``-Wextra`` includes ``no-compare-reals``, but we have comparisons like
   # ``value == 0.0_dp``.
   target_compile_options(
@@ -90,22 +90,22 @@ if(CMAKE_Fortran_COMPILER_ID EQUAL "GNU")
             -Wimplicit-interface
             -fmax-errors=1
             -std=f2008)
-  if(CMAKE_BUILD_TYPE EQUAL "Debug")
+  if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     target_compile_options(bezier PRIVATE -fcheck=all -fbacktrace
                                           -fimplicit-none -pedantic)
     target_compile_options(bezier PUBLIC -g)
-  elseif(CMAKE_BUILD_TYPE EQUAL "Release")
+  elseif(CMAKE_BUILD_TYPE STREQUAL "Release")
     target_compile_options(bezier PRIVATE -Werror)
     if(${TARGET_NATIVE_ARCH})
       target_compile_options(bezier PRIVATE -march=native)
     endif()
     target_compile_options(bezier PUBLIC -DNDEBUG -O3 -funroll-loops)
   endif()
-elseif(CMAKE_Fortran_COMPILER_ID EQUAL "Intel")
+elseif(CMAKE_Fortran_COMPILER_ID STREQUAL "Intel")
   target_compile_options(quadpack PUBLIC -warn all)
-  if(CMAKE_BUILD_TYPE EQUAL "Debug")
+  if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     target_compile_options(quadpack PUBLIC -check all)
-  elseif(CMAKE_BUILD_TYPE EQUAL "Release")
+  elseif(CMAKE_BUILD_TYPE STREQUAL "Release")
     target_compile_options(quadpack PUBLIC -fast)
   endif()
 else()
