@@ -1,3 +1,9 @@
+module quadpack
+
+  public dqagse
+
+contains
+
 subroutine dgtsl ( n, c, d, e, b, info )
 
 !*****************************************************************************80
@@ -8845,3 +8851,5 @@ subroutine xerror ( xmess, nmess, nerr, level )
 
   return
 end
+
+end module quadpack
