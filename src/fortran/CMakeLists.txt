@@ -12,7 +12,7 @@ option(BUILD_SHARED_LIBS "Build shared libraries" ON)
 option(TARGET_NATIVE_ARCH "Optimize build for host (native) architecture" ON)
 
 if(NOT CMAKE_Fortran_COMPILER_ID MATCHES "^(GNU|Intel)$")
-  message(FATAL_ERROR "gfortran and ifort are the only supported compilers")
+  message(FATAL_ERROR "gfortran and ifort are the only supported compilers (current compiler ID is ${CMAKE_Fortran_COMPILER_ID})")
 endif()
 
 if(NOT CMAKE_BUILD_TYPE)
@@ -50,7 +50,7 @@ if(WIN32 AND CMAKE_Fortran_COMPILER_ID STREQUAL "GNU")
 endif()
 
 if(NOT CMAKE_BUILD_TYPE MATCHES "^(Debug|Release)$")
-  message(FATAL_ERROR "Debug and Release are the only supported build types")
+  message(FATAL_ERROR "Debug and Release are the only supported build types (current build type is ${CMAKE_BUILD_TYPE})")
 endif()
 
 # Unset all Fortran flags (instead rely on our flags).
@@ -109,7 +109,7 @@ elseif(CMAKE_Fortran_COMPILER_ID STREQUAL "Intel")
     target_compile_options(quadpack PUBLIC -fast)
   endif()
 else()
-  message(FATAL_ERROR "gfortran and ifort are the only supported compilers")
+  message(FATAL_ERROR "gfortran and ifort are the only supported compilers (current compiler ID is ${CMAKE_Fortran_COMPILER_ID})")
 endif()
 
 include(GNUInstallDirs)

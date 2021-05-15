@@ -6,7 +6,7 @@ project(
   LANGUAGES Fortran)
 
 if(NOT CMAKE_Fortran_COMPILER_ID MATCHES "^(GNU|Intel)$")
-  message(FATAL_ERROR "gfortran and ifort are the only supported compilers")
+  message(FATAL_ERROR "gfortran and lfortran are the only supported compilers (current compiler ID is ${CMAKE_Fortran_COMPILER_ID})")
 endif()
 
 if(NOT CMAKE_BUILD_TYPE)
@@ -64,7 +64,7 @@ elseif(CMAKE_Fortran_COMPILER_ID STREQUAL "Intel")
     target_compile_options(quadpack PUBLIC -fast)
   endif()
 else()
-  message(FATAL_ERROR "gfortran and ifort are the only supported compilers")
+  message(FATAL_ERROR "gfortran and lfortran are the only supported compilers (current compiler ID is ${CMAKE_Fortran_COMPILER_ID})")
 endif()
 
 # Restore all Fortran flags.
