@@ -392,7 +392,6 @@ def lint(session):
         "cmake-format",
         "--in-place",
         get_path("src", "fortran", "CMakeLists.txt"),
-        get_path("src", "fortran", "quadpack", "CMakeLists.txt"),
     )
     # (Maybe) run ``clang-format`` for uniform formatting of ``.c`` and ``.h``
     # files
@@ -621,7 +620,6 @@ def clean(session):
         get_path("src", "python", "bezier", "*.pyc"),
         get_path("src", "python", "bezier", "*.pyd"),
         get_path("src", "python", "bezier", "*.so"),
-        get_path("src", "fortran", "quadpack", "*.o"),
         get_path("src", "fortran", "*.o"),
         get_path("tests", "*.pyc"),
         get_path("tests", "functional", "*.pyc"),

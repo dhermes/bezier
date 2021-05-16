@@ -15,10 +15,11 @@ module curve
   use, intrinsic :: iso_c_binding, only: c_double, c_int, c_bool
   use types, only: dp
   use helpers, only: cross_product, contains_nd
+  use quadpack, only: dqagse
   implicit none
   private &
        MAX_LOCATE_SUBDIVISIONS, LOCATE_STD_CAP, &
-       SQRT_PREC, REDUCE_THRESHOLD, scalar_func, dqagse, &
+       SQRT_PREC, REDUCE_THRESHOLD, &
        specialize_curve_generic, specialize_curve_quadratic, &
        subdivide_nodes_generic, split_candidate, allocate_candidates, &
        update_candidates, projection_error, can_reduce
@@ -49,49 +50,6 @@ module curve
   real(c_double), parameter :: REDUCE_THRESHOLD = SQRT_PREC
   real(c_double), parameter :: LOCATE_MISS = -1
   real(c_double), parameter :: LOCATE_INVALID = -2
-
-  ! Interface blocks for QUADPACK:dqagse
-  abstract interface
-     ! f: real(c_double) --> real(c_double)
-     real(c_double) function scalar_func(x)
-       use, intrinsic :: iso_c_binding, only: c_double
-       implicit none
-
-       real(c_double), intent(in) :: x
-     end function scalar_func
-  end interface
-
-  interface
-     ! D - double precision
-     ! Q - quadrature
-     ! A - adaptive
-     ! G - General integrand (i.e. INT f(x), not weighted INT w(x) f(x))
-     ! S - Singularities handled
-     ! E - Extended
-     ! See: https://en.wikipedia.org/wiki/QUADPACK
-     ! QUADPACK is "Public Domain"
-     subroutine dqagse( &
-          f, a, b, epsabs, epsrel, limit, result_, &
-          abserr, neval, ier, alist, blist, rlist, &
-          elist, iord, last)
-       use, intrinsic :: iso_c_binding, only: c_double, c_int
-       implicit none
-
-       procedure(scalar_func) :: f
-       real(c_double), intent(in) :: a, b
-       real(c_double), intent(in) :: epsabs, epsrel
-       integer(c_int), intent(in) :: limit
-       real(c_double), intent(out) :: result_, abserr
-       integer(c_int), intent(out) :: neval, ier
-       real(c_double), intent(out) :: alist(limit)
-       real(c_double), intent(out) :: blist(limit)
-       real(c_double), intent(out) :: rlist(limit)
-       real(c_double), intent(out) :: elist(limit)
-       integer(c_int), intent(out) :: iord(limit)
-       integer(c_int), intent(out) :: last
-
-     end subroutine dqagse
-  end interface
 
 contains
 
