@@ -1,7 +1,18 @@
 module quadpack
 
+  use, intrinsic :: iso_c_binding, only: c_double
   private dqelg, dqk21, dqpsrt
   public dqagse
+
+  abstract interface
+     ! f: real(c_double) --> real(c_double)
+     real(c_double) function scalar_func(x)
+       use, intrinsic :: iso_c_binding, only: c_double
+       implicit none
+
+       real(c_double), intent(in) :: x
+     end function scalar_func
+  end interface
 
 contains
 
@@ -11,6 +22,13 @@ subroutine dqagse(f,a,b,epsabs,epsrel,limit,result,abserr,neval, &
 !*****************************************************************************80
 !
 !! DQAGSE estimates the integral of a function.
+!
+! D - double precision
+! Q - quadrature
+! A - adaptive
+! G - General integrand (i.e. INT f(x), not weighted INT w(x) f(x))
+! S - Singularities handled
+! E - Extended
 !
 !  Modified:
 !
@@ -207,7 +225,7 @@ subroutine dqagse(f,a,b,epsabs,epsrel,limit,result,abserr,neval, &
   real ( kind = 8 ) a,abseps,abserr,alist,area,area1,area12,area2,a1, &
     a2,b,blist,b1,b2,correc,defabs,defab1,defab2, &
     dres,elist,epmach,epsabs,epsrel,erlarg,erlast,errbnd,errmax, &
-    error1,error2,erro12,errsum,ertest,f,oflow,resabs,reseps,result, &
+    error1,error2,erro12,errsum,ertest,oflow,resabs,reseps,result, &
     res3la,rlist,rlist2,small,uflow
   integer ( kind = 4 ) id,ier,ierro,iord,iroff1,iroff2,iroff3,jupbnd, &
     k,ksgn,ktmin,last,limit,maxerr,neval,nres,nrmax,numrl2
@@ -215,7 +233,7 @@ subroutine dqagse(f,a,b,epsabs,epsrel,limit,result,abserr,neval, &
   dimension alist(limit),blist(limit),elist(limit),iord(limit), &
    res3la(3),rlist(limit),rlist2(52)
 
-  external f
+  procedure(scalar_func) :: f
 
   epmach = epsilon ( epmach )
 !
@@ -718,10 +736,10 @@ subroutine dqk21(f,a,b,result,abserr,resabs,resasc)
   implicit none
 
   real ( kind = 8 ) a,absc,abserr,b,centr,dhlgth, &
-    epmach,f,fc,fsum,fval1,fval2,fv1,fv2,hlgth,resabs,resasc, &
+    epmach,fc,fsum,fval1,fval2,fv1,fv2,hlgth,resabs,resasc, &
     resg,resk,reskh,result,uflow,wg,wgk,xgk
   integer ( kind = 4 ) j,jtw,jtwm1
-  external f
+  procedure(scalar_func) :: f
   dimension fv1(10),fv2(10),wg(5),wgk(11),xgk(11)
 
   data wg  (  1) / 0.066671344308688137593568809893332d0 /
