@@ -93,15 +93,16 @@ Dependencies
 ============
 
 Currently, the ``src/fortran/quadpack.f90`` `file`_ has a subset of Fortran 77
-subroutines from `QUADPACK`_ converted into Fortran 90. These are Public
-Domain, so they do not conflict with the Apache 2.0 license (as far as we
-know).
+subroutines from `QUADPACK`_ converted into Fortran 90 by `John Burkardt`_.
+This code is Public Domain, so does not conflict with the Apache 2.0 license
+(as far as we know).
 
 QUADPACK is used to perform numerical quadrature to compute the length
 of a curve segment.
 
 .. _file: https://github.com/dhermes/bezier/tree/{revision}/src/fortran/quadpack.90
 .. _QUADPACK: https://en.wikipedia.org/wiki/QUADPACK
+.. _John Burkardt: https://people.math.sc.edu/Burkardt/f_src/quadpack_double/quadpack_double.html
 
 ******************
 Running Unit Tests
