@@ -22,7 +22,6 @@ Dockerfile
 
 # Generated files
 **/src/fortran/*.o
-**/src/fortran/quadpack/*.o
 **/src/python/bezier/_speedup*.so
 **/wheelhouse/
 **/scripts/macos/dist_wheels/
