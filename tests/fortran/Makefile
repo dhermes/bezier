@@ -29,6 +29,7 @@ endif
 
 # NOTE: **Must** specify the order for source files.
 F90_SOURCES := \
+	$(SRC_DIR)/quadpack$(F90) \
 	$(SRC_DIR)/types$(F90) \
 	$(SRC_DIR)/status$(F90) \
 	$(SRC_DIR)/helpers$(F90) \
