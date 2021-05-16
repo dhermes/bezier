@@ -235,6 +235,10 @@ subroutine dqagse(f,a,b,epsabs,epsrel,limit,result,abserr,neval, &
 
   procedure(scalar_func) :: f
 
+  correc = 0.0D+00
+  erlarg = 0.0D+00
+  ertest = 0.0D+00
+  small = 0.0D+00
   epmach = epsilon ( epmach )
 !
 !  test on validity of parameters
