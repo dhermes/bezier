@@ -6,12 +6,9 @@ sphinx:
 
 # Don't build any extra formats, HTML and JSON will
 # always be built by default.
-formats:
-- none
+formats: []
 
 python:
-  # pip_install: true
-  # setup_py_install: false
   version: 3.9
   install:
   - requirements: docs/requirements.txt
