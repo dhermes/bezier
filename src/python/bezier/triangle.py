@@ -1185,7 +1185,7 @@ class Triangle(_base.Base):
         return b_polynomial
 
     def implicitize(self):
-        r"""Implicitize the triangle .
+        r"""Implicitize the triangle.
 
         .. note::
 
