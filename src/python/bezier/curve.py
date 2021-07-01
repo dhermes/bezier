@@ -766,7 +766,7 @@ class Curve(_base.Base):
         return b_polynomial
 
     def implicitize(self):
-        r"""Implicitize the curve .
+        r"""Implicitize the curve.
 
         .. note::
 
