@@ -169,35 +169,35 @@ class Test_subdivide_nodes(utils.NumPyTestCase):
         self._points_check(nodes)
 
 
-class _Base_evaluate_multi_barycentric(utils.NumPyTestCase):
-    def _test_non_unity(self):
-        nodes = np.asfortranarray(
-            [[0.0, 0.5, 1.5, 2.0], [0.0, 3.0, 4.0, 8.0], [0.0, 1.0, 1.0, 1.0]]
-        )
-        lambda1 = np.asfortranarray([0.25, 0.5, 0.75])
-        lambda2 = np.asfortranarray([0.25, 0.125, -0.75])
-        result = self._call_function_under_test(nodes, lambda1, lambda2)
-        expected = np.asfortranarray(
-            [
-                [0.125, 0.0859375, 0.421875],
-                [0.453125, 0.390625, -2.109375],
-                [0.109375, 0.119140625, -0.421875],
-            ]
-        )
-        self.assertEqual(result, expected)
-
-    def _test_constant(self):
-        num_vals = 257
-        lambda1 = np.linspace(0.0, 1.0, num_vals)
-        lambda2 = 1.0 - lambda1
-        # B(s) = [1]
-        nodes = np.ones((1, 8), order="F")
-        result = self._call_function_under_test(nodes, lambda1, lambda2)
-        expected = np.ones((1, num_vals), order="F")
-        self.assertEqual(result, expected)
+def _evaluate_multi_non_unity(test_case):
+    nodes = np.asfortranarray(
+        [[0.0, 0.5, 1.5, 2.0], [0.0, 3.0, 4.0, 8.0], [0.0, 1.0, 1.0, 1.0]]
+    )
+    lambda1 = np.asfortranarray([0.25, 0.5, 0.75])
+    lambda2 = np.asfortranarray([0.25, 0.125, -0.75])
+    result = test_case._call_function_under_test(nodes, lambda1, lambda2)
+    expected = np.asfortranarray(
+        [
+            [0.125, 0.0859375, 0.421875],
+            [0.453125, 0.390625, -2.109375],
+            [0.109375, 0.119140625, -0.421875],
+        ]
+    )
+    test_case.assertEqual(result, expected)
 
 
-class Test_evaluate_multi_vs(_Base_evaluate_multi_barycentric):
+def _evaluate_multi_constant(test_case):
+    num_vals = 257
+    lambda1 = np.linspace(0.0, 1.0, num_vals)
+    lambda2 = 1.0 - lambda1
+    # B(s) = [1]
+    nodes = np.ones((1, 8), order="F")
+    result = test_case._call_function_under_test(nodes, lambda1, lambda2)
+    expected = np.ones((1, num_vals), order="F")
+    test_case.assertEqual(result, expected)
+
+
+class Test_evaluate_multi_vs(utils.NumPyTestCase):
     @staticmethod
     def _call_function_under_test(nodes, lambda1, lambda2):
         from bezier.hazmat import curve_helpers
@@ -205,10 +205,10 @@ class Test_evaluate_multi_vs(_Base_evaluate_multi_barycentric):
         return curve_helpers.evaluate_multi_vs(nodes, lambda1, lambda2)
 
     def test_non_unity(self):
-        self._test_non_unity()
+        _evaluate_multi_non_unity(self)
 
     def test_constant(self):
-        self._test_constant()
+        _evaluate_multi_constant(self)
 
     def test_binomial_overflow_int32(self):
         lambda1 = np.asfortranarray([0.5])
@@ -330,7 +330,7 @@ class Test_evaluate_multi_vs(_Base_evaluate_multi_barycentric):
         self.assertEqual(expected, binomial_coefficients)
 
 
-class Test_evaluate_multi_de_casteljau(_Base_evaluate_multi_barycentric):
+class Test_evaluate_multi_de_casteljau(utils.NumPyTestCase):
     @staticmethod
     def _call_function_under_test(nodes, lambda1, lambda2):
         from bezier.hazmat import curve_helpers
@@ -340,10 +340,10 @@ class Test_evaluate_multi_de_casteljau(_Base_evaluate_multi_barycentric):
         )
 
     def test_non_unity(self):
-        self._test_non_unity()
+        _evaluate_multi_non_unity(self)
 
     def test_constant(self):
-        self._test_constant()
+        _evaluate_multi_constant(self)
 
     def test_binomial_no_roundoff(self):
         lamdba1 = np.asfortranarray([0.5])
@@ -416,7 +416,7 @@ class Test_evaluate_multi_de_casteljau(_Base_evaluate_multi_barycentric):
         self.assertEqual(expected, binomial_coefficients)
 
 
-class Test_evaluate_multi_barycentric(_Base_evaluate_multi_barycentric):
+class Test_evaluate_multi_barycentric(utils.NumPyTestCase):
     @staticmethod
     def _call_function_under_test(nodes, lambda1, lambda2):
         from bezier.hazmat import curve_helpers
@@ -426,10 +426,10 @@ class Test_evaluate_multi_barycentric(_Base_evaluate_multi_barycentric):
         )
 
     def test_non_unity(self):
-        self._test_non_unity()
+        _evaluate_multi_non_unity(self)
 
     def test_constant(self):
-        self._test_constant()
+        _evaluate_multi_constant(self)
 
     def test_high_degree(self):
         lamdba1 = np.asfortranarray([0.5])
