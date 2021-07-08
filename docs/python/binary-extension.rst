@@ -120,14 +120,14 @@ and the local copy of ``libbezier`` depends on the other dependencies in
 
    $ readelf -d ../bezier.libs/libbezier-3374330c.so.2021.2.12
 
-   Dynamic section at offset 0x43dd8 contains 28 entries:
+   Dynamic section at offset 0x45dd8 contains 28 entries:
      Tag        Type                         Name/Value
     0x0000000000000001 (NEEDED)             Shared library: [libgfortran-2e0d59d6.so.5.0.0]
     0x0000000000000001 (NEEDED)             Shared library: [libm.so.6]
     0x0000000000000001 (NEEDED)             Shared library: [libgcc_s.so.1]
     0x0000000000000001 (NEEDED)             Shared library: [libc.so.6]
     0x000000000000000e (SONAME)             Library soname: [libbezier-3374330c.so.2021.2.12]
-    0x000000000000000c (INIT)               0x2838
+    0x000000000000000c (INIT)               0x29a0
    ...
    $ readelf -d ../bezier.libs/libgfortran-2e0d59d6.so.5.0.0
 
