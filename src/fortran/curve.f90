@@ -19,7 +19,7 @@ module curve
   implicit none
   private &
        MAX_LOCATE_SUBDIVISIONS, LOCATE_STD_CAP, &
-       SQRT_PREC, REDUCE_THRESHOLD, &
+       SQRT_PREC, REDUCE_THRESHOLD, evaluate_curve_vs, &
        specialize_curve_generic, specialize_curve_quadratic, &
        subdivide_nodes_generic, split_candidate, allocate_candidates, &
        update_candidates, projection_error, can_reduce
@@ -53,11 +53,10 @@ module curve
 
 contains
 
-  subroutine evaluate_curve_barycentric( &
-       num_nodes, dimension_, nodes, num_vals, lambda1, lambda2, evaluated) &
-       bind(c, name='BEZ_evaluate_curve_barycentric')
+  subroutine evaluate_curve_vs( &
+       num_nodes, dimension_, nodes, num_vals, lambda1, lambda2, evaluated)
 
-    ! NOTE: This is evaluate_multi_barycentric for a Bezier curve.
+    ! NOTE: This is evaluate_multi_vs for a Bezier curve.
 
     integer(c_int), intent(in) :: num_nodes, dimension_
     real(c_double), intent(in) :: nodes(dimension_, num_nodes)
@@ -93,6 +92,23 @@ contains
             lambda2_pow(i) * lambda2(i) * nodes(:, num_nodes))
     end forall
 
+  end subroutine evaluate_curve_vs
+
+  subroutine evaluate_curve_barycentric( &
+       num_nodes, dimension_, nodes, num_vals, lambda1, lambda2, evaluated) &
+       bind(c, name='BEZ_evaluate_curve_barycentric')
+
+    ! NOTE: This is evaluate_multi_barycentric for a Bezier curve.
+
+    integer(c_int), intent(in) :: num_nodes, dimension_
+    real(c_double), intent(in) :: nodes(dimension_, num_nodes)
+    integer(c_int), intent(in) :: num_vals
+    real(c_double), intent(in) :: lambda1(num_vals)
+    real(c_double), intent(in) :: lambda2(num_vals)
+    real(c_double), intent(out) :: evaluated(dimension_, num_vals)
+
+    call evaluate_multi_vs( &
+         num_nodes, dimension_, nodes, num_vals, lambda1, lambda2, evaluated)
   end subroutine evaluate_curve_barycentric
 
   subroutine evaluate_multi( &
