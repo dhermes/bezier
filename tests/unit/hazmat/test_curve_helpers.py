@@ -169,15 +169,7 @@ class Test_subdivide_nodes(utils.NumPyTestCase):
         self._points_check(nodes)
 
 
-class Test_evaluate_multi_barycentric(utils.NumPyTestCase):
-    @staticmethod
-    def _call_function_under_test(nodes, lambda1, lambda2):
-        from bezier.hazmat import curve_helpers
-
-        return curve_helpers.evaluate_multi_barycentric(
-            nodes, lambda1, lambda2
-        )
-
+class _Base_evaluate_multi_barycentric(utils.NumPyTestCase):
     def test_non_unity(self):
         nodes = np.asfortranarray(
             [[0.0, 0.5, 1.5, 2.0], [0.0, 3.0, 4.0, 8.0], [0.0, 1.0, 1.0, 1.0]]
@@ -205,7 +197,7 @@ class Test_evaluate_multi_barycentric(utils.NumPyTestCase):
         self.assertEqual(result, expected)
 
 
-class Test_evaluate_multi_vs(Test_evaluate_multi_barycentric):
+class Test_evaluate_multi_vs(_Base_evaluate_multi_barycentric):
     @staticmethod
     def _call_function_under_test(nodes, lambda1, lambda2):
         from bezier.hazmat import curve_helpers
@@ -332,7 +324,7 @@ class Test_evaluate_multi_vs(Test_evaluate_multi_barycentric):
         self.assertEqual(expected, binomial_coefficients)
 
 
-class Test_evaluate_multi_de_casteljau(Test_evaluate_multi_barycentric):
+class Test_evaluate_multi_de_casteljau(_Base_evaluate_multi_barycentric):
     @staticmethod
     def _call_function_under_test(nodes, lambda1, lambda2):
         from bezier.hazmat import curve_helpers
@@ -342,6 +334,86 @@ class Test_evaluate_multi_de_casteljau(Test_evaluate_multi_barycentric):
         )
 
     def test_binomial_no_roundoff(self):
+        lamdba1 = np.asfortranarray([0.5])
+        lamdba2 = np.asfortranarray([0.5])
+        degree = 55
+        nodes = np.eye(degree + 1, order="F")
+
+        expected = np.asfortranarray(
+            [
+                1.0,
+                55.0,
+                1485.0,
+                26235.0,
+                341055.0,
+                3478761.0,
+                28989675.0,
+                202927725.0,
+                1217566350.0,
+                6358402050.0,
+                29248649430.0,
+                119653565850.0,
+                438729741450.0,
+                1451182990950.0,
+                4353548972850.0,
+                11899700525790.0,
+                29749251314475.0,
+                68248282427325.0,
+                144079707346575.0,
+                280576272201225.0,
+                505037289962205.0,
+                841728816603675.0,
+                1300853625660225.0,
+                1866442158555975.0,
+                2488589544741300.0,
+                3085851035479212.0,
+                3560597348629860.0,
+                3824345300380220.0,
+                3824345300380220.0,
+                3560597348629860.0,
+                3085851035479212.0,
+                2488589544741300.0,
+                1866442158555975.0,
+                1300853625660225.0,
+                841728816603675.0,
+                505037289962205.0,
+                280576272201225.0,
+                144079707346575.0,
+                68248282427325.0,
+                29749251314475.0,
+                11899700525790.0,
+                4353548972850.0,
+                1451182990950.0,
+                438729741450.0,
+                119653565850.0,
+                29248649430.0,
+                6358402050.0,
+                1217566350.0,
+                202927725.0,
+                28989675.0,
+                3478761.0,
+                341055.0,
+                26235.0,
+                1485.0,
+                55.0,
+                1.0,
+            ],
+        )
+        evaluated = self._call_function_under_test(nodes, lamdba1, lamdba2)
+        binomial_coefficients = evaluated.flatten() * 2.0 ** degree
+        self.assertEqual(expected, binomial_coefficients)
+
+
+class Test_evaluate_multi_barycentric(_Base_evaluate_multi_barycentric):
+    @staticmethod
+    def _call_function_under_test(nodes, lambda1, lambda2):
+        from bezier.hazmat import curve_helpers
+
+        return curve_helpers.evaluate_multi_barycentric(
+            nodes, lambda1, lambda2
+        )
+
+    def test_high_degree(self):
         lamdba1 = np.asfortranarray([0.5])
         lamdba2 = np.asfortranarray([0.5])
         degree = 55
