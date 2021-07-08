@@ -219,6 +219,16 @@ def evaluate_multi_vs(nodes, lambda1, lambda2):
     Does so via a modified Horner's method (the `VS Algorithm`_) for each
     pair of values in ``lambda1`` and ``lambda2``.
 
+    .. math::
+
+       \begin{align*}
+       w_0 &= \lambda_1 v_0 \\
+       w_j &= \lambda_1 \left[w_{j - 1} +
+           \binom{n}{j} \lambda_2^j v_j\right] \\
+       w_n &= w_{n - 1} + \lambda_2^n v_n \\
+       B(\lambda_1, \lambda_2) &= w_n
+       \end{align*}
+
     Args:
         nodes (numpy.ndarray): The nodes defining a curve.
         lambda1 (numpy.ndarray): Parameters along the curve (as a
