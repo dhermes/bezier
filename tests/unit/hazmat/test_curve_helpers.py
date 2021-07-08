@@ -194,6 +194,16 @@ class Test_evaluate_multi_barycentric(utils.NumPyTestCase):
         )
         self.assertEqual(result, expected)
 
+    def test_constant(self):
+        num_vals = 257
+        lambda1 = np.linspace(0.0, 1.0, num_vals)
+        lambda2 = 1.0 - lambda1
+        # B(s) = [1]
+        nodes = np.ones((1, 8), order="F")
+        result = self._call_function_under_test(nodes, lambda1, lambda2)
+        expected = np.ones((1, num_vals), order="F")
+        self.assertEqual(result, expected)
+
 
 class Test_evaluate_multi_vs(Test_evaluate_multi_barycentric):
     @staticmethod
