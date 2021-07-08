@@ -19,12 +19,13 @@ module curve
   implicit none
   private &
        MAX_LOCATE_SUBDIVISIONS, LOCATE_STD_CAP, &
-       SQRT_PREC, REDUCE_THRESHOLD, evaluate_curve_vs, &
-       evaluate_curve_de_casteljau, specialize_curve_generic, &
-       specialize_curve_quadratic, subdivide_nodes_generic, split_candidate, &
-       allocate_candidates, update_candidates, projection_error, can_reduce
+       SQRT_PREC, REDUCE_THRESHOLD, &
+       specialize_curve_generic, specialize_curve_quadratic, &
+       subdivide_nodes_generic, split_candidate, allocate_candidates, &
+       update_candidates, projection_error, can_reduce
   public &
-       CurveData, LOCATE_MISS, LOCATE_INVALID, evaluate_curve_barycentric, &
+       CurveData, LOCATE_MISS, LOCATE_INVALID, evaluate_curve_vs, &
+       evaluate_curve_de_casteljau, evaluate_curve_barycentric, &
        evaluate_multi, specialize_curve, evaluate_hodograph, subdivide_nodes, &
        newton_refine, locate_point, elevate_nodes, get_curvature, &
        reduce_pseudo_inverse, full_reduce, compute_length, curves_equal, &
@@ -121,7 +122,7 @@ contains
     do i = num_nodes - 2, 1, -1
        workspace(:, :, :i) = ( &
             lambda1_wide(:, :, :i) * workspace(:, :, :i) + &
-            lambda2_wide(:, :, :i) * workspace(:, :, 1:(i+1)))
+            lambda2_wide(:, :, :i) * workspace(:, :, 2:(i+1)))
     end do
 
     evaluated = workspace(:, :, 1)
