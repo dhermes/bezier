@@ -24,7 +24,8 @@ module curve
        subdivide_nodes_generic, split_candidate, allocate_candidates, &
        update_candidates, projection_error, can_reduce
   public &
-       CurveData, LOCATE_MISS, LOCATE_INVALID, evaluate_curve_barycentric, &
+       CurveData, LOCATE_MISS, LOCATE_INVALID, evaluate_curve_vs, &
+       evaluate_curve_de_casteljau, evaluate_curve_barycentric, &
        evaluate_multi, specialize_curve, evaluate_hodograph, subdivide_nodes, &
        newton_refine, locate_point, elevate_nodes, get_curvature, &
        reduce_pseudo_inverse, full_reduce, compute_length, curves_equal, &
@@ -53,11 +54,10 @@ module curve
 
 contains
 
-  subroutine evaluate_curve_barycentric( &
-       num_nodes, dimension_, nodes, num_vals, lambda1, lambda2, evaluated) &
-       bind(c, name='BEZ_evaluate_curve_barycentric')
+  subroutine evaluate_curve_vs( &
+       num_nodes, dimension_, nodes, num_vals, lambda1, lambda2, evaluated)
 
-    ! NOTE: This is evaluate_multi_barycentric for a Bezier curve.
+    ! NOTE: This is evaluate_multi_vs for a Bezier curve.
 
     integer(c_int), intent(in) :: num_nodes, dimension_
     real(c_double), intent(in) :: nodes(dimension_, num_nodes)
@@ -93,6 +93,63 @@ contains
             lambda2_pow(i) * lambda2(i) * nodes(:, num_nodes))
     end forall
 
+  end subroutine evaluate_curve_vs
+
+  subroutine evaluate_curve_de_casteljau( &
+       num_nodes, dimension_, nodes, num_vals, lambda1, lambda2, evaluated)
+
+    ! NOTE: This is evaluate_multi_de_casteljau for a Bezier curve.
+
+    integer(c_int), intent(in) :: num_nodes, dimension_
+    real(c_double), intent(in) :: nodes(dimension_, num_nodes)
+    integer(c_int), intent(in) :: num_vals
+    real(c_double), intent(in) :: lambda1(num_vals)
+    real(c_double), intent(in) :: lambda2(num_vals)
+    real(c_double), intent(out) :: evaluated(dimension_, num_vals)
+    ! Variables outside of signature.
+    integer(c_int) :: i
+    real(c_double) :: lambda1_wide(dimension_, num_vals, num_nodes - 1)
+    real(c_double) :: lambda2_wide(dimension_, num_vals, num_nodes - 1)
+    real(c_double) :: workspace(dimension_, num_vals, num_nodes - 1)
+
+    forall (i = 1:num_vals)
+       lambda1_wide(:, i, :) = lambda1(i)
+       lambda2_wide(:, i, :) = lambda2(i)
+       workspace(:, i, :) = ( &
+            lambda1(i) * nodes(:, :num_nodes - 1) + lambda2(i) * nodes(:, 2:))
+    end forall
+
+    do i = num_nodes - 2, 1, -1
+       workspace(:, :, :i) = ( &
+            lambda1_wide(:, :, :i) * workspace(:, :, :i) + &
+            lambda2_wide(:, :, :i) * workspace(:, :, 2:(i+1)))
+    end do
+
+    evaluated = workspace(:, :, 1)
+
+  end subroutine evaluate_curve_de_casteljau
+
+  subroutine evaluate_curve_barycentric( &
+       num_nodes, dimension_, nodes, num_vals, lambda1, lambda2, evaluated) &
+       bind(c, name='BEZ_evaluate_curve_barycentric')
+
+    ! NOTE: This is evaluate_multi_barycentric for a Bezier curve.
+
+    integer(c_int), intent(in) :: num_nodes, dimension_
+    real(c_double), intent(in) :: nodes(dimension_, num_nodes)
+    integer(c_int), intent(in) :: num_vals
+    real(c_double), intent(in) :: lambda1(num_vals)
+    real(c_double), intent(in) :: lambda2(num_vals)
+    real(c_double), intent(out) :: evaluated(dimension_, num_vals)
+
+    if (num_nodes > 55) then
+       call evaluate_curve_de_casteljau( &
+            num_nodes, dimension_, nodes, num_vals, lambda1, lambda2, evaluated)
+       return
+    end if
+
+    call evaluate_curve_vs( &
+         num_nodes, dimension_, nodes, num_vals, lambda1, lambda2, evaluated)
   end subroutine evaluate_curve_barycentric
 
   subroutine evaluate_multi( &
