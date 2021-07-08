@@ -80,7 +80,7 @@ The command line tool `auditwheel`_ adds a ``bezier.libs`` directory to
    '.../site-packages/bezier.libs'
    >>> print_tree(libs_directory)
    bezier.libs/
-     libbezier-bbd6d660.so.2021.2.12
+     libbezier-3374330c.so.2021.2.12
      libgfortran-2e0d59d6.so.5.0.0
      libquadmath-2d0c479f.so.0.0.0
      libz-eb09ad1d.so.1.2.3
@@ -100,7 +100,7 @@ The ``bezier._speedup`` module depends on this local copy of ``libbezier``:
    Dynamic section at offset 0x332000 contains 27 entries:
      Tag        Type                         Name/Value
     0x000000000000000f (RPATH)              Library rpath: [$ORIGIN/../bezier.libs]
-    0x0000000000000001 (NEEDED)             Shared library: [libbezier-bbd6d660.so.2021.2.12]
+    0x0000000000000001 (NEEDED)             Shared library: [libbezier-3374330c.so.2021.2.12]
     0x0000000000000001 (NEEDED)             Shared library: [libpthread.so.0]
     0x0000000000000001 (NEEDED)             Shared library: [libc.so.6]
     0x000000000000000c (INIT)               0x9d40
@@ -112,13 +112,13 @@ and the local copy of ``libbezier`` depends on the other dependencies in
 .. testcode:: linux-readelf-lib
    :hide:
 
-   invoke_shell("readelf", "-d", "../bezier.libs/libbezier-bbd6d660.so.2021.2.12")
+   invoke_shell("readelf", "-d", "../bezier.libs/libbezier-3374330c.so.2021.2.12")
    invoke_shell("readelf", "-d", "../bezier.libs/libgfortran-2e0d59d6.so.5.0.0")
 
 .. testoutput:: linux-readelf-lib
    :linux-only:
 
-   $ readelf -d ../bezier.libs/libbezier-bbd6d660.so.2021.2.12
+   $ readelf -d ../bezier.libs/libbezier-3374330c.so.2021.2.12
 
    Dynamic section at offset 0x43dd8 contains 28 entries:
      Tag        Type                         Name/Value
@@ -126,7 +126,7 @@ and the local copy of ``libbezier`` depends on the other dependencies in
     0x0000000000000001 (NEEDED)             Shared library: [libm.so.6]
     0x0000000000000001 (NEEDED)             Shared library: [libgcc_s.so.1]
     0x0000000000000001 (NEEDED)             Shared library: [libc.so.6]
-    0x000000000000000e (SONAME)             Library soname: [libbezier-bbd6d660.so.2021.2.12]
+    0x000000000000000e (SONAME)             Library soname: [libbezier-3374330c.so.2021.2.12]
     0x000000000000000c (INIT)               0x2838
    ...
    $ readelf -d ../bezier.libs/libgfortran-2e0d59d6.so.5.0.0
