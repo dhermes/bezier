@@ -217,29 +217,152 @@ contains
     logical(c_bool), intent(inout) :: success
     ! Variables outside of signature.
     logical :: case_success
-    real(c_double) :: nodes(3, 4)
-    real(c_double) :: lambda1(3), lambda2(3)
-    real(c_double) :: evaluated(3, 3), expected(3, 3)
-    integer :: case_id
+    real(c_double) :: nodes1(3, 4)
+    real(c_double) :: lambda1_1(3), lambda2_1(3)
+    real(c_double) :: evaluated1(3, 3), expected1(3, 3)
+    real(c_double) :: nodes2(31, 31)
+    real(c_double) :: lambda1_2(1), lambda2_2(1)
+    real(c_double) :: evaluated2(31, 1), expected2(31, 1)
+    real(c_double) :: nodes3(56, 56)
+    real(c_double) :: lambda1_3(1), lambda2_3(1)
+    real(c_double) :: evaluated3(56, 1), expected3(56, 1)
+    integer :: case_id, i
     character(27) :: name
 
     case_id = 1
     name = "evaluate_curve_de_casteljau"
 
     ! CASE 1: Slightly complex example.
-    nodes(:, 1) = [0.0_dp, 0.0_dp, 0.0_dp]
-    nodes(:, 2) = [0.5_dp, 3.0_dp, 1.0_dp]
-    nodes(:, 3) = [1.5_dp, 4.0_dp, 1.0_dp]
-    nodes(:, 4) = [2.0_dp, 8.0_dp, 1.0_dp]
-    lambda1 = [0.25_dp, 0.5_dp, 0.75_dp]
-    lambda2 = [0.25_dp, 0.125_dp, -0.75_dp]
-    expected(:, 1) = [0.125_dp, 0.453125_dp, 0.109375_dp]
-    expected(:, 2) = [0.0859375_dp, 0.390625_dp, 0.119140625_dp]
-    expected(:, 3) = [0.421875_dp, -2.109375_dp, -0.421875_dp]
+    nodes1(:, 1) = [0.0_dp, 0.0_dp, 0.0_dp]
+    nodes1(:, 2) = [0.5_dp, 3.0_dp, 1.0_dp]
+    nodes1(:, 3) = [1.5_dp, 4.0_dp, 1.0_dp]
+    nodes1(:, 4) = [2.0_dp, 8.0_dp, 1.0_dp]
+    lambda1_1 = [0.25_dp, 0.5_dp, 0.75_dp]
+    lambda2_1 = [0.25_dp, 0.125_dp, -0.75_dp]
+    expected1(:, 1) = [0.125_dp, 0.453125_dp, 0.109375_dp]
+    expected1(:, 2) = [0.0859375_dp, 0.390625_dp, 0.119140625_dp]
+    expected1(:, 3) = [0.421875_dp, -2.109375_dp, -0.421875_dp]
     call evaluate_curve_de_casteljau( &
-         4, 3, nodes, 3, lambda1, lambda2, evaluated)
+         4, 3, nodes1, 3, lambda1_1, lambda2_1, evaluated1)
 
-    case_success = all(evaluated == expected)
+    case_success = all(evaluated1 == expected1)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 2: Check that binomial coefficients don't overflow `int32` / `c_int`.
+    !         This a borrowed regression test from VS algorithm.
+    nodes2 = 0  ! Identity matrix
+    forall(i = 1:31)
+       nodes2(i, i) = 1
+    end forall
+    lambda1_2 = [0.5_dp]
+    lambda2_2 = [0.5_dp]
+    expected2(:, 1) = [ &
+         1.0_dp, &
+         30.0_dp, &
+         435.0_dp, &
+         4060.0_dp, &
+         27405.0_dp, &
+         142506.0_dp, &
+         593775.0_dp, &
+         2035800.0_dp, &
+         5852925.0_dp, &
+         14307150.0_dp, &
+         30045015.0_dp, &
+         54627300.0_dp, &
+         86493225.0_dp, &
+         119759850.0_dp, &
+         145422675.0_dp, &
+         155117520.0_dp, &
+         145422675.0_dp, &
+         119759850.0_dp, &
+         86493225.0_dp, &
+         54627300.0_dp, &
+         30045015.0_dp, &
+         14307150.0_dp, &
+         5852925.0_dp, &
+         2035800.0_dp, &
+         593775.0_dp, &
+         142506.0_dp, &
+         27405.0_dp, &
+         4060.0_dp, &
+         435.0_dp, &
+         30.0_dp, &
+         1.0_dp]
+    call evaluate_curve_de_casteljau( &
+         31, 31, nodes2, 1, lambda1_2, lambda2_2, evaluated2)
+
+    case_success = all(evaluated2 * 2.0_dp**30 == expected2)
+    call print_status(name, case_id, case_success, success)
+
+    ! CASE 3: Check that binomial coefficients in `float64` / `c_double`
+    !         do not suffer round-off (as they do in the VS algorithm).
+    nodes3 = 0  ! Identity matrix
+    forall(i = 1:56)
+       nodes3(i, i) = 1
+    end forall
+    lambda1_3 = [0.5_dp]
+    lambda2_3 = [0.5_dp]
+    expected3(:, 1) = [ &
+         1.0_dp, &
+         55.0_dp, &
+         1485.0_dp, &
+         26235.0_dp, &
+         341055.0_dp, &
+         3478761.0_dp, &
+         28989675.0_dp, &
+         202927725.0_dp, &
+         1217566350.0_dp, &
+         6358402050.0_dp, &
+         29248649430.0_dp, &
+         119653565850.0_dp, &
+         438729741450.0_dp, &
+         1451182990950.0_dp, &
+         4353548972850.0_dp, &
+         11899700525790.0_dp, &
+         29749251314475.0_dp, &
+         68248282427325.0_dp, &
+         144079707346575.0_dp, &
+         280576272201225.0_dp, &
+         505037289962205.0_dp, &
+         841728816603675.0_dp, &
+         1300853625660225.0_dp, &
+         1866442158555975.0_dp, &
+         2488589544741300.0_dp, &
+         3085851035479212.0_dp, &
+         3560597348629860.0_dp, &
+         3824345300380220.0_dp, &
+         3824345300380220.0_dp, &
+         3560597348629860.0_dp, &
+         3085851035479212.0_dp, &
+         2488589544741300.0_dp, &
+         1866442158555975.0_dp, &
+         1300853625660225.0_dp, &
+         841728816603675.0_dp, &
+         505037289962205.0_dp, &
+         280576272201225.0_dp, &
+         144079707346575.0_dp, &
+         68248282427325.0_dp, &
+         29749251314475.0_dp, &
+         11899700525790.0_dp, &
+         4353548972850.0_dp, &
+         1451182990950.0_dp, &
+         438729741450.0_dp, &
+         119653565850.0_dp, &
+         29248649430.0_dp, &
+         6358402050.0_dp, &
+         1217566350.0_dp, &
+         202927725.0_dp, &
+         28989675.0_dp, &
+         3478761.0_dp, &
+         341055.0_dp, &
+         26235.0_dp, &
+         1485.0_dp, &
+         55.0_dp, &
+         1.0_dp]
+    call evaluate_curve_de_casteljau( &
+         56, 56, nodes3, 1, lambda1_3, lambda2_3, evaluated3)
+
+    case_success = all(evaluated3 * 2.0_dp**55 == expected3)
     call print_status(name, case_id, case_success, success)
 
   end subroutine test_evaluate_curve_de_casteljau
