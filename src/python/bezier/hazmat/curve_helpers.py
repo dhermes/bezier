@@ -202,7 +202,7 @@ def evaluate_multi(nodes, s_vals):
     return evaluate_multi_barycentric(nodes, one_less, s_vals)
 
 
-def evaluate_multi_barycentric_vs(nodes, lambda1, lambda2):
+def evaluate_multi_vs(nodes, lambda1, lambda2):
     r"""Evaluates a B |eacute| zier type-function.
 
     .. _VS Algorithm: https://doi.org/10.1016/0167-8396(86)90018-X
@@ -252,7 +252,7 @@ def evaluate_multi_barycentric_vs(nodes, lambda1, lambda2):
     return result
 
 
-def evaluate_multi_barycentric_de_casteljau(nodes, lambda1, lambda2):
+def evaluate_multi_de_casteljau(nodes, lambda1, lambda2):
     r"""Evaluates a B |eacute| zier type-function.
 
     Of the form
@@ -305,7 +305,8 @@ def evaluate_multi_barycentric_de_casteljau(nodes, lambda1, lambda2):
     for index in range(degree - 1, 0, -1):
         workspace[:, :, :index] = (
             lambda1_wide[:, :, :index] * workspace[:, :, :index]
-            + lambda2_wide[:, :, :index] * workspace[:, :, 1 : (index + 1)]
+            + lambda2_wide[:, :, :index]
+            * workspace[:, :, 1 : (index + 1)]  # noqa: E203
         )
 
     # NOTE: This returns an array with `evaluated.flags.owndata` false, though
@@ -343,15 +344,14 @@ def evaluate_multi_barycentric(nodes, lambda1, lambda2):
         values and the rows to the dimension.
     """
     _, num_nodes = nodes.shape
-    # NOTE: The computation of (degree C k) values in
-    #       ``evaluate_multi_barycentric_vs`` starts to introduce round-off
-    #       when computing (55 C 26). For very large degree, we ditch the
-    #       VS algorithm and use de Casteljau (which has quadratic runtime
-    #       and cubic space usage).
+    # NOTE: The computation of (degree C k) values in ``evaluate_multi_vs``
+    #       starts to introduce round-off when computing (55 C 26). For very
+    #       large degree, we ditch the VS algorithm and use de Casteljau
+    #       (which has quadratic runtime and cubic space usage).
     if num_nodes > 55:
-        return evaluate_multi_barycentric_de_casteljau(nodes, lambda1, lambda2)
+        return evaluate_multi_de_casteljau(nodes, lambda1, lambda2)
 
-    return evaluate_multi_barycentric_vs(nodes, lambda1, lambda2)
+    return evaluate_multi_vs(nodes, lambda1, lambda2)
 
 
 def vec_size(nodes, s_val):
