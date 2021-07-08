@@ -610,6 +610,7 @@ def clean(session):
         get_path("tests", "__pycache__"),
         get_path("tests", "functional", "__pycache__"),
         get_path("tests", "unit", "__pycache__"),
+        get_path("tests", "unit", "hazmat", "__pycache__"),
         get_path("wheelhouse"),
     )
     clean_globs = (
