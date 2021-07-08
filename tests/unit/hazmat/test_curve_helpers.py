@@ -170,7 +170,7 @@ class Test_subdivide_nodes(utils.NumPyTestCase):
 
 
 class _Base_evaluate_multi_barycentric(utils.NumPyTestCase):
-    def test_non_unity(self):
+    def _test_non_unity(self):
         nodes = np.asfortranarray(
             [[0.0, 0.5, 1.5, 2.0], [0.0, 3.0, 4.0, 8.0], [0.0, 1.0, 1.0, 1.0]]
         )
@@ -186,7 +186,7 @@ class _Base_evaluate_multi_barycentric(utils.NumPyTestCase):
         )
         self.assertEqual(result, expected)
 
-    def test_constant(self):
+    def _test_constant(self):
         num_vals = 257
         lambda1 = np.linspace(0.0, 1.0, num_vals)
         lambda2 = 1.0 - lambda1
@@ -203,6 +203,12 @@ class Test_evaluate_multi_vs(_Base_evaluate_multi_barycentric):
         from bezier.hazmat import curve_helpers
 
         return curve_helpers.evaluate_multi_vs(nodes, lambda1, lambda2)
+
+    def test_non_unity(self):
+        self._test_non_unity()
+
+    def test_constant(self):
+        self._test_constant()
 
     def test_binomial_overflow_int32(self):
         lambda1 = np.asfortranarray([0.5])
@@ -333,6 +339,12 @@ class Test_evaluate_multi_de_casteljau(_Base_evaluate_multi_barycentric):
             nodes, lambda1, lambda2
         )
 
+    def test_non_unity(self):
+        self._test_non_unity()
+
+    def test_constant(self):
+        self._test_constant()
+
     def test_binomial_no_roundoff(self):
         lamdba1 = np.asfortranarray([0.5])
         lamdba2 = np.asfortranarray([0.5])
@@ -412,6 +424,12 @@ class Test_evaluate_multi_barycentric(_Base_evaluate_multi_barycentric):
         return curve_helpers.evaluate_multi_barycentric(
             nodes, lambda1, lambda2
         )
+
+    def test_non_unity(self):
+        self._test_non_unity()
+
+    def test_constant(self):
+        self._test_constant()
 
     def test_high_degree(self):
         lamdba1 = np.asfortranarray([0.5])
