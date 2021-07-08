@@ -204,51 +204,9 @@ class Test_evaluate_multi_barycentric_vs(Test_evaluate_multi_barycentric):
             nodes, lambda1, lambda2
         )
 
-
-class Test_evaluate_multi_barycentric_de_casteljau(
-    Test_evaluate_multi_barycentric
-):
-    @staticmethod
-    def _call_function_under_test(nodes, lambda1, lambda2):
-        from bezier.hazmat import curve_helpers
-
-        return curve_helpers.evaluate_multi_barycentric_de_casteljau(
-            nodes, lambda1, lambda2
-        )
-
-
-class Test_evaluate_multi(utils.NumPyTestCase):
-    @staticmethod
-    def _call_function_under_test(nodes, s_vals):
-        from bezier.hazmat import curve_helpers
-
-        return curve_helpers.evaluate_multi(nodes, s_vals)
-
-    def test_linear(self):
-        num_vals = 129
-        s_vals = np.linspace(0.0, 1.0, num_vals)
-        # B(s) = [s + 1, 1 - 2 s, 3 s - 7]
-        nodes = np.asfortranarray([[1.0, 2.0], [1.0, -1.0], [-7.0, -4.0]])
-        result = self._call_function_under_test(nodes, s_vals)
-        expected = np.empty((3, num_vals), order="F")
-        expected[0, :] = 1.0 + s_vals
-        expected[1, :] = 1.0 - 2.0 * s_vals
-        expected[2, :] = -7.0 + 3.0 * s_vals
-        self.assertEqual(result, expected)
-
-    def test_quadratic(self):
-        num_vals = 65
-        s_vals = np.linspace(0.0, 1.0, num_vals)
-        # B(s) = [s(4 - s), 2s(2s - 1)]
-        nodes = np.asfortranarray([[0.0, 2.0, 3.0], [0.0, -1.0, 2.0]])
-        result = self._call_function_under_test(nodes, s_vals)
-        expected = np.empty((2, num_vals), order="F")
-        expected[0, :] = s_vals * (4.0 - s_vals)
-        expected[1, :] = 2.0 * s_vals * (2.0 * s_vals - 1.0)
-        self.assertEqual(result, expected)
-
     def test_binomial_overflow_int32(self):
-        s_vals = np.asfortranarray([0.5])
+        lambda1 = np.asfortranarray([0.5])
+        lambda2 = np.asfortranarray([0.5])
         degree = 30
         nodes = np.eye(degree + 1, order="F")
 
@@ -287,7 +245,7 @@ class Test_evaluate_multi(utils.NumPyTestCase):
                 1.0,
             ]
         )
-        evaluated = self._call_function_under_test(nodes, s_vals)
+        evaluated = self._call_function_under_test(nodes, lambda1, lambda2)
         binomial_coefficients = evaluated.flatten() * 2.0 ** degree
         self.assertEqual(expected, binomial_coefficients)
 
@@ -296,7 +254,8 @@ class Test_evaluate_multi(utils.NumPyTestCase):
         "32-bit is skipped on Linux",
     )
     def test_binomial_roundoff(self):
-        s_vals = np.asfortranarray([0.5])
+        lamdba1 = np.asfortranarray([0.5])
+        lamdba2 = np.asfortranarray([0.5])
         degree = 55
         nodes = np.eye(degree + 1, order="F")
 
@@ -360,9 +319,52 @@ class Test_evaluate_multi(utils.NumPyTestCase):
                 1.0,
             ],
         )
-        evaluated = self._call_function_under_test(nodes, s_vals)
+        evaluated = self._call_function_under_test(nodes, lamdba1, lamdba2)
         binomial_coefficients = evaluated.flatten() * 2.0 ** degree
         self.assertEqual(expected, binomial_coefficients)
+
+
+class Test_evaluate_multi_barycentric_de_casteljau(
+    Test_evaluate_multi_barycentric
+):
+    @staticmethod
+    def _call_function_under_test(nodes, lambda1, lambda2):
+        from bezier.hazmat import curve_helpers
+
+        return curve_helpers.evaluate_multi_barycentric_de_casteljau(
+            nodes, lambda1, lambda2
+        )
+
+
+class Test_evaluate_multi(utils.NumPyTestCase):
+    @staticmethod
+    def _call_function_under_test(nodes, s_vals):
+        from bezier.hazmat import curve_helpers
+
+        return curve_helpers.evaluate_multi(nodes, s_vals)
+
+    def test_linear(self):
+        num_vals = 129
+        s_vals = np.linspace(0.0, 1.0, num_vals)
+        # B(s) = [s + 1, 1 - 2 s, 3 s - 7]
+        nodes = np.asfortranarray([[1.0, 2.0], [1.0, -1.0], [-7.0, -4.0]])
+        result = self._call_function_under_test(nodes, s_vals)
+        expected = np.empty((3, num_vals), order="F")
+        expected[0, :] = 1.0 + s_vals
+        expected[1, :] = 1.0 - 2.0 * s_vals
+        expected[2, :] = -7.0 + 3.0 * s_vals
+        self.assertEqual(result, expected)
+
+    def test_quadratic(self):
+        num_vals = 65
+        s_vals = np.linspace(0.0, 1.0, num_vals)
+        # B(s) = [s(4 - s), 2s(2s - 1)]
+        nodes = np.asfortranarray([[0.0, 2.0, 3.0], [0.0, -1.0, 2.0]])
+        result = self._call_function_under_test(nodes, s_vals)
+        expected = np.empty((2, num_vals), order="F")
+        expected[0, :] = s_vals * (4.0 - s_vals)
+        expected[1, :] = 2.0 * s_vals * (2.0 * s_vals - 1.0)
+        self.assertEqual(result, expected)
 
 
 class Test_vec_size(unittest.TestCase):
