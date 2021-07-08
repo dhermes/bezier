@@ -219,11 +219,6 @@ def evaluate_multi_barycentric_vs(nodes, lambda1, lambda2):
     Does so via a modified Horner's method (the `VS Algorithm`_) for each
     pair of values in ``lambda1`` and ``lambda2``.
 
-    .. note::
-
-       There is also a Fortran implementation of this function, which
-       will be used if it can be built.
-
     Args:
         nodes (numpy.ndarray): The nodes defining a curve.
         lambda1 (numpy.ndarray): Parameters along the curve (as a
@@ -257,6 +252,67 @@ def evaluate_multi_barycentric_vs(nodes, lambda1, lambda2):
     return result
 
 
+def evaluate_multi_barycentric_de_casteljau(nodes, lambda1, lambda2):
+    r"""Evaluates a B |eacute| zier type-function.
+
+    Of the form
+
+    .. math::
+
+       B(\lambda_1, \lambda_2) = \sum_j \binom{n}{j}
+           \lambda_1^{n - j} \lambda_2^j \cdot v_j
+
+    for some set of vectors :math:`v_j` given by ``nodes``.
+
+    Does so via the de Castljau algorithm:
+
+    .. math::
+
+       \begin{align*}
+       v_j^{(n)} &= v_j \\
+       v_j^{(k)} &= \lambda_1 \cdot v_j^{(k + 1)} +
+           \lambda_2 \cdot v_{j + 1}^{(k + 1)} \\
+       B(\lambda_1, \lambda_2) &= v_0^{(0)}
+       \end{align*}
+
+    Args:
+        nodes (numpy.ndarray): The nodes defining a curve.
+        lambda1 (numpy.ndarray): Parameters along the curve (as a
+            1D array).
+        lambda2 (numpy.ndarray): Parameters along the curve (as a
+            1D array). Typically we have ``lambda1 + lambda2 == 1``.
+
+    Returns:
+        numpy.ndarray: The evaluated points as a two dimensional
+        NumPy array, with the columns corresponding to each pair of parameter
+        values and the rows to the dimension.
+    """
+    # NOTE: We assume but don't check that lambda2 has the same shape.
+    (num_vals,) = lambda1.shape
+    dimension, num_nodes = nodes.shape
+    degree = num_nodes - 1
+
+    lambda1_wide = np.empty((dimension, num_vals, degree), order="F")
+    lambda2_wide = np.empty((dimension, num_vals, degree), order="F")
+    workspace = np.empty((dimension, num_vals, degree), order="F")
+    for index in range(num_vals):
+        lambda1_wide[:, index, :] = lambda1[index]
+        lambda2_wide[:, index, :] = lambda2[index]
+        workspace[:, index, :] = (
+            lambda1[index] * nodes[:, :degree] + lambda2[index] * nodes[:, 1:]
+        )
+
+    for index in range(degree - 1, 0, -1):
+        workspace[:, :, :index] = (
+            lambda1_wide[:, :, :index] * workspace[:, :, :index]
+            + lambda2_wide[:, :, :index] * workspace[:, :, 1 : (index + 1)]
+        )
+
+    # NOTE: This returns an array with `evaluated.flags.owndata` false, though
+    #       it is Fortran contiguous.
+    return workspace[:, :, 0]
+
+
 def evaluate_multi_barycentric(nodes, lambda1, lambda2):
     r"""Evaluates a B |eacute| zier type-function.
 
@@ -286,6 +342,15 @@ def evaluate_multi_barycentric(nodes, lambda1, lambda2):
         NumPy array, with the columns corresponding to each pair of parameter
         values and the rows to the dimension.
     """
+    _, num_nodes = nodes.shape
+    # NOTE: The computation of (degree C k) values in
+    #       ``evaluate_multi_barycentric_vs`` starts to introduce round-off
+    #       when computing (55 C 26). For very large degree, we ditch the
+    #       VS algorithm and use de Casteljau (which has quadratic runtime
+    #       and cubic space usage).
+    if num_nodes > 55:
+        return evaluate_multi_barycentric_de_casteljau(nodes, lambda1, lambda2)
+
     return evaluate_multi_barycentric_vs(nodes, lambda1, lambda2)
 
 
