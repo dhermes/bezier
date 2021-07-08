@@ -3,6 +3,18 @@ Latest Release (``2021.2.13.dev1``)
 
 |pypi| |docs|
 
+Robustness
+----------
+
+-  Fall back to de Casteljau algorithm for evaluation on high degree curves
+   (`#264 <https://github.com/dhermes/bezier/pull/264>`__). Fixed
+   `#263 <https://github.com/dhermes/bezier/issues/263>`__. The more efficient
+   ``evaluate_multi_vs()``
+   `function <https://bezier.readthedocs.io/en/2021.2.13.dev1/python/reference/bezier.hazmat.curve_helpers.html#bezier.hazmat.curve_helpers.evaluate_multi_vs>`__
+   relies on the ability to compute binomial coefficients ``(n C k)`` but
+   after ``(55 C 26)`` these values cannot be computed in floating
+   point without roundoff and for very large degrees these values overflow.
+
 Python Changes
 --------------
 
