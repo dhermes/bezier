@@ -317,6 +317,8 @@ def evaluate_multi_de_casteljau(nodes, lambda1, lambda2):
 def evaluate_multi_barycentric(nodes, lambda1, lambda2):
     r"""Evaluates a B |eacute| zier type-function.
 
+    .. _VS Algorithm: https://doi.org/10.1016/0167-8396(86)90018-X
+
     Of the form
 
     .. math::
@@ -324,7 +326,11 @@ def evaluate_multi_barycentric(nodes, lambda1, lambda2):
        B(\lambda_1, \lambda_2) = \sum_j \binom{n}{j}
            \lambda_1^{n - j} \lambda_2^j \cdot v_j
 
-    for some set of vectors :math:`v_j` given by ``nodes``.
+    for some set of vectors :math:`v_j` given by ``nodes``. This uses the
+    more efficient `VS Algorithm`_ until degree 55, at which point
+    :math:`\binom{55}{26}` and other coefficients cannot be computed exactly.
+    For degree 55 and higher, the classical de Casteljau algorithm will be
+    used.
 
     .. note::
 
