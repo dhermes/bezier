@@ -24,9 +24,9 @@ Performance Optimizations
 
 -  `Adding <https://github.com/dhermes/bezier/commit/dcf40f4c9ed2167e96fc8f4675aeedcc2d811a0b>`__
    ``_verify`` switch to ``Surface.locate()``
-   (`doc <http://bezier.readthedocs.io/en/0.4.0/reference/bezier.surface.html#bezier.surface.Surface.locate>`__)
+   (`doc <https://bezier.readthedocs.io/en/0.4.0/reference/bezier.surface.html#bezier.surface.Surface.locate>`__)
    and ``Curve.intersect()``
-   (`doc <http://bezier.readthedocs.io/en/0.4.0/reference/bezier.curve.html#bezier.curve.Curve.intersect>`__)
+   (`doc <https://bezier.readthedocs.io/en/0.4.0/reference/bezier.curve.html#bezier.curve.Curve.intersect>`__)
    to selectively disable overly defensive value checking. (Making sure
    to use this switch during "internal" computation.)
 -  Making sure NumPy arrays are Fortran-contiguous as often as possible
@@ -52,18 +52,18 @@ New Features
 -  `Adding <https://github.com/dhermes/bezier/commit/e72ca20f0f4ee0f6399b56805b30fe67a02aa04f>`__
    optional ``strategy`` argument (one of geometric or algebraic) to the
    ``Surface.intersect()``
-   `method <http://bezier.readthedocs.io/en/0.4.0/reference/bezier.surface.html#bezier.surface.Surface.intersect>`__
+   `method <https://bezier.readthedocs.io/en/0.4.0/reference/bezier.surface.html#bezier.surface.Surface.intersect>`__
 
    -  Added "algebraic" ``IntersectionStrategy``
-      `enum <http://bezier.readthedocs.io/en/0.4.0/reference/bezier.curve.html#bezier.curve.IntersectionStrategy>`__
+      `enum <https://bezier.readthedocs.io/en/0.4.0/reference/bezier.curve.html#bezier.curve.IntersectionStrategy>`__
       via curve
       `implicitization <https://github.com/dhermes/bezier/commits/0.4.0/src/bezier/_implicitization.py>`__
       (`reference <https://en.wikipedia.org/wiki/Resultant>`__)
 
 -  Adding ``Curve.reduce_()``
-   `method <http://bezier.readthedocs.io/en/0.4.0/reference/bezier.curve.html#bezier.curve.Curve.reduce_>`__
+   `method <https://bezier.readthedocs.io/en/0.4.0/reference/bezier.curve.html#bezier.curve.Curve.reduce_>`__
    which acts as a partial inverse to ``Curve.elevate()``
-   `method <http://bezier.readthedocs.io/en/0.4.0/reference/bezier.curve.html#bezier.curve.Curve.elevate>`__.
+   `method <https://bezier.readthedocs.io/en/0.4.0/reference/bezier.curve.html#bezier.curve.Curve.elevate>`__.
    It is only a complete inverse when a curve is degree-elevated,
    otherwise it returns the "best" reduced form (in the least squares
    sense).
@@ -74,25 +74,25 @@ Interface Changes
 -  (**Breaking change**)
    `Removing <https://github.com/dhermes/bezier/commit/828f4238971b12a9d494ce38387cec855d063c91>`__
    ``show`` keyword from ``Curve.plot()``
-   (`doc <http://bezier.readthedocs.io/en/0.4.0/reference/bezier.curve.html#bezier.curve.Curve.plot>`__),
+   (`doc <https://bezier.readthedocs.io/en/0.4.0/reference/bezier.curve.html#bezier.curve.Curve.plot>`__),
    ``Surface.plot()``
-   (`doc <http://bezier.readthedocs.io/en/0.4.0/reference/bezier.surface.html#bezier.surface.Surface.plot>`__)
+   (`doc <https://bezier.readthedocs.io/en/0.4.0/reference/bezier.surface.html#bezier.surface.Surface.plot>`__)
    and ``CurvedPolygon.plot()``
-   (`doc <http://bezier.readthedocs.io/en/0.4.0/reference/bezier.curved_polygon.html#bezier.curved_polygon.CurvedPolygon.plot>`__)
+   (`doc <https://bezier.readthedocs.io/en/0.4.0/reference/bezier.curved_polygon.html#bezier.curved_polygon.CurvedPolygon.plot>`__)
 -  `Adding <https://github.com/dhermes/bezier/commit/ce838a2aaef2281f06603d1c76324a3aa8289cf9>`__
    ``color`` keyword to ``Curve.plot()``
-   `method <http://bezier.readthedocs.io/en/0.4.0/reference/bezier.curve.html#bezier.curve.Curve.plot>`__
+   `method <https://bezier.readthedocs.io/en/0.4.0/reference/bezier.curve.html#bezier.curve.Curve.plot>`__
 -  `Adding <https://github.com/dhermes/bezier/commit/dcbeefc25b7f5f9a1fa725dac04e81a43039f680>`__
    ``alpha`` keyword to ``Curve.plot()``
-   `method <http://bezier.readthedocs.io/en/0.4.0/reference/bezier.curve.html#bezier.curve.Curve.plot>`__
+   `method <https://bezier.readthedocs.io/en/0.4.0/reference/bezier.curve.html#bezier.curve.Curve.plot>`__
 -  (**Breaking change**)
    `Splitting <https://github.com/dhermes/bezier/commit/cea88285b8c9002a57efd88e69b5bd2ef46e7ca7>`__
    the ``Surface.evaluate_multi()``
-   `method <http://bezier.readthedocs.io/en/0.3.0/reference/bezier.surface.html#bezier.surface.Surface.evaluate_multi>`__
+   `method <https://bezier.readthedocs.io/en/0.3.0/reference/bezier.surface.html#bezier.surface.Surface.evaluate_multi>`__
    into ``Surface.evaluate_barycentric_multi()``
-   (`doc <http://bezier.readthedocs.io/en/0.4.0/reference/bezier.surface.html#bezier.surface.Surface.evaluate_barycentric_multi>`__)
+   (`doc <https://bezier.readthedocs.io/en/0.4.0/reference/bezier.surface.html#bezier.surface.Surface.evaluate_barycentric_multi>`__)
    and ``Surface.evaluate_cartesian_multi()``
-   (`doc <http://bezier.readthedocs.io/en/0.4.0/reference/bezier.surface.html#bezier.surface.Surface.evaluate_cartesian_multi>`__)
+   (`doc <https://bezier.readthedocs.io/en/0.4.0/reference/bezier.surface.html#bezier.surface.Surface.evaluate_cartesian_multi>`__)
 -  `Adding <https://github.com/dhermes/bezier/commit/f0fca088ac6f70c39f9f5af457c29e3c82f094b5>`__
    ``__dict__`` helpers on ``Curve``, ``CurvedPolygon`` and ``Surface``.
    These are ``@property``\ s intended only for REPL use, since classes
@@ -102,7 +102,7 @@ Miscellany
 ----------
 
 -  Adding ``IntersectionClassification``
-   `enum <http://bezier.readthedocs.io/en/0.4.0/algorithm-helpers.html#bezier._surface_helpers.IntersectionClassification>`__
+   `enum <https://bezier.readthedocs.io/en/0.4.0/algorithm-helpers.html#bezier._surface_helpers.IntersectionClassification>`__
    to docs
    (`ref <https://github.com/dhermes/bezier/commit/828f4238971b12a9d494ce38387cec855d063c91>`__)
 -  `Moving <https://github.com/dhermes/bezier/commit/dc4d33cfcf7f9ac6e794b856dc6d76635d362922>`__

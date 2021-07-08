@@ -6,23 +6,23 @@
 Changes:
 
 -  Adding ``Curve.elevate()``
-   `method <http://bezier.readthedocs.io/en/0.1.1/reference/bezier.curve.html#bezier.curve.Curve.elevate>`__
+   `method <https://bezier.readthedocs.io/en/0.1.1/reference/bezier.curve.html#bezier.curve.Curve.elevate>`__
    for degree elevation
 -  Upgrading curve-curve intersection algorithm to ignore parallel line
    segments that don't meet (rather than throwing
    ``NotImplementedError``)
 -  Making ``segment_intersection()``
-   `helper <http://bezier.readthedocs.io/en/0.1.1/reference/bezier.curve.html#bezier._intersection_helpers.segment_intersection>`__
+   `helper <https://bezier.readthedocs.io/en/0.1.1/reference/bezier.curve.html#bezier._intersection_helpers.segment_intersection>`__
    return a ``success`` bool instead of raising ``NotImplementedError``
    on failure
 -  Updating docs for ``newton_refine()``
-   `helper <http://bezier.readthedocs.io/en/0.1.1/reference/bezier.curve.html#bezier._intersection_helpers.newton_refine>`__
+   `helper <https://bezier.readthedocs.io/en/0.1.1/reference/bezier.curve.html#bezier._intersection_helpers.newton_refine>`__
    with two examples and making the ``parallel_different()``
-   `helper <http://bezier.readthedocs.io/en/0.1.1/reference/bezier.curve.html#bezier._intersection_helpers.parallel_different>`__
+   `helper <https://bezier.readthedocs.io/en/0.1.1/reference/bezier.curve.html#bezier._intersection_helpers.parallel_different>`__
    a publicly documented function (as a partner to
    ``segment_intersection()``)
 -  Adding some more examples / failures to ``curve-curve-intersection``
-   `doc <http://bezier.readthedocs.io/en/0.1.1/curve-curve-intersection.html>`__
+   `doc <https://bezier.readthedocs.io/en/0.1.1/curve-curve-intersection.html>`__
 
 .. |pypi| image:: https://img.shields.io/pypi/v/bezier/0.1.1.svg
    :target: https://pypi.org/project/bezier/0.1.1/

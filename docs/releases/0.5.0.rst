@@ -20,16 +20,16 @@ New Features
 ------------
 
 -  Making Fortran features available outside of Python (see `Native
-   Libraries <http://bezier.readthedocs.io/en/0.5.0/native-libraries.html>`__)
+   Libraries <https://bezier.readthedocs.io/en/0.5.0/native-libraries.html>`__)
 -  C headers for each Fortran module (via the ``bezier.get_include()``
-   `function <http://bezier.readthedocs.io/en/0.5.0/reference/bezier.html#bezier.get_include>`__)
+   `function <https://bezier.readthedocs.io/en/0.5.0/reference/bezier.html#bezier.get_include>`__)
 
    -  Cython ``.pxd`` declarations for all Fortran modules
    -  ``libbezier`` static library (via the ``bezier.get_lib()``
-      `function <http://bezier.readthedocs.io/en/0.5.0/reference/bezier.html#bezier.get_lib>`__)
+      `function <https://bezier.readthedocs.io/en/0.5.0/reference/bezier.html#bezier.get_lib>`__)
 
 -  Implementing ``bezier_roots()`` polynomial root
-   `solver <http://bezier.readthedocs.io/en/0.5.0/algorithm-helpers.html#bezier._implicitization.bezier_roots>`__
+   `solver <https://bezier.readthedocs.io/en/0.5.0/algorithm-helpers.html#bezier._implicitization.bezier_roots>`__
    for polynomials written in Bernstein basis.
    (`0dd6369 <https://github.com/dhermes/bezier/commit/0dd6369b0f77e4c0cf8113f2d25812addc90482a>`__)
 
@@ -64,7 +64,7 @@ Miscellany
    `c326c00 <https://github.com/dhermes/bezier/commit/c326c00a5c0ee74f9aa53c2b104ac6d4eb5c6794>`__)
 -  Adding ``BEZIER_JOURNAL`` option to ``setup.py``. This stores a
    record of compiler commands invoked during installation. See `Native
-   Libraries <http://bezier.readthedocs.io/en/0.5.0/native-libraries.html>`__
+   Libraries <https://bezier.readthedocs.io/en/0.5.0/native-libraries.html>`__
    for more details.
    (`3d832e7 <https://github.com/dhermes/bezier/commit/3d832e78af2a951a642ff5860b9593abfa674ec3>`__
    and

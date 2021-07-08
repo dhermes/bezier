@@ -6,7 +6,7 @@
 Primary changes since previous release
 (`0.0.1 <https://pypi.org/project/bezier/0.0.1/>`__) are related to
 curve-curve intersection. See `the intersection
-docs <http://bezier.readthedocs.io/en/0.1.0/curve-curve-intersection.html>`__
+docs <https://bezier.readthedocs.io/en/0.1.0/curve-curve-intersection.html>`__
 for examples and more information.
 
 .. |pypi| image:: https://img.shields.io/pypi/v/bezier/0.1.0.svg

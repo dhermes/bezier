@@ -42,8 +42,8 @@ New Features
    ``_HAS_CURVE_SPEEDUP``
    (`d798f66 <https://github.com/dhermes/bezier/commit/d798f665fdd0c223a1b0a71919eb9a45ee86951d>`__).
 -  Added ``bezier.__author__`` and ``bezier.__version__``
-   `attributes <http://bezier.readthedocs.io/en/0.6.0/reference/bezier.html#bezier.__version__>`__.
--  `Added <http://bezier.readthedocs.io/en/0.6.0/reference/bezier.html#bezier.get_dll>`__
+   `attributes <https://bezier.readthedocs.io/en/0.6.0/reference/bezier.html#bezier.__version__>`__.
+-  `Added <https://bezier.readthedocs.io/en/0.6.0/reference/bezier.html#bezier.get_dll>`__
    ``bezier.get_dll()`` for Windows
    (`699e39b <https://github.com/dhermes/bezier/commit/699e39b2671daed23a57d37b5e776c6627c72850>`__).
 -  Added ``bezier/__config__.py`` that adds ``libbezier`` to ``%PATH%``
@@ -77,16 +77,16 @@ Breaking Changes
 ~~~~~~~~~~~~~~~~
 
 -  ``Curve.intersect()``
-   `returns <http://bezier.readthedocs.io/en/0.6.0/reference/bezier.curve.html#bezier.curve.Curve.intersect>`__
+   `returns <https://bezier.readthedocs.io/en/0.6.0/reference/bezier.curve.html#bezier.curve.Curve.intersect>`__
    ``s-t`` parameters rather than ``x-y`` values
    (`c309998 <https://github.com/dhermes/bezier/commit/c309998f705de7467e1222e41467190739ff3118>`__).
 -  ``Surface.intersect()``
-   `returns <http://bezier.readthedocs.io/en/0.6.0/reference/bezier.surface.html#bezier.surface.Surface.intersect>`__
+   `returns <https://bezier.readthedocs.io/en/0.6.0/reference/bezier.surface.html#bezier.surface.Surface.intersect>`__
    a list with a single ``Surface`` when one of the two surfaces
    is contained in the other
    (`05b1fd9 <https://github.com/dhermes/bezier/commit/05b1fd98c5caea015b87819abdd2d6631ccc9bd4>`__).
 -  ``Surface.is_valid`` will only
-   `return <http://bezier.readthedocs.io/en/0.6.0/reference/bezier.surface.html#bezier.surface.Surface.is_valid>`__
+   `return <https://bezier.readthedocs.io/en/0.6.0/reference/bezier.surface.html#bezier.surface.Surface.is_valid>`__
    ``True`` if the map ``B(s, t)`` determined by the
    surface has everywhere positive Jacobian. Previously a negative
    Jacobian was also allowed
@@ -245,7 +245,7 @@ Miscellany
 -  Added documentation for "native extensions" in ``DEVELOPMENT``
    (`2f9f2c4 <https://github.com/dhermes/bezier/commit/2f9f2c49585238024722b5a5b4fb60ea3338b9b3>`__).
 -  Overhauled
-   `native-libraries doc <http://bezier.readthedocs.io/en/0.6.0/native-libraries.html>`__
+   `native-libraries doc <https://bezier.readthedocs.io/en/0.6.0/native-libraries.html>`__
    with subsections for OS X and Windows
    (`bfa75ee <https://github.com/dhermes/bezier/commit/bfa75eedda8187bef59ca8e04f9d04ee0fc28b97>`__,
    `72005fb <https://github.com/dhermes/bezier/commit/72005fbb0a05715f6832f68dc8c3f04576781047>`__,
