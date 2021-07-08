@@ -20,9 +20,9 @@ module curve
   private &
        MAX_LOCATE_SUBDIVISIONS, LOCATE_STD_CAP, &
        SQRT_PREC, REDUCE_THRESHOLD, evaluate_curve_vs, &
-       specialize_curve_generic, specialize_curve_quadratic, &
-       subdivide_nodes_generic, split_candidate, allocate_candidates, &
-       update_candidates, projection_error, can_reduce
+       evaluate_curve_de_casteljau, specialize_curve_generic, &
+       specialize_curve_quadratic, subdivide_nodes_generic, split_candidate, &
+       allocate_candidates, update_candidates, projection_error, can_reduce
   public &
        CurveData, LOCATE_MISS, LOCATE_INVALID, evaluate_curve_barycentric, &
        evaluate_multi, specialize_curve, evaluate_hodograph, subdivide_nodes, &
@@ -94,6 +94,20 @@ contains
 
   end subroutine evaluate_curve_vs
 
+  subroutine evaluate_curve_de_casteljau( &
+       num_nodes, dimension_, nodes, num_vals, lambda1, lambda2, evaluated)
+
+    ! NOTE: This is evaluate_multi_de_casteljau for a Bezier curve.
+
+    integer(c_int), intent(in) :: num_nodes, dimension_
+    real(c_double), intent(in) :: nodes(dimension_, num_nodes)
+    integer(c_int), intent(in) :: num_vals
+    real(c_double), intent(in) :: lambda1(num_vals)
+    real(c_double), intent(in) :: lambda2(num_vals)
+    real(c_double), intent(out) :: evaluated(dimension_, num_vals)
+
+  end subroutine evaluate_curve_de_casteljau
+
   subroutine evaluate_curve_barycentric( &
        num_nodes, dimension_, nodes, num_vals, lambda1, lambda2, evaluated) &
        bind(c, name='BEZ_evaluate_curve_barycentric')
@@ -107,7 +121,13 @@ contains
     real(c_double), intent(in) :: lambda2(num_vals)
     real(c_double), intent(out) :: evaluated(dimension_, num_vals)
 
-    call evaluate_multi_vs( &
+    if (num_nodes > 55) then
+       call evaluate_curve_de_casteljau( &
+            num_nodes, dimension_, nodes, num_vals, lambda1, lambda2, evaluated)
+       return
+    end if
+
+    call evaluate_curve_vs( &
          num_nodes, dimension_, nodes, num_vals, lambda1, lambda2, evaluated)
   end subroutine evaluate_curve_barycentric
 
