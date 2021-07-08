@@ -195,6 +195,28 @@ class Test_evaluate_multi_barycentric(utils.NumPyTestCase):
         self.assertEqual(result, expected)
 
 
+class Test_evaluate_multi_barycentric_vs(Test_evaluate_multi_barycentric):
+    @staticmethod
+    def _call_function_under_test(nodes, lambda1, lambda2):
+        from bezier.hazmat import curve_helpers
+
+        return curve_helpers.evaluate_multi_barycentric_vs(
+            nodes, lambda1, lambda2
+        )
+
+
+class Test_evaluate_multi_barycentric_de_casteljau(
+    Test_evaluate_multi_barycentric
+):
+    @staticmethod
+    def _call_function_under_test(nodes, lambda1, lambda2):
+        from bezier.hazmat import curve_helpers
+
+        return curve_helpers.evaluate_multi_barycentric_de_casteljau(
+            nodes, lambda1, lambda2
+        )
+
+
 class Test_evaluate_multi(utils.NumPyTestCase):
     @staticmethod
     def _call_function_under_test(nodes, s_vals):
