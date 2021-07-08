@@ -183,9 +183,6 @@ def subdivide_nodes(nodes):
 def evaluate_multi(nodes, s_vals):
     r"""Computes multiple points along a curve.
 
-    Does so via a modified Horner's method for each value in ``s_vals``
-    rather than using the de Casteljau algorithm.
-
     .. note::
 
        There is also a Fortran implementation of this function, which
@@ -205,8 +202,10 @@ def evaluate_multi(nodes, s_vals):
     return evaluate_multi_barycentric(nodes, one_less, s_vals)
 
 
-def evaluate_multi_barycentric(nodes, lambda1, lambda2):
+def evaluate_multi_barycentric_vs(nodes, lambda1, lambda2):
     r"""Evaluates a B |eacute| zier type-function.
+
+    .. _VS Algorithm: https://doi.org/10.1016/0167-8396(86)90018-X
 
     Of the form
 
@@ -217,9 +216,8 @@ def evaluate_multi_barycentric(nodes, lambda1, lambda2):
 
     for some set of vectors :math:`v_j` given by ``nodes``.
 
-    Does so via a modified Horner's method for each pair of values
-    in ``lambda1`` and ``lambda2``, rather than using the
-    de Casteljau algorithm.
+    Does so via a modified Horner's method (the `VS Algorithm`_) for each
+    pair of values in ``lambda1`` and ``lambda2``.
 
     .. note::
 
@@ -257,6 +255,38 @@ def evaluate_multi_barycentric(nodes, lambda1, lambda2):
         result *= lambda1
     result += lambda2 * lambda2_pow * nodes[:, [degree]]
     return result
+
+
+def evaluate_multi_barycentric(nodes, lambda1, lambda2):
+    r"""Evaluates a B |eacute| zier type-function.
+
+    Of the form
+
+    .. math::
+
+       B(\lambda_1, \lambda_2) = \sum_j \binom{n}{j}
+           \lambda_1^{n - j} \lambda_2^j \cdot v_j
+
+    for some set of vectors :math:`v_j` given by ``nodes``.
+
+    .. note::
+
+       There is also a Fortran implementation of this function, which
+       will be used if it can be built.
+
+    Args:
+        nodes (numpy.ndarray): The nodes defining a curve.
+        lambda1 (numpy.ndarray): Parameters along the curve (as a
+            1D array).
+        lambda2 (numpy.ndarray): Parameters along the curve (as a
+            1D array). Typically we have ``lambda1 + lambda2 == 1``.
+
+    Returns:
+        numpy.ndarray: The evaluated points as a two dimensional
+        NumPy array, with the columns corresponding to each pair of parameter
+        values and the rows to the dimension.
+    """
+    return evaluate_multi_barycentric_vs(nodes, lambda1, lambda2)
 
 
 def vec_size(nodes, s_val):
