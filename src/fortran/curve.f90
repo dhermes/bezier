@@ -105,6 +105,26 @@ contains
     real(c_double), intent(in) :: lambda1(num_vals)
     real(c_double), intent(in) :: lambda2(num_vals)
     real(c_double), intent(out) :: evaluated(dimension_, num_vals)
+    ! Variables outside of signature.
+    integer(c_int) :: i
+    real(c_double) :: lambda1_wide(dimension_, num_vals, num_nodes - 1)
+    real(c_double) :: lambda2_wide(dimension_, num_vals, num_nodes - 1)
+    real(c_double) :: workspace(dimension_, num_vals, num_nodes - 1)
+
+    forall (i = 1:num_vals)
+       lambda1_wide(:, i, :) = lambda1(i)
+       lambda2_wide(:, i, :) = lambda2(i)
+       workspace(:, i, :) = ( &
+            lambda1(i) * nodes(:, :num_nodes - 1) + lambda2(i) * nodes(:, 2:))
+    end forall
+
+    do i = num_nodes - 2, 1, -1
+       workspace(:, :, :i) = ( &
+            lambda1_wide(:, :, :i) * workspace(:, :, :i) + &
+            lambda2_wide(:, :, :i) * workspace(:, :, 1:(i+1)))
+    end do
+
+    evaluated = workspace(:, :, 1)
 
   end subroutine evaluate_curve_de_casteljau
 
