@@ -229,6 +229,9 @@ def evaluate_multi_vs(nodes, lambda1, lambda2):
        B(\lambda_1, \lambda_2) &= w_n
        \end{align*}
 
+    Additionally, binomial coefficients are computed by utilizing the fact that
+    :math:`\binom{n}{j} = \binom{n}{j - 1} \frac{n - j + 1}{j}`.
+
     Args:
         nodes (numpy.ndarray): The nodes defining a curve.
         lambda1 (numpy.ndarray): Parameters along the curve (as a
