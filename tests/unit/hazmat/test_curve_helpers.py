@@ -1060,3 +1060,63 @@ class Test_full_reduce(utils.NumPyTestCase):
             self._call_function_under_test(nodes)
         self.assertEqual(exc_info.exception.degree, degree)
         self.assertEqual(exc_info.exception.supported, (0, 1, 2, 3, 4))
+
+
+class Test_discrete_turning_angle(utils.NumPyTestCase):
+    @staticmethod
+    def _call_function_under_test(nodes):
+        from bezier.hazmat import curve_helpers
+
+        return curve_helpers.discrete_turning_angle(nodes)
+
+    def test_invalid_dimension(self):
+        nodes = np.asfortranarray(
+            [
+                [0.0, 1.0, 3.0],
+                [0.0, 4.0, 5.0],
+                [0.0, 2.0, 1.0],
+            ]
+        )
+        with self.assertRaises(NotImplementedError) as exc_info:
+            self._call_function_under_test(nodes)
+
+        expected = (
+            "2D is the only supported dimension",
+            "Current dimension",
+            3,
+        )
+        self.assertEqual(expected, exc_info.exception.args)
+
+    def test_linear(self):
+        nodes = np.asfortranarray(
+            [
+                [0.0, 1.0],
+                [0.0, 4.0],
+            ]
+        )
+        angle = self._call_function_under_test(nodes)
+        self.assertEqual(0.0, angle)
+
+    def test_overshoot_pi(self):
+        nodes = np.asfortranarray(
+            [
+                [1.125, 0.625, 0.125],
+                [0.5, -0.5, 0.5],
+            ]
+        )
+        angle = self._call_function_under_test(nodes)
+        expected = float.fromhex("0x1.1b6e192ebbe44p+1")
+        local_eps = abs(SPACING(expected))
+        self.assertAlmostEqual(expected, angle, delta=local_eps)
+
+    def test_undershoot_minus_pi(self):
+        nodes = np.asfortranarray(
+            [
+                [11.0, 7.0, 3.0],
+                [8.0, 10.0, 4.0],
+            ]
+        )
+        angle = self._call_function_under_test(nodes)
+        expected = float.fromhex("0x1.7249faa996a21p+0")
+        local_eps = abs(SPACING(expected))
+        self.assertAlmostEqual(expected, angle, delta=local_eps)
