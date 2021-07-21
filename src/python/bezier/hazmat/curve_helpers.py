@@ -1089,7 +1089,7 @@ def discrete_turning_angle(nodes):
             dimension,
         )
 
-    if num_nodes < 2:
+    if num_nodes < 3:
         return 0.0
 
     directed = nodes[:, 1:] - nodes[:, : (num_nodes - 1)]
