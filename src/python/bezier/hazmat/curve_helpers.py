@@ -1051,3 +1051,64 @@ def full_reduce(nodes):
     while was_reduced:
         was_reduced, nodes = maybe_reduce(nodes)
     return nodes
+
+
+def discrete_turning_angle(nodes):
+    r"""Determine the absolute sum of B |eacute| zier node angles.
+
+    For the set of vectors :math:`v_j` given by ``nodes``, the discrete
+    angles :math:`\theta_j` at each internal node is given by
+
+    .. math::
+
+       \left(v_{j} - v_{j - 1}\right) \cdot \left(v_{j + 1} - v_{j}\right) =
+         \| v_{j} - v_{j - 1} \|_2 \| v_{j + 1} - v_{j} \|_2 \cos \theta_j
+
+    and the discrete turning angle is :math:`\sum_{j} \left|\theta_j\right|`.
+    This approximates the exact turning angle
+
+    .. math::
+
+       \int_0^1 \left|\theta'(s)\right| \, ds.
+
+    Args:
+        nodes (numpy.ndarray): The nodes in the curve.
+
+    Returns:
+        float: The (discrete) turning angle.
+
+    Raises:
+        NotImplementedError: If the curve's dimension is not ``2``.
+    """
+    dimension, num_nodes = nodes.shape
+
+    if dimension != 2:
+        raise NotImplementedError(
+            "2D is the only supported dimension",
+            "Current dimension",
+            dimension,
+        )
+
+    if num_nodes < 3:
+        return 0.0
+
+    directed = nodes[:, 1:] - nodes[:, : (num_nodes - 1)]
+    vector_theta = np.arctan2(directed[1, :], directed[0, :])
+    # Two values in [-pi, pi] have a difference in [-2pi, 2pi]
+    angle_theta = vector_theta[1:] - vector_theta[: (num_nodes - 2)]
+
+    result = 0.0
+    for angle in angle_theta:
+        if angle > np.pi:
+            # Convert value in [pi, 2pi] back into [-pi, pi] and take
+            # absolute value
+            result += 2 * np.pi - angle
+        elif angle < -np.pi:
+            # Convert value in [-2pi, -pi] back into [-pi, pi] and take
+            # absolute value
+            result += 2 * np.pi + angle
+        else:
+            # Absolute value of value in [-pi, pi]
+            result += abs(angle)
+
+    return result

@@ -1650,6 +1650,42 @@ class TestLinearization(utils.NumPyTestCase):
         self.assertEqual(new_shape.error, error)
 
 
+class Test_self_intersections(utils.NumPyTestCase):
+    @staticmethod
+    def _call_function_under_test(nodes):
+        from bezier.hazmat import geometric_intersection
+
+        return geometric_intersection.self_intersections(nodes)
+
+    def test_no_intersections(self):
+        nodes = np.asfortranarray([[0.0, 1.0, 2.0], [0.0, 1.0, 0.0]])
+        intersections = self._call_function_under_test(nodes)
+        expected = np.empty((2, 0), order="F")
+        self.assertEqual(expected, intersections)
+
+    def test_intersection(self):
+        nodes = np.asfortranarray(
+            [
+                [0.0, -1.0, 1.0, -0.75],
+                [2.0, 0.0, 1.0, 1.625],
+            ]
+        )
+        intersections = self._call_function_under_test(nodes)
+        self.assertEqual((2, 1), intersections.shape)
+
+        sq5 = np.sqrt(5.0)
+        expected_s = 0.5 - sq5 / 6.0
+        local_eps = 3 * abs(SPACING(expected_s))
+        self.assertAlmostEqual(
+            expected_s, intersections[0, 0], delta=local_eps
+        )
+        expected_t = 0.5 + sq5 / 6.0
+        local_eps = abs(SPACING(expected_t))
+        self.assertAlmostEqual(
+            expected_t, intersections[1, 0], delta=local_eps
+        )
+
+
 def subdivided_curve(nodes, **kwargs):
     from bezier.hazmat import geometric_intersection
 
