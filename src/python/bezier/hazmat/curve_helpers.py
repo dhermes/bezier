@@ -1071,6 +1071,17 @@ def discrete_turning_angle(nodes):
 
        \int_0^1 \left|\theta'(s)\right| \, ds.
 
+    This is done by considering how the angle of
+    :math:`B'(s) = \left[x'(s), y'(s)\right]^T` changes in small intervals
+    in the parameter space; where the angle is
+    :math:`\theta(s) = \arctan(y'(s) / x'(s)`. Computing
+    :math:`\theta(s + ds) - \theta(s)` as :math:`ds \longrightarrow 0` leaves
+    us with the **signed** angle change
+
+    .. math::
+
+       \theta'(s) = \frac{y''(s) x'(s) - x''(s) y'(s)}{x'(s)^2 + y'(s)^2}.
+
     Args:
         nodes (numpy.ndarray): The nodes in the curve.
 
