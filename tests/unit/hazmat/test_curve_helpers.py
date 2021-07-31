@@ -1069,24 +1069,6 @@ class Test_discrete_turning_angle(utils.NumPyTestCase):
 
         return curve_helpers.discrete_turning_angle(nodes)
 
-    def test_invalid_dimension(self):
-        nodes = np.asfortranarray(
-            [
-                [0.0, 1.0, 3.0],
-                [0.0, 4.0, 5.0],
-                [0.0, 2.0, 1.0],
-            ]
-        )
-        with self.assertRaises(NotImplementedError) as exc_info:
-            self._call_function_under_test(nodes)
-
-        expected = (
-            "2D is the only supported dimension",
-            "Current dimension",
-            3,
-        )
-        self.assertEqual(expected, exc_info.exception.args)
-
     def test_linear(self):
         nodes = np.asfortranarray(
             [

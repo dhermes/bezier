@@ -52,6 +52,13 @@ Additive Changes
    (`#251 <https://github.com/dhermes/bezier/pull/251>`__). For example, in
    ``Curve.intersect()``
    (`doc <https://bezier.readthedocs.io/en/2021.2.13.dev1/python/reference/bezier.curve.html#bezier.curve.Curve.intersect>`__)
+-  Adding provisional support for self-intersection checks in planar curves
+   (`#265 <https://github.com/dhermes/bezier/pull/265>`__,
+   `#267 <https://github.com/dhermes/bezier/pull/267>`__). Fixed
+   `#165 <https://github.com/dhermes/bezier/issues/165>`__ and
+   `#171 <https://github.com/dhermes/bezier/issues/171>`__.
+   Supported via ``Curve.self_intersections()``
+   `method <https://bezier.readthedocs.io/en/2021.2.13.dev1/python/reference/bezier.curve.html#bezier.curve.Curve.self_intersections>`__.
 
 Documentation
 -------------
