@@ -39,8 +39,8 @@ from bezier import _geometric_intersection
 from bezier import _plot_helpers
 from bezier import _symbolic
 from bezier.hazmat import algebraic_intersection
-from bezier.hazmat import intersection_helpers
 from bezier.hazmat import geometric_intersection
+from bezier.hazmat import intersection_helpers
 
 
 _LOCATE_ERROR_TEMPLATE = (
