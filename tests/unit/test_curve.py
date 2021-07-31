@@ -314,6 +314,8 @@ class TestCurve(utils.NumPyTestCase):
         curve = self._make_one(nodes, 3)
         intersections = curve.self_intersections(verify=False)
         self.assertEqual((2, 1), intersections.shape)
+        intersections_verified = curve.self_intersections(verify=True)
+        self.assertEqual(intersections, intersections_verified)
 
         sq5 = np.sqrt(5.0)
         expected_s = 0.5 - sq5 / 6.0
