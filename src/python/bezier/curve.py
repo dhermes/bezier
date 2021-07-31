@@ -22,6 +22,13 @@ See :doc:`../../algorithms/curve-curve-intersection` for examples using the
 
    import numpy as np
    import bezier
+
+   def binary_exponent(value):
+       if value == 0.0:
+           return -np.inf
+       _, result = np.frexp(value)
+       # Shift [1/2, 1) --> [1, 2) borrows one from exponent
+       return result - 1
 """
 
 import numpy as np
@@ -33,6 +40,7 @@ from bezier import _plot_helpers
 from bezier import _symbolic
 from bezier.hazmat import algebraic_intersection
 from bezier.hazmat import intersection_helpers
+from bezier.hazmat import geometric_intersection
 
 
 _LOCATE_ERROR_TEMPLATE = (
@@ -456,6 +464,123 @@ class Curve(_base.Base):
 
         st_vals, _ = all_intersections(self._nodes, other._nodes)
         return st_vals
+
+    def self_intersections(
+        self, strategy=IntersectionStrategy.GEOMETRIC, verify=True
+    ):
+        """Find the points where the curve intersects itself.
+
+        For curves in general position, there will be no self-intersections:
+
+        .. doctest:: curve-self-intersect1
+           :options: +NORMALIZE_WHITESPACE
+
+           >>> nodes = np.asfortranarray([
+           ...     [0.0, 1.0, 0.0],
+           ...     [0.0, 1.0, 2.0],
+           ... ])
+           >>> curve = bezier.Curve(nodes, degree=2)
+           >>> curve.self_intersections()
+           array([], shape=(2, 0), dtype=float64)
+
+        However, some curves do have self-intersections. Consider a cubic
+        with
+
+        .. math::
+
+           B\\left(\\frac{3 - \\sqrt{5}}{6}\\right) =
+               B\\left(\\frac{3 + \\sqrt{5}}{6}\\right)
+
+        .. image:: ../../images/curve_self_intersect2.png
+           :align: center
+
+        .. doctest:: curve-self-intersect2
+           :options: +NORMALIZE_WHITESPACE
+
+           >>> nodes = np.asfortranarray([
+           ...     [0.0, -1.0, 1.0, -0.75 ],
+           ...     [2.0,  0.0, 1.0,  1.625],
+           ... ])
+           >>> curve = bezier.Curve(nodes, degree=3)
+           >>> self_intersections = curve.self_intersections()
+           >>> sq5 = np.sqrt(5.0)
+           >>> expected = np.asfortranarray([
+           ...     [3 - sq5],
+           ...     [3 + sq5],
+           ... ]) / 6.0
+           >>> max_err = np.max(np.abs(self_intersections - expected))
+           >>> binary_exponent(max_err)
+           -53
+
+        .. testcleanup:: curve-self-intersect2
+
+           import make_images
+           make_images.curve_self_intersect2(curve, self_intersections)
+
+        Some (somewhat pathological) curves can have multiple
+        self-intersections, though the number possible is largely constrained
+        by the degree. For example, this degree six curve has two
+        self-intersections:
+
+        .. image:: ../../images/curve_self_intersect3.png
+           :align: center
+
+        .. doctest:: curve-self-intersect3
+           :options: +NORMALIZE_WHITESPACE
+
+           >>> nodes = np.asfortranarray([
+           ...     [-300.0, 227.5 ,  -730.0,    0.0 ,   730.0, -227.5 , 300.0],
+           ...     [ 150.0, 953.75, -2848.0, 4404.75, -2848.0,  953.75, 150.0],
+           ... ])
+           >>> curve = bezier.Curve(nodes, degree=6)
+           >>> self_intersections = curve.self_intersections()
+           >>> 6.0 * self_intersections
+           array([[1., 4.],
+                  [2., 5.]])
+           >>> curve.evaluate_multi(self_intersections[:, 0])
+           array([[-150., -150.],
+                  [  75.,   75.]])
+           >>> curve.evaluate_multi(self_intersections[:, 1])
+           array([[150., 150.],
+                  [ 75.,  75.]])
+
+        .. testcleanup:: curve-self-intersect3
+
+           import make_images
+           make_images.curve_self_intersect3(curve, self_intersections)
+
+        Args:
+            strategy (Optional[ \
+                ~bezier.hazmat.intersection_helpers.IntersectionStrategy]): The
+                intersection algorithm to use. Defaults to geometric.
+            verify (Optional[bool]): Indicates if extra caution should be
+                used to verify assumptions about the current curve. Can be
+                disabled to speed up execution time. Defaults to :data:`True`.
+
+        Returns:
+            numpy.ndarray: ``2 x N`` array of ``s1``- and ``s2``-parameters
+            where self-intersections occur (possibly empty). For each pair
+            we have :math:`s_1 \\neq s_2` and :math:`B(s_1) = B(s_2)`.
+
+        Raises:
+            NotImplementedError: If at the curve isn't two-dimensional
+                (and ``verify=True``).
+            NotImplementedError: If ``strategy`` is not
+                :attr:`~.IntersectionStrategy.GEOMETRIC`.
+        """
+        if strategy != IntersectionStrategy.GEOMETRIC:
+            raise NotImplementedError(
+                "Only geometric strategy for self-intersection detection"
+            )
+        if verify:
+            if self._dimension != 2:
+                raise NotImplementedError(
+                    "Self-intersection only implemented in 2D",
+                    "Current dimension",
+                    self._dimension,
+                )
+
+        return geometric_intersection.self_intersections(self._nodes)
 
     def elevate(self):
         r"""Return a degree-elevated version of the current curve.

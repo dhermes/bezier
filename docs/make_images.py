@@ -355,6 +355,54 @@ def curve_intersect(curve1, curve2, s_vals):
     save_image(ax.figure, "curve_intersect.png")
 
 
+def curve_self_intersect2(curve, self_intersections):
+    """Image for :meth`.Curve.self_intersections` docstring."""
+    if NO_IMAGES:
+        return
+
+    ax = curve.plot(256, color=BLUE)
+    if self_intersections.shape != (2, 1):
+        raise ValueError("Unexpected shape", self_intersections)
+
+    s1_val = self_intersections[0, 0]
+    intersection_xy = curve.evaluate(s1_val)
+    ax.plot(
+        intersection_xy[0, :],
+        intersection_xy[1, :],
+        color="black",
+        linestyle="None",
+        marker="o",
+    )
+    ax.axis("scaled")
+    ax.set_xlim(-0.8125, 0.0625)
+    ax.set_ylim(0.75, 2.125)
+    save_image(ax.figure, "curve_self_intersect2.png")
+
+
+def curve_self_intersect3(curve, self_intersections):
+    """Image for :meth`.Curve.self_intersections` docstring."""
+    if NO_IMAGES:
+        return
+
+    ax = curve.plot(256, color=BLUE)
+    if self_intersections.shape != (2, 2):
+        raise ValueError("Unexpected shape", self_intersections)
+
+    s1_vals = np.asfortranarray(self_intersections[0, :])
+    intersection_xy = curve.evaluate_multi(s1_vals)
+    ax.plot(
+        intersection_xy[0, :],
+        intersection_xy[1, :],
+        color="black",
+        linestyle="None",
+        marker="o",
+    )
+    ax.axis("scaled")
+    ax.set_xlim(-330.0, 330.0)
+    ax.set_ylim(0.125, 266.0)
+    save_image(ax.figure, "curve_self_intersect3.png")
+
+
 def triangle_constructor(triangle):
     """Image for :class`.Triangle` docstring."""
     if NO_IMAGES:

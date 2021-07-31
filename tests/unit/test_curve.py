@@ -23,6 +23,9 @@ from tests.unit import test__symbolic
 from tests.unit import utils
 
 
+SPACING = np.spacing  # pylint: disable=no-member
+
+
 class TestCurve(utils.NumPyTestCase):
 
     ZEROS = np.zeros((2, 2), order="F")
@@ -273,6 +276,56 @@ class TestCurve(utils.NumPyTestCase):
             curve1.intersect(curve2)
         with self.assertRaises(NotImplementedError):
             curve2.intersect(curve1)
+
+    def test_self_intersections_unsupported_dimension(self):
+        nodes = np.asfortranarray([[0.0, 1.0, 2.0]])
+        curve = self._make_one(nodes, 2)
+
+        with self.assertRaises(NotImplementedError) as exc_info:
+            curve.self_intersections()
+
+        expected = (
+            "Self-intersection only implemented in 2D",
+            "Current dimension",
+            1,
+        )
+        self.assertEqual(expected, exc_info.exception.args)
+
+    def test_self_intersections_unsupported_strategy(self):
+        from bezier.hazmat import intersection_helpers
+
+        nodes = np.asfortranarray([[0.0, 1.0, 2.0], [0.0, 1.0, 2.0]])
+        curve = self._make_one(nodes, 2)
+
+        strategy = intersection_helpers.IntersectionStrategy.ALGEBRAIC
+        with self.assertRaises(NotImplementedError) as exc_info:
+            curve.self_intersections(strategy=strategy)
+
+        expected = ("Only geometric strategy for self-intersection detection",)
+        self.assertEqual(expected, exc_info.exception.args)
+
+    def test_self_intersections_valid(self):
+        nodes = np.asfortranarray(
+            [
+                [0.0, -1.0, 1.0, -0.75],
+                [2.0, 0.0, 1.0, 1.625],
+            ]
+        )
+        curve = self._make_one(nodes, 3)
+        intersections = curve.self_intersections(verify=False)
+        self.assertEqual((2, 1), intersections.shape)
+
+        sq5 = np.sqrt(5.0)
+        expected_s = 0.5 - sq5 / 6.0
+        local_eps = 3 * abs(SPACING(expected_s))
+        self.assertAlmostEqual(
+            expected_s, intersections[0, 0], delta=local_eps
+        )
+        expected_t = 0.5 + sq5 / 6.0
+        local_eps = abs(SPACING(expected_t))
+        self.assertAlmostEqual(
+            expected_t, intersections[1, 0], delta=local_eps
+        )
 
     def test_elevate(self):
         nodes = np.asfortranarray([[0.0, 1.0, 3.0, 3.5], [0.5, 1.0, 2.0, 4.0]])

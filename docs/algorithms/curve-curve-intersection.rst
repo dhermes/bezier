@@ -567,35 +567,6 @@ Intersections at Endpoints
 .. image:: ../images/curves10_and_17.png
    :align: center
 
-Detecting Self-Intersections
-----------------------------
-
-.. doctest:: intersect-12-self
-   :options: +NORMALIZE_WHITESPACE
-
-   >>> nodes = np.asfortranarray([
-   ...     [0.0, -1.0, 1.0, -0.75 ],
-   ...     [2.0,  0.0, 1.0,  1.625],
-   ... ])
-   >>> curve = bezier.Curve(nodes, degree=3)
-   >>> left, right = curve.subdivide()
-   >>> intersections = left.intersect(right)
-   >>> sq5 = np.sqrt(5.0)
-   >>> expected_ints = np.asfortranarray([
-   ...     [3, 3 - sq5],
-   ...     [0, sq5    ],
-   ... ]) / 3.0
-   >>> max_err = np.max(np.abs(intersections - expected_ints))
-   >>> binary_exponent(max_err)
-   -53
-   >>> s_vals = np.asfortranarray(intersections[0, :])
-   >>> left.evaluate_multi(s_vals)
-   array([[-0.09375 , -0.25  ],
-          [ 0.828125,  1.375 ]])
-
-.. image:: ../images/curves42_and_43.png
-   :align: center
-
 Limitations
 -----------
 

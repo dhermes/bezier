@@ -1056,6 +1056,10 @@ def full_reduce(nodes):
 def discrete_turning_angle(nodes):
     r"""Determine the absolute sum of B |eacute| zier node angles.
 
+    .. note::
+
+       This assumes, but does not check, that ``nodes`` is ``2 x N``.
+
     For the set of vectors :math:`v_j` given by ``nodes``, the discrete
     angles :math:`\theta_j` at each internal node is given by
 
@@ -1087,19 +1091,8 @@ def discrete_turning_angle(nodes):
 
     Returns:
         float: The (discrete) turning angle.
-
-    Raises:
-        NotImplementedError: If the curve's dimension is not ``2``.
     """
-    dimension, num_nodes = nodes.shape
-
-    if dimension != 2:
-        raise NotImplementedError(
-            "2D is the only supported dimension",
-            "Current dimension",
-            dimension,
-        )
-
+    _, num_nodes = nodes.shape
     if num_nodes < 3:
         return 0.0
 
