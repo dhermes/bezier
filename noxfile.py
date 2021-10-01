@@ -30,7 +30,7 @@ IS_WINDOWS = os.name == "nt"
 DEPS = {
     "black": "black >= 21.4b2",
     "cmake-format": "cmake-format >= 0.6.13",
-    "cmake": "cmake >= 3.18.4.post1",
+    "cmake": "cmake >= 3.21.3",
     "coverage": "coverage",
     "Cython": "Cython >= 0.29.24",
     "docutils": "docutils",
