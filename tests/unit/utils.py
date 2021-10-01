@@ -62,10 +62,10 @@ def binary_round(value, num_bits):
     pre, hex_digits = hex_val.split("0x1.")
     hex_digits, post = hex_digits.split("p")
     assert len(hex_digits) == 13
-    all_bits = "{:052b}".format(int(hex_digits, 16))
+    all_bits = f"{int(hex_digits, 16):052b}"
     assert len(all_bits) == 52
     truncated_bits = all_bits[:num_bits] + "0" * (52 - num_bits)
-    truncated_hex = "{:013x}".format(int(truncated_bits, 2))
+    truncated_hex = f"{int(truncated_bits, 2):013x}"
     python_hex = pre + "0x1." + truncated_hex + "p" + post
     return float.fromhex(python_hex)
 

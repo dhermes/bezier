@@ -44,7 +44,7 @@ DEPS = {
     "numpy": "numpy >= 1.20.1",
     "pycobertura": "pycobertura >= 2.0.1",
     "Pygments": "Pygments",
-    "pylint": "pylint >= 2.8.2",
+    "pylint": "pylint >= 2.11.1",
     "pytest": "pytest >= 6.2.2",
     "pytest-cov": "pytest-cov",
     "scipy": "scipy >= 1.6.0",
