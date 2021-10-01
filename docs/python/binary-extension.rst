@@ -200,7 +200,7 @@ it indirectly depends on ``libgfortran``, ``libquadmath`` and ``libgcc_s``:
 
    $ otool -L .dylibs/libbezier.2021.2.12.dylib
    .dylibs/libbezier.2021.2.12.dylib:
-       /DLC/bezier/libbezier.2021.2.12.dylib (...)
+       /DLC/.dylibs/bezier/libbezier.2021.2.12.dylib (...)
        @loader_path/libgfortran.5.dylib (...)
        /usr/lib/libSystem.B.dylib (...)
        @loader_path/libgcc_s.1.dylib (...)
