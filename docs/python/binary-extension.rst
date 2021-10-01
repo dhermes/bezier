@@ -133,7 +133,7 @@ and the local copy of ``libbezier`` depends on the other dependencies in
    Dynamic section at offset 0x207db8 contains 31 entries:
      Tag        Type                         Name/Value
     0x0000000000000001 (NEEDED)             Shared library: [libquadmath-2d0c479f.so.0.0.0]
-    0x0000000000000001 (NEEDED)             Shared library: [libz-eb09ad1d.so.1.2.3]
+    0x0000000000000001 (NEEDED)             Shared library: [libz.so.1]
     0x0000000000000001 (NEEDED)             Shared library: [libm.so.6]
     0x0000000000000001 (NEEDED)             Shared library: [libgcc_s.so.1]
     0x0000000000000001 (NEEDED)             Shared library: [libc.so.6]
