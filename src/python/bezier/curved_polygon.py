@@ -257,9 +257,7 @@ class CurvedPolygon:
         Returns:
             str: Object representation.
         """
-        return "<{} (num_sides={:d})>".format(
-            self.__class__.__name__, self._num_sides
-        )
+        return f"<{self.__class__.__name__} (num_sides={self._num_sides:d})>"
 
     def plot(self, pts_per_edge, color=None, ax=None):
         """Plot the current curved polygon.

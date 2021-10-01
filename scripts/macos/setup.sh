@@ -40,9 +40,9 @@ echo "PIP_CMD=${PIP_CMD}"
 
 # Make sure our installed CPython is set up for testing.
 ${PIP_CMD} install --ignore-installed virtualenv pip
-${PIP_CMD} install --upgrade "nox >= 2020.12.31" numpy
+${PIP_CMD} install --upgrade "nox >= 2021.10.1" numpy
 # Make sure there is a working ``cmake`` on the ``${PATH}``.
-${PIP_CMD} install --upgrade "cmake >= 3.18.4.post1"
+${PIP_CMD} install --upgrade "cmake >= 3.21.3"
 command -v cmake
 
 PY_BIN_DIR=$(dirname "${PYTHON_EXE}")

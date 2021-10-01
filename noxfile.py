@@ -30,7 +30,7 @@ IS_WINDOWS = os.name == "nt"
 DEPS = {
     "black": "black >= 21.4b2",
     "cmake-format": "cmake-format >= 0.6.13",
-    "cmake": "cmake >= 3.18.4.post1",
+    "cmake": "cmake >= 3.21.3",
     "coverage": "coverage",
     "Cython": "Cython >= 0.29.24",
     "docutils": "docutils",
@@ -44,7 +44,7 @@ DEPS = {
     "numpy": "numpy >= 1.20.1",
     "pycobertura": "pycobertura >= 2.0.1",
     "Pygments": "Pygments",
-    "pylint": "pylint >= 2.8.2",
+    "pylint": "pylint >= 2.11.1",
     "pytest": "pytest >= 6.2.2",
     "pytest-cov": "pytest-cov",
     "scipy": "scipy >= 1.6.0",

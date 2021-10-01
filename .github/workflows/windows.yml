@@ -45,7 +45,7 @@ jobs:
       shell: cmd
       run: |
         python -m pip install --upgrade pip
-        python -m pip install --upgrade setuptools wheel "nox >= 2020.12.31"
+        python -m pip install --upgrade setuptools wheel "nox >= 2021.10.1"
     - name: Show gfortran version
       shell: powershell
       run: |

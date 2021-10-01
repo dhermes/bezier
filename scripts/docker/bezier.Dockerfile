@@ -2,8 +2,8 @@ FROM dhermes/python-multi:latest
 
 # Install the current versions of CMake, nox and NumPy.
 RUN python3.9 -m pip install --no-cache-dir \
-  "cmake == 3.18.4.post1" \
-  "nox == 2020.12.31" \
+  "cmake == 3.21.3" \
+  "nox == 2021.10.1" \
   "numpy == 1.20.1" \
   "appdirs == 1.4.4" \
   "argcomplete == 1.12.2" \

@@ -261,7 +261,7 @@ def incorrect_values(multipliers, errors, exact):
     # pylint: enable=unbalanced-tuple-unpacking
     failures = []
     for failure_row, failure_col in zip(failure_rows, failure_cols):
-        failures.append("* {:d}, {:d}".format(failure_row, failure_col))
+        failures.append(f"* {failure_row:d}, {failure_col:d}")
     failures = "\n".join(failures)
     zero_misses = np.where((exact == 0.0) & (observed_error_ulps != 0.0))
     observed_error_ulps[zero_misses] = np.nan

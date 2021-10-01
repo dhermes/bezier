@@ -83,7 +83,6 @@ The command line tool `auditwheel`_ adds a ``bezier.libs`` directory to
      libbezier-3374330c.so.2021.2.12
      libgfortran-2e0d59d6.so.5.0.0
      libquadmath-2d0c479f.so.0.0.0
-     libz-eb09ad1d.so.1.2.3
 
 The ``bezier._speedup`` module depends on this local copy of ``libbezier``:
 
@@ -134,7 +133,7 @@ and the local copy of ``libbezier`` depends on the other dependencies in
    Dynamic section at offset 0x207db8 contains 31 entries:
      Tag        Type                         Name/Value
     0x0000000000000001 (NEEDED)             Shared library: [libquadmath-2d0c479f.so.0.0.0]
-    0x0000000000000001 (NEEDED)             Shared library: [libz-eb09ad1d.so.1.2.3]
+    0x0000000000000001 (NEEDED)             Shared library: [libz.so.1]
     0x0000000000000001 (NEEDED)             Shared library: [libm.so.6]
     0x0000000000000001 (NEEDED)             Shared library: [libgcc_s.so.1]
     0x0000000000000001 (NEEDED)             Shared library: [libc.so.6]
@@ -200,7 +199,7 @@ it indirectly depends on ``libgfortran``, ``libquadmath`` and ``libgcc_s``:
 
    $ otool -L .dylibs/libbezier.2021.2.12.dylib
    .dylibs/libbezier.2021.2.12.dylib:
-       /DLC/.dylibs/bezier/libbezier.2021.2.12.dylib (...)
+       /DLC/bezier/.dylibs/libbezier.2021.2.12.dylib (...)
        @loader_path/libgfortran.5.dylib (...)
        /usr/lib/libSystem.B.dylib (...)
        @loader_path/libgcc_s.1.dylib (...)

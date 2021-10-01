@@ -555,9 +555,9 @@ class UnsupportedDegree(NotImplementedError):
     def __str__(self):
         num_supported = len(self.supported)
         if num_supported == 0:
-            return "degree={}".format(self.degree)
+            return f"degree={self.degree}"
 
-        degrees_str = ["{}".format(degree) for degree in self.supported]
+        degrees_str = [str(degree) for degree in self.supported]
         if num_supported == 1:
             msg = "The only degree supported at this time is " + degrees_str[0]
         else:
@@ -567,4 +567,4 @@ class UnsupportedDegree(NotImplementedError):
                 + " and "
                 + degrees_str[-1]
             )
-        return "{} (degree={})".format(msg, self.degree)
+        return f"{msg} (degree={self.degree})"
