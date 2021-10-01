@@ -83,7 +83,6 @@ The command line tool `auditwheel`_ adds a ``bezier.libs`` directory to
      libbezier-3374330c.so.2021.2.12
      libgfortran-2e0d59d6.so.5.0.0
      libquadmath-2d0c479f.so.0.0.0
-     libz-eb09ad1d.so.1.2.3
 
 The ``bezier._speedup`` module depends on this local copy of ``libbezier``:
 
