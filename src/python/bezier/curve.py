@@ -563,7 +563,7 @@ class Curve(_base.Base):
             we have :math:`s_1 \\neq s_2` and :math:`B(s_1) = B(s_2)`.
 
         Raises:
-            NotImplementedError: If at the curve isn't two-dimensional
+            NotImplementedError: If the curve isn't two-dimensional
                 (and ``verify=True``).
             NotImplementedError: If ``strategy`` is not
                 :attr:`~.IntersectionStrategy.GEOMETRIC`.
