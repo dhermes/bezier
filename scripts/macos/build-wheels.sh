@@ -51,8 +51,8 @@ REPO_ROOT=$(dirname "${SCRIPTS_DIR}")
 
 # Build and install ``libbezier`` into a custom location.
 SRC_DIR="${REPO_ROOT}/src/fortran/"
-BUILD_DIR="${REPO_ROOT}/.nox/libbezier-release/build"
-INSTALL_PREFIX="${REPO_ROOT}/.nox/libbezier-release/usr"
+BUILD_DIR="${REPO_ROOT}/.nox/.cache/libbezier-release/build"
+INSTALL_PREFIX="${REPO_ROOT}/.nox/.cache/libbezier-release/usr"
 mkdir -p "${BUILD_DIR}"
 "${BIN_DIR}/cmake" \
     -DCMAKE_BUILD_TYPE=Release \

@@ -457,15 +457,16 @@ def validate_functional_test_cases(session):
     )
 
 
-def _cmake_virtualenv(session, build_type):
-    """The **path** to the ``cmake`` virtual environment.
+def _cmake_libbezier_root(session, build_type):
+    """The **path** to the Nox shared directory for the build type.
 
-    This path is dependent on build type. If the ``session`` is actually
-    running as part of the intended ``build_type``, this will ensure a full
-    virtual environment is created. Otherwise, it will just create a
-    subdirectory for the build. This subdirectory will be the same one that
-    would be created for ``build_type``, e.g. if ``build_type`` is ``Debug``,
-    then the ``.nox/libbezier-debug`` subdirectory would be created.
+    This path is dependent on build type. e.g. e.g. if ``build_type`` is
+    ``Debug``, then the ``.nox/.cache/libbezier-debug`` is expected to be
+    returned. This subdirectory will be created if it doesn't exist.
+
+    If the ``session`` is actually running as part of the intended
+    ``build_type``, this will ensure a full virtual environment is created
+    as well.
     """
     if build_type == BUILD_TYPE_DEBUG:
         build_session_name = DEBUG_SESSION_NAME
@@ -475,7 +476,6 @@ def _cmake_virtualenv(session, build_type):
         raise ValueError(f"Invalid build type {build_type!r}")
 
     if session._runner.name == build_session_name:
-        virtualenv_location = session.virtualenv.location
         # Force the virtual environment to be (re-)created if it doesn't
         # have a ``bin`` directory. This can happen if a build was invoked from
         # another session function.
@@ -485,15 +485,11 @@ def _cmake_virtualenv(session, build_type):
             session.virtualenv.create()
             session.virtualenv.reuse_existing = reuse_value
 
-        return virtualenv_location
-
-    relative_path = nox.sessions._normalize_path(
-        session._runner.global_config.envdir, build_session_name
-    )
+    relative_path = session.cache_dir / build_session_name
     # Convert to an absolute path.
-    virtualenv_location = get_path(relative_path)
-    session.run(os.makedirs, virtualenv_location, exist_ok=True)
-    return virtualenv_location
+    libbezier_root = get_path(relative_path)
+    session.run(os.makedirs, libbezier_root, exist_ok=True)
+    return libbezier_root
 
 
 def _cmake_needed():
@@ -520,7 +516,7 @@ def _cmake(session, build_type):
     Returns:
         str: The install prefix that was created / re-used.
     """
-    virtualenv_location = _cmake_virtualenv(session, build_type)
+    libbezier_root = _cmake_libbezier_root(session, build_type)
 
     cmake_external = True
     if _cmake_needed():
@@ -531,8 +527,8 @@ def _cmake(session, build_type):
         session.run_always("cmake", "--version", external=cmake_external)
 
     # Prepare build and install directories.
-    build_dir = os.path.join(virtualenv_location, "build")
-    install_prefix = os.path.join(virtualenv_location, "usr")
+    build_dir = os.path.join(libbezier_root, "build")
+    install_prefix = os.path.join(libbezier_root, "usr")
     session.run_always(os.makedirs, build_dir, exist_ok=True)
 
     # Run ``cmake`` to prepare for / configure the build.
