@@ -96,6 +96,10 @@ jobs:
           --workdir /var/code/bezier/ \
           dhermes/bezier:latest \
           sleep 3600
+    - name: Out-of-band upgrade `nox` to latest
+      run: |
+        docker exec dhermes-bezier \
+          python -m pip install --upgrade 'nox >= 2021.10.1'
     - name: Check that all Cython generated files have been updated
       run: |
         docker exec dhermes-bezier \
@@ -131,6 +135,10 @@ jobs:
           --workdir /var/code/bezier/ \
           dhermes/bezier:latest \
           sleep 3600
+    - name: Out-of-band upgrade `nox` to latest
+      run: |
+        docker exec dhermes-bezier \
+          python -m pip install --upgrade 'nox >= 2021.10.1'
     - name: Run all doctests
       run: |
         docker exec dhermes-bezier \
