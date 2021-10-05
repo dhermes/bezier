@@ -1,18 +1,21 @@
 FROM dhermes/python-multi:latest
 
 # Install the current versions of CMake, nox and NumPy.
-RUN python3.9 -m pip install --no-cache-dir \
+RUN python3.10 -m pip install --no-cache-dir \
   "cmake == 3.21.3" \
   "nox == 2021.10.1" \
-  "numpy == 1.20.1" \
-  "appdirs == 1.4.4" \
-  "argcomplete == 1.12.2" \
-  "colorlog == 4.7.2" \
-  "distlib == 0.3.1" \
-  "filelock == 3.0.12" \
-  "py == 1.10.0" \
-  "six == 1.15.0" \
-  "virtualenv == 20.4.2"
+  "numpy == 1.21.2" \
+  "argcomplete==1.12.3" \
+  "backports.entry-points-selectable==1.1.0" \
+  "colorlog==6.4.1" \
+  "distlib==0.3.3" \
+  "filelock==3.3.0" \
+  "packaging==21.0" \
+  "platformdirs==2.4.0" \
+  "py==1.10.0" \
+  "pyparsing==2.4.7" \
+  "six==1.16.0" \
+  "virtualenv==20.8.1"
 
 # Install `gfortran` (for building the Fortran code used by the binary
 # extension), `libatlas-base-dev`, `libblas-dev`, `liblapack-dev` (for SciPy)
@@ -35,9 +38,9 @@ RUN mkdir ${WHEELHOUSE}
 RUN set -ex \
   && virtualenv --python=pypy3 pypy3-env \
   && pypy3-env/bin/python -m pip install --upgrade pip wheel \
-  && pypy3-env/bin/python -m pip wheel --wheel-dir=${WHEELHOUSE} "numpy == 1.20.1" \
+  && pypy3-env/bin/python -m pip wheel --wheel-dir=${WHEELHOUSE} "numpy == 1.21.2" \
   && pypy3-env/bin/python -m pip install ${WHEELHOUSE}/numpy*.whl \
-  && pypy3-env/bin/python -m pip wheel --wheel-dir=${WHEELHOUSE} "scipy == 1.6.0" \
+  && pypy3-env/bin/python -m pip wheel --wheel-dir=${WHEELHOUSE} "scipy == 1.7.1" \
   && rm -fr pypy3-env
 
 # Install Docker CLI (used to build `manylinux` wheel for `nox -s doctest`).

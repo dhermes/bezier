@@ -6,7 +6,7 @@
 
 This repository is intended to be used as a fully-functional environment for installing / running / testing `bezier`. Provides:
 
-- CPython 3.7, 3.8, 3.9 and PyPy 3.7 (version 7.3.3)
+- CPython 3.7, 3.8, 3.9, 3.10 and PyPy 3.7 (version 7.3.5)
 - NumPy pre-installed (needed for installing the binary extension)
 - `/wheelhouse` directory with NumPy and SciPy pre-built for PyPy 3
 - `gfortran` compiler
