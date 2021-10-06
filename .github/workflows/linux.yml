@@ -49,18 +49,22 @@ jobs:
       run: |
         docker exec dhermes-bezier \
           nox -s "unit-3.8"
+    - name: Unit tests in Python 3.9
+      run: |
+        docker exec dhermes-bezier \
+          nox -s "unit-3.9"
     - name: Unit tests in pypy3
       run: |
         docker exec dhermes-bezier \
           nox -s "unit-pypy3"
-    - name: Unit tests AND line coverage in Python 3.9
+    - name: Unit tests AND line coverage in Python 3.10
       run: |
         docker exec dhermes-bezier \
           nox -s cover
-    - name: Functional tests in Python 3.9
+    - name: Functional tests in Python 3.10
       run: |
         docker exec dhermes-bezier \
-          nox -s "functional-3.9"
+          nox -s "functional-3.10"
     - name: Upload coverage to coveralls
       env:
         COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}

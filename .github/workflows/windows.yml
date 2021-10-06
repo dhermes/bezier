@@ -32,8 +32,10 @@ jobs:
         - unit-3.8-32
         - unit-3.8
         - unit-3.9-32
+        - unit-3.9
+        - unit-3.10-32
         - cover
-        - functional-3.9
+        - functional-3.10
         - doctest
     steps:
     - uses: actions/cache@v2
