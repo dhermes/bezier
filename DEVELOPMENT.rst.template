@@ -85,8 +85,8 @@ To explicitly disable the building of the extension, the
 
    $ BEZIER_NO_EXTENSION=True .../bin/python -m pip wheel .
 
-This environment variable is actually used for the ``nox -s docs`` session
-to emulate the `RTD`_ build environment (where no Fortran compiler is
+This environment variable is actually used for the ``nox --session docs``
+session to emulate the `RTD`_ build environment (where no Fortran compiler is
 present).
 
 Dependencies
@@ -112,11 +112,11 @@ We recommend using `Nox`_ to run unit tests:
 
 .. code-block:: console
 
-   $ nox -s "unit-3.7"
-   $ nox -s "unit-3.8"
-   $ nox -s "unit-3.9"
-   $ nox -s "unit-pypy3"
-   $ nox -s  unit  # Run all versions
+   $ nox --session "unit-3.7"
+   $ nox --session "unit-3.8"
+   $ nox --session "unit-3.9"
+   $ nox --session "unit-pypy3"
+   $ nox --session  unit  # Run all versions
 
 However, `pytest`_ can be used directly (though it won't
 manage dependencies or build the binary extension):
@@ -165,7 +165,7 @@ To run the coverage report locally:
 
 .. code-block:: console
 
-   $ nox -s cover
+   $ nox --session cover
    $ # OR
    $ PYTHONPATH=src/python/ python -m pytest \
    >     --cov=bezier \
@@ -180,17 +180,17 @@ marked slow, use the ``--ignore-slow`` flag:
 
 .. code-block:: console
 
-   $ nox -s "unit-3.7" -- --ignore-slow
-   $ nox -s "unit-3.8" -- --ignore-slow
-   $ nox -s "unit-3.9" -- --ignore-slow
-   $ nox -s  unit      -- --ignore-slow
+   $ nox --session "unit-3.7" -- --ignore-slow
+   $ nox --session "unit-3.8" -- --ignore-slow
+   $ nox --session "unit-3.9" -- --ignore-slow
+   $ nox --session  unit      -- --ignore-slow
 
 These slow tests have been identified via:
 
 .. code-block:: console
 
    $ ...
-   $ nox -s "unit-3.9" -- --durations=10
+   $ nox --session "unit-3.9" -- --durations=10
 
 and then marked with ``pytest.mark.skipif``.
 
@@ -250,11 +250,11 @@ To run the functional tests:
 
 .. code-block:: console
 
-   $ nox -s "functional-3.7"
-   $ nox -s "functional-3.8"
-   $ nox -s "functional-3.9"
-   $ nox -s "functional-pypy3"
-   $ nox -s  functional  # Run all versions
+   $ nox --session "functional-3.7"
+   $ nox --session "functional-3.8"
+   $ nox --session "functional-3.9"
+   $ nox --session "functional-pypy3"
+   $ nox --session  functional  # Run all versions
    $ # OR
    $ PYTHONPATH=src/python/ python3.7 -m pytest tests/functional/
    $ PYTHONPATH=src/python/ python3.8 -m pytest tests/functional/
@@ -325,7 +325,7 @@ To check compliance:
 
 .. code-block:: console
 
-   $ nox -s lint
+   $ nox --session lint
 
 A few extensions and overrides have been specified in the `pylintrc`_
 configuration for ``bezier``.
@@ -375,7 +375,7 @@ To build the documentation locally:
 
 .. code-block:: console
 
-   $ nox -s docs
+   $ nox --session docs
    $ # OR (from a Python 3.7 or later environment)
    $ PYTHONPATH=src/python/ ./scripts/build_docs.sh
 
@@ -391,7 +391,7 @@ To run the documentation tests:
 
 .. code-block:: console
 
-   $ nox -s doctest
+   $ nox --session doctest
    $ # OR (from a Python 3.7 or later environment)
    $ PYTHONPATH=src/python/:. sphinx-build -W \
    >     -b doctest \
@@ -414,7 +414,7 @@ To regenerate all the images:
 
 .. code-block:: console
 
-   $ nox -s docs_images
+   $ nox --session docs_images
    $ # OR (from a Python 3.7 or later environment)
    $ export MATPLOTLIBRC=docs/ GENERATE_IMAGES=True PYTHONPATH=src/python/
    $ sphinx-build -W \
@@ -552,8 +552,8 @@ services:
 
 - ``WHEELHOUSE``: If set, this gives a path to prebuilt NumPy and SciPy wheels
   for PyPy 3.
-- ``GENERATE_IMAGES``: Indicates to ``nox -s doctest`` that images should
-  be generated during cleanup of each test case.
+- ``GENERATE_IMAGES``: Indicates to ``nox --session doctest`` that images
+  should be generated during cleanup of each test case.
 - ``READTHEDOCS``: Indicates currently running on Read The Docs (RTD). This is
   used to tell Sphinx to use the RTD theme when **not** running on RTD.
 - ``COVERALLS_REPO_TOKEN``: To upload the coverage report.
