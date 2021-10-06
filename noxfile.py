@@ -521,7 +521,7 @@ def _cmake(session, build_type):
     The ``session`` may be one of ``libbezier-debug`` / ``libbezier-release``
     in which case we directly build as instructed. Additionally, it may
     correspond to a session that seeks to build ``libbezier`` as a dependency,
-    e.g. ``nox -s unit-3.10``.
+    e.g. ``nox --session unit-3.10``.
 
     Returns:
         str: The install prefix that was created / re-used.

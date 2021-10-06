@@ -22,7 +22,7 @@ ROOT_DIR = _SCRIPT_FILE.parent.parent
 ADVICE = """\
 `black --check` failed on your local branch.
 
-To resolve, run `nox -s blacken`.
+To resolve, run `nox --session blacken`.
 """
 
 

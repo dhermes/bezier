@@ -16,7 +16,7 @@ To actually execute these functions with the desired inputs, run:
 
 .. code-block:: console
 
-   $ nox -s docs_images
+   $ nox --session docs_images
 """
 
 import os

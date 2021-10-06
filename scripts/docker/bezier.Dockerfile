@@ -43,7 +43,7 @@ RUN set -ex \
   && pypy3-env/bin/python -m pip wheel --wheel-dir=${WHEELHOUSE} "scipy == 1.7.1" \
   && rm -fr pypy3-env
 
-# Install Docker CLI (used to build `manylinux` wheel for `nox -s doctest`).
+# Install Docker CLI (used to build `manylinux` wheel for `nox --session doctest`).
 # Via: https://docs.docker.com/install/linux/docker-ce/ubuntu/
 # Includes a diagnostic-only use of `apt-key fingerprint`.
 RUN apt-get update \

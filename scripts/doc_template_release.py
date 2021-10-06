@@ -22,7 +22,7 @@ This will introduce one-off changes in
 that are not intended to be checked into ``main`` (except maybe
 to be reverted after a release).
 
-This changes will cause ``nox -s lint`` to fail because it will make
+This changes will cause ``nox --session lint`` to fail because it will make
 those documents look incorrect to the ``check_doc_templates.py``
 script.
 """
