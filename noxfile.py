@@ -28,7 +28,7 @@ IS_LINUX = sys.platform in ("linux", "linux2")
 IS_MACOS = sys.platform == "darwin"
 IS_WINDOWS = os.name == "nt"
 DEPS = {
-    "black": "black >= 21.4b2",
+    "black": "black >= 21.9b0",
     "cmake-format": "cmake-format >= 0.6.13",
     "cmake": "cmake >= 3.21.3",
     "coverage": "coverage",
@@ -37,19 +37,19 @@ DEPS = {
     "flake8": "flake8",
     "flake8-import-order": "flake8-import-order",
     "importlib-metadata": 'importlib-metadata; python_version<"3.8"',
-    "jsonschema": "jsonschema >= 3.2.0",
+    "jsonschema": "jsonschema >= 4.0.1",
     "lcov_cobertura": "lcov_cobertura >= 1.6",
     "machomachomangler": "machomachomangler == 0.0.1",
-    "matplotlib": "matplotlib >= 3.3.4",
-    "numpy": "numpy >= 1.20.1",
-    "pycobertura": "pycobertura >= 2.0.1",
+    "matplotlib": "matplotlib >= 3.4.3",
+    "numpy": "numpy >= 1.21.2",
+    "pycobertura": "pycobertura >= 2.1.0",
     "Pygments": "Pygments",
     "pylint": "pylint >= 2.11.1",
-    "pytest": "pytest >= 6.2.2",
+    "pytest": "pytest >= 6.2.5",
     "pytest-cov": "pytest-cov",
-    "scipy": "scipy >= 1.6.0",
-    "sympy": "sympy >= 1.7.1",
-    "seaborn": "seaborn >= 0.11.1",
+    "scipy": "scipy >= 1.7.1",
+    "sympy": "sympy >= 1.8",
+    "seaborn": "seaborn >= 0.11.2",
 }
 BASE_DEPS = (DEPS["numpy"], DEPS["pytest"], DEPS["importlib-metadata"])
 NOX_DIR = os.path.abspath(os.path.dirname(__file__))
