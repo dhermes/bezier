@@ -89,12 +89,12 @@ The ``bezier._speedup`` module depends on this local copy of ``libbezier``:
 .. testcode:: linux-readelf-py
    :hide:
 
-   invoke_shell("readelf", "-d", "_speedup.cpython-39-x86_64-linux-gnu.so")
+   invoke_shell("readelf", "-d", "_speedup.cpython-310-x86_64-linux-gnu.so")
 
 .. testoutput:: linux-readelf-py
    :linux-only:
 
-   $ readelf -d _speedup.cpython-39-x86_64-linux-gnu.so
+   $ readelf -d _speedup.cpython-310-x86_64-linux-gnu.so
 
    Dynamic section at offset 0x332000 contains 27 entries:
      Tag        Type                         Name/Value
@@ -173,15 +173,15 @@ of ``libbezier``:
 .. testcode:: macos-extension
    :hide:
 
-   invoke_shell("otool", "-L", "_speedup.cpython-39-darwin.so")
+   invoke_shell("otool", "-L", "_speedup.cpython-310-darwin.so")
 
 .. testoutput:: macos-extension
    :options: +NORMALIZE_WHITESPACE
    :macos-only:
    :pyversion: >= 3.10
 
-   $ otool -L _speedup.cpython-39-darwin.so
-   _speedup.cpython-39-darwin.so:
+   $ otool -L _speedup.cpython-310-darwin.so
+   _speedup.cpython-310-darwin.so:
            @loader_path/.dylibs/libbezier.2021.2.12.dylib (...)
            /usr/lib/libSystem.B.dylib (...)
 
@@ -267,26 +267,26 @@ The Python extension module (``.pyd`` file) depends directly on this library:
 .. testcode:: windows-extension
    :hide:
 
-   invoke_shell("dumpbin", "/dependents", "_speedup.cp39-win_amd64.pyd")
+   invoke_shell("dumpbin", "/dependents", "_speedup.cp310-win_amd64.pyd")
 
 .. testoutput:: windows-extension
    :options: +NORMALIZE_WHITESPACE
    :windows-only:
    :pyversion: >= 3.10
 
-   > dumpbin /dependents _speedup.cp39-win_amd64.pyd
+   > dumpbin /dependents _speedup.cp310-win_amd64.pyd
    Microsoft (R) COFF/PE Dumper Version ...
    Copyright (C) Microsoft Corporation.  All rights reserved.
 
 
-   Dump of file _speedup.cp39-win_amd64.pyd
+   Dump of file _speedup.cp310-win_amd64.pyd
 
    File Type: DLL
 
      Image has the following dependencies:
 
        bezier-e5dbb97a.dll
-       python39.dll
+       python310.dll
        KERNEL32.dll
        VCRUNTIME140.dll
        api-ms-win-crt-stdio-l1-1-0.dll
