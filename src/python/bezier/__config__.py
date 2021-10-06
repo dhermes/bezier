@@ -20,7 +20,7 @@ import os
 
 
 # Error messages for ``handle_import_error``.
-TEMPLATE = "No module named 'bezier.{}'"  # 3.7, 3.8, 3.9, pypy3
+TEMPLATE = "No module named 'bezier.{}'"  # 3.7, 3.8, 3.9, 3.10, pypy3
 # NOTE: ``os.add_dll_directory()`` was added on Windows in Python 3.8.
 OS_ADD_DLL_DIRECTORY = getattr(os, "add_dll_directory", None)
 

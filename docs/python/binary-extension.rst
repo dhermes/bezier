@@ -178,7 +178,7 @@ of ``libbezier``:
 .. testoutput:: macos-extension
    :options: +NORMALIZE_WHITESPACE
    :macos-only:
-   :pyversion: >= 3.9
+   :pyversion: >= 3.10
 
    $ otool -L _speedup.cpython-39-darwin.so
    _speedup.cpython-39-darwin.so:
@@ -272,7 +272,7 @@ The Python extension module (``.pyd`` file) depends directly on this library:
 .. testoutput:: windows-extension
    :options: +NORMALIZE_WHITESPACE
    :windows-only:
-   :pyversion: >= 3.9
+   :pyversion: >= 3.10
 
    > dumpbin /dependents _speedup.cp39-win_amd64.pyd
    Microsoft (R) COFF/PE Dumper Version ...
