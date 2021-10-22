@@ -24,6 +24,7 @@ jobs:
       PY_VERSION: '${{ matrix.python-version }}'
       PY_BIN_DIR: '/Library/Frameworks/Python.framework/Versions/${{ matrix.python-version }}/bin'
     strategy:
+      fail-fast: false  # Temporary
       matrix:
         python-version:
         - '3.7'
