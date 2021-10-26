@@ -82,15 +82,12 @@ def modify_path():
         return
 
     # pylint: disable=import-outside-toplevel
-    try:
-        import importlib.metadata as importlib_metadata
-    except ImportError:  # pragma: NO COVER
-        import importlib_metadata
+    import importlib.metadata
     # pylint: enable=import-outside-toplevel
 
     try:
-        bezier_files = importlib_metadata.files("bezier")
-    except importlib_metadata.PackageNotFoundError:
+        bezier_files = importlib.metadata.files("bezier")
+    except importlib.metadata.PackageNotFoundError:
         return
 
     extra_dll_dir = _get_extra_dll_dir(bezier_files)

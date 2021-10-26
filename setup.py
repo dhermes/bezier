@@ -66,9 +66,6 @@ REQUIREMENTS = ("numpy >= 1.20.1",)
 #      Dependency specification for Python Software Packages
 EXTRAS_REQUIRE = {
     "full": ["matplotlib >= 3.3.4", "scipy >= 1.6.0", "sympy >= 1.7.1"],
-    ':python_version<"3.8" and platform_system=="Windows"': [
-        "importlib-metadata"
-    ],
 }
 DESCRIPTION = (
     "Helper for B\u00e9zier Curves, Triangles, and Higher Order Objects"
