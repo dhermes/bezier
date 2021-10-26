@@ -26,10 +26,8 @@ TEMPLATE = "No module named 'bezier.{}'"  # 3.8, 3.9, 3.10, pypy3
 def add_dll_directory(extra_dll_dir):
     """Add a DLL directory.
 
-    This is only expected to be invoked on Windows. For Python versions before
-    3.8, this will update the ``%PATH%`` environment variable to include
-    ``extra_dll_dir`` and for 3.8 and later, it will invoke
-    ``os.add_dll_directory()``.
+    This is only expected to be invoked on Windows. It will invoke
+    ``os.add_dll_directory()``, which was added in Python 3.8.
 
     Args:
         extra_dll_dir (str): The path to a directory ``extra-dll``.

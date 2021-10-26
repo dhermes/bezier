@@ -88,45 +88,13 @@ class Test_modify_path(unittest.TestCase):
         # Check mock.
         metadata_files.assert_called_once_with("bezier")
 
-    @unittest.mock.patch.multiple(
-        os, name="nt", environ={"PATH": "before" + os.pathsep}
-    )
-    @unittest.mock.patch("os.path.isdir", return_value=True)
-    @unittest.mock.patch.object(
-        importlib_metadata, "files", return_value=(MOCK_PACKAGE_PATH,)
-    )
-    @unittest.mock.patch("bezier.__config__.OS_ADD_DLL_DIRECTORY", new=None)
-    def test_windows_with_dll(self, metadata_files, isdir):
-        return_value = self._call_function_under_test()
-        self.assertIsNone(return_value)
-        expected_path = "before" + os.pathsep + str(MOCK_PACKAGE_PATH.parent)
-        self.assertEqual(os.environ, {"PATH": expected_path})
-        # Check mocks.
-        metadata_files.assert_called_once_with("bezier")
-        isdir.assert_called_once_with("extra-dll")
-
     @unittest.mock.patch.multiple(os, name="nt", environ={})
     @unittest.mock.patch("os.path.isdir", return_value=True)
     @unittest.mock.patch.object(
         importlib_metadata, "files", return_value=(MOCK_PACKAGE_PATH,)
     )
-    @unittest.mock.patch("bezier.__config__.OS_ADD_DLL_DIRECTORY", new=None)
-    def test_windows_with_dll_no_path(self, metadata_files, isdir):
-        return_value = self._call_function_under_test()
-        self.assertIsNone(return_value)
-        expected_path = str(MOCK_PACKAGE_PATH.parent)
-        self.assertEqual(os.environ, {"PATH": expected_path})
-        # Check mocks.
-        metadata_files.assert_called_once_with("bezier")
-        isdir.assert_called_once_with("extra-dll")
-
-    @unittest.mock.patch.multiple(os, name="nt", environ={})
-    @unittest.mock.patch("os.path.isdir", return_value=True)
-    @unittest.mock.patch.object(
-        importlib_metadata, "files", return_value=(MOCK_PACKAGE_PATH,)
-    )
-    @unittest.mock.patch("bezier.__config__.OS_ADD_DLL_DIRECTORY")
-    def test_windows_with_dll_at_least_38(
+    @unittest.mock.patch("os.add_dll_directory", create=True)
+    def test_windows_with_dll(
         self, os_add_dll_directory, metadata_files, isdir
     ):
         return_value = self._call_function_under_test()
