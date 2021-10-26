@@ -29,8 +29,8 @@ README_FILENAME = os.path.join(os.path.dirname(__file__), "README.rst")
 NUMPY_MESSAGE = """\
 Error: NumPy needs to be installed first. It can be installed via:
 
-$ python    -m pip install numpy
-$ python3.9 -m pip install numpy
+$ python     -m pip install numpy
+$ python3.10 -m pip install numpy
 $ # OR
 $ conda install numpy
 """
