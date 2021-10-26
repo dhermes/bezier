@@ -24,9 +24,7 @@ if [[ -z "${PY_BIN_DIR}" ]]; then
     exit 1
 fi
 
-if [[ "${PY_VERSION}" == "3.7" ]]; then
-    ${PY_BIN_DIR}/nox --session "unit-3.7"
-elif [[ "${PY_VERSION}" == "3.8" ]]; then
+if [[ "${PY_VERSION}" == "3.8" ]]; then
     ${PY_BIN_DIR}/nox --session "unit-3.8"
 elif [[ "${PY_VERSION}" == "3.9" ]]; then
     ${PY_BIN_DIR}/nox --session "unit-3.9"

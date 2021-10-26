@@ -20,9 +20,7 @@ import os
 
 
 # Error messages for ``handle_import_error``.
-TEMPLATE = "No module named 'bezier.{}'"  # 3.7, 3.8, 3.9, 3.10, pypy3
-# NOTE: ``os.add_dll_directory()`` was added on Windows in Python 3.8.
-OS_ADD_DLL_DIRECTORY = getattr(os, "add_dll_directory", None)
+TEMPLATE = "No module named 'bezier.{}'"  # 3.8, 3.9, 3.10, pypy3
 
 
 def add_dll_directory(extra_dll_dir):
@@ -39,14 +37,7 @@ def add_dll_directory(extra_dll_dir):
     if not os.path.isdir(extra_dll_dir):
         return
 
-    if OS_ADD_DLL_DIRECTORY is not None:
-        OS_ADD_DLL_DIRECTORY(extra_dll_dir)  # pylint: disable=not-callable
-        return
-
-    path = os.environ.get("PATH", "")
-    values = [subdir for subdir in path.split(os.pathsep) if subdir]
-    values.append(extra_dll_dir)
-    os.environ["PATH"] = os.pathsep.join(values)
+    os.add_dll_directory(extra_dll_dir)
 
 
 def _is_extra_dll(path):

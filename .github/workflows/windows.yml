@@ -28,8 +28,6 @@ jobs:
       fail-fast: false  # Temporary
       matrix:
         nox-session:
-        - unit-3.7-32
-        - unit-3.7
         - unit-3.8-32
         - unit-3.8
         - unit-3.9-32

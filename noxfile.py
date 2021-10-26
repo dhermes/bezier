@@ -60,8 +60,6 @@ DOCS_DEPS = (
 DEFAULT_INTERPRETER = "3.10"
 PYPY = "pypy3"
 ALL_INTERPRETERS = (
-    "3.7",
-    "3.7-32",
     "3.8",
     "3.8-32",
     "3.9",
