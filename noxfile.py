@@ -171,6 +171,10 @@ def unit(session):
     unit_deps = BASE_DEPS + (DEPS["sympy"],)
     if interpreter == PYPY:
         local_deps = pypy_setup(unit_deps, session)
+    elif IS_WINDOWS and interpreter == "3.10-32":
+        # The SciPy project hasn't yet shipped a wheel supporting 32-bit
+        # Python 3.10 on Windows.
+        local_deps = unit_deps
     else:
         local_deps = unit_deps + (DEPS["scipy"],)
 
