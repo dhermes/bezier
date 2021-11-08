@@ -83,6 +83,7 @@ def modify_path():
 
     # pylint: disable=import-outside-toplevel
     import importlib.metadata
+
     # pylint: enable=import-outside-toplevel
 
     try:
