@@ -20,18 +20,14 @@ import os
 
 
 # Error messages for ``handle_import_error``.
-TEMPLATE = "No module named 'bezier.{}'"  # 3.7, 3.8, 3.9, pypy3
-# NOTE: ``os.add_dll_directory()`` was added on Windows in Python 3.8.
-OS_ADD_DLL_DIRECTORY = getattr(os, "add_dll_directory", None)
+TEMPLATE = "No module named 'bezier.{}'"  # 3.8, 3.9, 3.10, pypy3
 
 
 def add_dll_directory(extra_dll_dir):
     """Add a DLL directory.
 
-    This is only expected to be invoked on Windows. For Python versions before
-    3.8, this will update the ``%PATH%`` environment variable to include
-    ``extra_dll_dir`` and for 3.8 and later, it will invoke
-    ``os.add_dll_directory()``.
+    This is only expected to be invoked on Windows. It will invoke
+    ``os.add_dll_directory()``, which was added in Python 3.8.
 
     Args:
         extra_dll_dir (str): The path to a directory ``extra-dll``.
@@ -39,14 +35,7 @@ def add_dll_directory(extra_dll_dir):
     if not os.path.isdir(extra_dll_dir):
         return
 
-    if OS_ADD_DLL_DIRECTORY is not None:
-        OS_ADD_DLL_DIRECTORY(extra_dll_dir)  # pylint: disable=not-callable
-        return
-
-    path = os.environ.get("PATH", "")
-    values = [subdir for subdir in path.split(os.pathsep) if subdir]
-    values.append(extra_dll_dir)
-    os.environ["PATH"] = os.pathsep.join(values)
+    os.add_dll_directory(extra_dll_dir)
 
 
 def _is_extra_dll(path):
@@ -93,15 +82,13 @@ def modify_path():
         return
 
     # pylint: disable=import-outside-toplevel
-    try:
-        import importlib.metadata as importlib_metadata
-    except ImportError:  # pragma: NO COVER
-        import importlib_metadata
+    import importlib.metadata
+
     # pylint: enable=import-outside-toplevel
 
     try:
-        bezier_files = importlib_metadata.files("bezier")
-    except importlib_metadata.PackageNotFoundError:
+        bezier_files = importlib.metadata.files("bezier")
+    except importlib.metadata.PackageNotFoundError:
         return
 
     extra_dll_dir = _get_extra_dll_dir(bezier_files)

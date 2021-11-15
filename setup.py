@@ -29,8 +29,8 @@ README_FILENAME = os.path.join(os.path.dirname(__file__), "README.rst")
 NUMPY_MESSAGE = """\
 Error: NumPy needs to be installed first. It can be installed via:
 
-$ python    -m pip install numpy
-$ python3.9 -m pip install numpy
+$ python     -m pip install numpy
+$ python3.10 -m pip install numpy
 $ # OR
 $ conda install numpy
 """
@@ -61,14 +61,11 @@ will be modified.
 # NOTE: This is a workaround, put in place for "deterministic" hashing of the
 #       DLL in cases where that matters (i.e. ``doctest``.)
 DLL_HASH_ENV = "BEZIER_DLL_HASH"
-REQUIREMENTS = ("numpy >= 1.20.1",)
+REQUIREMENTS = ("numpy >= 1.21.4",)
 # See: https://www.python.org/dev/peps/pep-0508/
 #      Dependency specification for Python Software Packages
 EXTRAS_REQUIRE = {
-    "full": ["matplotlib >= 3.3.4", "scipy >= 1.6.0", "sympy >= 1.7.1"],
-    ':python_version<"3.8" and platform_system=="Windows"': [
-        "importlib-metadata"
-    ],
+    "full": ["matplotlib >= 3.4.3", "scipy >= 1.7.2", "sympy >= 1.9"],
 }
 DESCRIPTION = (
     "Helper for B\u00e9zier Curves, Triangles, and Higher Order Objects"
@@ -260,9 +257,9 @@ def setup():
             "License :: OSI Approved :: Apache Software License",
             "Operating System :: OS Independent",
             "Programming Language :: Python :: 3",
-            "Programming Language :: Python :: 3.7",
             "Programming Language :: Python :: 3.8",
             "Programming Language :: Python :: 3.9",
+            "Programming Language :: Python :: 3.10",
             "Programming Language :: Python :: Implementation :: CPython",
             "Programming Language :: Python :: Implementation :: PyPy",
         ],

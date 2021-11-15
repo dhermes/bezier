@@ -1068,6 +1068,7 @@ class Test__reciprocal_condition_number(utils.NumPyTestCase):
         )
 
     @unittest.mock.patch("scipy.linalg.lapack.dgecon")
+    @unittest.skipIf(SCIPY_LAPACK is None, "SciPy not installed")
     def test_dgecon_failure(self, dgecon):
         rcond = 0.5
         info = -1

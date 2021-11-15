@@ -42,7 +42,7 @@ echo "PIP_CMD=${PIP_CMD}"
 ${PIP_CMD} install --ignore-installed virtualenv pip
 ${PIP_CMD} install --upgrade "nox >= 2021.10.1" numpy
 # Make sure there is a working ``cmake`` on the ``${PATH}``.
-${PIP_CMD} install --upgrade "cmake >= 3.21.3"
+${PIP_CMD} install --upgrade "cmake >= 3.21.4"
 command -v cmake
 
 PY_BIN_DIR=$(dirname "${PYTHON_EXE}")

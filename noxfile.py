@@ -28,38 +28,45 @@ IS_LINUX = sys.platform in ("linux", "linux2")
 IS_MACOS = sys.platform == "darwin"
 IS_WINDOWS = os.name == "nt"
 DEPS = {
-    "black": "black >= 21.4b2",
+    "black": "black >= 21.10b0",
     "cmake-format": "cmake-format >= 0.6.13",
-    "cmake": "cmake >= 3.21.3",
+    "cmake": "cmake >= 3.21.4",
     "coverage": "coverage",
     "Cython": "Cython >= 0.29.24",
     "docutils": "docutils",
     "flake8": "flake8",
     "flake8-import-order": "flake8-import-order",
-    "importlib-metadata": 'importlib-metadata; python_version<"3.8"',
-    "jsonschema": "jsonschema >= 3.2.0",
+    "jsonschema": "jsonschema >= 4.2.1",
     "lcov_cobertura": "lcov_cobertura >= 1.6",
     "machomachomangler": "machomachomangler == 0.0.1",
-    "matplotlib": "matplotlib >= 3.3.4",
-    "numpy": "numpy >= 1.20.1",
-    "pycobertura": "pycobertura >= 2.0.1",
+    "matplotlib": "matplotlib >= 3.4.3",
+    "numpy": "numpy >= 1.21.4",
+    "pycobertura": "pycobertura >= 2.1.0",
     "Pygments": "Pygments",
     "pylint": "pylint >= 2.11.1",
-    "pytest": "pytest >= 6.2.2",
+    "pytest": "pytest >= 6.2.5",
     "pytest-cov": "pytest-cov",
-    "scipy": "scipy >= 1.6.0",
-    "sympy": "sympy >= 1.7.1",
-    "seaborn": "seaborn >= 0.11.1",
+    "scipy": "scipy >= 1.7.2",
+    "sympy": "sympy >= 1.9",
+    "seaborn": "seaborn >= 0.11.2",
 }
-BASE_DEPS = (DEPS["numpy"], DEPS["pytest"], DEPS["importlib-metadata"])
+BASE_DEPS = (DEPS["numpy"], DEPS["pytest"])
 NOX_DIR = os.path.abspath(os.path.dirname(__file__))
 DOCS_DEPS = (
     "--requirement",
     os.path.join(NOX_DIR, "docs", "requirements.txt"),
 )
-DEFAULT_INTERPRETER = "3.9"
+DEFAULT_INTERPRETER = "3.10"
 PYPY = "pypy3"
-ALL_INTERPRETERS = ("3.7", "3.7-32", "3.8", "3.8-32", "3.9", "3.9-32", PYPY)
+ALL_INTERPRETERS = (
+    "3.8",
+    "3.8-32",
+    "3.9",
+    "3.9-32",
+    "3.10",
+    "3.10-32",
+    PYPY,
+)
 BUILD_TYPE_DEBUG = "Debug"
 BUILD_TYPE_RELEASE = "Release"
 DEBUG_SESSION_NAME = "libbezier-debug"
@@ -164,6 +171,11 @@ def unit(session):
     unit_deps = BASE_DEPS + (DEPS["sympy"],)
     if interpreter == PYPY:
         local_deps = pypy_setup(unit_deps, session)
+    elif IS_WINDOWS and interpreter == "3.10-32":
+        # The SciPy project hasn't yet shipped a wheel supporting 32-bit
+        # Python 3.10 on Windows.
+        # See: https://github.com/dhermes/bezier/issues/274
+        local_deps = unit_deps
     else:
         local_deps = unit_deps + (DEPS["scipy"],)
 
@@ -273,7 +285,6 @@ def docs_images(session):
     # Install all dependencies.
     local_deps = DOCS_DEPS
     local_deps += (
-        DEPS["importlib-metadata"],
         DEPS["matplotlib"],
         DEPS["pytest"],
         DEPS["seaborn"],
@@ -511,7 +522,7 @@ def _cmake(session, build_type):
     The ``session`` may be one of ``libbezier-debug`` / ``libbezier-release``
     in which case we directly build as instructed. Additionally, it may
     correspond to a session that seeks to build ``libbezier`` as a dependency,
-    e.g. ``nox -s unit-3.9``.
+    e.g. ``nox --session unit-3.10``.
 
     Returns:
         str: The install prefix that was created / re-used.

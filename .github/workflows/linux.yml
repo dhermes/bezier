@@ -41,30 +41,26 @@ jobs:
           --workdir /var/code/bezier/ \
           dhermes/bezier:latest \
           sleep 3600
-    - name: Out-of-band upgrade `nox` to latest
-      run: |
-        docker exec dhermes-bezier \
-          python -m pip install --upgrade 'nox >= 2021.10.1'
-    - name: Unit tests in Python 3.7
-      run: |
-        docker exec dhermes-bezier \
-          nox -s "unit-3.7"
     - name: Unit tests in Python 3.8
       run: |
         docker exec dhermes-bezier \
-          nox -s "unit-3.8"
+          nox --session "unit-3.8"
+    - name: Unit tests in Python 3.9
+      run: |
+        docker exec dhermes-bezier \
+          nox --session "unit-3.9"
     - name: Unit tests in pypy3
       run: |
         docker exec dhermes-bezier \
-          nox -s "unit-pypy3"
-    - name: Unit tests AND line coverage in Python 3.9
+          nox --session "unit-pypy3"
+    - name: Unit tests AND line coverage in Python 3.10
       run: |
         docker exec dhermes-bezier \
-          nox -s cover
-    - name: Functional tests in Python 3.9
+          nox --session cover
+    - name: Functional tests in Python 3.10
       run: |
         docker exec dhermes-bezier \
-          nox -s "functional-3.9"
+          nox --session "functional-3.10"
     - name: Upload coverage to coveralls
       env:
         COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
@@ -96,22 +92,18 @@ jobs:
           --workdir /var/code/bezier/ \
           dhermes/bezier:latest \
           sleep 3600
-    - name: Out-of-band upgrade `nox` to latest
-      run: |
-        docker exec dhermes-bezier \
-          python -m pip install --upgrade 'nox >= 2021.10.1'
     - name: Check that all Cython generated files have been updated
       run: |
         docker exec dhermes-bezier \
-          nox -s "update_generated(check=True)"
+          nox --session "update_generated(check=True)"
     - name: Lint code for style issues
       run: |
         docker exec dhermes-bezier \
-          nox -s lint
+          nox --session lint
     - name: Check that test case examples are valid for JSON schema
       run: |
         docker exec dhermes-bezier \
-          nox -s validate_functional_test_cases
+          nox --session validate_functional_test_cases
   docs:
     runs-on: ubuntu-20.04
     steps:
@@ -135,15 +127,11 @@ jobs:
           --workdir /var/code/bezier/ \
           dhermes/bezier:latest \
           sleep 3600
-    - name: Out-of-band upgrade `nox` to latest
-      run: |
-        docker exec dhermes-bezier \
-          python -m pip install --upgrade 'nox >= 2021.10.1'
     - name: Run all doctests
       run: |
         docker exec dhermes-bezier \
-          nox -s doctest
+          nox --session doctest
     - name: Build docs
       run: |
         docker exec dhermes-bezier \
-          nox -s docs
+          nox --session docs

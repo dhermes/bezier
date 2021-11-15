@@ -90,17 +90,17 @@ The ``bezier`` Python package can be installed with `pip`_:
 
 .. code-block:: console
 
-   $ python    -m pip install --upgrade bezier
-   $ python3.9 -m pip install --upgrade bezier
+   $ python     -m pip install --upgrade bezier
+   $ python3.10 -m pip install --upgrade bezier
    $ # To install optional dependencies, e.g. SymPy
-   $ python    -m pip install --upgrade bezier[full]
+   $ python     -m pip install --upgrade bezier[full]
 
 To install a pure Python version (i.e. with no binary extension):
 
 .. code-block:: console
 
    $ BEZIER_NO_EXTENSION=true \
-   >   python  -m pip install --upgrade bezier --no-binary=bezier
+   >   python   -m pip install --upgrade bezier --no-binary=bezier
 
 ``bezier`` is open-source, so you can alternatively grab the source
 code from `GitHub`_ and install from source.

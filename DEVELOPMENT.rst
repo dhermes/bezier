@@ -15,9 +15,9 @@ In order to add a feature to ``bezier``:
    proposed changes (i.e. just sending a large PR with a finished
    feature may catch maintainer(s) off guard).
 
-#. **Add tests**: The feature must work fully on CPython versions 3.7, 3.8 and
-   3.9 and on PyPy 3; on Linux, macOS and Windows. In addition, the feature
-   should have 100% line coverage.
+#. **Add tests**: The feature must work fully on CPython versions 3.8, 3.9
+   and 3.10 and on PyPy 3; on Linux, macOS and Windows. In addition, the
+   feature should have 100% line coverage.
 
 #. **Documentation**: The feature must (should) be documented with
    helpful `doctest`_ examples wherever relevant.
@@ -85,8 +85,8 @@ To explicitly disable the building of the extension, the
 
    $ BEZIER_NO_EXTENSION=True .../bin/python -m pip wheel .
 
-This environment variable is actually used for the ``nox -s docs`` session
-to emulate the `RTD`_ build environment (where no Fortran compiler is
+This environment variable is actually used for the ``nox --session docs``
+session to emulate the `RTD`_ build environment (where no Fortran compiler is
 present).
 
 Dependencies
@@ -112,21 +112,21 @@ We recommend using `Nox`_ to run unit tests:
 
 .. code-block:: console
 
-   $ nox -s "unit-3.7"
-   $ nox -s "unit-3.8"
-   $ nox -s "unit-3.9"
-   $ nox -s "unit-pypy3"
-   $ nox -s  unit  # Run all versions
+   $ nox --session "unit-3.8"
+   $ nox --session "unit-3.9"
+   $ nox --session "unit-3.10"
+   $ nox --session "unit-pypy3"
+   $ nox --session  unit  # Run all versions
 
 However, `pytest`_ can be used directly (though it won't
 manage dependencies or build the binary extension):
 
 .. code-block:: console
 
-   $ PYTHONPATH=src/python/ python3.7 -m pytest tests/unit/
-   $ PYTHONPATH=src/python/ python3.8 -m pytest tests/unit/
-   $ PYTHONPATH=src/python/ python3.9 -m pytest tests/unit/
-   $ PYTHONPATH=src/python/ pypy3     -m pytest tests/unit/
+   $ PYTHONPATH=src/python/ python3.8  -m pytest tests/unit/
+   $ PYTHONPATH=src/python/ python3.9  -m pytest tests/unit/
+   $ PYTHONPATH=src/python/ python3.10 -m pytest tests/unit/
+   $ PYTHONPATH=src/python/ pypy3      -m pytest tests/unit/
 
 .. _Nox: https://nox.readthedocs.io
 .. _pytest: https://docs.pytest.org
@@ -165,7 +165,7 @@ To run the coverage report locally:
 
 .. code-block:: console
 
-   $ nox -s cover
+   $ nox --session cover
    $ # OR
    $ PYTHONPATH=src/python/ python -m pytest \
    >     --cov=bezier \
@@ -180,17 +180,17 @@ marked slow, use the ``--ignore-slow`` flag:
 
 .. code-block:: console
 
-   $ nox -s "unit-3.7" -- --ignore-slow
-   $ nox -s "unit-3.8" -- --ignore-slow
-   $ nox -s "unit-3.9" -- --ignore-slow
-   $ nox -s  unit      -- --ignore-slow
+   $ nox --session "unit-3.8"  -- --ignore-slow
+   $ nox --session "unit-3.9"  -- --ignore-slow
+   $ nox --session "unit-3.10" -- --ignore-slow
+   $ nox --session  unit       -- --ignore-slow
 
 These slow tests have been identified via:
 
 .. code-block:: console
 
    $ ...
-   $ nox -s "unit-3.9" -- --durations=10
+   $ nox --session "unit-3.10" -- --durations=10
 
 and then marked with ``pytest.mark.skipif``.
 
@@ -250,16 +250,16 @@ To run the functional tests:
 
 .. code-block:: console
 
-   $ nox -s "functional-3.7"
-   $ nox -s "functional-3.8"
-   $ nox -s "functional-3.9"
-   $ nox -s "functional-pypy3"
-   $ nox -s  functional  # Run all versions
+   $ nox --session "functional-3.8"
+   $ nox --session "functional-3.9"
+   $ nox --session "functional-3.10"
+   $ nox --session "functional-pypy3"
+   $ nox --session  functional  # Run all versions
    $ # OR
-   $ PYTHONPATH=src/python/ python3.7 -m pytest tests/functional/
-   $ PYTHONPATH=src/python/ python3.8 -m pytest tests/functional/
-   $ PYTHONPATH=src/python/ python3.9 -m pytest tests/functional/
-   $ PYTHONPATH=src/python/ pypy3     -m pytest tests/functional/
+   $ PYTHONPATH=src/python/ python3.8  -m pytest tests/functional/
+   $ PYTHONPATH=src/python/ python3.9  -m pytest tests/functional/
+   $ PYTHONPATH=src/python/ python3.10 -m pytest tests/functional/
+   $ PYTHONPATH=src/python/ pypy3      -m pytest tests/functional/
 
 .. _functional tests: https://github.com/dhermes/bezier/tree/main/tests/functional
 
@@ -325,7 +325,7 @@ To check compliance:
 
 .. code-block:: console
 
-   $ nox -s lint
+   $ nox --session lint
 
 A few extensions and overrides have been specified in the `pylintrc`_
 configuration for ``bezier``.
@@ -375,8 +375,8 @@ To build the documentation locally:
 
 .. code-block:: console
 
-   $ nox -s docs
-   $ # OR (from a Python 3.7 or later environment)
+   $ nox --session docs
+   $ # OR (from a Python 3.8 or later environment)
    $ PYTHONPATH=src/python/ ./scripts/build_docs.sh
 
 Documentation Snippets
@@ -391,8 +391,8 @@ To run the documentation tests:
 
 .. code-block:: console
 
-   $ nox -s doctest
-   $ # OR (from a Python 3.7 or later environment)
+   $ nox --session doctest
+   $ # OR (from a Python 3.8 or later environment)
    $ PYTHONPATH=src/python/:. sphinx-build -W \
    >     -b doctest \
    >     -d docs/build/doctrees \
@@ -414,8 +414,8 @@ To regenerate all the images:
 
 .. code-block:: console
 
-   $ nox -s docs_images
-   $ # OR (from a Python 3.7 or later environment)
+   $ nox --session docs_images
+   $ # OR (from a Python 3.8 or later environment)
    $ export MATPLOTLIBRC=docs/ GENERATE_IMAGES=True PYTHONPATH=src/python/
    $ sphinx-build -W \
    >     -b doctest \
@@ -496,14 +496,14 @@ Supported Python Versions
 
 ``bezier`` explicitly supports:
 
--  `Python 3.7`_
 -  `Python 3.8`_
 -  `Python 3.9`_
+-  `Python 3.10`_
 -  `PyPy 3`_
 
-.. _Python 3.7: https://docs.python.org/3.7/
 .. _Python 3.8: https://docs.python.org/3.8/
 .. _Python 3.9: https://docs.python.org/3.9/
+.. _Python 3.10: https://docs.python.org/3.10/
 .. _PyPy 3: https://pypy.org/
 
 Supported versions can be found in the ``noxfile.py`` `config`_.
@@ -552,8 +552,8 @@ services:
 
 - ``WHEELHOUSE``: If set, this gives a path to prebuilt NumPy and SciPy wheels
   for PyPy 3.
-- ``GENERATE_IMAGES``: Indicates to ``nox -s doctest`` that images should
-  be generated during cleanup of each test case.
+- ``GENERATE_IMAGES``: Indicates to ``nox --session doctest`` that images
+  should be generated during cleanup of each test case.
 - ``READTHEDOCS``: Indicates currently running on Read The Docs (RTD). This is
   used to tell Sphinx to use the RTD theme when **not** running on RTD.
 - ``COVERALLS_REPO_TOKEN``: To upload the coverage report.
