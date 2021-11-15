@@ -27,7 +27,7 @@ jobs:
         key: ubuntu-tests-pip
     - uses: actions/checkout@v2
     - name: Pull Docker image used for CI
-      run: docker pull dhermes/bezier:issue-270
+      run: docker pull dhermes/bezier:latest
     - name: Start and detach a Docker container (max lifetime 1 hour)
       run: |
         docker run \
@@ -39,7 +39,7 @@ jobs:
           --env MATPLOTLIBRC=tests \
           --env "GITHUB_REF=${GITHUB_REF}" \
           --workdir /var/code/bezier/ \
-          dhermes/bezier:issue-270 \
+          dhermes/bezier:latest \
           sleep 3600
     - name: Unit tests in Python 3.8
       run: |
@@ -78,7 +78,7 @@ jobs:
         key: ubuntu-lint-pip
     - uses: actions/checkout@v2
     - name: Pull Docker image used for CI
-      run: docker pull dhermes/bezier:issue-270
+      run: docker pull dhermes/bezier:latest
     - name: Start and detach a Docker container (max lifetime 1 hour)
       run: |
         docker run \
@@ -90,7 +90,7 @@ jobs:
           --env MATPLOTLIBRC=tests \
           --env "GITHUB_REF=${GITHUB_REF}" \
           --workdir /var/code/bezier/ \
-          dhermes/bezier:issue-270 \
+          dhermes/bezier:latest \
           sleep 3600
     - name: Check that all Cython generated files have been updated
       run: |
@@ -113,7 +113,7 @@ jobs:
         key: ubuntu-docs-pip
     - uses: actions/checkout@v2
     - name: Pull Docker image used for CI
-      run: docker pull dhermes/bezier:issue-270
+      run: docker pull dhermes/bezier:latest
     - name: Start and detach a Docker container (max lifetime 1 hour)
       run: |
         docker run \
@@ -125,7 +125,7 @@ jobs:
           --env MATPLOTLIBRC=tests \
           --env "GITHUB_REF=${GITHUB_REF}" \
           --workdir /var/code/bezier/ \
-          dhermes/bezier:issue-270 \
+          dhermes/bezier:latest \
           sleep 3600
     - name: Run all doctests
       run: |
