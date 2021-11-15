@@ -28,26 +28,26 @@ IS_LINUX = sys.platform in ("linux", "linux2")
 IS_MACOS = sys.platform == "darwin"
 IS_WINDOWS = os.name == "nt"
 DEPS = {
-    "black": "black >= 21.9b0",
+    "black": "black >= 21.10b0",
     "cmake-format": "cmake-format >= 0.6.13",
-    "cmake": "cmake >= 3.21.3",
+    "cmake": "cmake >= 3.21.4",
     "coverage": "coverage",
     "Cython": "Cython >= 0.29.24",
     "docutils": "docutils",
     "flake8": "flake8",
     "flake8-import-order": "flake8-import-order",
-    "jsonschema": "jsonschema >= 4.0.1",
+    "jsonschema": "jsonschema >= 4.2.1",
     "lcov_cobertura": "lcov_cobertura >= 1.6",
     "machomachomangler": "machomachomangler == 0.0.1",
     "matplotlib": "matplotlib >= 3.4.3",
-    "numpy": "numpy >= 1.21.2",
+    "numpy": "numpy >= 1.21.4",
     "pycobertura": "pycobertura >= 2.1.0",
     "Pygments": "Pygments",
     "pylint": "pylint >= 2.11.1",
     "pytest": "pytest >= 6.2.5",
     "pytest-cov": "pytest-cov",
-    "scipy": "scipy >= 1.7.1",
-    "sympy": "sympy >= 1.8",
+    "scipy": "scipy >= 1.7.2",
+    "sympy": "sympy >= 1.9",
     "seaborn": "seaborn >= 0.11.2",
 }
 BASE_DEPS = (DEPS["numpy"], DEPS["pytest"])
@@ -174,6 +174,7 @@ def unit(session):
     elif IS_WINDOWS and interpreter == "3.10-32":
         # The SciPy project hasn't yet shipped a wheel supporting 32-bit
         # Python 3.10 on Windows.
+        # See: https://github.com/dhermes/bezier/issues/274
         local_deps = unit_deps
     else:
         local_deps = unit_deps + (DEPS["scipy"],)

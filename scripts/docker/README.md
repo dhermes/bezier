@@ -1,20 +1,24 @@
 ## [`bezier`][1] Dockerfile
 
-> Provides Python, NumPy, CMake, gfortran and nox. For automated testing of bezier Python package.
+> Provides Python, NumPy, CMake, gfortran and nox. For automated testing of
+> `bezier` Python package.
 
-`bezier` is a Python library for interacting with B&#xe9;zier Curves and Triangles.
+`bezier` is a Python library for interacting with B&#xe9;zier Curves and
+Triangles.
 
-This repository is intended to be used as a fully-functional environment for installing / running / testing `bezier`. Provides:
+This repository is intended to be used as a fully-functional environment for
+installing / running / testing `bezier`. Provides:
 
-- CPython 3.8, 3.9, 3.10 and PyPy 3.8 (version 7.3.7)
-- NumPy pre-installed (needed for installing the binary extension)
-- `/wheelhouse` directory with NumPy and SciPy pre-built for PyPy 3
-- `gfortran` compiler
-- `nox` test runner
-- `lcov` line coverage tool
-- `libatlas-base-dev`, `libblas-dev` and `liblapack-dev` (needed by SciPy)
-- `cmake` for building `libbezier`
-- `docker` for running the Docker CLI (assuming `/var/run/docker.sock` has been shared from the host OS)
+-   CPython 3.8, 3.9, 3.10 and PyPy 3.8 (version 7.3.7)
+-   NumPy pre-installed (needed for installing the binary extension)
+-   `/wheelhouse` directory with NumPy and SciPy pre-built for PyPy 3
+-   `gfortran` compiler
+-   `nox` test runner
+-   `lcov` line coverage tool
+-   `libatlas-base-dev`, `libblas-dev` and `liblapack-dev` (needed by SciPy)
+-   `cmake` for building `libbezier`
+-   `docker` for running the Docker CLI (assuming `/var/run/docker.sock` has
+    been shared from the host OS)
 
 ## Commands
 

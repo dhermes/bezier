@@ -26,8 +26,8 @@ Breaking Changes
 Build
 ~~~~~
 
--  Integrating ``black`` `code formatter`_ into the ``nox --session lint``
-   session to ensure consistent formatting
+-  Integrating ``black`` `code formatter`_ into the ``nox -s lint`` session
+   to ensure consistent formatting
    (`e659532 <https://github.com/dhermes/bezier/commit/e659532747d0433bf3a91198a7baf172ed36f069>`__).
 -  Fully automating the building of wheels in the ``bezier-wheels`` `project`_
    (`recent commits`_). Built wheels are uploaded to a Google Cloud Storage
@@ -86,8 +86,8 @@ Miscellany
       pre-built Docker container
       (`7634779 <https://github.com/dhermes/bezier/commit/763477958c73a4eb6ce0f89b6b37887c66c10706>`__).
 
--  Added ``nox --session validate_functional_test_cases`` session to ensure
-   that functional test cases always adhere to the JSON schema.
+-  Added ``nox -s validate_functional_test_cases`` session to ensure that
+   functional test cases always adhere to the JSON schema.
 
    -  Added ``nox`` session and fixed some schema file bugs
       (`618653a <https://github.com/dhermes/bezier/commit/618653a0888cc5e91a5fb1959cf5e04f61e5c1cf>`__).

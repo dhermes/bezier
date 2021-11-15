@@ -25,7 +25,6 @@ jobs:
       MINGW_32: 'C:\msys64\mingw32\bin'
       MINGW_64: 'C:\msys64\mingw64\bin'
     strategy:
-      fail-fast: false  # Temporary
       matrix:
         nox-session:
         - unit-3.8-32

@@ -27,7 +27,7 @@ set -e -x
 
 # Install (new) CMake into Python 3.10 environment.
 /opt/python/cp310-cp310/bin/python -m pip install --upgrade pip
-/opt/python/cp310-cp310/bin/python -m pip install "cmake >= 3.21.3"
+/opt/python/cp310-cp310/bin/python -m pip install "cmake >= 3.21.4"
 
 # Build and install ``libbezier`` into a custom location.
 SRC_DIR="/io/src/fortran/"
