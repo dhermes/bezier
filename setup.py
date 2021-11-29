@@ -21,6 +21,7 @@ import sys
 import pkg_resources
 import setuptools
 import setuptools.command.build_ext
+import setuptools.dist
 
 
 VERSION = "2021.2.13.dev1"  # Also in ``codemeta.json`` and ``__init__.py``.
@@ -71,6 +72,7 @@ DESCRIPTION = (
     "Helper for B\u00e9zier Curves, Triangles, and Higher Order Objects"
 )
 _IS_WINDOWS = os.name == "nt"
+_IS_PYPY = sys.implementation.name == "pypy"
 _EXTRA_DLL = "extra-dll"
 _DLL_FILENAME = "bezier.dll"
 
@@ -267,7 +269,24 @@ def setup():
     )
 
 
+def _patch_setuptools():
+    """Patch ``setuptools`` to address known issues.
+
+    Known issues:
+    * In some PyPy installs, the ``setuptools.build_py.build_package_data()``
+      method depends on the ``convert_2to3_doctests`` being set on an instance
+      of ``setuptools.dist.Distribution``, but it is unset. We handle this
+      by setting it as a **class attribute** (vs. monkey-patching ``__init__``
+      to set it on instances).
+    """
+    if not _IS_PYPY:
+        return
+
+    setuptools.dist.Distribution.convert_2to3_doctests = []
+
+
 def main():
+    _patch_setuptools()
     setup()
 
 

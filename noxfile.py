@@ -118,7 +118,7 @@ def pypy_setup(local_deps, session):
         # Install NumPy and SciPy from pre-built wheels. Don't use ``DEPS``
         # to specify version range for NumPy and SciPy.
         session.install(
-            "--no-index", "--find-links", wheelhouse, "numpy", "scipy"
+            "--no-index", "--find-links", str(wheelhouse), "numpy", "scipy"
         )
     return local_deps
 
@@ -184,7 +184,11 @@ def unit(session):
     # Install this package.
     install_bezier(session, debug=True)
     # Run pytest against the unit tests.
-    run_args = ["pytest"] + session.posargs + [get_path("tests", "unit")]
+    run_args = (
+        ["python", "-m", "pytest"]
+        + session.posargs
+        + [get_path("tests", "unit")]
+    )
     session.run(*run_args)
 
 
@@ -201,7 +205,7 @@ def cover(session):
     # Install this package.
     install_bezier(session, debug=True)
     # Run pytest with coverage against the unit tests.
-    run_args = ["pytest", "--cov=bezier", "--cov=tests.unit"]
+    run_args = ["python", "-m", "pytest", "--cov=bezier", "--cov=tests.unit"]
     run_args += session.posargs
     run_args += [get_path("tests", "unit")]
     session.run(*run_args)
@@ -220,7 +224,11 @@ def functional(session):
     # Install this package.
     install_bezier(session, debug=True)
     # Run pytest against the functional tests.
-    run_args = ["pytest"] + session.posargs + [get_path("tests", "functional")]
+    run_args = (
+        ["python", "-m", "pytest"]
+        + session.posargs
+        + [get_path("tests", "functional")]
+    )
     session.run(*run_args)
 
 
