@@ -70,7 +70,7 @@ def add_patch(ax, color, pts_per_edge, *edges):
         color (Tuple[float, float, float]): Color as RGB profile.
         pts_per_edge (int): Number of points to use in polygonal
             approximation of edge.
-        edges (Tuple[~bezier.curve.Curve, ...]): Curved edges defining
+        *edges (Tuple[~bezier.curve.Curve, ...]): Curved edges defining
             a boundary.
     """
     # pylint: disable=import-outside-toplevel

@@ -43,7 +43,7 @@ DEPS = {
     "numpy": "numpy >= 1.21.4",
     "pycobertura": "pycobertura >= 2.1.0",
     "Pygments": "Pygments",
-    "pylint": "pylint >= 2.11.1",
+    "pylint": "pylint >= 2.12.1",
     "pytest": "pytest >= 6.2.5",
     "pytest-cov": "pytest-cov",
     "scipy": "scipy >= 1.7.2",
@@ -391,6 +391,7 @@ def lint(session):
         "--rcfile",
         "pylintrc",
         "--max-module-lines=3035",
+        "--disable=missing-type-doc",
         get_path("src", "python", "bezier"),
     )
     # Run Pylint over the tests source.
