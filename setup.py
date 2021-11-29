@@ -37,7 +37,7 @@ $ conda install numpy
 """
 NO_EXTENSION_ENV = "BEZIER_NO_EXTENSION"
 NO_SPEEDUPS_MESSAGE = """\
-The {} environment variable has been used to explicitly disable the
+The `{}` environment variable has been used to explicitly disable the
 building of the binary extension module.
 """.format(
     NO_EXTENSION_ENV
@@ -58,15 +58,28 @@ the `BEZIER_IGNORE_VERSION_CHECK` environment variable.
 """
 READTHEDOCS_ENV = "READTHEDOCS"
 ON_READTHEDOCS_MESSAGE = """\
-The {} environment variable has been detected, the binary extension module
+The `{}` environment variable has been detected, the binary extension module
 will not be built.
 """.format(
     READTHEDOCS_ENV
 )
 INSTALL_PREFIX_ENV = "BEZIER_INSTALL_PREFIX"
-NO_INSTALL_PREFIX_MESSAGE = (
-    "The {} environment variable must be set."
-).format(INSTALL_PREFIX_ENV)
+NO_INSTALL_PREFIX_MESSAGE = """\
+The `{install_prefix}` environment variable must be set when installing
+`bezier` from source with the binary extension module. If you are not
+intending to install from source, check on PyPI to see if a prebuilt wheel
+exists for your current Python environment. If no wheel exists, installing
+from source is the only option (even via `pip`, which will use the `sdist`
+source distribution).
+
+For a pure Python install (i.e. without the binary extension module), set
+the `{no_extension}` environment variable.
+
+For a source install using the binary extension module, see installation
+instructions for the C ABI (`libbezier`).
+""".format(
+    install_prefix=INSTALL_PREFIX_ENV, no_extension=NO_EXTENSION_ENV
+)
 WHEEL_ENV = "BEZIER_WHEEL"
 """Environment variable used to indicate a wheel is being built.
 
@@ -140,7 +153,7 @@ def extension_modules():
 
     install_prefix = os.environ.get(INSTALL_PREFIX_ENV)
     if install_prefix is None:
-        print(NO_INSTALL_PREFIX_MESSAGE, file=sys.stderr)
+        print(NO_INSTALL_PREFIX_MESSAGE, file=sys.stderr, end="")
         sys.exit(1)
 
     rpath = os.path.join(install_prefix, "lib")
