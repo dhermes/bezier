@@ -42,6 +42,20 @@ building of the binary extension module.
 """.format(
     NO_EXTENSION_ENV
 )
+IGNORE_VERSION_CHECK_ENV = "BEZIER_IGNORE_VERSION_CHECK"
+INVALID_VERSION_MESSAGE = """\
+The current Python version ({major}.{minor}) is not supported.
+
+The supported versions are: {versions}
+
+Using `bezier` on an unsupported version of Python is not known to work. You
+may be seeing this message as part of a source distribution (`sdist`) install
+because no wheels exist on PyPI for your current Python environment. The
+Python environment is uniquely identified by Python version, operating
+system (ABI) and architecture (platform). You are likely seeing this message
+because a new version of Python has been released. To disable this check, set
+the `BEZIER_IGNORE_VERSION_CHECK` environment variable.
+"""
 READTHEDOCS_ENV = "READTHEDOCS"
 ON_READTHEDOCS_MESSAGE = """\
 The {} environment variable has been detected, the binary extension module
@@ -89,7 +103,7 @@ def is_installed(requirement):
 
 def numpy_include_dir():
     if not is_installed("numpy >= 1.9.0"):
-        print(NUMPY_MESSAGE, file=sys.stderr)
+        print(NUMPY_MESSAGE, file=sys.stderr, end="")
         sys.exit(1)
 
     import numpy as np
@@ -117,11 +131,11 @@ def _sha256_short_hash(filename):
 
 def extension_modules():
     if os.environ.get(READTHEDOCS_ENV) == "True":
-        print(ON_READTHEDOCS_MESSAGE, file=sys.stderr)
+        print(ON_READTHEDOCS_MESSAGE, file=sys.stderr, end="")
         return []
 
     if NO_EXTENSION_ENV in os.environ:
-        print(NO_SPEEDUPS_MESSAGE, file=sys.stderr)
+        print(NO_SPEEDUPS_MESSAGE, file=sys.stderr, end="")
         return []
 
     install_prefix = os.environ.get(INSTALL_PREFIX_ENV)
@@ -269,6 +283,30 @@ def setup():
     )
 
 
+def _check_python_version():
+    """Check that this is being installed in a valid version of Python.
+
+    If the current version of Python is unsupported, this will exit with an
+    error.
+
+    The ``BEZIER_IGNORE_VERSION_CHECK`` environment variable can be set to
+    opt out of this check.
+    """
+    if IGNORE_VERSION_CHECK_ENV in os.environ:
+        return
+
+    major = sys.version_info.major
+    minor = sys.version_info.minor
+    if (major, minor) in ((3, 8), (3, 9), (3, 10)):
+        return
+
+    message = INVALID_VERSION_MESSAGE.format(
+        major=major, minor=minor, versions="3.8, 3.9 and 3.10"
+    )
+    print(message, file=sys.stderr, end="")
+    sys.exit(1)
+
+
 def _patch_setuptools():
     """Patch ``setuptools`` to address known issues.
 
@@ -286,6 +324,7 @@ def _patch_setuptools():
 
 
 def main():
+    _check_python_version()
     _patch_setuptools()
     setup()
 

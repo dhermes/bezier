@@ -534,6 +534,13 @@ This project uses environment variables for building the
   current build is intended for a wheel. On Windows, this will involve
   renaming ``bezier.dll`` to a unique name (to avoid name collision) and
   updating ``_speedup*.pyd`` to refer to the new name.
+- ``BEZIER_IGNORE_VERSION_CHECK ``: Will instruct ``pip`` and ``setup.py`` to
+  ignore a check on the current version of Python. By default, Python installs
+  of ``bezier`` will explicitly check for supported versions and this opts
+  out of that check (e.g. if a new version of Python was just released).
+  This will only be relevant when installing from source, but a new version of
+  Python will also mean the existing wheels on PyPI won't support that new
+  version.
 - ``BEZIER_DLL_HASH``: If set, this will indicate to ``setup.py`` that the
   built ``bezier.dll`` should be renamed to ``bezier-${BEZIER_DLL_HASH}.dll``
   in situations such as tests where this filename should be deterministic.
