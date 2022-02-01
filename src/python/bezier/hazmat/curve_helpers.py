@@ -927,7 +927,7 @@ def reduce_pseudo_inverse(nodes):
         numpy.ndarray: The reduced nodes.
 
     Raises:
-        .UnsupportedDegree: If the degree is not 1, 2, 3 or 4.
+        UnsupportedDegree: If the degree is not 1, 2, 3 or 4.
     """
     _, num_nodes = np.shape(nodes)
     if num_nodes == 2:
@@ -1001,7 +1001,7 @@ def maybe_reduce(nodes):
         either the reduced ones or the original passed in.
 
     Raises:
-        .UnsupportedDegree: If the curve is degree 5 or higher.
+        UnsupportedDegree: If the curve is degree 5 or higher.
     """
     _, num_nodes = nodes.shape
     if num_nodes < 2:

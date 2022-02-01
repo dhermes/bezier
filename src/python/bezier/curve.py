@@ -206,7 +206,7 @@ class Curve(_base.Base):
         """Make a copy of the current curve.
 
         Returns:
-            .Curve: Copy of current curve.
+            Curve: Copy of current curve.
         """
         return Curve(self._nodes, self._degree, copy=True, verify=False)
 

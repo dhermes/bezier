@@ -367,8 +367,8 @@ def same_intersection(intersection1, intersection2, wiggle=0.5**40):
        is only used by :func:`generic_intersect`.
 
     Args:
-        intersection1 (.Intersection): The first intersection.
-        intersection2 (.Intersection): The second intersection.
+        intersection1 (Intersection): The first intersection.
+        intersection2 (Intersection): The second intersection.
         wiggle (Optional[float]): The amount of relative error allowed
             in parameter values.
 
@@ -496,7 +496,7 @@ def add_edge_end_unused(intersection, duplicates, intersections):
       and ``index_second`` and if it matches the start index exactly
 
     Args:
-        intersection (.Intersection): An intersection to be added.
+        intersection (Intersection): An intersection to be added.
         duplicates (List[~bezier.hazmat.intersection_helpers.Intersection]):
             List of duplicate intersections.
         intersections (List[~bezier.hazmat.intersection_helpers.Intersection]):
@@ -532,7 +532,7 @@ def check_unused(intersection, duplicates, intersections):
       :attr:`~.IntersectionClassification.COINCIDENT_UNUSED`.
 
     Args:
-        intersection (.Intersection): An intersection to be added.
+        intersection (Intersection): An intersection to be added.
         duplicates (List[~bezier.hazmat.intersection_helpers.Intersection]):
             List of duplicate intersections.
         intersections (List[~bezier.hazmat.intersection_helpers.Intersection]):
@@ -677,7 +677,7 @@ def should_use(intersection):
     :attr:`~.IntersectionClassification.TANGENT_SECOND`.
 
     Args:
-        intersection (.Intersection): An intersection to be added.
+        intersection (Intersection): An intersection to be added.
 
     Returns:
         bool: Indicating if the intersection will be used.

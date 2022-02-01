@@ -166,7 +166,7 @@ def evaluate(nodes, x_val, y_val):
 
     Raises:
         ValueError: If the curve is a point.
-        .UnsupportedDegree: If the degree is not 1, 2 or 3.
+        UnsupportedDegree: If the degree is not 1, 2 or 3.
     """
     _, num_nodes = nodes.shape
     if num_nodes == 1:
@@ -1324,7 +1324,7 @@ def poly_to_power_basis(bezier_coeffs):
         numpy.ndarray: 1D array of coefficients in monomial basis.
 
     Raises:
-        .UnsupportedDegree: If the degree of the curve is not among
+        UnsupportedDegree: If the degree of the curve is not among
             0, 1, 2 or 3.
     """
     (num_coeffs,) = bezier_coeffs.shape
