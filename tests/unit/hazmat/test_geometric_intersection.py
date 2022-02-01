@@ -143,7 +143,7 @@ class Test_linearization_error(unittest.TestCase):
         )
         error_val = self._call_function_under_test(nodes)
         # D^2 v = [1.5, 2.25], [1.5, -4.5], [1.5, 9]
-        expected = 0.125 * 4 * 3 * np.sqrt(1.5 ** 2 + 9.0 ** 2)
+        expected = 0.125 * 4 * 3 * np.sqrt(1.5**2 + 9.0**2)
         self.assertEqual(expected, error_val)
 
     def test_cubic(self):
@@ -649,7 +649,7 @@ class Test_add_intersection(unittest.TestCase):
 
     def test_s_under_zero(self):
         intersections = [(0.0, 0.75)]
-        candidate_s = 0.5 ** 43
+        candidate_s = 0.5**43
         self.assertIsNone(
             self._call_function_under_test(candidate_s, 0.75, intersections)
         )
@@ -657,7 +657,7 @@ class Test_add_intersection(unittest.TestCase):
 
     def test_t_under_zero(self):
         intersections = [(0.125, 0.0)]
-        candidate_t = 0.5 ** 42
+        candidate_t = 0.5**42
         self.assertIsNone(
             self._call_function_under_test(0.125, candidate_t, intersections)
         )
@@ -1620,7 +1620,7 @@ class TestLinearization(utils.NumPyTestCase):
         self.assertIs(new_shape, curve)
 
     def test_from_shape_factory_close_enough(self):
-        scale_factor = 0.5 ** 27
+        scale_factor = 0.5**27
         nodes = self.NODES * scale_factor
         curve = subdivided_curve(nodes)
         klass = self._get_target_class()

@@ -17,7 +17,7 @@ import bisect
 import numpy as np
 
 
-_EPS = 0.5 ** 40
+_EPS = 0.5**40
 
 
 def vector_close(vec1, vec2, eps=_EPS):
@@ -194,7 +194,7 @@ def matrix_product(mat1, mat2):
     return np.dot(mat2.T, mat1.T).T  # pylint: disable=no-member
 
 
-def wiggle_interval(value, wiggle=0.5 ** 44):
+def wiggle_interval(value, wiggle=0.5**44):
     r"""Check if ``value`` is in :math:`\left[0, 1\right]`.
 
     Allows a little bit of wiggle room outside the interval. A value

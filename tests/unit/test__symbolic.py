@@ -77,8 +77,8 @@ class Test_curve_weights:
                 [
                     (1 - t) ** 3,
                     3 * t * (1 - t) ** 2,
-                    3 * t ** 2 * (1 - t),
-                    t ** 3,
+                    3 * t**2 * (1 - t),
+                    t**3,
                 ]
             ]
         ).T
@@ -116,15 +116,15 @@ class Test_implicitize_2d:
     @pytest.mark.skipif(sympy is None, reason="SymPy not installed")
     def test_it(self):
         s, x_sym, y_sym = sympy.symbols("s, x, y")
-        x_fn = 1 - s ** 2
-        y_fn = 1 + s + s ** 2
+        x_fn = 1 - s**2
+        y_fn = 1 + s + s**2
         f_polynomial = self._call_function_under_test(x_fn, y_fn, s)
 
         expected = (
-            x_sym ** 2
+            x_sym**2
             + 2 * x_sym * y_sym
             - 3 * x_sym
-            + y_sym ** 2
+            + y_sym**2
             - 4 * y_sym
             + 3
         )
@@ -150,10 +150,10 @@ class Test_triangle_weights:
                 [
                     (1 - s - t) ** 2,
                     2 * (1 - s - t) * s,
-                    s ** 2,
+                    s**2,
                     2 * (1 - s - t) * t,
                     2 * s * t,
-                    t ** 2,
+                    t**2,
                 ]
             ]
         ).T
@@ -195,20 +195,20 @@ class Test_implicitize_3d:
         s, t, x_sym, y_sym, z_sym = sympy.symbols("s, t, x, y, z")
         x_fn = s * t
         y_fn = s + t
-        z_fn = s ** 2 + t ** 2
+        z_fn = s**2 + t**2
         f_polynomial = self._call_function_under_test(x_fn, y_fn, z_fn, s, t)
 
         expected = (
-            x_sym ** 4
-            - 2 * x_sym ** 3 * y_sym
-            + 2 * x_sym ** 2 * y_sym ** 2
-            - 4 * x_sym ** 2 * y_sym
-            - 2 * x_sym ** 2 * z_sym
-            + 4 * x_sym ** 2
+            x_sym**4
+            - 2 * x_sym**3 * y_sym
+            + 2 * x_sym**2 * y_sym**2
+            - 4 * x_sym**2 * y_sym
+            - 2 * x_sym**2 * z_sym
+            + 4 * x_sym**2
             + 2 * x_sym * y_sym * z_sym
             + 4 * x_sym * z_sym
-            - 2 * y_sym ** 2 * z_sym
-            + z_sym ** 2
+            - 2 * y_sym**2 * z_sym
+            + z_sym**2
         )
         assert sympy_equal(f_polynomial, expected)
 

@@ -87,7 +87,7 @@ def ref_triangle_uniform_nodes(pts_exponent):
     # Using the exponent means that we will divide by
     # 2**exp, which can be done without roundoff (for small
     # enough exponents).
-    pts_per_side = 2 ** pts_exponent + 1
+    pts_per_side = 2**pts_exponent + 1
     total = ((pts_per_side + 1) * pts_per_side) // 2
     result = np.zeros((total, 2), order="F")
     index = 0

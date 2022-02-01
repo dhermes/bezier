@@ -1946,7 +1946,7 @@ def clip_range_distances(nodes1, nodes2):
     )
 
     # Use minor xticks **above** for showing s_min and s_max.
-    jitter = 0.5 ** 5
+    jitter = 0.5**5
     # NOTE: We introduce ``jitter`` to avoid using the same value for a minor
     #       xtick that is used for a major one. When ``matplotlib`` sees a
     #       minor xtick at the exact same value used by a major xtick, it

@@ -251,7 +251,7 @@ class TestCurve(utils.NumPyTestCase):
         result = left.intersect(right, **kwargs)
         expected = np.asfortranarray([[1.0], [2.0]]) / 3.0
         self.assertTrue(
-            np.allclose(result, expected, atol=0.0, rtol=0.5 ** 52)
+            np.allclose(result, expected, atol=0.0, rtol=0.5**52)
         )
 
     def test_intersect(self):
@@ -385,7 +385,7 @@ class TestCurve(utils.NumPyTestCase):
         b_polynomial = curve.to_symbolic()
 
         s = sympy.Symbol("s")
-        expected = 3 * sympy.Matrix([[1 + s ** 2, 1 - s ** 3]]).T
+        expected = 3 * sympy.Matrix([[1 + s**2, 1 - s**3]]).T
         self.assertTrue(
             test__symbolic.sympy_matrix_equal(b_polynomial, expected)
         )
@@ -398,10 +398,10 @@ class TestCurve(utils.NumPyTestCase):
 
         x_sym, y_sym = sympy.symbols("x, y")
         expected = -9 * (
-            x_sym ** 3
-            - 9 * x_sym ** 2
+            x_sym**3
+            - 9 * x_sym**2
             + 27 * x_sym
-            - 3 * y_sym ** 2
+            - 3 * y_sym**2
             + 18 * y_sym
             - 54
         )

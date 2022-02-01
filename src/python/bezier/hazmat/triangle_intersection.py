@@ -29,7 +29,7 @@ from bezier.hazmat import triangle_helpers
 
 
 MAX_LOCATE_SUBDIVISIONS = 20
-LOCATE_EPS = 0.5 ** 47
+LOCATE_EPS = 0.5**47
 INTERSECTION_T = geometric_intersection.BoxIntersectionType.INTERSECTION
 CLASSIFICATION_T = intersection_helpers.IntersectionClassification
 UNUSED_T = CLASSIFICATION_T.COINCIDENT_UNUSED
@@ -358,7 +358,7 @@ def locate_point(nodes, degree, x_val, y_val):
     return s, t
 
 
-def same_intersection(intersection1, intersection2, wiggle=0.5 ** 40):
+def same_intersection(intersection1, intersection2, wiggle=0.5**40):
     """Check if two intersections are close to machine precision.
 
     .. note::

@@ -79,8 +79,8 @@ source_suffix = ".rst"
 master_doc = "index"
 
 # General information about the project.
-project = u"bezier"
-copyright = u"2016, Danny Hermes"
+project = "bezier"
+copyright = "2016, Danny Hermes"
 author = bezier.__author__
 version = bezier.__version__
 
@@ -280,8 +280,8 @@ latex_documents = [
     (
         master_doc,
         "bezier.tex",
-        u"bezier Documentation",
-        u"Danny Hermes",
+        "bezier Documentation",
+        "Danny Hermes",
         "manual",
     )
 ]
@@ -323,7 +323,7 @@ latex_documents = [
 
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
-man_pages = [(master_doc, "bezier", u"bezier Documentation", [author], 1)]
+man_pages = [(master_doc, "bezier", "bezier Documentation", [author], 1)]
 
 # If true, show URL addresses after external links.
 #
@@ -339,7 +339,7 @@ texinfo_documents = [
     (
         master_doc,
         "bezier",
-        u"bezier Documentation",
+        "bezier Documentation",
         author,
         "bezier",
         "One line description of project.",

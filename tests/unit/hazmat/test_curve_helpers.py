@@ -110,7 +110,7 @@ class Test_subdivide_nodes(utils.NumPyTestCase):
         left, right = self._call_function_under_test(nodes)
         # Using the exponent means that ds = 1/2**exp, which
         # can be computed without roundoff.
-        num_pts = 2 ** pts_exponent + 1
+        num_pts = 2**pts_exponent + 1
         left_half = np.linspace(0.0, 0.5, num_pts)
         right_half = np.linspace(0.5, 1.0, num_pts)
         unit_interval = np.linspace(0.0, 1.0, num_pts)
@@ -252,7 +252,7 @@ class Test_evaluate_multi_vs(utils.NumPyTestCase):
             ]
         )
         evaluated = self._call_function_under_test(nodes, lambda1, lambda2)
-        binomial_coefficients = evaluated.flatten() * 2.0 ** degree
+        binomial_coefficients = evaluated.flatten() * 2.0**degree
         self.assertEqual(expected, binomial_coefficients)
 
     @unittest.skipIf(
@@ -300,33 +300,33 @@ class Test_evaluate_multi_vs(utils.NumPyTestCase):
                 3085851035479212.0 - 0.5,
                 2488589544741300.0 - 0.5,
                 1866442158555974.0 + 0.5,
-                1300853625660225.0 - 0.5 ** 2,
-                841728816603675.0 - 0.5 ** 3,
-                505037289962205.0 - 0.5 ** 4,
-                280576272201225.0 - 0.5 ** 4,
-                144079707346575.0 - 0.5 ** 5,
-                68248282427325.0 - 0.5 ** 6,
-                29749251314475.0 - 0.5 ** 7,
-                11899700525790.0 - 0.5 ** 8,
-                4353548972850.0 - 3 * 0.5 ** 11,
-                1451182990950.0 - 0.5 ** 11,
-                438729741450.0 - 3 * 0.5 ** 14,
-                119653565850.0 - 3 * 0.5 ** 16,
-                29248649430.0 - 3 * 0.5 ** 18,
-                6358402050.0 - 3 * 0.5 ** 20,
-                1217566350.0 - 0.5 ** 21,
-                202927725.0 - 3 * 0.5 ** 25,
-                28989675.0 - 0.5 ** 26,
-                3478761.0 - 0.5 ** 29,
-                341055.0 - 3 * 0.5 ** 34,
-                26235.0 - 0.5 ** 36,
-                1485.0 - 0.5 ** 40,
-                55.0 - 5 * 0.5 ** 47,
+                1300853625660225.0 - 0.5**2,
+                841728816603675.0 - 0.5**3,
+                505037289962205.0 - 0.5**4,
+                280576272201225.0 - 0.5**4,
+                144079707346575.0 - 0.5**5,
+                68248282427325.0 - 0.5**6,
+                29749251314475.0 - 0.5**7,
+                11899700525790.0 - 0.5**8,
+                4353548972850.0 - 3 * 0.5**11,
+                1451182990950.0 - 0.5**11,
+                438729741450.0 - 3 * 0.5**14,
+                119653565850.0 - 3 * 0.5**16,
+                29248649430.0 - 3 * 0.5**18,
+                6358402050.0 - 3 * 0.5**20,
+                1217566350.0 - 0.5**21,
+                202927725.0 - 3 * 0.5**25,
+                28989675.0 - 0.5**26,
+                3478761.0 - 0.5**29,
+                341055.0 - 3 * 0.5**34,
+                26235.0 - 0.5**36,
+                1485.0 - 0.5**40,
+                55.0 - 5 * 0.5**47,
                 1.0,
             ],
         )
         evaluated = self._call_function_under_test(nodes, lamdba1, lamdba2)
-        binomial_coefficients = evaluated.flatten() * 2.0 ** degree
+        binomial_coefficients = evaluated.flatten() * 2.0**degree
         self.assertEqual(expected, binomial_coefficients)
 
 
@@ -412,7 +412,7 @@ class Test_evaluate_multi_de_casteljau(utils.NumPyTestCase):
             ],
         )
         evaluated = self._call_function_under_test(nodes, lamdba1, lamdba2)
-        binomial_coefficients = evaluated.flatten() * 2.0 ** degree
+        binomial_coefficients = evaluated.flatten() * 2.0**degree
         self.assertEqual(expected, binomial_coefficients)
 
 
@@ -498,7 +498,7 @@ class Test_evaluate_multi_barycentric(utils.NumPyTestCase):
             ],
         )
         evaluated = self._call_function_under_test(nodes, lamdba1, lamdba2)
-        binomial_coefficients = evaluated.flatten() * 2.0 ** degree
+        binomial_coefficients = evaluated.flatten() * 2.0**degree
         self.assertEqual(expected, binomial_coefficients)
 
 
@@ -837,7 +837,7 @@ class Test_locate_point(unittest.TestCase):
 
 
 class Test_reduce_pseudo_inverse(utils.NumPyTestCase):
-    EPS = 0.5 ** 52
+    EPS = 0.5**52
 
     @staticmethod
     def _call_function_under_test(nodes):

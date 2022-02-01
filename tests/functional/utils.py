@@ -185,7 +185,7 @@ def id_func(value):
         return value.test_id
 
 
-def ulps_away(value1, value2, num_bits=1, eps=0.5 ** 40):
+def ulps_away(value1, value2, num_bits=1, eps=0.5**40):
     r"""Determines if ``value1`` is within ``n`` ULPs of ``value2``.
 
     Uses ``np.spacing`` to determine the unit of least precision (ULP)

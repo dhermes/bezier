@@ -43,7 +43,7 @@ ULPS_ALLOWED = 3.0
 # NOTE: Set a threshold for values that are "approximately" zero.
 #       This is an **absolute** error rather than a relative error
 #       since relative to zero error is always infinite.
-ZERO_THRESHOLD = 0.5 ** 52
+ZERO_THRESHOLD = 0.5**52
 ZERO_MISS = object()
 # NOTE: We use units of least precision (ULP) as error. These
 #       are for the very rare cases where the computed values

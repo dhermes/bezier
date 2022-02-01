@@ -27,7 +27,7 @@ from tests.unit import utils
 FLOAT64 = np.float64  # pylint: disable=no-member
 SPACING = np.spacing  # pylint: disable=no-member
 RANDOM = np.random.random  # pylint: disable=no-member
-LOCAL_EPS = 0.5 ** 25  # 2 * sqrt(machine precision)
+LOCAL_EPS = 0.5**25  # 2 * sqrt(machine precision)
 
 
 class Test__evaluate3(unittest.TestCase):
@@ -547,10 +547,10 @@ class Test__strip_leading_zeros(utils.NumPyTestCase):
         self.assertIs(result, coeffs)
 
     def test_custom_threshold(self):
-        coeffs = np.asfortranarray([2.0, 0.0, 0.0, 0.5 ** 10])
+        coeffs = np.asfortranarray([2.0, 0.0, 0.0, 0.5**10])
         result = self._call_function_under_test(coeffs)
         self.assertIs(result, coeffs)
-        result = self._call_function_under_test(coeffs, threshold=0.5 ** 9)
+        result = self._call_function_under_test(coeffs, threshold=0.5**9)
         self.assertEqual(result, coeffs[:1])
 
 
@@ -587,7 +587,7 @@ class Test__check_non_simple(utils.NumPyTestCase):
         # Make sure no exception was thrown.
         self.assertIsNone(self._call_function_under_test(coeffs))
         for exponent in (-30, -20, -10, 10, 20, 30):
-            new_coeffs = 0.5 ** exponent * coeffs
+            new_coeffs = 0.5**exponent * coeffs
             self.assertIsNone(self._call_function_under_test(new_coeffs))
 
 
@@ -626,7 +626,7 @@ class Test__resolve_and_add(utils.NumPyTestCase):
         self.assertEqual(final_t, [t])
 
     def test_to_zero(self):
-        s = -(0.5 ** 60)
+        s = -(0.5**60)
         t = 0.5
         final_s, final_t = self._helper(s, t)
         self.assertEqual(final_s, [0.0])
@@ -634,7 +634,7 @@ class Test__resolve_and_add(utils.NumPyTestCase):
 
     def test_still_negative(self):
         s = 0.125
-        t = -(0.5 ** 20)
+        t = -(0.5**20)
         final_s, final_t = self._helper(s, t)
         self.assertEqual(final_s, [])
         self.assertEqual(final_t, [])
@@ -747,12 +747,12 @@ class Test_normalize_polynomial(utils.NumPyTestCase):
 
     def test_almost_zero(self):
         shape = (4,)
-        coeffs = 0.5 ** 42 * RANDOM(shape)
+        coeffs = 0.5**42 * RANDOM(shape)
         result = self._call_function_under_test(coeffs)
         self.assertIsNot(result, coeffs)
         self.assertEqual(result, np.zeros(shape, order="F"))
-        coeffs = 0.5 ** 10 * RANDOM(shape)
-        result = self._call_function_under_test(coeffs, threshold=0.5 ** 8)
+        coeffs = 0.5**10 * RANDOM(shape)
+        result = self._call_function_under_test(coeffs, threshold=0.5**8)
         self.assertIsNot(result, coeffs)
         self.assertEqual(result, np.zeros(shape, order="F"))
 

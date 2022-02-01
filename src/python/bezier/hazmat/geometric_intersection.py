@@ -30,7 +30,7 @@ from bezier.hazmat import intersection_helpers
 
 # Set the threshold for exponent at half the bits available, this way one round
 # of Newton's method can (usually) finish the job by squaring the error.
-_ERROR_VAL = 0.5 ** 26
+_ERROR_VAL = 0.5**26
 _MAX_INTERSECT_SUBDIVISIONS = 20
 _MAX_CANDIDATES = 64
 _UNHANDLED_LINES = (
@@ -45,7 +45,7 @@ _NO_CONVERGE_TEMPLATE = (
     "Curve intersection failed to converge to approximately linear "
     "subdivisions after {:d} iterations."
 )
-_MIN_INTERVAL_WIDTH = 0.5 ** 40
+_MIN_INTERVAL_WIDTH = 0.5**40
 _SPLIT_POINT = np.asfortranarray([[0.5], [0.5]])
 
 

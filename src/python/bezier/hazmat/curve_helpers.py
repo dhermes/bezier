@@ -24,9 +24,9 @@ from bezier.hazmat import helpers as _py_helpers
 
 
 _MAX_LOCATE_SUBDIVISIONS = 20
-_LOCATE_STD_CAP = 0.5 ** 20
+_LOCATE_STD_CAP = 0.5**20
 _FLOAT64 = np.float64  # pylint: disable=no-member
-_REDUCE_THRESHOLD = 0.5 ** 26  # sqrt(machine precision)
+_REDUCE_THRESHOLD = 0.5**26  # sqrt(machine precision)
 # Projections onto the space of degree-elevated nodes.
 # If v --> vE is the (right) elevation map, then P = E^T (E E^T)^{-1} E
 # is the (right) projection.

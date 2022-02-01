@@ -312,7 +312,7 @@ class TestNewtonDoubleRoot(utils.NumPyTestCase):
 
 
 class Test_newton_iterate(unittest.TestCase):
-    HALF_EPS = 0.5 ** 26
+    HALF_EPS = 0.5**26
 
     @staticmethod
     def _call_function_under_test(evaluate_fn, s, t):
@@ -377,8 +377,8 @@ class Test_newton_iterate(unittest.TestCase):
             evaluate_fn, s, t
         )
         self.assertFalse(converged)
-        self.assertEqual(3.0 * current_s, 2.0 + 0.5 ** 14)
-        self.assertEqual(3.0 * current_t, 1 - 0.5 ** 14)
+        self.assertEqual(3.0 * current_s, 2.0 + 0.5**14)
+        self.assertEqual(3.0 * current_t, 1 - 0.5**14)
 
     def _check_closer(
         self, s, current_s, expected_s, t, current_t, expected_t
@@ -520,27 +520,27 @@ class Test_newton_iterate(unittest.TestCase):
             evaluate_fn, s, t
         )
         self.assertFalse(converged)
-        self.assertEqual(current_s, 0.5 - 0.5 ** 4)
-        self.assertEqual(current_t, 0.5 - 0.5 ** 4)
+        self.assertEqual(current_s, 0.5 - 0.5**4)
+        self.assertEqual(current_t, 0.5 - 0.5**4)
         # Do the same as above, but start a bit closer to a root.
-        s = 0.5 - 0.5 ** 20
-        t = 0.5 - 0.5 ** 20
+        s = 0.5 - 0.5**20
+        t = 0.5 - 0.5**20
         converged, current_s, current_t = self._call_function_under_test(
             evaluate_fn, s, t
         )
         self.assertFalse(converged)
-        self.assertEqual(current_s, 0.5 - 0.5 ** 24)
-        self.assertEqual(current_t, 0.5 - 0.5 ** 24)
+        self.assertEqual(current_s, 0.5 - 0.5**24)
+        self.assertEqual(current_t, 0.5 - 0.5**24)
         # Finally, start "too close" so that ``F(s, t)`` evaluates to zero
         # earlier than it should.
-        s = 0.5 - 0.5 ** 26
-        t = 0.5 - 0.5 ** 26
+        s = 0.5 - 0.5**26
+        t = 0.5 - 0.5**26
         converged, current_s, current_t = self._call_function_under_test(
             evaluate_fn, s, t
         )
         self.assertTrue(converged)
-        self.assertEqual(current_s, 0.5 - 0.5 ** 28)
-        self.assertEqual(current_t, 0.5 - 0.5 ** 28)
+        self.assertEqual(current_s, 0.5 - 0.5**28)
+        self.assertEqual(current_t, 0.5 - 0.5**28)
 
 
 class Test_full_newton_nonzero(unittest.TestCase):

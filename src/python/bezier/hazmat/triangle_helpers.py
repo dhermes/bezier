@@ -676,7 +676,7 @@ SECOND_TRIANGLE_INFO = (
 # Threshold where a vector cross-product (u x v) is considered
 # to be "zero". This is a "hack", since it doesn't take ||u||
 # or ||v|| into account.
-ALMOST_TANGENT = 0.5 ** 50
+ALMOST_TANGENT = 0.5**50
 # Hardcoded "line integral" helpers for ``shoelace_for_area()``.
 SHOELACE_LINEAR = ((1, 0, 1),)
 SHOELACE_QUADRATIC = ((2, 0, 1), (1, 0, 2), (2, 1, 2))

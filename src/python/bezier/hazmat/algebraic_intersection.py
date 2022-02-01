@@ -96,16 +96,16 @@ _CHEB10 = np.asfortranarray(
     ]
 )
 # Allow a buffer of sqrt(sqrt(machine precision)) for polynomial roots.
-_IMAGINARY_WIGGLE = 0.5 ** 13
-_UNIT_INTERVAL_WIGGLE_START = -(0.5 ** 13)
-_UNIT_INTERVAL_WIGGLE_END = 1.0 + 0.5 ** 13
-_SIGMA_THRESHOLD = 0.5 ** 20
-_SINGULAR_EPS = 0.5 ** 52
+_IMAGINARY_WIGGLE = 0.5**13
+_UNIT_INTERVAL_WIGGLE_START = -(0.5**13)
+_UNIT_INTERVAL_WIGGLE_END = 1.0 + 0.5**13
+_SIGMA_THRESHOLD = 0.5**20
+_SINGULAR_EPS = 0.5**52
 # Detect almost zero polynomials.
-_L2_THRESHOLD = 0.5 ** 40  # 4096 (machine precision)
-_ZERO_THRESHOLD = 0.5 ** 38  # 16384 (machine precision)
-_COEFFICIENT_THRESHOLD = 0.5 ** 26  # sqrt(machine precision)
-_NON_SIMPLE_THRESHOLD = 0.5 ** 48  # 16 (machine precision)
+_L2_THRESHOLD = 0.5**40  # 4096 (machine precision)
+_ZERO_THRESHOLD = 0.5**38  # 16384 (machine precision)
+_COEFFICIENT_THRESHOLD = 0.5**26  # sqrt(machine precision)
+_NON_SIMPLE_THRESHOLD = 0.5**48  # 16 (machine precision)
 _COINCIDENT_ERR = "Coincident curves not currently supported"
 _NON_SIMPLE_ERR = "Polynomial has non-simple roots"
 _POWER_BASIS_ERR = (
