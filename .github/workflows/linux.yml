@@ -62,6 +62,7 @@ jobs:
         docker exec dhermes-bezier \
           nox --session "functional-3.10"
     - name: Upload coverage to coveralls
+      if: github.event_name != 'pull_request'
       env:
         COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
       run: |
