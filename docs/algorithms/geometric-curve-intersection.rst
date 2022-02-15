@@ -74,3 +74,30 @@ the number of pairs:
 
 .. image:: ../images/subdivision_pruning.png
    :align: center
+
+Subdividing Until Linear
+------------------------
+
+In addition to limiting the input range from :math:`\left[0, 1\right]` to
+a more focused interval where intersection can occur, the subdivision process
+also serves the purpose of "linearizing" the curve segments:
+
+.. image:: ../images/subdivision_linearized.png
+   :align: center
+
+After a sufficient number of subdivisions, the :func:`.linearization_error`
+of each segment in a pair will drop below a given threshold.
+
+By symmetry this also holds for the right side. Thus, the error bound
+
+.. math::
+
+   E = \frac{\left\lVert\Delta^2 \mathbf{p}_0\right\rVert_2}{4}
+
+becomes
+
+.. math::
+
+   E^{(L)} = \frac{\left\lVert\Delta^2 \mathbf{p}_0^{(L)}\right\rVert_2}{4} =
+   \frac{\frac{1}{4} \left\lVert\Delta^2 \mathbf{p}_0\right\rVert_2}{4} =
+   \frac{1}{4} E.

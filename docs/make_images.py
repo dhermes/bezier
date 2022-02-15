@@ -1420,6 +1420,13 @@ def simple_axis(ax):
     ax.set_yticklabels([])
 
 
+def plot_bbox(curve, ax, color, **plot_kwargs):
+    left, right, bottom, top = _helpers.bbox(curve._nodes)
+    bbox_x = [left, right, right, left, left]
+    bbox_y = [bottom, bottom, top, top, bottom]
+    ax.plot(bbox_x, bbox_y, color=color, **plot_kwargs)
+
+
 def plot_with_bbox(curve, ax, color, with_nodes=False):
     curve.plot(256, color=color, ax=ax)
     left, right, bottom, top = _helpers.bbox(curve._nodes)
@@ -1988,12 +1995,58 @@ def clip_range_distances(nodes1, nodes2):
     save_image(figure, "clip_range_distances.png")
 
 
+def subdivision_linearized():
+    figure, all_axes = plt.subplots(2, 7)
+    all_axes = all_axes.flatten()
+
+    nodes15 = np.asfortranarray([[0.25, 0.625, 1.0], [0.625, 0.25, 1.0]])
+    curve15 = bezier.Curve(nodes15, degree=2)
+    nodes25 = np.asfortranarray([[0.0, 0.25, 0.75, 1.0], [0.5, 1.0, 1.5, 0.5]])
+    curve25 = bezier.Curve(nodes25, degree=3)
+
+    color1 = BLUE
+    curve15.plot(256, ax=all_axes[0], color=color1)
+    color2 = GREEN
+    curve25.plot(256, ax=all_axes[0], color=color2)
+
+    choices1 = (1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1)
+    choices2 = (1, 1, 0, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1)
+    first = curve15
+    second = curve25
+    for i in range(13):
+        ax = all_axes[i + 1]
+        index1 = choices1[i]
+        index2 = choices2[i]
+        first = first.subdivide()[index1]
+        second = second.subdivide()[index2]
+        first.plot(256, ax=ax, color=color1)
+        second.plot(256, ax=ax, color=color2)
+        # After splitting, put the bounding box on the previous axis.
+        prev_ax = all_axes[i]
+        plot_with_bbox(first, prev_ax, color1)
+        plot_with_bbox(second, prev_ax, color2)
+        plot_bbox(first, ax, color1, linestyle="dashed", alpha=0.375)
+        plot_bbox(second, ax, color2, linestyle="dashed", alpha=0.375)
+
+    for ax in all_axes:
+        ax.axis("equal")
+        ax.set_xticklabels([])
+        ax.set_yticklabels([])
+
+    figure.set_size_inches(6.4, 2.4)
+    figure.subplots_adjust(
+        left=0.01, bottom=0.01, right=0.99, top=0.99, wspace=0.06, hspace=0.04
+    )
+    save_image(figure, "subdivision_linearized.png")
+
+
 def main():
     bounding_box_predicate()
     convex_hull_predicate()
     subdivide_curve()
     subdivision_process()
     subdivision_pruning()
+    subdivision_linearized()
 
 
 if __name__ == "__main__":
