@@ -278,6 +278,7 @@ def setup():
         install_requires=REQUIREMENTS,
         extras_require=EXTRAS_REQUIRE,
         ext_modules=extension_modules(),
+        python_requires=">=3.8",
         classifiers=[
             "Development Status :: 4 - Beta",
             "Intended Audience :: Developers",
