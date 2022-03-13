@@ -2735,9 +2735,9 @@ static const char __pyx_k_evaluate_cartesian_multi[] = "evaluate_cartesian_multi
 static const char __pyx_k_subdivide_nodes_triangle[] = "subdivide_nodes_triangle";
 static const char __pyx_k_triangle_workspace_sizes[] = "triangle_workspace_sizes";
 static const char __pyx_k_Invalid_shape_in_axis_d_d[] = "Invalid shape in axis %d: %d.";
-static const char __pyx_k_Unknown_error_has_occured[] = "Unknown error has occurred.";
 static const char __pyx_k_reset_triangle_workspaces[] = "reset_triangle_workspaces";
 static const char __pyx_k_Unexpected_number_of_edges[] = "Unexpected number of edges";
+static const char __pyx_k_Unknown_error_has_occurred[] = "Unknown error has occurred.";
 static const char __pyx_k_evaluate_barycentric_multi[] = "evaluate_barycentric_multi";
 static const char __pyx_k_evaluate_multi_barycentric[] = "evaluate_multi_barycentric";
 static const char __pyx_k_itemsize_0_for_cython_array[] = "itemsize <= 0 for cython.array";
@@ -2848,7 +2848,7 @@ static PyObject *__pyx_kp_u_The_number_of_candidate_intersec;
 static PyObject *__pyx_n_s_TypeError;
 static PyObject *__pyx_kp_s_Unable_to_convert_item_to_object;
 static PyObject *__pyx_kp_u_Unexpected_number_of_edges;
-static PyObject *__pyx_kp_u_Unknown_error_has_occured;
+static PyObject *__pyx_kp_u_Unknown_error_has_occurred;
 static PyObject *__pyx_kp_u_Unknown_error_r;
 static PyObject *__pyx_n_s_UnsupportedDegree;
 static PyObject *__pyx_kp_u_Unsupported_multiplicity_Newton;
@@ -36643,7 +36643,7 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_TypeError, __pyx_k_TypeError, sizeof(__pyx_k_TypeError), 0, 0, 1, 1},
   {&__pyx_kp_s_Unable_to_convert_item_to_object, __pyx_k_Unable_to_convert_item_to_object, sizeof(__pyx_k_Unable_to_convert_item_to_object), 0, 0, 1, 0},
   {&__pyx_kp_u_Unexpected_number_of_edges, __pyx_k_Unexpected_number_of_edges, sizeof(__pyx_k_Unexpected_number_of_edges), 0, 1, 0, 0},
-  {&__pyx_kp_u_Unknown_error_has_occured, __pyx_k_Unknown_error_has_occured, sizeof(__pyx_k_Unknown_error_has_occured), 0, 1, 0, 0},
+  {&__pyx_kp_u_Unknown_error_has_occurred, __pyx_k_Unknown_error_has_occurred, sizeof(__pyx_k_Unknown_error_has_occurred), 0, 1, 0, 0},
   {&__pyx_kp_u_Unknown_error_r, __pyx_k_Unknown_error_r, sizeof(__pyx_k_Unknown_error_r), 0, 1, 0, 0},
   {&__pyx_n_s_UnsupportedDegree, __pyx_k_UnsupportedDegree, sizeof(__pyx_k_UnsupportedDegree), 0, 0, 1, 1},
   {&__pyx_kp_u_Unsupported_multiplicity_Newton, __pyx_k_Unsupported_multiplicity_Newton, sizeof(__pyx_k_Unsupported_multiplicity_Newton), 0, 1, 0, 0},
@@ -37071,7 +37071,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
  *     else:
  *         # NOTE: If ``status`` isn't one of the enum values, then it is the
  */
-  __pyx_tuple__14 = PyTuple_Pack(1, __pyx_kp_u_Unknown_error_has_occured); if (unlikely(!__pyx_tuple__14)) __PYX_ERR(0, 1149, __pyx_L1_error)
+  __pyx_tuple__14 = PyTuple_Pack(1, __pyx_kp_u_Unknown_error_has_occurred); if (unlikely(!__pyx_tuple__14)) __PYX_ERR(0, 1149, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__14);
   __Pyx_GIVEREF(__pyx_tuple__14);
 
@@ -40159,7 +40159,7 @@ static const char* __Pyx_BufFmt_DescribeTypeChar(char ch, int is_complex) {
     case 'P': return "a pointer";
     case 's': case 'p': return "a string";
     case 0: return "end";
-    default: return "unparsable format string";
+    default: return "unparseable format string";
   }
 }
 static size_t __Pyx_BufFmt_TypeCharToStandardSize(char ch, int is_complex) {
@@ -45315,7 +45315,7 @@ static int __pyx_Generator_init(void) {
     if (ctversion[0] != rtversion[0] || ctversion[2] != rtversion[2]) {
         char message[200];
         PyOS_snprintf(message, sizeof(message),
-                      "compile time version %s of module '%.100s' "
+                      "compiletime version %s of module '%.100s' "
                       "does not match runtime version %s",
                       ctversion, __Pyx_MODULE_NAME, rtversion);
         return PyErr_WarnEx(NULL, message, 1);
