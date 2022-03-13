@@ -39,7 +39,7 @@ except ImportError as exc:  # pragma: NO COVER
     _HAS_SPEEDUP = False
 # NOTE: The ``__version__`` and ``__author__`` are hard-coded here, rather
 #       than using ``pkg_resources.get_distribution("bezier").version``
-#       and related. This is **entirely** to accomodate builds where
+#       and related. This is **entirely** to accommodate builds where
 #       ``bezier`` is imported from source (and not installed).
 __author__ = "Danny Hermes"
 __version__ = "2021.2.13.dev1"

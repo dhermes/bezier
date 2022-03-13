@@ -68,7 +68,7 @@ def main():
         name, segment, _ = value_triple
         curr_index = index_by_name[name]
         make_plot(name, segment, curr_index, args.save_plot)
-        # For next occurence of ``name``.
+        # For next occurrence of ``name``.
         index_by_name[name] = curr_index + 1
 
 

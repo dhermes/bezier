@@ -109,7 +109,7 @@ Breaking Changes
    (`fe453c3 <https://github.com/dhermes/bezier/commit/fe453c3839b19ce4a85dfd0b5ad78f71a0973daf>`__).
    Now when doing geometric curve-curve intersection, parallel linearized
    segments are handled by checking if the convex hulls collide and then
-   (if they do) using a modifed Newton iteration to converge to a root.
+   (if they do) using a modified Newton iteration to converge to a root.
 -  Adding ``BAD_MULTIPLICITY`` status enum
    (`fe453c3 <https://github.com/dhermes/bezier/commit/fe453c3839b19ce4a85dfd0b5ad78f71a0973daf>`__).
    (This is a **breaking** change rather than additive because it re-uses
