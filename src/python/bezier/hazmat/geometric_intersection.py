@@ -213,7 +213,7 @@ def linearization_error(nodes):
     intersect the linear approximations. Then the :math:`s`-values from
     the line-line intersection is lifted back to the curves. Thus
     the error :math:`\|B(s) - L(s)\|_2` is more relevant than the
-    underyling algebraic curve containing :math:`B(s)`.
+    underlying algebraic curve containing :math:`B(s)`.
 
     .. note::
 

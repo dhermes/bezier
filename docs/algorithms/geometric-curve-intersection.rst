@@ -33,7 +33,7 @@ intervals overlap in each of the :math:`x` and :math:`y` directions, whereas
 arbitrary convex polygon intersection is much more involved
 (though the `Sutherland-Hodgman`_ clipping algorithm exists) and the :math:`x`
 and :math:`y` components are not independent. In order to **eliminate** pairs
-of curves that are gauranteed **not** to intersect, a bounding box predicate
+of curves that are guaranteed **not** to intersect, a bounding box predicate
 can be used.
 
 .. _Sutherland-Hodgman: https://en.wikipedia.org/wiki/Sutherland%E2%80%93Hodgman_algorithm

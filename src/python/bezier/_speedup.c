@@ -2735,7 +2735,7 @@ static const char __pyx_k_evaluate_cartesian_multi[] = "evaluate_cartesian_multi
 static const char __pyx_k_subdivide_nodes_triangle[] = "subdivide_nodes_triangle";
 static const char __pyx_k_triangle_workspace_sizes[] = "triangle_workspace_sizes";
 static const char __pyx_k_Invalid_shape_in_axis_d_d[] = "Invalid shape in axis %d: %d.";
-static const char __pyx_k_Unknown_error_has_occured[] = "Unknown error has occured.";
+static const char __pyx_k_Unknown_error_has_occured[] = "Unknown error has occurred.";
 static const char __pyx_k_reset_triangle_workspaces[] = "reset_triangle_workspaces";
 static const char __pyx_k_Unexpected_number_of_edges[] = "Unexpected number of edges";
 static const char __pyx_k_evaluate_barycentric_multi[] = "evaluate_barycentric_multi";
@@ -19454,7 +19454,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_84triangle_intersections(CYTHON_UNUS
  *         #       edges have been added.
  *         raise RuntimeError("Unexpected number of edges")             # <<<<<<<<<<<<<<
  *     elif status == bezier._status.Status.UNKNOWN:
- *         raise RuntimeError("Unknown error has occured.")
+ *         raise RuntimeError("Unknown error has occurred.")
  */
     __pyx_t_1 = __Pyx_PyObject_Call(__pyx_builtin_RuntimeError, __pyx_tuple__13, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1147, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
@@ -19475,7 +19475,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_84triangle_intersections(CYTHON_UNUS
     /* "bezier/_speedup.pyx":1149
  *         raise RuntimeError("Unexpected number of edges")
  *     elif status == bezier._status.Status.UNKNOWN:
- *         raise RuntimeError("Unknown error has occured.")             # <<<<<<<<<<<<<<
+ *         raise RuntimeError("Unknown error has occurred.")             # <<<<<<<<<<<<<<
  *     else:
  *         # NOTE: If ``status`` isn't one of the enum values, then it is the
  */
@@ -19489,7 +19489,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_84triangle_intersections(CYTHON_UNUS
  *         #       edges have been added.
  *         raise RuntimeError("Unexpected number of edges")
  *     elif status == bezier._status.Status.UNKNOWN:             # <<<<<<<<<<<<<<
- *         raise RuntimeError("Unknown error has occured.")
+ *         raise RuntimeError("Unknown error has occurred.")
  *     else:
  */
     break;
@@ -37058,7 +37058,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
  *         #       edges have been added.
  *         raise RuntimeError("Unexpected number of edges")             # <<<<<<<<<<<<<<
  *     elif status == bezier._status.Status.UNKNOWN:
- *         raise RuntimeError("Unknown error has occured.")
+ *         raise RuntimeError("Unknown error has occurred.")
  */
   __pyx_tuple__13 = PyTuple_Pack(1, __pyx_kp_u_Unexpected_number_of_edges); if (unlikely(!__pyx_tuple__13)) __PYX_ERR(0, 1147, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__13);
@@ -37067,7 +37067,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   /* "bezier/_speedup.pyx":1149
  *         raise RuntimeError("Unexpected number of edges")
  *     elif status == bezier._status.Status.UNKNOWN:
- *         raise RuntimeError("Unknown error has occured.")             # <<<<<<<<<<<<<<
+ *         raise RuntimeError("Unknown error has occurred.")             # <<<<<<<<<<<<<<
  *     else:
  *         # NOTE: If ``status`` isn't one of the enum values, then it is the
  */
@@ -40159,7 +40159,7 @@ static const char* __Pyx_BufFmt_DescribeTypeChar(char ch, int is_complex) {
     case 'P': return "a pointer";
     case 's': case 'p': return "a string";
     case 0: return "end";
-    default: return "unparseable format string";
+    default: return "unparsable format string";
   }
 }
 static size_t __Pyx_BufFmt_TypeCharToStandardSize(char ch, int is_complex) {
@@ -45315,7 +45315,7 @@ static int __pyx_Generator_init(void) {
     if (ctversion[0] != rtversion[0] || ctversion[2] != rtversion[2]) {
         char message[200];
         PyOS_snprintf(message, sizeof(message),
-                      "compiletime version %s of module '%.100s' "
+                      "compile time version %s of module '%.100s' "
                       "does not match runtime version %s",
                       ctversion, __Pyx_MODULE_NAME, rtversion);
         return PyErr_WarnEx(NULL, message, 1);

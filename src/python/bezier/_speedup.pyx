@@ -1146,7 +1146,7 @@ def triangle_intersections(
         #       edges have been added.
         raise RuntimeError("Unexpected number of edges")
     elif status == bezier._status.Status.UNKNOWN:
-        raise RuntimeError("Unknown error has occured.")
+        raise RuntimeError("Unknown error has occurred.")
     else:
         # NOTE: If ``status`` isn't one of the enum values, then it is the
         #       number of candidate intersections.
