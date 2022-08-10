@@ -463,7 +463,7 @@ class TestTriangle(utils.NumPyTestCase):
         # Verify mocks.
         new_axis_mock.assert_called_once_with()
         add_patch_mock.assert_called_once_with(
-            ax, None, pts_per_edge, *curve._edges
+            ax, None, pts_per_edge, *curve._edges, alpha=0.625
         )
 
     @unittest.mock.patch("bezier._plot_helpers.new_axis")
@@ -473,12 +473,13 @@ class TestTriangle(utils.NumPyTestCase):
         color = (0.5, 0.5, 0.5)
         curve = self._make_one(self.UNIT_TRIANGLE, 1, copy=False)
         pts_per_edge = 16
-        result = curve.plot(pts_per_edge, color=color, ax=ax, with_nodes=True)
+        alpha = 0.5
+        result = curve.plot(pts_per_edge, color=color, ax=ax, with_nodes=True, alpha=alpha)
         self.assertIs(result, ax)
         # Verify mocks.
         new_axis_mock.assert_not_called()
         add_patch_mock.assert_called_once_with(
-            ax, color, pts_per_edge, *curve._edges
+            ax, color, pts_per_edge, *curve._edges, alpha=alpha
         )
         # Check the call to ax.plot(). We can't assert_any_call()
         # since == breaks on NumPy arrays.
