@@ -86,7 +86,7 @@ class Test_add_plot_boundary(unittest.TestCase):
 
 class Test_add_patch(utils.NumPyTestCase):
     @staticmethod
-    def _call_function_under_test(ax, color, pts_per_edge, *edges, alpha=None):
+    def _call_function_under_test(ax, color, pts_per_edge, *edges, alpha=0.625):
         from bezier import _plot_helpers
 
         return _plot_helpers.add_patch(ax, color, pts_per_edge, *edges, alpha=alpha)

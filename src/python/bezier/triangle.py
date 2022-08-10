@@ -701,7 +701,7 @@ class Triangle(_base.Base):
             self._nodes, self._degree, param_vals, self._dimension
         )
 
-    def plot(self, pts_per_edge, color=None, ax=None, with_nodes=False, alpha=None):
+    def plot(self, pts_per_edge, color=None, ax=None, with_nodes=False, alpha=0.625):
         """Plot the current triangle.
 
         Args:
@@ -711,7 +711,7 @@ class Triangle(_base.Base):
                 to add plot to.
             with_nodes (Optional[bool]): Determines if the control points
                 should be added to the plot. Off by default.
-            alpha (Optional[float]): Alpha value of patch centre, between 0 and 1 inclusive.
+            alpha (Optional[float]): Alpha value of patch center, between 0 and 1 inclusive.
 
         Returns:
             matplotlib.artist.Artist: The axis containing the plot. This

@@ -130,7 +130,7 @@ class TestCurvedPolygon(utils.NumPyTestCase):
         # Verify mocks.
         new_axis_mock.assert_called_once_with()
         add_patch_mock.assert_called_once_with(
-            ax, None, pts_per_edge, *curved_poly._edges, alpha=None
+            ax, None, pts_per_edge, *curved_poly._edges, alpha=0.625
         )
 
     @unittest.mock.patch("bezier._plot_helpers.new_axis")

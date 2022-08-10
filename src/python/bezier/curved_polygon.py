@@ -259,7 +259,7 @@ class CurvedPolygon:
         """
         return f"<{self.__class__.__name__} (num_sides={self._num_sides:d})>"
 
-    def plot(self, pts_per_edge, color=None, ax=None, alpha=None):
+    def plot(self, pts_per_edge, color=None, ax=None, alpha=0.625):
         """Plot the current curved polygon.
 
         Args:
@@ -267,7 +267,7 @@ class CurvedPolygon:
             color (Optional[Tuple[float, float, float]]): Color as RGB profile.
             ax (Optional[matplotlib.artist.Artist]): matplotlib axis object
                 to add plot to.
-            alpha (Optional[float]): Alpha value of patch centre, between 0 and 1 inclusive.
+            alpha (Optional[float]): Alpha value of patch center, between 0 and 1 inclusive.
 
         Returns:
             matplotlib.artist.Artist: The axis containing the plot. This
