@@ -52,6 +52,7 @@ nitpick_ignore = [
 # ones.
 extensions = [
     "sphinx.ext.autodoc",
+    "sphinx_copybutton",
     "sphinx.ext.coverage",
     "sphinx.ext.doctest",
     "sphinx.ext.intersphinx",
