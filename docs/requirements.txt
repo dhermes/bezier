@@ -4,3 +4,4 @@ numpy >= 1.21.4
 Sphinx >= 4.4.0
 sphinx-docstring-typing >= 0.0.4
 sphinx_rtd_theme >= 1.0.0
+sphinx-copybutton >= 0.5.0
