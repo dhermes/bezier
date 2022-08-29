@@ -28,7 +28,7 @@ IS_LINUX = sys.platform in ("linux", "linux2")
 IS_MACOS = sys.platform == "darwin"
 IS_WINDOWS = os.name == "nt"
 DEPS = {
-    "black": "black >= 22.1.0",
+    "black": "black >= 22.6.0",
     "cmake-format": "cmake-format >= 0.6.13",
     "cmake": "cmake >= 3.21.4",
     "coverage": "coverage",

@@ -701,7 +701,9 @@ class Triangle(_base.Base):
             self._nodes, self._degree, param_vals, self._dimension
         )
 
-    def plot(self, pts_per_edge, color=None, ax=None, with_nodes=False, alpha=0.625):
+    def plot(
+        self, pts_per_edge, color=None, ax=None, with_nodes=False, alpha=0.625
+    ):
         """Plot the current triangle.
 
         Args:
@@ -729,7 +731,9 @@ class Triangle(_base.Base):
 
         if ax is None:
             ax = _plot_helpers.new_axis()
-        _plot_helpers.add_patch(ax, color, pts_per_edge, *self._get_edges(), alpha=alpha)
+        _plot_helpers.add_patch(
+            ax, color, pts_per_edge, *self._get_edges(), alpha=alpha
+        )
         if with_nodes:
             ax.plot(
                 self._nodes[0, :],

@@ -86,10 +86,14 @@ class Test_add_plot_boundary(unittest.TestCase):
 
 class Test_add_patch(utils.NumPyTestCase):
     @staticmethod
-    def _call_function_under_test(ax, color, pts_per_edge, *edges, alpha=0.625):
+    def _call_function_under_test(
+        ax, color, pts_per_edge, *edges, alpha=0.625
+    ):
         from bezier import _plot_helpers
 
-        return _plot_helpers.add_patch(ax, color, pts_per_edge, *edges, alpha=alpha)
+        return _plot_helpers.add_patch(
+            ax, color, pts_per_edge, *edges, alpha=alpha
+        )
 
     def _path_val(self, path, expected_transpose):
         self.assertEqual(path.Path.call_count, 1)
@@ -143,7 +147,12 @@ class Test_add_patch(utils.NumPyTestCase):
             "matplotlib.path": path,
         }
         func = functools.partial(
-            self._call_function_under_test, ax, color, pts_per_edge, *edges, alpha=0.5
+            self._call_function_under_test,
+            ax,
+            color,
+            pts_per_edge,
+            *edges,
+            alpha=0.5
         )
         result = run_fake_modules(modules, func)
         self.assertIsNone(result)

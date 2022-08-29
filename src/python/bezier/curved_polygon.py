@@ -275,5 +275,7 @@ class CurvedPolygon:
         """
         if ax is None:
             ax = _plot_helpers.new_axis()
-        _plot_helpers.add_patch(ax, color, pts_per_edge, *self._edges, alpha=alpha)
+        _plot_helpers.add_patch(
+            ax, color, pts_per_edge, *self._edges, alpha=alpha
+        )
         return ax

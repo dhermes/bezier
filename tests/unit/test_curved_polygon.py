@@ -141,7 +141,9 @@ class TestCurvedPolygon(utils.NumPyTestCase):
         curved_poly = self._make_default()
         pts_per_edge = 16
         alpha = 0.5
-        result = curved_poly.plot(pts_per_edge, color=color, ax=ax, alpha=alpha)
+        result = curved_poly.plot(
+            pts_per_edge, color=color, ax=ax, alpha=alpha
+        )
         self.assertIs(result, ax)
         # Verify mocks.
         new_axis_mock.assert_not_called()

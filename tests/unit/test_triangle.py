@@ -474,7 +474,9 @@ class TestTriangle(utils.NumPyTestCase):
         curve = self._make_one(self.UNIT_TRIANGLE, 1, copy=False)
         pts_per_edge = 16
         alpha = 0.5
-        result = curve.plot(pts_per_edge, color=color, ax=ax, with_nodes=True, alpha=alpha)
+        result = curve.plot(
+            pts_per_edge, color=color, ax=ax, with_nodes=True, alpha=alpha
+        )
         self.assertIs(result, ax)
         # Verify mocks.
         new_axis_mock.assert_not_called()
