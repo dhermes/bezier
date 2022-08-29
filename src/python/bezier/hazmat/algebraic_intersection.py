@@ -112,7 +112,6 @@ _POWER_BASIS_ERR = (
     "Currently only supporting degree pairs "
     "1-1, 1-2, 1-3, 1-4, 2-2, 2-3, 2-4 and 3-3."
 )
-_LINEARIZATION = geometric_intersection.Linearization
 _DISJOINT = geometric_intersection.BoxIntersectionType.DISJOINT
 
 
@@ -1051,7 +1050,8 @@ def _reciprocal_condition_number(lu_mat, one_norm):
 
     # pylint: enable=import-outside-toplevel,no-name-in-module
 
-    rcond, info = scipy.linalg.lapack.dgecon(lu_mat, one_norm)
+    _dgecon = scipy.linalg.lapack.dgecon  # pylint: disable=no-member
+    rcond, info = _dgecon(lu_mat, one_norm)
     if info != 0:
         raise RuntimeError(
             "The reciprocal 1-norm condition number could not be computed."

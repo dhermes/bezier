@@ -391,7 +391,6 @@ def lint(session):
         "--rcfile",
         "pylintrc",
         "--max-module-lines=3035",
-        "--disable=missing-type-doc",
         get_path("src", "python", "bezier"),
     )
     # Run Pylint over the tests source.

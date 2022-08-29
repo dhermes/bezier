@@ -504,8 +504,6 @@ class CurveIntersectionInfo:
         """
         return self.curve1_params, self.curve2_params, self.intersections
 
-    # pylint: disable=missing-return-type-doc
-
     @property
     def curve1(self):
         """The first B |eacute| zier curve in the intersection.
@@ -523,8 +521,6 @@ class CurveIntersectionInfo:
             ~bezier.curve.Curve: The second B |eacute| zier curve.
         """
         return self.curve2_info.curve
-
-    # pylint: enable=missing-return-type-doc
 
     @property
     def nodes1(self):
@@ -881,8 +877,6 @@ class TriangleIntersectionsInfo:
             f"triangles{self.triangle1_info.id_}_and_{self.triangle2_info.id_}"
         )
 
-    # pylint: disable=missing-return-type-doc
-
     @property
     def triangle1(self):
         """The first B |eacute| zier triangle in the intersection.
@@ -900,8 +894,6 @@ class TriangleIntersectionsInfo:
             ~bezier.triangle.Triangle: The second B |eacute| zier triangle.
         """
         return self.triangle2_info.triangle
-
-    # pylint: enable=missing-return-type-doc
 
     @classmethod
     def from_json(cls, info, triangles):

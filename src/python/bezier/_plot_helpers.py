@@ -75,6 +75,7 @@ def add_patch(ax, color, pts_per_edge, *edges, alpha=0.625):
         *edges (Tuple[~bezier.curve.Curve, ...]): Curved edges defining
             a boundary.
     """
+    # pylint: disable=too-many-locals
     # pylint: disable=import-outside-toplevel
     from matplotlib import patches
     from matplotlib import path as _path_mod

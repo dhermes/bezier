@@ -8,7 +8,7 @@ ignore=.git,.cache,.nox
 # DEFAULT:  load-plugins=
 # RATIONALE: We want to make sure our docstrings match the objects
 #            they document.
-load-plugins=pylint.extensions.check_docs
+load-plugins=pylint.extensions.docparams
 
 # A comma-separated list of package or module names from where C extensions may
 # be loaded. Extensions are loading into the active Python interpreter and may
@@ -21,8 +21,6 @@ disable =
     I,
     cyclic-import,
     no-else-return,
-    misplaced-comparison-constant,
-    bad-continuation,
     useless-object-inheritance,
 
 [REPORTS]
