@@ -164,7 +164,7 @@ with copies of ``libbezier``, ``libgfortran``, ``libquadmath`` and
    >>> print_tree(dylibs_directory)
    .dylibs/
      libbezier.2021.2.12.dylib
-     libgcc_s.1.dylib
+     libgcc_s.1.1.dylib
      libgfortran.5.dylib
      libquadmath.0.dylib
 
@@ -202,9 +202,8 @@ it indirectly depends on ``libgfortran``, ``libquadmath`` and ``libgcc_s``:
    .dylibs/libbezier.2021.2.12.dylib:
        /DLC/bezier/.dylibs/libbezier.2021.2.12.dylib (...)
        @loader_path/libgfortran.5.dylib (...)
-       /usr/lib/libSystem.B.dylib (...)
-       @loader_path/libgcc_s.1.dylib (...)
        @loader_path/libquadmath.0.dylib (...)
+       /usr/lib/libSystem.B.dylib (...)
 
 .. note::
 

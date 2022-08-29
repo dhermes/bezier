@@ -1668,4 +1668,5 @@ def self_intersections(nodes):
     keep_columns = ~np.all(compare_split, axis=0)
     left_right_intersections = left_right_intersections[:, keep_columns]
 
-    return np.hstack([left_self, left_right_intersections, right_self])
+    result = np.hstack([left_self, left_right_intersections, right_self])
+    return np.asfortranarray(result)

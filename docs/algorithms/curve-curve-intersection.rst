@@ -411,7 +411,7 @@ larger.
    ...     [y_val],
    ... ])
    >>> max_err = np.max(np.abs(points - expected_pts))
-   >>> binary_exponent(max_err) <= -50
+   >>> binary_exponent(max_err) <= -49
    True
 
 .. image:: ../images/curves15_and_25.png
