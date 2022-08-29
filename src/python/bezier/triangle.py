@@ -713,7 +713,8 @@ class Triangle(_base.Base):
                 to add plot to.
             with_nodes (Optional[bool]): Determines if the control points
                 should be added to the plot. Off by default.
-            alpha (Optional[float]): Alpha value of patch center, between 0 and 1 inclusive.
+            alpha (Optional[float]): Alpha value of patch center, between 0 and
+                1 inclusive.
 
         Returns:
             matplotlib.artist.Artist: The axis containing the plot. This
