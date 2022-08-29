@@ -70,10 +70,12 @@ def add_patch(ax, color, pts_per_edge, *edges, alpha=0.625):
         color (Tuple[float, float, float]): Color as RGB profile.
         pts_per_edge (int): Number of points to use in polygonal
             approximation of edge.
-        alpha (Optional[float]): Alpha value of patch center, between 0 and 1 inclusive.
+        alpha (Optional[float]): Alpha value of patch center, between 0 and 1
+            inclusive.
         *edges (Tuple[~bezier.curve.Curve, ...]): Curved edges defining
             a boundary.
     """
+    # pylint: disable=too-many-locals
     # pylint: disable=import-outside-toplevel
     from matplotlib import patches
     from matplotlib import path as _path_mod

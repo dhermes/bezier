@@ -187,8 +187,6 @@ class Triangle(_base.Base):
     """
 
     __slots__ = (
-        "_dimension",  # From base class
-        "_nodes",  # From base class
         "_degree",  # From constructor
         "_edges",  # Empty default
     )
@@ -701,7 +699,9 @@ class Triangle(_base.Base):
             self._nodes, self._degree, param_vals, self._dimension
         )
 
-    def plot(self, pts_per_edge, color=None, ax=None, with_nodes=False, alpha=0.625):
+    def plot(
+        self, pts_per_edge, color=None, ax=None, with_nodes=False, alpha=0.625
+    ):
         """Plot the current triangle.
 
         Args:
@@ -711,7 +711,8 @@ class Triangle(_base.Base):
                 to add plot to.
             with_nodes (Optional[bool]): Determines if the control points
                 should be added to the plot. Off by default.
-            alpha (Optional[float]): Alpha value of patch center, between 0 and 1 inclusive.
+            alpha (Optional[float]): Alpha value of patch center, between 0 and
+                1 inclusive.
 
         Returns:
             matplotlib.artist.Artist: The axis containing the plot. This
@@ -729,7 +730,9 @@ class Triangle(_base.Base):
 
         if ax is None:
             ax = _plot_helpers.new_axis()
-        _plot_helpers.add_patch(ax, color, pts_per_edge, *self._get_edges(), alpha=alpha)
+        _plot_helpers.add_patch(
+            ax, color, pts_per_edge, *self._get_edges(), alpha=alpha
+        )
         if with_nodes:
             ax.plot(
                 self._nodes[0, :],
@@ -1152,9 +1155,6 @@ class Triangle(_base.Base):
         new_nodes /= denominator
         return Triangle(new_nodes, self._degree + 1, copy=False, verify=False)
 
-    # Return type doc appears missing to Pylint because of the use of the
-    # :class:`sympy.Matrix ...` aliases.
-    # pylint: disable=missing-return-type-doc
     def to_symbolic(self):
         """Convert to a SymPy matrix representing :math:`B(s, t)`.
 
@@ -1219,8 +1219,6 @@ class Triangle(_base.Base):
             )
 
         return _symbolic.implicitize_triangle(self._nodes, self._degree)
-
-    # pylint: enable=missing-return-type-doc
 
 
 def _make_intersection(edge_info, all_edge_nodes):

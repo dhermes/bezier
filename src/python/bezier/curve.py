@@ -98,11 +98,7 @@ class Curve(_base.Base):
             the number of nodes. Defaults to :data:`True`.
     """
 
-    __slots__ = (
-        "_dimension",  # From base class
-        "_nodes",  # From base class
-        "_degree",  # From constructor
-    )
+    __slots__ = ("_degree",)  # From constructor
 
     def __init__(self, nodes, degree, *, copy=True, verify=True):
         super().__init__(nodes, copy=copy)
@@ -859,9 +855,6 @@ class Curve(_base.Base):
 
         return _curve_helpers.locate_point(self._nodes, point)
 
-    # Return type doc appears missing to Pylint because of the use of the
-    # :class:`sympy.Matrix ...` aliases.
-    # pylint: disable=missing-return-type-doc
     def to_symbolic(self):
         """Convert to a SymPy matrix representing :math:`B(s)`.
 
@@ -922,5 +915,3 @@ class Curve(_base.Base):
             )
 
         return _symbolic.implicitize_curve(self._nodes, self._degree)
-
-    # pylint: enable=missing-return-type-doc

@@ -28,26 +28,26 @@ IS_LINUX = sys.platform in ("linux", "linux2")
 IS_MACOS = sys.platform == "darwin"
 IS_WINDOWS = os.name == "nt"
 DEPS = {
-    "black": "black >= 22.1.0",
+    "black": "black >= 22.6.0",
     "cmake-format": "cmake-format >= 0.6.13",
-    "cmake": "cmake >= 3.21.4",
+    "cmake": "cmake >= 3.24.1",
     "coverage": "coverage",
-    "Cython": "Cython >= 0.29.28",
+    "Cython": "Cython >= 0.29.32",
     "docutils": "docutils",
     "flake8": "flake8",
     "flake8-import-order": "flake8-import-order",
-    "jsonschema": "jsonschema >= 4.2.1",
-    "lcov_cobertura": "lcov_cobertura >= 1.6",
+    "jsonschema": "jsonschema >= 4.14.0",
+    "lcov-cobertura": "lcov-cobertura >= 2.0.2",
     "machomachomangler": "machomachomangler == 0.0.1",
-    "matplotlib": "matplotlib >= 3.4.3",
-    "numpy": "numpy >= 1.21.4",
+    "matplotlib": "matplotlib >= 3.5.3",
+    "numpy": "numpy >= 1.23.2",
     "pycobertura": "pycobertura >= 2.1.0",
     "Pygments": "Pygments",
-    "pylint": "pylint >= 2.12.1",
-    "pytest": "pytest >= 6.2.5",
+    "pylint": "pylint >= 2.15.0",
+    "pytest": "pytest >= 7.1.2",
     "pytest-cov": "pytest-cov",
-    "scipy": "scipy >= 1.7.2",
-    "sympy": "sympy >= 1.9",
+    "scipy": "scipy >= 1.9.1",
+    "sympy": "sympy >= 1.11",
     "seaborn": "seaborn >= 0.11.2",
 }
 BASE_DEPS = (DEPS["numpy"], DEPS["pytest"])
@@ -391,7 +391,6 @@ def lint(session):
         "--rcfile",
         "pylintrc",
         "--max-module-lines=3035",
-        "--disable=missing-type-doc",
         get_path("src", "python", "bezier"),
     )
     # Run Pylint over the tests source.
@@ -436,7 +435,7 @@ def blacken(session):
 
 @nox.session(py=DEFAULT_INTERPRETER)
 def fortran_unit(session):
-    session.install(DEPS["lcov_cobertura"], DEPS["pycobertura"])
+    session.install(DEPS["lcov-cobertura"], DEPS["pycobertura"])
     if py.path.local.sysfind("make") is None:
         session.skip("`make` must be installed")
     if py.path.local.sysfind("gfortran") is None:

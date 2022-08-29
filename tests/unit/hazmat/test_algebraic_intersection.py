@@ -956,7 +956,7 @@ class Test_bezier_roots(utils.NumPyTestCase):
         expected = np.asfortranarray([0.75, 5.0])
         ulp_errs = np.abs((roots - expected) / SPACING(expected))
         self.assertEqual(ulp_errs.shape, (2,))
-        self.assertEqual(ulp_errs[0], 0.0)
+        self.assertLess(ulp_errs[0], 2)
         self.assertLess(ulp_errs[1], 64)
 
     def test_quartic(self):

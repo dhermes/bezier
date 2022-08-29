@@ -267,7 +267,8 @@ class CurvedPolygon:
             color (Optional[Tuple[float, float, float]]): Color as RGB profile.
             ax (Optional[matplotlib.artist.Artist]): matplotlib axis object
                 to add plot to.
-            alpha (Optional[float]): Alpha value of patch center, between 0 and 1 inclusive.
+            alpha (Optional[float]): Alpha value of patch center, between 0 and
+                1 inclusive.
 
         Returns:
             matplotlib.artist.Artist: The axis containing the plot. This
@@ -275,5 +276,7 @@ class CurvedPolygon:
         """
         if ax is None:
             ax = _plot_helpers.new_axis()
-        _plot_helpers.add_patch(ax, color, pts_per_edge, *self._edges, alpha=alpha)
+        _plot_helpers.add_patch(
+            ax, color, pts_per_edge, *self._edges, alpha=alpha
+        )
         return ax

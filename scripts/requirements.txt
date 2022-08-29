@@ -1,7 +1,7 @@
 # NumPy is required for building `bezier` from source.
-numpy >= 1.21.4
+numpy >= 1.23.2
 # SymPy and SciPy are optional dependencies for pure-Python implementations.
-scipy >= 1.7.2
-sympy >= 1.9
+scipy >= 1.9.1
+sympy >= 1.11
 # Test requirements.
-pytest >= 6.2.5
+pytest >= 7.1.2

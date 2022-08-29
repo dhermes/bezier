@@ -96,14 +96,14 @@ The ``bezier._speedup`` module depends on this local copy of ``libbezier``:
 
    $ readelf -d _speedup.cpython-310-x86_64-linux-gnu.so
 
-   Dynamic section at offset 0x333000 contains 27 entries:
+   Dynamic section at offset 0x327000 contains 27 entries:
      Tag        Type                         Name/Value
     0x000000000000000f (RPATH)              Library rpath: [$ORIGIN/../bezier.libs]
     0x0000000000000001 (NEEDED)             Shared library: [libbezier-3374330c.so.2021.2.12]
     0x0000000000000001 (NEEDED)             Shared library: [libpthread.so.0]
     0x0000000000000001 (NEEDED)             Shared library: [libc.so.6]
-    0x000000000000000c (INIT)               0x9e98
-    0x000000000000000d (FINI)               0x6a8b8
+    0x000000000000000c (INIT)               0x9e18
+    0x000000000000000d (FINI)               0x691a8
    ...
 
 and the local copy of ``libbezier`` depends on the other dependencies in
@@ -164,7 +164,7 @@ with copies of ``libbezier``, ``libgfortran``, ``libquadmath`` and
    >>> print_tree(dylibs_directory)
    .dylibs/
      libbezier.2021.2.12.dylib
-     libgcc_s.1.dylib
+     libgcc_s.1.1.dylib
      libgfortran.5.dylib
      libquadmath.0.dylib
 
@@ -202,9 +202,8 @@ it indirectly depends on ``libgfortran``, ``libquadmath`` and ``libgcc_s``:
    .dylibs/libbezier.2021.2.12.dylib:
        /DLC/bezier/.dylibs/libbezier.2021.2.12.dylib (...)
        @loader_path/libgfortran.5.dylib (...)
-       /usr/lib/libSystem.B.dylib (...)
-       @loader_path/libgcc_s.1.dylib (...)
        @loader_path/libquadmath.0.dylib (...)
+       /usr/lib/libSystem.B.dylib (...)
 
 .. note::
 
