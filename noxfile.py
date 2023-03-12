@@ -18,7 +18,6 @@ import sys
 
 import nox
 import nox.sessions
-import py.path
 
 
 nox.options.error_on_external_run = True
@@ -414,7 +413,7 @@ def lint(session):
     )
     # (Maybe) run ``clang-format`` for uniform formatting of ``.c`` and ``.h``
     # files
-    if py.path.local.sysfind("clang-format") is not None:
+    if shutil.which("clang-format") is not None:
         filenames = glob.glob(get_path("docs", "abi", "*.c"))
         filenames.append(get_path("src", "fortran", "include", "bezier.h"))
         filenames.extend(
@@ -436,11 +435,11 @@ def blacken(session):
 @nox.session(py=DEFAULT_INTERPRETER)
 def fortran_unit(session):
     session.install(DEPS["lcov-cobertura"], DEPS["pycobertura"])
-    if py.path.local.sysfind("make") is None:
+    if shutil.which("make") is None:
         session.skip("`make` must be installed")
-    if py.path.local.sysfind("gfortran") is None:
+    if shutil.which("gfortran") is None:
         session.skip("`gfortran` must be installed")
-    if py.path.local.sysfind("lcov") is None:
+    if shutil.which("lcov") is None:
         session.skip("`lcov` must be installed")
     test_dir = get_path("tests", "fortran")
     lcov_filename = os.path.join(test_dir, "coverage.info")
@@ -521,7 +520,7 @@ def _cmake_needed():
     if "NOX_INSTALL_CMAKE" in os.environ:
         return True
 
-    return py.path.local.sysfind("cmake") is None
+    return shutil.which("cmake") is None
 
 
 def _cmake(session, build_type):
