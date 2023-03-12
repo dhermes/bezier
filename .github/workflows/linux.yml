@@ -53,14 +53,14 @@ jobs:
       run: |
         docker exec dhermes-bezier \
           nox --session "unit-pypy3"
-    - name: Unit tests AND line coverage in Python 3.10
+    - name: Unit tests AND line coverage in Python 3.11
       run: |
         docker exec dhermes-bezier \
           nox --session cover
-    - name: Functional tests in Python 3.10
+    - name: Functional tests in Python 3.11
       run: |
         docker exec dhermes-bezier \
-          nox --session "functional-3.10"
+          nox --session "functional-3.11"
     - name: Upload coverage to coveralls
       if: github.event_name != 'pull_request'
       env:

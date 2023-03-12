@@ -32,8 +32,10 @@ jobs:
         - unit-3.9-32
         - unit-3.9
         - unit-3.10-32
+        - unit-3.10
+        - unit-3.11-32
         - cover
-        - functional-3.10
+        - functional-3.11
         - doctest
     steps:
     - uses: actions/cache@v2
@@ -57,11 +59,11 @@ jobs:
         }
         $env:Path = "$MINGW;" + $env:Path
         gfortran --version
-    - name: Support `py -3.10-32` on Windows
+    - name: Support `py -3.11-32` on Windows
       uses: actions/setup-python@v2
-      if: ${{ matrix.nox-session == 'unit-3.10-32' }}
+      if: ${{ matrix.nox-session == 'unit-3.11-32' }}
       with:
-        python-version: '3.10.0'
+        python-version: '3.11.0'
         architecture: x86
     - name: Invoke nox
       shell: powershell

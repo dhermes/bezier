@@ -31,7 +31,7 @@ NUMPY_MESSAGE = """\
 Error: NumPy needs to be installed first. It can be installed via:
 
 $ python     -m pip install numpy
-$ python3.10 -m pip install numpy
+$ python3.11 -m pip install numpy
 $ # OR
 $ conda install numpy
 """
@@ -290,6 +290,7 @@ def setup():
             "Programming Language :: Python :: 3.8",
             "Programming Language :: Python :: 3.9",
             "Programming Language :: Python :: 3.10",
+            "Programming Language :: Python :: 3.11",
             "Programming Language :: Python :: Implementation :: CPython",
             "Programming Language :: Python :: Implementation :: PyPy",
         ],
@@ -315,7 +316,7 @@ def _check_python_version():
         return
 
     message = INVALID_VERSION_MESSAGE.format(
-        major=major, minor=minor, versions="3.8, 3.9 and 3.10"
+        major=major, minor=minor, versions="3.8, 3.9, 3.10 and 3.11"
     )
     print(message, file=sys.stderr, end="")
     sys.exit(1)

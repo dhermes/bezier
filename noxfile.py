@@ -55,7 +55,7 @@ DOCS_DEPS = (
     "--requirement",
     os.path.join(NOX_DIR, "docs", "requirements.txt"),
 )
-DEFAULT_INTERPRETER = "3.10"
+DEFAULT_INTERPRETER = "3.11"
 PYPY = "pypy3"
 ALL_INTERPRETERS = (
     "3.8",
@@ -64,6 +64,8 @@ ALL_INTERPRETERS = (
     "3.9-32",
     "3.10",
     "3.10-32",
+    "3.11",
+    "3.11-32",
     PYPY,
 )
 BUILD_TYPE_DEBUG = "Debug"
@@ -170,11 +172,6 @@ def unit(session):
     unit_deps = BASE_DEPS + (DEPS["sympy"],)
     if interpreter == PYPY:
         local_deps = pypy_setup(unit_deps, session)
-    elif IS_WINDOWS and interpreter == "3.10-32":
-        # The SciPy project hasn't yet shipped a wheel supporting 32-bit
-        # Python 3.10 on Windows.
-        # See: https://github.com/dhermes/bezier/issues/274
-        local_deps = unit_deps
     else:
         local_deps = unit_deps + (DEPS["scipy"],)
 
@@ -529,7 +526,7 @@ def _cmake(session, build_type):
     The ``session`` may be one of ``libbezier-debug`` / ``libbezier-release``
     in which case we directly build as instructed. Additionally, it may
     correspond to a session that seeks to build ``libbezier`` as a dependency,
-    e.g. ``nox --session unit-3.10``.
+    e.g. ``nox --session unit-3.11``.
 
     Returns:
         str: The install prefix that was created / re-used.

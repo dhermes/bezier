@@ -29,8 +29,10 @@ if [[ "${PY_VERSION}" == "3.8" ]]; then
 elif [[ "${PY_VERSION}" == "3.9" ]]; then
     ${PY_BIN_DIR}/nox --session "unit-3.9"
 elif [[ "${PY_VERSION}" == "3.10" ]]; then
+    ${PY_BIN_DIR}/nox --session "unit-3.10"
+elif [[ "${PY_VERSION}" == "3.11" ]]; then
     ${PY_BIN_DIR}/nox --session cover
-    ${PY_BIN_DIR}/nox --session "functional-3.10"
+    ${PY_BIN_DIR}/nox --session "functional-3.11"
     ${PY_BIN_DIR}/nox --session doctest
 else
     echo "Unexpected version: ${PY_VERSION}"
