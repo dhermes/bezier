@@ -27,7 +27,6 @@ SPACING = np.spacing  # pylint: disable=no-member
 
 
 class TestCurve(utils.NumPyTestCase):
-
     ZEROS = np.zeros((2, 2), order="F")
 
     @staticmethod

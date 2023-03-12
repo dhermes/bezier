@@ -87,6 +87,7 @@ class Test_curve_weights:
 
 # pylint: enable=too-few-public-methods
 
+
 # pylint: disable=too-few-public-methods
 class Test_curve_as_polynomial:
     @staticmethod
@@ -104,6 +105,7 @@ class Test_curve_as_polynomial:
 
 
 # pylint: enable=too-few-public-methods
+
 
 # pylint: disable=too-few-public-methods
 class Test_implicitize_2d:
@@ -132,6 +134,7 @@ class Test_implicitize_2d:
 
 
 # pylint: enable=too-few-public-methods
+
 
 # pylint: disable=too-few-public-methods
 class Test_triangle_weights:
@@ -162,6 +165,7 @@ class Test_triangle_weights:
 
 # pylint: enable=too-few-public-methods
 
+
 # pylint: disable=too-few-public-methods
 class Test_triangle_as_polynomial:
     @staticmethod
@@ -181,6 +185,7 @@ class Test_triangle_as_polynomial:
 
 
 # pylint: enable=too-few-public-methods
+
 
 # pylint: disable=too-few-public-methods
 class Test_implicitize_3d:

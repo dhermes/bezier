@@ -421,7 +421,6 @@ class Test_specialize_triangle(utils.NumPyTestCase):
 
 
 class Test_subdivide_nodes(utils.NumPyTestCase):
-
     REF_TRIANGLE = utils.ref_triangle_uniform_nodes(5)
 
     @staticmethod
