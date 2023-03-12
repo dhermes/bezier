@@ -14,14 +14,15 @@ RUN python3.11 -m pip install --no-cache-dir \
   "virtualenv==20.21.0"
 
 # Install `gfortran` (for building the Fortran code used by the binary
-# extension), `libatlas-base-dev`, `libblas-dev`, `liblapack-dev` (for SciPy)
-# and `lcov` for Fortran code coverage.
+# extension), `libatlas-base-dev`, `libblas-dev`, `libopenblas-dev`,
+# `liblapack-dev` (for SciPy) and `lcov` for Fortran code coverage.
 RUN apt-get update \
   && apt-get install -y --no-install-recommends \
     gfortran \
     libatlas-base-dev \
     libblas-dev \
     liblapack-dev \
+    libopenblas-dev \
     lcov \
   && apt-get clean autoclean \
   && apt-get autoremove -y \
