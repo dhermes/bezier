@@ -21,11 +21,11 @@ jobs:
   tests:
     runs-on: ubuntu-20.04
     steps:
-    - uses: actions/cache@v2
+    - uses: actions/cache@v3
       with:
         path: ~/.cache/pip
         key: ubuntu-tests-pip
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: Pull Docker image used for CI
       run: docker pull dhermes/bezier:latest
     - name: Start and detach a Docker container (max lifetime 1 hour)
@@ -77,11 +77,11 @@ jobs:
   lint:
     runs-on: ubuntu-20.04
     steps:
-    - uses: actions/cache@v2
+    - uses: actions/cache@v3
       with:
         path: ~/.cache/pip
         key: ubuntu-lint-pip
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: Pull Docker image used for CI
       run: docker pull dhermes/bezier:latest
     - name: Start and detach a Docker container (max lifetime 1 hour)
@@ -112,11 +112,11 @@ jobs:
   docs:
     runs-on: ubuntu-20.04
     steps:
-    - uses: actions/cache@v2
+    - uses: actions/cache@v3
       with:
         path: ~/.cache/pip
         key: ubuntu-docs-pip
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: Pull Docker image used for CI
       run: docker pull dhermes/bezier:latest
     - name: Start and detach a Docker container (max lifetime 1 hour)

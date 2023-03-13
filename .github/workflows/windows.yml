@@ -34,11 +34,11 @@ jobs:
         - functional-3.11
         - doctest
     steps:
-    - uses: actions/cache@v2
+    - uses: actions/cache@v3
       with:
         path: ~\AppData\Local\pip\Cache
         key: windows-pip
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: Update host Python packaging
       shell: cmd
       run: |
