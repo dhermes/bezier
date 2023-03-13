@@ -100,6 +100,8 @@ jobs:
     - name: Check that all Cython generated files have been updated
       run: |
         docker exec dhermes-bezier \
+          git config --add safe.directory /var/code/bezier
+        docker exec dhermes-bezier \
           nox --session "update_generated(check=True)"
     - name: Lint code for style issues
       run: |
