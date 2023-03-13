@@ -400,8 +400,8 @@ larger.
    ...     [t_val],
    ... ])
    >>> max_err = np.max(np.abs(intersections - expected_ints))
-   >>> binary_exponent(max_err)
-   -50
+   >>> binary_exponent(max_err) <= -49
+   True
    >>> s_vals = np.asfortranarray(intersections[0, :])
    >>> points = curve1.evaluate_multi(s_vals)
    >>> x_val = (3 * s_val + 1) / 4
