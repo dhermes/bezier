@@ -47,6 +47,10 @@ jobs:
           path: ~/Library/Caches/pip
           key: macos-pip
 
+      - uses: actions/setup-python@v4
+        with:
+          python-version: "${{ matrix.python-version }}"
+
       - uses: actions/checkout@v3
 
       - name: Install `gcc`
