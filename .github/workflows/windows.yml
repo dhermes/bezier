@@ -19,7 +19,7 @@ on:
 
 jobs:
   ci:
-    runs-on: windows-2019
+    runs-on: windows-2022
     env:
       NOX_SESSION: '${{ matrix.nox-session }}'
       MINGW_32: 'C:\msys64\mingw32\bin'
