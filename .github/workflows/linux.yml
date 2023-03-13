@@ -99,6 +99,12 @@ jobs:
           sleep 3600
     - name: Check that all Cython generated files have been updated
       run: |
+        echo "GITHUB_WORKSPACE=${GITHUB_WORKSPACE}"
+        echo "GITHUB_REF=${GITHUB_REF}"
+        docker exec dhermes-bezier \
+          pwd
+        docker exec dhermes-bezier \
+          ls -alFG
         docker exec dhermes-bezier \
           git config --add safe.directory /var/code/bezier
         docker exec dhermes-bezier \
