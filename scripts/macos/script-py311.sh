@@ -12,16 +12,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-SCRIPT_FI=$(readlink -f ${0})
-MANYLINUX_DIR=$(dirname ${SCRIPT_FI})
-SCRIPTS_DIR=$(dirname ${MANYLINUX_DIR})
-REPO_ROOT=$(dirname ${SCRIPTS_DIR})
-DOCKER_IMAGE=quay.io/pypa/manylinux2014_i686
-PRE_CMD=linux32
+set -e -x
 
-docker run \
-    --rm \
-    --volume ${REPO_ROOT}:/io \
-    ${DOCKER_IMAGE} \
-    ${PRE_CMD} \
-    /io/scripts/manylinux/build-wheels.sh
+# NOTE: This is the Python.org version of Python.
+export BIN_DIR="/Library/Frameworks/Python.framework/Versions/3.11/bin"
+export PY_BIN="${BIN_DIR}/python3"
+export PY_TAG="cp311-cp311m"
+
+# ``readlink -f`` is not our friend on macOS.
+SCRIPT_FI=$(${PY_BIN} -c "import os; print(os.path.realpath('${0}'))")
+CURR_DIR=$(dirname ${SCRIPT_FI})
+${CURR_DIR}/build-wheels.sh

@@ -31,7 +31,7 @@ NUMPY_MESSAGE = """\
 Error: NumPy needs to be installed first. It can be installed via:
 
 $ python     -m pip install numpy
-$ python3.10 -m pip install numpy
+$ python3.11 -m pip install numpy
 $ # OR
 $ conda install numpy
 """
@@ -89,11 +89,11 @@ will be modified.
 # NOTE: This is a workaround, put in place for "deterministic" hashing of the
 #       DLL in cases where that matters (i.e. ``doctest``.)
 DLL_HASH_ENV = "BEZIER_DLL_HASH"
-REQUIREMENTS = ("numpy >= 1.21.4",)
+REQUIREMENTS = ("numpy >= 1.24.2",)
 # See: https://www.python.org/dev/peps/pep-0508/
 #      Dependency specification for Python Software Packages
 EXTRAS_REQUIRE = {
-    "full": ["matplotlib >= 3.4.3", "scipy >= 1.7.2", "sympy >= 1.9"],
+    "full": ["matplotlib >= 3.4.3", "scipy >= 1.10.1", "sympy >= 1.11.1"],
 }
 DESCRIPTION = (
     "Helper for B\u00e9zier Curves, Triangles, and Higher Order Objects"
@@ -290,6 +290,7 @@ def setup():
             "Programming Language :: Python :: 3.8",
             "Programming Language :: Python :: 3.9",
             "Programming Language :: Python :: 3.10",
+            "Programming Language :: Python :: 3.11",
             "Programming Language :: Python :: Implementation :: CPython",
             "Programming Language :: Python :: Implementation :: PyPy",
         ],
@@ -311,11 +312,11 @@ def _check_python_version():
 
     major = sys.version_info.major
     minor = sys.version_info.minor
-    if (major, minor) in ((3, 8), (3, 9), (3, 10)):
+    if (major, minor) in ((3, 8), (3, 9), (3, 10), (3, 11)):
         return
 
     message = INVALID_VERSION_MESSAGE.format(
-        major=major, minor=minor, versions="3.8, 3.9 and 3.10"
+        major=major, minor=minor, versions="3.8, 3.9, 3.10 and 3.11"
     )
     print(message, file=sys.stderr, end="")
     sys.exit(1)

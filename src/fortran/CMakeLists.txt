@@ -25,22 +25,6 @@ endif()
 if(WIN32 AND CMAKE_Fortran_COMPILER_ID STREQUAL "GNU")
   set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -static")
 
-  # Regarding `-Wl,--default-image-base-low`, see:
-  # https://github.com/actions/virtual-environments/issues/2721
-  # https://github.com/msys2/MINGW-packages/issues/7023
-  # https://github.com/msys2/MINGW-packages/issues/6986
-  # https://www.msys2.org/news/#2021-01-31-aslr-enabled-by-default
-  # https://sourceware.org/bugzilla/show_bug.cgi?id=26659
-  if(CMAKE_SIZEOF_VOID_P EQUAL "8")
-    # Only add the flag for 64-bit MinGW `gfortran`
-    set(CMAKE_SHARED_LINKER_FLAGS
-        "${CMAKE_SHARED_LINKER_FLAGS} -Wl,--default-image-base-low")
-  elseif(NOT CMAKE_SIZEOF_VOID_P EQUAL "4")
-    message(
-      FATAL_ERROR
-        "Unexpected pointer size: CMAKE_SIZEOF_VOID_P=${CMAKE_SIZEOF_VOID_P}")
-  endif()
-
   if(NOT CMAKE_IMPORT_LIBRARY_SUFFIX_Fortran)
     set(CMAKE_IMPORT_LIBRARY_SUFFIX_Fortran ".lib")
   endif()

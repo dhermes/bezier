@@ -18,7 +18,6 @@ import sys
 
 import nox
 import nox.sessions
-import py.path
 
 
 nox.options.error_on_external_run = True
@@ -28,27 +27,27 @@ IS_LINUX = sys.platform in ("linux", "linux2")
 IS_MACOS = sys.platform == "darwin"
 IS_WINDOWS = os.name == "nt"
 DEPS = {
-    "black": "black >= 22.6.0",
+    "black": "black >= 23.1.0",
     "cmake-format": "cmake-format >= 0.6.13",
-    "cmake": "cmake >= 3.24.1",
+    "cmake": "cmake >= 3.25.2",
     "coverage": "coverage",
-    "Cython": "Cython >= 0.29.32",
+    "Cython": "Cython >= 0.29.33",
     "docutils": "docutils",
     "flake8": "flake8",
     "flake8-import-order": "flake8-import-order",
-    "jsonschema": "jsonschema >= 4.14.0",
+    "jsonschema": "jsonschema >= 4.17.3",
     "lcov-cobertura": "lcov-cobertura >= 2.0.2",
     "machomachomangler": "machomachomangler == 0.0.1",
-    "matplotlib": "matplotlib >= 3.5.3",
-    "numpy": "numpy >= 1.23.2",
-    "pycobertura": "pycobertura >= 2.1.0",
+    "matplotlib": "matplotlib >= 3.7.1",
+    "numpy": "numpy >= 1.24.2",
+    "pycobertura": "pycobertura >= 3.0.0",
     "Pygments": "Pygments",
-    "pylint": "pylint >= 2.15.0",
-    "pytest": "pytest >= 7.1.2",
+    "pylint": "pylint >= 2.17.0",
+    "pytest": "pytest >= 7.2.2",
     "pytest-cov": "pytest-cov",
-    "scipy": "scipy >= 1.9.1",
-    "sympy": "sympy >= 1.11",
-    "seaborn": "seaborn >= 0.11.2",
+    "scipy": "scipy >= 1.10.1",
+    "sympy": "sympy >= 1.11.1",
+    "seaborn": "seaborn >= 0.12.2",
 }
 BASE_DEPS = (DEPS["numpy"], DEPS["pytest"])
 NOX_DIR = os.path.abspath(os.path.dirname(__file__))
@@ -56,7 +55,7 @@ DOCS_DEPS = (
     "--requirement",
     os.path.join(NOX_DIR, "docs", "requirements.txt"),
 )
-DEFAULT_INTERPRETER = "3.10"
+DEFAULT_INTERPRETER = "3.11"
 PYPY = "pypy3"
 ALL_INTERPRETERS = (
     "3.8",
@@ -65,6 +64,8 @@ ALL_INTERPRETERS = (
     "3.9-32",
     "3.10",
     "3.10-32",
+    "3.11",
+    "3.11-32",
     PYPY,
 )
 BUILD_TYPE_DEBUG = "Debug"
@@ -171,11 +172,6 @@ def unit(session):
     unit_deps = BASE_DEPS + (DEPS["sympy"],)
     if interpreter == PYPY:
         local_deps = pypy_setup(unit_deps, session)
-    elif IS_WINDOWS and interpreter == "3.10-32":
-        # The SciPy project hasn't yet shipped a wheel supporting 32-bit
-        # Python 3.10 on Windows.
-        # See: https://github.com/dhermes/bezier/issues/274
-        local_deps = unit_deps
     else:
         local_deps = unit_deps + (DEPS["scipy"],)
 
@@ -414,7 +410,7 @@ def lint(session):
     )
     # (Maybe) run ``clang-format`` for uniform formatting of ``.c`` and ``.h``
     # files
-    if py.path.local.sysfind("clang-format") is not None:
+    if shutil.which("clang-format") is not None:
         filenames = glob.glob(get_path("docs", "abi", "*.c"))
         filenames.append(get_path("src", "fortran", "include", "bezier.h"))
         filenames.extend(
@@ -436,11 +432,11 @@ def blacken(session):
 @nox.session(py=DEFAULT_INTERPRETER)
 def fortran_unit(session):
     session.install(DEPS["lcov-cobertura"], DEPS["pycobertura"])
-    if py.path.local.sysfind("make") is None:
+    if shutil.which("make") is None:
         session.skip("`make` must be installed")
-    if py.path.local.sysfind("gfortran") is None:
+    if shutil.which("gfortran") is None:
         session.skip("`gfortran` must be installed")
-    if py.path.local.sysfind("lcov") is None:
+    if shutil.which("lcov") is None:
         session.skip("`lcov` must be installed")
     test_dir = get_path("tests", "fortran")
     lcov_filename = os.path.join(test_dir, "coverage.info")
@@ -521,7 +517,7 @@ def _cmake_needed():
     if "NOX_INSTALL_CMAKE" in os.environ:
         return True
 
-    return py.path.local.sysfind("cmake") is None
+    return shutil.which("cmake") is None
 
 
 def _cmake(session, build_type):
@@ -530,7 +526,7 @@ def _cmake(session, build_type):
     The ``session`` may be one of ``libbezier-debug`` / ``libbezier-release``
     in which case we directly build as instructed. Additionally, it may
     correspond to a session that seeks to build ``libbezier`` as a dependency,
-    e.g. ``nox --session unit-3.10``.
+    e.g. ``nox --session unit-3.11``.
 
     Returns:
         str: The install prefix that was created / re-used.

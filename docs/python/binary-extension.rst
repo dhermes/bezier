@@ -80,30 +80,30 @@ The command line tool `auditwheel`_ adds a ``bezier.libs`` directory to
    '.../site-packages/bezier.libs'
    >>> print_tree(libs_directory)
    bezier.libs/
-     libbezier-3374330c.so.2021.2.12
-     libgfortran-2e0d59d6.so.5.0.0
-     libquadmath-2d0c479f.so.0.0.0
+     libbezier-147c8e41.so.2021.2.12
+     libgfortran-040039e1.so.5.0.0
+     libquadmath-96973f99.so.0.0.0
 
 The ``bezier._speedup`` module depends on this local copy of ``libbezier``:
 
 .. testcode:: linux-readelf-py
    :hide:
 
-   invoke_shell("readelf", "-d", "_speedup.cpython-310-x86_64-linux-gnu.so")
+   invoke_shell("readelf", "-d", "_speedup.cpython-311-x86_64-linux-gnu.so")
 
 .. testoutput:: linux-readelf-py
    :linux-only:
 
-   $ readelf -d _speedup.cpython-310-x86_64-linux-gnu.so
+   $ readelf -d _speedup.cpython-311-x86_64-linux-gnu.so
 
-   Dynamic section at offset 0x327000 contains 27 entries:
+   Dynamic section at offset 0x40b000 contains 27 entries:
      Tag        Type                         Name/Value
     0x000000000000000f (RPATH)              Library rpath: [$ORIGIN/../bezier.libs]
-    0x0000000000000001 (NEEDED)             Shared library: [libbezier-3374330c.so.2021.2.12]
+    0x0000000000000001 (NEEDED)             Shared library: [libbezier-147c8e41.so.2021.2.12]
     0x0000000000000001 (NEEDED)             Shared library: [libpthread.so.0]
     0x0000000000000001 (NEEDED)             Shared library: [libc.so.6]
-    0x000000000000000c (INIT)               0x9e18
-    0x000000000000000d (FINI)               0x691a8
+    0x000000000000000c (INIT)               0xa000
+    0x000000000000000d (FINI)               0x7332c
    ...
 
 and the local copy of ``libbezier`` depends on the other dependencies in
@@ -112,34 +112,35 @@ and the local copy of ``libbezier`` depends on the other dependencies in
 .. testcode:: linux-readelf-lib
    :hide:
 
-   invoke_shell("readelf", "-d", "../bezier.libs/libbezier-3374330c.so.2021.2.12")
-   invoke_shell("readelf", "-d", "../bezier.libs/libgfortran-2e0d59d6.so.5.0.0")
+   invoke_shell("readelf", "-d", "../bezier.libs/libbezier-147c8e41.so.2021.2.12")
+   invoke_shell("readelf", "-d", "../bezier.libs/libgfortran-040039e1.so.5.0.0")
 
 .. testoutput:: linux-readelf-lib
    :linux-only:
 
-   $ readelf -d ../bezier.libs/libbezier-3374330c.so.2021.2.12
+   $ readelf -d ../bezier.libs/libbezier-147c8e41.so.2021.2.12
 
-   Dynamic section at offset 0x45dd8 contains 28 entries:
+   Dynamic section at offset 0x4adc8 contains 29 entries:
      Tag        Type                         Name/Value
-    0x0000000000000001 (NEEDED)             Shared library: [libgfortran-2e0d59d6.so.5.0.0]
+    0x0000000000000001 (NEEDED)             Shared library: [libgfortran-040039e1.so.5.0.0]
     0x0000000000000001 (NEEDED)             Shared library: [libm.so.6]
     0x0000000000000001 (NEEDED)             Shared library: [libgcc_s.so.1]
+    0x0000000000000001 (NEEDED)             Shared library: [libquadmath-96973f99.so.0.0.0]
     0x0000000000000001 (NEEDED)             Shared library: [libc.so.6]
-    0x000000000000000e (SONAME)             Library soname: [libbezier-3374330c.so.2021.2.12]
-    0x000000000000000c (INIT)               0x29a0
+    0x000000000000000e (SONAME)             Library soname: [libbezier-147c8e41.so.2021.2.12]
+    0x000000000000000c (INIT)               0x3000
    ...
-   $ readelf -d ../bezier.libs/libgfortran-2e0d59d6.so.5.0.0
+   $ readelf -d ../bezier.libs/libgfortran-040039e1.so.5.0.0
 
-   Dynamic section at offset 0x207db8 contains 31 entries:
+   Dynamic section at offset 0x275d78 contains 31 entries:
      Tag        Type                         Name/Value
-    0x0000000000000001 (NEEDED)             Shared library: [libquadmath-2d0c479f.so.0.0.0]
+    0x0000000000000001 (NEEDED)             Shared library: [libquadmath-96973f99.so.0.0.0]
     0x0000000000000001 (NEEDED)             Shared library: [libz.so.1]
     0x0000000000000001 (NEEDED)             Shared library: [libm.so.6]
     0x0000000000000001 (NEEDED)             Shared library: [libgcc_s.so.1]
     0x0000000000000001 (NEEDED)             Shared library: [libc.so.6]
-    0x000000000000000e (SONAME)             Library soname: [libgfortran-2e0d59d6.so.5.0.0]
-    0x000000000000000c (INIT)               0x19a78
+    0x000000000000000e (SONAME)             Library soname: [libgfortran-040039e1.so.5.0.0]
+    0x000000000000000c (INIT)               0x19a88
    ...
 
 .. note::
@@ -174,15 +175,15 @@ of ``libbezier``:
 .. testcode:: macos-extension
    :hide:
 
-   invoke_shell("otool", "-L", "_speedup.cpython-310-darwin.so")
+   invoke_shell("otool", "-L", "_speedup.cpython-311-darwin.so")
 
 .. testoutput:: macos-extension
    :options: +NORMALIZE_WHITESPACE
    :macos-only:
-   :pyversion: >= 3.10
+   :pyversion: >= 3.11
 
-   $ otool -L _speedup.cpython-310-darwin.so
-   _speedup.cpython-310-darwin.so:
+   $ otool -L _speedup.cpython-311-darwin.so
+   _speedup.cpython-311-darwin.so:
            @loader_path/.dylibs/libbezier.2021.2.12.dylib (...)
            /usr/lib/libSystem.B.dylib (...)
 
@@ -267,26 +268,26 @@ The Python extension module (``.pyd`` file) depends directly on this library:
 .. testcode:: windows-extension
    :hide:
 
-   invoke_shell("dumpbin", "/dependents", "_speedup.cp310-win_amd64.pyd")
+   invoke_shell("dumpbin", "/dependents", "_speedup.cp311-win_amd64.pyd")
 
 .. testoutput:: windows-extension
    :options: +NORMALIZE_WHITESPACE
    :windows-only:
-   :pyversion: >= 3.10
+   :pyversion: >= 3.11
 
-   > dumpbin /dependents _speedup.cp310-win_amd64.pyd
+   > dumpbin /dependents _speedup.cp311-win_amd64.pyd
    Microsoft (R) COFF/PE Dumper Version ...
    Copyright (C) Microsoft Corporation.  All rights reserved.
 
 
-   Dump of file _speedup.cp310-win_amd64.pyd
+   Dump of file _speedup.cp311-win_amd64.pyd
 
    File Type: DLL
 
      Image has the following dependencies:
 
        bezier-e5dbb97a.dll
-       python310.dll
+       python311.dll
        KERNEL32.dll
        VCRUNTIME140.dll
        api-ms-win-crt-stdio-l1-1-0.dll

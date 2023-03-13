@@ -19,19 +19,21 @@ if [[ -z "${PY_VERSION}" ]]; then
     exit 1
 fi
 
-if [[ -z "${PY_BIN_DIR}" ]]; then
-    echo "PY_BIN_DIR environment variable should be set by the caller."
+if [[ -z "${Python_ROOT_DIR}" ]]; then
+    echo "Python_ROOT_DIR environment variable should be set by the caller."
     exit 1
 fi
 
 if [[ "${PY_VERSION}" == "3.8" ]]; then
-    ${PY_BIN_DIR}/nox --session "unit-3.8"
+    "${Python_ROOT_DIR}/bin/nox" --session "unit-3.8"
 elif [[ "${PY_VERSION}" == "3.9" ]]; then
-    ${PY_BIN_DIR}/nox --session "unit-3.9"
+    "${Python_ROOT_DIR}/bin/nox" --session "unit-3.9"
 elif [[ "${PY_VERSION}" == "3.10" ]]; then
-    ${PY_BIN_DIR}/nox --session cover
-    ${PY_BIN_DIR}/nox --session "functional-3.10"
-    ${PY_BIN_DIR}/nox --session doctest
+    "${Python_ROOT_DIR}/bin/nox" --session "unit-3.10"
+elif [[ "${PY_VERSION}" == "3.11" ]]; then
+    "${Python_ROOT_DIR}/bin/nox" --session cover
+    "${Python_ROOT_DIR}/bin/nox" --session "functional-3.11"
+    "${Python_ROOT_DIR}/bin/nox" --session doctest
 else
     echo "Unexpected version: ${PY_VERSION}"
     exit 1

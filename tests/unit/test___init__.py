@@ -17,7 +17,6 @@ import pkg_resources
 
 
 class Test___version__(unittest.TestCase):
-
     # NOTE: The ``__version__`` is hard-coded in ``__init__.py`` to
     #       accommodate builds where ``bezier`` is imported from source
     #       but not installed.
@@ -31,7 +30,6 @@ class Test___version__(unittest.TestCase):
 
 
 class Test___author__(unittest.TestCase):
-
     # NOTE: The ``__author__`` is hard-coded in ``__init__.py`` to
     #       accommodate builds where ``bezier`` is imported from source
     #       but not installed.

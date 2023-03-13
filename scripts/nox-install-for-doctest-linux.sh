@@ -15,8 +15,8 @@
 set -e -x
 
 # NOTE: This is assumed to be running within an activated virtual environment.
-if [[ "$(python -c 'import sys; print(".".join(map(str, sys.version_info[:2])))')" != "3.10" ]]; then
-    echo "Python 3.10 required."
+if [[ "$(python -c 'import sys; print(".".join(map(str, sys.version_info[:2])))')" != "3.11" ]]; then
+    echo "Python 3.11 required."
     exit 1
 fi
 
@@ -24,10 +24,10 @@ SCRIPT_FI=$(readlink -f ${0})
 SCRIPTS_DIR=$(dirname ${SCRIPT_FI})
 REPO_ROOT=$(dirname ${SCRIPTS_DIR})
 LOCAL_WHEELHOUSE="${REPO_ROOT}/scripts/manylinux/fixed_wheels"
-DOCKER_IMAGE=quay.io/pypa/manylinux2010_x86_64
+DOCKER_IMAGE=quay.io/pypa/manylinux2014_x86_64
 DUMMY_IMAGE_NAME=bezier-manylinux
 # Variables within the container.
-PY_ROOT="/opt/python/cp310-cp310"
+PY_ROOT="/opt/python/cp311-cp311"
 # NOTE: This path determines the hash of `libbezier.so` (i.e. the builds
 #       are "deterministic" but not under relocation).
 BEZIER_ROOT="/var/code/bezier"

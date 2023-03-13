@@ -24,7 +24,6 @@ from tests.unit import utils
 
 
 class TestTriangle(utils.NumPyTestCase):
-
     REF_TRIANGLE = utils.ref_triangle_uniform_nodes(5)
     REF_TRIANGLE3 = utils.ref_triangle_uniform_nodes(3)
     QUADRATIC = np.asfortranarray(

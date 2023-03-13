@@ -1,138 +1,180 @@
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 ---
 name: Linux
 
 on:
   push:
     branches:
-    - main
+      - main
   pull_request:
     branches:
-    - main
+      - main
   schedule:
-  # Scheduled workflows run on the latest commit on the default or base branch
-  - cron: '0 0 1 * *'
+    # Scheduled workflows run on the latest commit on the default or base branch
+    - cron: "0 0 1 * *"
   workflow_dispatch:
     inputs:
       reason:
-        description: 'Reason for manually triggering workflow'
+        description: "Reason for manually triggering workflow"
         required: true
 
 jobs:
   tests:
     runs-on: ubuntu-20.04
     steps:
-    - uses: actions/cache@v2
-      with:
-        path: ~/.cache/pip
-        key: ubuntu-tests-pip
-    - uses: actions/checkout@v2
-    - name: Pull Docker image used for CI
-      run: docker pull dhermes/bezier:latest
-    - name: Start and detach a Docker container (max lifetime 1 hour)
-      run: |
-        docker run \
-          --name dhermes-bezier \
-          --rm \
-          --detach \
-          --volume /var/run/docker.sock:/var/run/docker.sock \
-          --volume "${GITHUB_WORKSPACE}:/var/code/bezier/" \
-          --env MATPLOTLIBRC=tests \
-          --env "GITHUB_REF=${GITHUB_REF}" \
-          --workdir /var/code/bezier/ \
-          dhermes/bezier:latest \
-          sleep 3600
-    - name: Unit tests in Python 3.8
-      run: |
-        docker exec dhermes-bezier \
-          nox --session "unit-3.8"
-    - name: Unit tests in Python 3.9
-      run: |
-        docker exec dhermes-bezier \
-          nox --session "unit-3.9"
-    - name: Unit tests in pypy3
-      run: |
-        docker exec dhermes-bezier \
-          nox --session "unit-pypy3"
-    - name: Unit tests AND line coverage in Python 3.10
-      run: |
-        docker exec dhermes-bezier \
-          nox --session cover
-    - name: Functional tests in Python 3.10
-      run: |
-        docker exec dhermes-bezier \
-          nox --session "functional-3.10"
-    - name: Upload coverage to coveralls
-      if: github.event_name != 'pull_request'
-      env:
-        COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
-      run: |
-        docker exec \
-          --env "COVERALLS_REPO_TOKEN=${COVERALLS_REPO_TOKEN}" \
-          dhermes-bezier \
-          ./scripts/upload_coveralls.sh
+      - uses: actions/cache@v3
+        with:
+          path: ~/.cache/pip
+          key: ubuntu-tests-pip
+
+      - uses: actions/checkout@v3
+
+      - name: Pull Docker image used for CI
+        run: docker pull dhermes/bezier:latest
+
+      - name: Start and detach a Docker container (max lifetime 1 hour)
+        run: |
+          docker run \
+            --name dhermes-bezier \
+            --rm \
+            --detach \
+            --volume /var/run/docker.sock:/var/run/docker.sock \
+            --volume "${GITHUB_WORKSPACE}:/var/code/bezier/" \
+            --env MATPLOTLIBRC=tests \
+            --env "GITHUB_REF=${GITHUB_REF}" \
+            --workdir /var/code/bezier/ \
+            dhermes/bezier:latest \
+            sleep 3600
+
+      - name: Unit tests in Python 3.8
+        run: |
+          docker exec dhermes-bezier \
+            nox --session "unit-3.8"
+
+      - name: Unit tests in Python 3.9
+        run: |
+          docker exec dhermes-bezier \
+            nox --session "unit-3.9"
+
+      - name: Unit tests in Python 3.10
+        run: |
+          docker exec dhermes-bezier \
+            nox --session "unit-3.10"
+
+      - name: Unit tests in pypy3
+        run: |
+          docker exec dhermes-bezier \
+            nox --session "unit-pypy3"
+
+      - name: Unit tests AND line coverage in Python 3.11
+        run: |
+          docker exec dhermes-bezier \
+            nox --session cover
+
+      - name: Functional tests in Python 3.11
+        run: |
+          docker exec dhermes-bezier \
+            nox --session "functional-3.11"
+
+      - name: Upload coverage to coveralls
+        if: github.event_name != 'pull_request'
+        env:
+          COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
+        run: |
+          docker exec \
+            --env "COVERALLS_REPO_TOKEN=${COVERALLS_REPO_TOKEN}" \
+            dhermes-bezier \
+            ./scripts/upload_coveralls.sh
+
   lint:
     runs-on: ubuntu-20.04
     steps:
-    - uses: actions/cache@v2
-      with:
-        path: ~/.cache/pip
-        key: ubuntu-lint-pip
-    - uses: actions/checkout@v2
-    - name: Pull Docker image used for CI
-      run: docker pull dhermes/bezier:latest
-    - name: Start and detach a Docker container (max lifetime 1 hour)
-      run: |
-        docker run \
-          --name dhermes-bezier \
-          --rm \
-          --detach \
-          --volume /var/run/docker.sock:/var/run/docker.sock \
-          --volume "${GITHUB_WORKSPACE}:/var/code/bezier/" \
-          --env MATPLOTLIBRC=tests \
-          --env "GITHUB_REF=${GITHUB_REF}" \
-          --workdir /var/code/bezier/ \
-          dhermes/bezier:latest \
-          sleep 3600
-    - name: Check that all Cython generated files have been updated
-      run: |
-        docker exec dhermes-bezier \
-          nox --session "update_generated(check=True)"
-    - name: Lint code for style issues
-      run: |
-        docker exec dhermes-bezier \
-          nox --session lint
-    - name: Check that test case examples are valid for JSON schema
-      run: |
-        docker exec dhermes-bezier \
-          nox --session validate_functional_test_cases
+      - uses: actions/cache@v3
+        with:
+          path: ~/.cache/pip
+          key: ubuntu-lint-pip
+
+      - uses: actions/checkout@v3
+
+      - name: Pull Docker image used for CI
+        run: docker pull dhermes/bezier:latest
+
+      - name: Start and detach a Docker container (max lifetime 1 hour)
+        run: |
+          docker run \
+            --name dhermes-bezier \
+            --rm \
+            --detach \
+            --volume /var/run/docker.sock:/var/run/docker.sock \
+            --volume "${GITHUB_WORKSPACE}:/var/code/bezier/" \
+            --env MATPLOTLIBRC=tests \
+            --env "GITHUB_REF=${GITHUB_REF}" \
+            --workdir /var/code/bezier/ \
+            dhermes/bezier:latest \
+            sleep 3600
+
+      - name: Check that all Cython generated files have been updated
+        run: |
+          docker exec dhermes-bezier \
+            git config --global --add safe.directory /var/code/bezier
+          docker exec dhermes-bezier \
+            nox --session "update_generated(check=True)"
+
+      - name: Lint code for style issues
+        run: |
+          docker exec dhermes-bezier \
+            nox --session lint
+
+      - name: Check that test case examples are valid for JSON schema
+        run: |
+          docker exec dhermes-bezier \
+            nox --session validate_functional_test_cases
+
   docs:
     runs-on: ubuntu-20.04
     steps:
-    - uses: actions/cache@v2
-      with:
-        path: ~/.cache/pip
-        key: ubuntu-docs-pip
-    - uses: actions/checkout@v2
-    - name: Pull Docker image used for CI
-      run: docker pull dhermes/bezier:latest
-    - name: Start and detach a Docker container (max lifetime 1 hour)
-      run: |
-        docker run \
-          --name dhermes-bezier \
-          --rm \
-          --detach \
-          --volume /var/run/docker.sock:/var/run/docker.sock \
-          --volume "${GITHUB_WORKSPACE}:/var/code/bezier/" \
-          --env MATPLOTLIBRC=tests \
-          --env "GITHUB_REF=${GITHUB_REF}" \
-          --workdir /var/code/bezier/ \
-          dhermes/bezier:latest \
-          sleep 3600
-    - name: Run all doctests
-      run: |
-        docker exec dhermes-bezier \
-          nox --session doctest
-    - name: Build docs
-      run: |
-        docker exec dhermes-bezier \
-          nox --session docs
+      - uses: actions/cache@v3
+        with:
+          path: ~/.cache/pip
+          key: ubuntu-docs-pip
+
+      - uses: actions/checkout@v3
+
+      - name: Pull Docker image used for CI
+        run: docker pull dhermes/bezier:latest
+
+      - name: Start and detach a Docker container (max lifetime 1 hour)
+        run: |
+          docker run \
+            --name dhermes-bezier \
+            --rm \
+            --detach \
+            --volume /var/run/docker.sock:/var/run/docker.sock \
+            --volume "${GITHUB_WORKSPACE}:/var/code/bezier/" \
+            --env MATPLOTLIBRC=tests \
+            --env "GITHUB_REF=${GITHUB_REF}" \
+            --workdir /var/code/bezier/ \
+            dhermes/bezier:latest \
+            sleep 3600
+
+      - name: Run all doctests
+        run: |
+          docker exec dhermes-bezier \
+            git config --global --add safe.directory /var/code/bezier
+          docker exec dhermes-bezier \
+            nox --session doctest
+
+      - name: Build docs
+        run: |
+          docker exec dhermes-bezier \
+            nox --session docs

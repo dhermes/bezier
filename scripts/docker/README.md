@@ -9,7 +9,7 @@ Triangles.
 This repository is intended to be used as a fully-functional environment for
 installing / running / testing `bezier`. Provides:
 
--   CPython 3.8, 3.9, 3.10 and PyPy 3.8 (version 7.3.7)
+-   CPython 3.8, 3.9, 3.10, 3.11 and PyPy 3.9 (version 7.3.11)
 -   NumPy pre-installed (needed for installing the binary extension)
 -   `/wheelhouse` directory with NumPy and SciPy pre-built for PyPy 3
 -   `gfortran` compiler
