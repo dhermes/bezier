@@ -49,6 +49,10 @@ jobs:
       run: |
         docker exec dhermes-bezier \
           nox --session "unit-3.9"
+    - name: Unit tests in Python 3.10
+      run: |
+        docker exec dhermes-bezier \
+          nox --session "unit-3.10"
     - name: Unit tests in pypy3
       run: |
         docker exec dhermes-bezier \
