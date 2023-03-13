@@ -120,18 +120,19 @@ and the local copy of ``libbezier`` depends on the other dependencies in
 
    $ readelf -d ../bezier.libs/libbezier-147c8e41.so.2021.2.12
 
-   Dynamic section at offset 0x45dd8 contains 28 entries:
+   Dynamic section at offset 0x4adc8 contains 29 entries:
      Tag        Type                         Name/Value
     0x0000000000000001 (NEEDED)             Shared library: [libgfortran-040039e1.so.5.0.0]
     0x0000000000000001 (NEEDED)             Shared library: [libm.so.6]
     0x0000000000000001 (NEEDED)             Shared library: [libgcc_s.so.1]
+    0x0000000000000001 (NEEDED)             Shared library: [libquadmath-96973f99.so.0.0.0]
     0x0000000000000001 (NEEDED)             Shared library: [libc.so.6]
     0x000000000000000e (SONAME)             Library soname: [libbezier-147c8e41.so.2021.2.12]
-    0x000000000000000c (INIT)               0x29a0
+    0x000000000000000c (INIT)               0x3000
    ...
    $ readelf -d ../bezier.libs/libgfortran-040039e1.so.5.0.0
 
-   Dynamic section at offset 0x207db8 contains 31 entries:
+   Dynamic section at offset 0x275d78 contains 31 entries:
      Tag        Type                         Name/Value
     0x0000000000000001 (NEEDED)             Shared library: [libquadmath-96973f99.so.0.0.0]
     0x0000000000000001 (NEEDED)             Shared library: [libz.so.1]
@@ -139,7 +140,7 @@ and the local copy of ``libbezier`` depends on the other dependencies in
     0x0000000000000001 (NEEDED)             Shared library: [libgcc_s.so.1]
     0x0000000000000001 (NEEDED)             Shared library: [libc.so.6]
     0x000000000000000e (SONAME)             Library soname: [libgfortran-040039e1.so.5.0.0]
-    0x000000000000000c (INIT)               0x19a78
+    0x000000000000000c (INIT)               0x19a88
    ...
 
 .. note::
