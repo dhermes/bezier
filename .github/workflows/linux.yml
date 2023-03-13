@@ -137,6 +137,8 @@ jobs:
     - name: Run all doctests
       run: |
         docker exec dhermes-bezier \
+          git config --global --add safe.directory /var/code/bezier
+        docker exec dhermes-bezier \
           nox --session doctest
     - name: Build docs
       run: |
