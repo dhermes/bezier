@@ -59,12 +59,6 @@ jobs:
         }
         $env:Path = "$MINGW;" + $env:Path
         gfortran --version
-    - name: Support `py -3.11-32` on Windows
-      uses: actions/setup-python@v2
-      if: ${{ matrix.nox-session == 'unit-3.11-32' }}
-      with:
-        python-version: '3.11.2'
-        architecture: x86
     - name: Invoke nox
       shell: powershell
       run: |
