@@ -19,8 +19,8 @@ set -e -x
 # - https://github.com/pypa/python-manylinux-demo/blob/master/.travis.yml
 # - https://github.com/pypa/python-manylinux-demo/blob/master/travis/build-wheels.sh
 
-# NOTE: On the `manylinux2010` images (which `rpm -q centos-release` indicates
-#       are CentOS 6, release 10.el6.centos.12.3) there is a pre-installed
+# NOTE: On the `manylinux2014` images (which `rpm -q centos-release` indicates
+#       are CentOS 7, release 9.2009.1.el7.centos) there is a pre-installed
 #       `gfortran` on the path under `/opt/rh`. Running
 #       `yum install gcc-gfortran` installs an **older** `/usr/bin/gfortran`
 #       so we don't do that.
