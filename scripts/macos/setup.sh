@@ -14,12 +14,12 @@
 
 set -e -x
 
-if [[ -z "${PY_BIN_DIR}" ]]; then
-    echo "PY_BIN_DIR environment variable should be set by the caller."
+if [[ -z "${Python_ROOT_DIR}" ]]; then
+    echo "Python_ROOT_DIR environment variable should be set by the caller."
     exit 1
 fi
 
-PIP_CMD="${PY_BIN_DIR}/python -m pip"
+PIP_CMD="${Python_ROOT_DIR}/bin/python -m pip"
 echo "PIP_CMD=${PIP_CMD}"
 
 # Make sure our installed CPython is set up for testing.
