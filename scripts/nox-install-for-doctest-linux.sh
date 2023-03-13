@@ -24,7 +24,7 @@ SCRIPT_FI=$(readlink -f ${0})
 SCRIPTS_DIR=$(dirname ${SCRIPT_FI})
 REPO_ROOT=$(dirname ${SCRIPTS_DIR})
 LOCAL_WHEELHOUSE="${REPO_ROOT}/scripts/manylinux/fixed_wheels"
-DOCKER_IMAGE=quay.io/pypa/manylinux2010_x86_64
+DOCKER_IMAGE=quay.io/pypa/manylinux2014_x86_64
 DUMMY_IMAGE_NAME=bezier-manylinux
 # Variables within the container.
 PY_ROOT="/opt/python/cp311-cp311"
