@@ -24,7 +24,7 @@ import setuptools.command.build_ext
 import setuptools.dist
 
 
-VERSION = "2021.2.13.dev1"  # Also in ``codemeta.json`` and ``__init__.py``.
+VERSION = "2023.7.26"  # Also in ``codemeta.json`` and ``__init__.py``.
 AUTHOR = "Danny Hermes"  # Also in ``__init__.py``.
 README_FILENAME = os.path.join(os.path.dirname(__file__), "README.rst")
 NUMPY_MESSAGE = """\
