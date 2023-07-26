@@ -96,14 +96,14 @@ The ``bezier._speedup`` module depends on this local copy of ``libbezier``:
 
    $ readelf -d _speedup.cpython-311-x86_64-linux-gnu.so
 
-   Dynamic section at offset 0x40b000 contains 27 entries:
+   Dynamic section at offset 0x4a9000 contains 27 entries:
      Tag        Type                         Name/Value
     0x000000000000000f (RPATH)              Library rpath: [$ORIGIN/../bezier.libs]
     0x0000000000000001 (NEEDED)             Shared library: [libbezier-147c8e41.so.2023.7.26]
     0x0000000000000001 (NEEDED)             Shared library: [libpthread.so.0]
     0x0000000000000001 (NEEDED)             Shared library: [libc.so.6]
-    0x000000000000000c (INIT)               0xa000
-    0x000000000000000d (FINI)               0x7332c
+    0x000000000000000c (INIT)               0x6000
+    0x000000000000000d (FINI)               0x80c80
    ...
 
 and the local copy of ``libbezier`` depends on the other dependencies in
