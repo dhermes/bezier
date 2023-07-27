@@ -5,8 +5,6 @@
 
 |linux-build| |macos-build| |windows-build| |coverage|
 
-|pypi| |versions|
-
 |docs| |zenodo| |JOSS|
 
 .. |eacute| unicode:: U+000E9 .. LATIN SMALL LETTER E WITH ACUTE
@@ -19,7 +17,7 @@ This library provides:
 
 Dive in and take a look!
 
-.. image:: https://raw.githubusercontent.com/dhermes/bezier/main/docs/images/triangles6Q_and_7Q.png
+.. image:: https://raw.githubusercontent.com/dhermes/bezier/2023.7.27/docs/images/triangles6Q_and_7Q.png
    :align: center
 
 Why B |eacute| zier?
@@ -28,17 +26,17 @@ Why B |eacute| zier?
 A B |eacute| zier curve (and triangle, etc.) is a parametric curve
 that uses the `Bernstein basis`_:
 
-.. image:: https://raw.githubusercontent.com/dhermes/bezier/main/docs/images/bernstein_basis.png
+.. image:: https://raw.githubusercontent.com/dhermes/bezier/2023.7.27/docs/images/bernstein_basis.png
    :align: center
 
 to define a curve as a linear combination:
 
-.. image:: https://raw.githubusercontent.com/dhermes/bezier/main/docs/images/bezier_defn.png
+.. image:: https://raw.githubusercontent.com/dhermes/bezier/2023.7.27/docs/images/bezier_defn.png
    :align: center
 
 This comes from the fact that the weights sum to one:
 
-.. image:: https://raw.githubusercontent.com/dhermes/bezier/main/docs/images/sum_to_unity.png
+.. image:: https://raw.githubusercontent.com/dhermes/bezier/2023.7.27/docs/images/sum_to_unity.png
    :align: center
 
 This can be generalized to higher order by considering three, four, etc.
@@ -148,7 +146,7 @@ intersections):
    >>> _ = ax.set_xlim(-0.125, 1.125)
    >>> _ = ax.set_ylim(-0.0625, 0.625)
 
-.. image:: https://raw.githubusercontent.com/dhermes/bezier/main/docs/images/curves1_and_13.png
+.. image:: https://raw.githubusercontent.com/dhermes/bezier/2023.7.27/docs/images/curves1_and_13.png
    :align: center
 
 For API-level documentation, check out the B |eacute| zier Python
@@ -195,32 +193,26 @@ License
 ``bezier`` is made available under the Apache 2.0 License. For more
 details, see `the LICENSE`_.
 
-.. _Curves: https://bezier.readthedocs.io/en/latest/python/reference/bezier.curve.html
-.. _Triangles: https://bezier.readthedocs.io/en/latest/python/reference/bezier.triangle.html
-.. _package: https://bezier.readthedocs.io/en/latest/python/reference/bezier.html
-.. _DEVELOPMENT doc: https://github.com/dhermes/bezier/blob/main/DEVELOPMENT.rst
-.. _the LICENSE: https://github.com/dhermes/bezier/blob/main/LICENSE
+.. _Curves: https://bezier.readthedocs.io/en/2023.7.27/python/reference/bezier.curve.html
+.. _Triangles: https://bezier.readthedocs.io/en/2023.7.27/python/reference/bezier.triangle.html
+.. _package: https://bezier.readthedocs.io/en/2023.7.27/python/reference/bezier.html
+.. _DEVELOPMENT doc: https://github.com/dhermes/bezier/blob/2023.7.27/DEVELOPMENT.rst
+.. _the LICENSE: https://github.com/dhermes/bezier/blob/2023.7.27/LICENSE
 
-.. |docs| image:: https://readthedocs.org/projects/bezier/badge/?version=latest
-   :target: https://bezier.readthedocs.io/en/latest/
+.. |docs| image:: https://readthedocs.org/projects/bezier/badge/?version=2023.7.27
+   :target: https://bezier.readthedocs.io/en/2023.7.27/
    :alt: Documentation Status
-.. |linux-build| image:: https://github.com/dhermes/bezier/workflows/Linux/badge.svg?branch=main&event=push
-   :target: https://github.com/dhermes/bezier/actions?query=workflow%3ALinux
+.. |linux-build| image:: https://raw.githubusercontent.com/dhermes/bezier/2023.7.27/docs/linux-passing.svg?sanitize=true
+   :target: https://github.com/dhermes/bezier/actions/runs/5682630165
    :alt: Linux Build (GitHub Actions)
-.. |macos-build| image:: https://github.com/dhermes/bezier/workflows/macOS/badge.svg?branch=main&event=push
-   :target: https://github.com/dhermes/bezier/actions?query=workflow%3AmacOS
+.. |macos-build| image:: https://raw.githubusercontent.com/dhermes/bezier/2023.7.27/docs/macos-passing.svg?sanitize=true
+   :target: https://github.com/dhermes/bezier/actions/runs/5682630157
    :alt: macOS Build (GitHub Actions)
-.. |windows-build| image:: https://github.com/dhermes/bezier/workflows/Windows/badge.svg?branch=main&event=push
-   :target: https://github.com/dhermes/bezier/actions?query=workflow%3AWindows
+.. |windows-build| image:: https://raw.githubusercontent.com/dhermes/bezier/2023.7.27/docs/windows-passing.svg?sanitize=true
+   :target: https://github.com/dhermes/bezier/actions/run/5682630153
    :alt: Windows Build (GitHub Actions)
-.. |pypi| image:: https://img.shields.io/pypi/v/bezier.svg
-   :target: https://pypi.org/project/bezier/
-   :alt: PyPI Latest
-.. |versions| image:: https://img.shields.io/pypi/pyversions/bezier.svg
-   :target: https://pypi.org/project/bezier/
-   :alt: Package Versions
-.. |coverage| image:: https://coveralls.io/repos/github/dhermes/bezier/badge.svg
-   :target: https://coveralls.io/github/dhermes/bezier
+.. |coverage| image:: https://s3.amazonaws.com/assets.coveralls.io/badges/coveralls_100.svg
+   :target: https://coveralls.io/builds/61620506
    :alt: Code Coverage
 .. |zenodo| image:: https://zenodo.org/badge/73047402.svg
    :target: https://zenodo.org/badge/latestdoi/73047402
