@@ -18,6 +18,19 @@ Robustness
 Python Changes
 --------------
 
+Packaging
+~~~~~~~~~
+
+-  Dropped support for Python 3.7 and added support for Python 3.10 and 3.11
+   (`#271 <https://github.com/dhermes/bezier/pull/271>`__,
+   `#302 <https://github.com/dhermes/bezier/pull/302>`__).
+-  Add strict check for Python version on source installs.
+   Fixed `#278 <https://github.com/dhermes/bezier/issues/278>`__.
+-  Make missing ``BEZIER_INSTALL_PREFIX`` error message more helpful.
+   In particular, add a suggestion to set ``BEZIER_NO_EXTENSION`` for a source
+   only install if ``BEZIER_INSTALL_PREFIX`` cannot be set.
+   Fixed `#277 <https://github.com/dhermes/bezier/issues/277>`__.
+
 Bug Fixes
 ~~~~~~~~~
 
@@ -59,6 +72,8 @@ Additive Changes
    `#171 <https://github.com/dhermes/bezier/issues/171>`__.
    Supported via ``Curve.self_intersections()``
    `method <https://bezier.readthedocs.io/en/2023.7.26/python/reference/bezier.curve.html#bezier.curve.Curve.self_intersections>`__.
+-  Added ``alpha`` argument to ``Triangle.plot()`` and ``CurvedPolygon.plot()``
+   methods (`#296 <https://github.com/dhermes/bezier/pull/296>`__).
 
 Documentation
 -------------
