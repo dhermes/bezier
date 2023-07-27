@@ -65,8 +65,8 @@ Linux
        bezier.h
      lib/
        libbezier.so -> libbezier.so.2023
-       libbezier.so.2023 -> libbezier.so.2023.7.26
-       libbezier.so.2023.7.26
+       libbezier.so.2023 -> libbezier.so.2023.7.27
+       libbezier.so.2023.7.27
      share/
        bezier/
          cmake/
@@ -92,8 +92,8 @@ macOS
          triangle_intersection.h
        bezier.h
      lib/
-       libbezier.2023.7.26.dylib
-       libbezier.2023.dylib -> libbezier.2023.7.26.dylib
+       libbezier.2023.7.27.dylib
+       libbezier.2023.dylib -> libbezier.2023.7.27.dylib
        libbezier.dylib -> libbezier.2023.dylib
      share/
        bezier/
