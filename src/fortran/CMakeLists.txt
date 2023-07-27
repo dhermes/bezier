@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.1)
 
 project(
   bezier
-  VERSION 2023.7.26
+  VERSION 2023.7.27
   LANGUAGES Fortran C)
 set(AUTHOR "Danny Hermes")
 set(AUTHOR_DETAILS "daniel.j.hermes@gmail.com")

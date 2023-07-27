@@ -33,8 +33,7 @@ jobs:
     runs-on: windows-2022
     env:
       NOX_SESSION: "${{ matrix.nox-session }}"
-      MINGW_32: 'C:\msys64\mingw32\bin'
-      MINGW_64: 'C:\msys64\mingw64\bin'
+      MINGW: 'C:\msys64\mingw64\bin'
     strategy:
       matrix:
         nox-session:
@@ -61,23 +60,11 @@ jobs:
       - name: Show gfortran version
         shell: powershell
         run: |
-          $NOX_SESSION = $env:NOX_SESSION
-          If ($NOX_SESSION.EndsWith("-32")) {
-            $MINGW = $env:MINGW_32
-          } Else {
-            $MINGW = $env:MINGW_64
-          }
-          $env:Path = "$MINGW;" + $env:Path
+          $env:Path = "$env:MINGW;" + $env:Path
           gfortran --version
 
       - name: Invoke nox
         shell: powershell
         run: |
-          $NOX_SESSION = $env:NOX_SESSION
-          If ($NOX_SESSION.EndsWith("-32")) {
-            $MINGW = $env:MINGW_32
-          } Else {
-            $MINGW = $env:MINGW_64
-          }
-          $env:Path = "$MINGW;" + $env:Path
+          $env:Path = "$env:MINGW;" + $env:Path
           nox --session $env:NOX_SESSION
