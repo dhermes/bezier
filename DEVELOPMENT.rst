@@ -448,21 +448,12 @@ Python versions we test in. The image used in our Linux builds (from
 `bezier Dockerfile`_) installs dependencies needed for testing (such as
 ``nox`` and NumPy).
 
-For macOS, Matthew Brett's `multibuild`_ is used to
-install "official" python.org CPython binaries for macOS. Then tests are run
-in 64-bit mode (NumPy has `discontinued`_ 32-bit support).
-
-For Windows, the binary extension is built and tested with both 32-bit and
-64-bit Python binaries.
-
 .. _GitHub Actions: https://github.com/dhermes/bezier/actions
 .. _Linux config: https://github.com/dhermes/bezier/blob/main/.github/workflows/linux.yml
 .. _macOS config: https://github.com/dhermes/bezier/blob/main/.github/workflows/macos.yml
 .. _Windows config: https://github.com/dhermes/bezier/blob/main/.github/workflows/windows.yml
 .. _python-multi Dockerfile: https://github.com/dhermes/python-multi/blob/master/src/Dockerfile
 .. _bezier Dockerfile: https://github.com/dhermes/bezier/blob/main/scripts/docker/bezier.Dockerfile
-.. _multibuild: https://github.com/matthew-brett/multibuild
-.. _discontinued: https://github.com/numpy/numpy/issues/11625
 
 ****************************************
 Release Process / Deploying New Versions
