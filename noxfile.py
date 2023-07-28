@@ -262,7 +262,14 @@ def _windows_doctest_install(session, install_prefix):
     session.install(DEPS["delvewheel"])
     # 2. Build the wheel from source.
     basic_dir = tempfile.mkdtemp()
-    session.run("pip", "wheel", ".", "--wheel-dir", basic_dir)
+    session.run(
+        "pip",
+        "wheel",
+        ".",
+        "--wheel-dir",
+        basic_dir,
+        env={INSTALL_PREFIX_ENV: install_prefix},
+    )
     # 3. Repair the built wheel.
     repaired_dir = tempfile.mkdtemp()
     session.run(
