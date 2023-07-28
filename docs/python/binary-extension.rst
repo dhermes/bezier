@@ -294,7 +294,7 @@ The Python extension module (``.pyd`` file) depends directly on this library:
        #       ``subprocess.call()`` directly.
        output_bytes = subprocess.check_output(cmd, cwd=cwd)
 
-       output_str = "\n".join(
+       output_str = os.linesep.join(
            [
                "> " + " ".join(args),
                output_bytes.decode("utf-8"),

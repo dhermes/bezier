@@ -246,7 +246,7 @@ def print_tree(directory, suffix=None, replacements=None):
         replacements = ()
 
     full_tree = tree(directory, suffix=suffix)
-    content = "\n".join(
+    content = os.linesep.join(
         [
             os.path.basename(directory) + os.path.sep,
             textwrap.indent(full_tree, "  "),
