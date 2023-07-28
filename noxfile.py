@@ -266,7 +266,10 @@ def doctest(session):
         session.run(command, external=True)
         install_prefix = _cmake(session, BUILD_TYPE_RELEASE)
     elif IS_WINDOWS:
-        install_prefix = install_bezier(session)
+        install_prefix = _cmake(session, BUILD_TYPE_RELEASE)
+        command = get_path("scripts", "windows", "nox_install_for_doctest.py")
+        env = {INSTALL_PREFIX_ENV: install_prefix}
+        session.run("python", command, env=env)
     else:
         raise OSError("Unknown operating system")
 
