@@ -204,12 +204,12 @@ def cover(session):
     )
     session.install(*local_deps)
     # Install this package.
-    install_bezier(session, debug=True)
+    _, env = install_bezier(session, debug=True)
     # Run pytest with coverage against the unit tests.
     run_args = ["python", "-m", "pytest", "--cov=bezier", "--cov=tests.unit"]
     run_args += session.posargs
     run_args += [get_path("tests", "unit")]
-    session.run(*run_args)
+    session.run(*run_args, env=env)
 
 
 @nox.session(py=ALL_INTERPRETERS)
@@ -223,14 +223,14 @@ def functional(session):
     # Install all test dependencies.
     session.install(*local_deps)
     # Install this package.
-    install_bezier(session, debug=True)
+    _, env = install_bezier(session, debug=True)
     # Run pytest against the functional tests.
     run_args = (
         ["python", "-m", "pytest"]
         + session.posargs
         + [get_path("tests", "functional")]
     )
-    session.run(*run_args)
+    session.run(*run_args, env=env)
 
 
 @nox.session(py=DEFAULT_INTERPRETER)
