@@ -34,6 +34,9 @@ def add_dll_directory():
     This is only expected to be invoked on Windows. It will invoke
     ``os.add_dll_directory()``, which was added in Python 3.8.
     """
+    if os.name != "nt":
+        return
+
     extra_dll_dir = os.environ.get(EXTRA_DLL_ENV)
     if extra_dll_dir is None:
         return
