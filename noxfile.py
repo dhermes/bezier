@@ -305,7 +305,6 @@ def doctest(session):
         session.run(command, external=True)
         install_prefix = _cmake(session, BUILD_TYPE_RELEASE)
     elif IS_WINDOWS:
-        session.run("python", "-c", "import sys; print(sys.executable)")  # TMP
         install_prefix = _cmake(session, BUILD_TYPE_RELEASE)
         _windows_doctest_install(session, install_prefix)
     else:
