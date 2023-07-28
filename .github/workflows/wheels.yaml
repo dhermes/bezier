@@ -13,13 +13,10 @@
 name: Building Wheels
 
 on:
-  push: # TMP
-    branches: # TMP
-      - build-wheels # TMP
   workflow_dispatch:
     inputs:
       reason:
-        description: "Reason for manually triggering workflow"
+        description: Reason for manually triggering workflow
         required: true
 
 jobs:
