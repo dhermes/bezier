@@ -72,6 +72,7 @@ BUILD_TYPE_RELEASE = "Release"
 DEBUG_SESSION_NAME = "libbezier-debug"
 RELEASE_SESSION_NAME = "libbezier-release"
 INSTALL_PREFIX_ENV = "BEZIER_INSTALL_PREFIX"
+EXTRA_DLL_ENV = "BEZIER_EXTRA_DLL"
 
 
 def get_path(*names):
@@ -176,12 +177,9 @@ def unit(session):
     session.install(*local_deps)
     # Install this package.
     install_prefix = install_bezier(session, debug=True)
-    # Ensure DLL is on search path
     env = {}
     if IS_WINDOWS:
-        env["PATH"] = os.pathsep.join(
-            [os.path.join(install_prefix, "bin"), os.environ["PATH"]]
-        )
+        env[EXTRA_DLL_ENV] = os.path.join(install_prefix, "bin")
     # Run pytest against the unit tests.
     run_args = (
         ["python", "-m", "pytest"]

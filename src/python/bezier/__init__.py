@@ -22,6 +22,9 @@ Plotting utilities are also provided.
    :trim:
 """
 
+# NOTE: ``__config__`` **must** be the first import because it (may)
+#       modify the search path used to locate shared libraries.
+from bezier import __config__
 from bezier.curve import Curve
 from bezier.curved_polygon import CurvedPolygon
 from bezier.hazmat.helpers import UnsupportedDegree
@@ -32,9 +35,7 @@ try:
 
     _HAS_SPEEDUP = True
 except ImportError as exc:  # pragma: NO COVER
-    if exc.args != ("No module named 'bezier._speedup'",):
-        raise
-
+    __config__.handle_import_error(exc, "_speedup")
     _HAS_SPEEDUP = False
 # NOTE: The ``__version__`` and ``__author__`` are hard-coded here, rather
 #       than using ``pkg_resources.get_distribution("bezier").version``
