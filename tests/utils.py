@@ -254,6 +254,6 @@ def print_tree(directory, suffix=None, replacements=None):
     )
 
     for pattern, replacement in replacements:
-        output_str = re.sub(pattern, replacement, output_str)
+        content = re.sub(pattern, replacement, content)
 
     print(content)
