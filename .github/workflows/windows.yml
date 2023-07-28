@@ -16,10 +16,9 @@ on:
   push:
     branches:
       - main
-      - use-delvewheel
-  # pull_request:
-  #   branches:
-  #     - main
+  pull_request:
+    branches:
+      - main
   schedule:
     # Scheduled workflows run on the latest commit on the default or base branch
     - cron: "0 0 1 * *"
@@ -39,11 +38,11 @@ jobs:
       fail-fast: false # TMP
       matrix:
         nox-session:
-          # - unit-3.8
-          # - unit-3.9
-          # - unit-3.10
-          # - cover
-          # - functional-3.11
+          - unit-3.8
+          - unit-3.9
+          - unit-3.10
+          - cover
+          - functional-3.11
           - doctest
     steps:
       - uses: actions/cache@v3
