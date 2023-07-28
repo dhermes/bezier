@@ -271,6 +271,8 @@ def _windows_doctest_install(session, install_prefix):
         env={INSTALL_PREFIX_ENV: install_prefix},
     )
     # 3. Repair the built wheel.
+    basic_dir_path = pathlib.Path(basic_dir)
+    wheels = list(basic_dir_path.glob("bezier*.whl"))
     repaired_dir = tempfile.mkdtemp()
     session.run(
         "delvewheel",
@@ -279,7 +281,7 @@ def _windows_doctest_install(session, install_prefix):
         repaired_dir,
         "--add-path",
         os.path.join(install_prefix, "bin"),
-        os.path.join(basic_dir, "bezier*.whl"),
+        *wheels,
     )
     # 4. Install from the repaired wheel.
     session.run(
