@@ -232,7 +232,7 @@ def docs(session):
     # Install this package.
     install_bezier(session, env={"BEZIER_NO_EXTENSION": "True"})
     # Run the script for building docs.
-    command = get_path("scripts", "build_docs.sh")
+    command = get_path("scripts", "build-docs.sh")
     session.run(command, external=True)
 
 

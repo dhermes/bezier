@@ -382,7 +382,7 @@ To build the documentation locally:
 
    $ nox --session docs
    $ # OR (from a Python 3.8 or later environment)
-   $ PYTHONPATH=src/python/ ./scripts/build_docs.sh
+   $ PYTHONPATH=src/python/ ./scripts/build-docs.sh
 
 Documentation Snippets
 ======================
