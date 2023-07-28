@@ -37,7 +37,6 @@ DEPS = {
     "flake8-import-order": "flake8-import-order",
     "jsonschema": "jsonschema >= 4.17.3",
     "lcov-cobertura": "lcov-cobertura >= 2.0.2",
-    "machomachomangler": "machomachomangler == 0.0.1",
     "matplotlib": "matplotlib >= 3.7.1",
     "numpy": "numpy >= 1.24.2",
     "pycobertura": "pycobertura >= 3.0.0",
@@ -73,8 +72,6 @@ BUILD_TYPE_RELEASE = "Release"
 DEBUG_SESSION_NAME = "libbezier-debug"
 RELEASE_SESSION_NAME = "libbezier-release"
 INSTALL_PREFIX_ENV = "BEZIER_INSTALL_PREFIX"
-WHEEL_ENV = "BEZIER_WHEEL"
-DLL_HASH_ENV = "BEZIER_DLL_HASH"
 
 
 def get_path(*names):
@@ -269,10 +266,7 @@ def doctest(session):
         session.run(command, external=True)
         install_prefix = _cmake(session, BUILD_TYPE_RELEASE)
     elif IS_WINDOWS:
-        session.install(DEPS["machomachomangler"])
-        install_prefix = install_bezier(
-            session, env={WHEEL_ENV: "true", DLL_HASH_ENV: "e5dbb97a"}
-        )
+        install_prefix = install_bezier(session)
     else:
         raise OSError("Unknown operating system")
 
@@ -617,7 +611,6 @@ def clean(session):
         get_path("scripts", "manylinux", "fixed_wheels"),
         get_path("src", "python", "bezier.egg-info"),
         get_path("src", "python", "bezier", "__pycache__"),
-        get_path("src", "python", "bezier", "extra-dll"),
         get_path("tests", "__pycache__"),
         get_path("tests", "functional", "__pycache__"),
         get_path("tests", "unit", "__pycache__"),
