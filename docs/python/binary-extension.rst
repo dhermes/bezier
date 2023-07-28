@@ -226,7 +226,7 @@ The command line tool `delvewheel`_ adds a ``bezier.libs`` directory to
 ``site-packages`` (i.e. it is **next to** ``bezier``) with a modified
 ``libbezier`` DLL
 
-.. delvewheel: https://github.com/adang1345/delvewheel
+.. _delvewheel: https://github.com/adang1345/delvewheel
 
 .. doctest:: windows-libs
    :windows-only:
