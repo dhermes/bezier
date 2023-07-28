@@ -94,7 +94,7 @@ jobs:
           docker exec \
             --env "COVERALLS_REPO_TOKEN=${COVERALLS_REPO_TOKEN}" \
             dhermes-bezier \
-            ./scripts/upload_coveralls.sh
+            ./scripts/upload-coveralls.sh
 
   lint:
     runs-on: ubuntu-20.04
