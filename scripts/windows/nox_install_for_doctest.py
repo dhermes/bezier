@@ -22,6 +22,7 @@ Used in:
 import os
 import shutil
 import subprocess
+import sys
 import tempfile
 
 
@@ -32,6 +33,7 @@ INSTALL_PREFIX_ENV = "BEZIER_INSTALL_PREFIX"
 
 
 def main():
+    print("sys.executable:", sys.executable)
     # 0. Make sure we are running in the project root and install prefix
     #    environment variable is set.
     os.chdir(ROOT_DIR)
@@ -40,11 +42,12 @@ def main():
         raise RuntimeError("Install prefix must be set", INSTALL_PREFIX_ENV)
 
     # TMP
+    print("subprocess sys.executable: ", end="")
     subprocess.check_call(
         ("python", "-c", "import sys; print(sys.executable)")
     )
 
-    # 1. Install the ``delocate`` tool.
+    # 1. Install the ``delvewheel`` tool.
     subprocess.check_call(
         ("python", "-m", "pip", "install", "--upgrade", "delvewheel")
     )

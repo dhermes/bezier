@@ -15,6 +15,7 @@ import os
 import pathlib
 import shutil
 import sys
+import tempfile
 
 import nox
 import nox.sessions
@@ -32,6 +33,7 @@ DEPS = {
     "cmake": "cmake >= 3.25.2",
     "coverage": "coverage",
     "Cython": "Cython >= 3.0.0",
+    "delvewheel": "delvewheel >= 1.4.0",
     "docutils": "docutils",
     "flake8": "flake8",
     "flake8-import-order": "flake8-import-order",
@@ -255,6 +257,32 @@ def get_doctest_args(session):
     return run_args
 
 
+def _windows_doctest_install(session, install_prefix):
+    # 1. Install the ``delvewheel`` tool.
+    session.install(DEPS["delvewheel"])
+    # 2. Build the wheel from source.
+    basic_dir = tempfile.mkdtemp()
+    session.run("pip", "wheel", ".", "--wheel-dir", basic_dir)
+    # 3. Repair the built wheel.
+    repaired_dir = tempfile.mkdtemp()
+    session.run(
+        "delvewheel",
+        "repair",
+        "--wheel-dir",
+        repaired_dir,
+        "--add-path",
+        os.path.join(install_prefix, "bin"),
+        os.path.join(basic_dir, "bezier*.whl"),
+    )
+    # 4. Install from the repaired wheel.
+    session.run(
+        "pip", "install", "bezier", "--no-index", "--find-links", repaired_dir
+    )
+    # 5. Clean up temporary directories.
+    shutil.rmtree(basic_dir, ignore_errors=True)
+    shutil.rmtree(repaired_dir, ignore_errors=True)
+
+
 @nox.session(py=DEFAULT_INTERPRETER)
 def doctest(session):
     # Install all dependencies.
@@ -270,10 +298,9 @@ def doctest(session):
         session.run(command, external=True)
         install_prefix = _cmake(session, BUILD_TYPE_RELEASE)
     elif IS_WINDOWS:
+        session.run("python", "-c", "import sys; print(sys.executable)")  # TMP
         install_prefix = _cmake(session, BUILD_TYPE_RELEASE)
-        command = get_path("scripts", "windows", "nox_install_for_doctest.py")
-        env = {INSTALL_PREFIX_ENV: install_prefix}
-        session.run("python", command, env=env)
+        _windows_doctest_install(session, install_prefix)
     else:
         raise OSError("Unknown operating system")
 
