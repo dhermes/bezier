@@ -76,8 +76,8 @@ The command line tool `auditwheel`_ adds a ``bezier.libs`` directory to
 .. doctest:: linux-libs
    :linux-only:
 
-   >>> print(libs_directory)
-   .../site-packages/bezier.libs
+   >>> libs_directory
+   '.../site-packages/bezier.libs'
    >>> print_tree(libs_directory)
    bezier.libs/
      libbezier-631d8eda.so.2023.7.27
@@ -160,8 +160,8 @@ with copies of ``libbezier``, ``libgfortran``, ``libquadmath`` and
 .. doctest:: macos-dylibs
    :macos-only:
 
-   >>> print(dylibs_directory)
-   .../site-packages/bezier/.dylibs
+   >>> dylibs_directory
+   '.../site-packages/bezier/.dylibs'
    >>> print_tree(dylibs_directory)
    .dylibs/
      libbezier.2023.7.27.dylib
@@ -231,8 +231,8 @@ The command line tool `delvewheel`_ adds a ``bezier.libs`` directory to
 .. doctest:: windows-libs
    :windows-only:
 
-   >>> print(libs_directory)
-   ...\site-packages\bezier.libs
+   >>> libs_directory
+   '...\\site-packages\\bezier.libs'
    >>> print_tree(libs_directory)
    bezier.libs\
      bezier-40ff1ce7372f05ba11436ffbadd11324.dll
