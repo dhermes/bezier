@@ -263,7 +263,7 @@ The Python extension module (``.pyd`` file) depends directly on this library:
 
    def print_tree(directory):
        return tests.utils.print_tree(
-           directory, replacements=((dll_pattern, dll_sentinel))
+           directory, replacements=((dll_pattern, dll_sentinel),)
        )
 
 
