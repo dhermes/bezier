@@ -39,20 +39,20 @@ def main():
         raise RuntimeError("Install prefix must be set", INSTALL_PREFIX_ENV)
 
     # 1. Install the ``delocate`` tool.
-    subprocess.call(
+    subprocess.check_call(
         ("python", "-m", "pip", "install", "--upgrade", "delvewheel")
     )
 
     # 2. Build the wheel from source.
     basic_dir = tempfile.mkdtemp()
     # NOTE: ``pip wheel`` requires ``BEZIER_INSTALL_PREFIX`` to be set.
-    subprocess.call(
+    subprocess.check_call(
         ("python", "-m", "pip", "wheel", ".", "--wheel-dir", basic_dir)
     )
 
     # 3. repair the built wheel.
     repaired_dir = tempfile.mkdtemp()
-    subprocess.call(
+    subprocess.check_call(
         (
             "python",
             "-m",
@@ -67,7 +67,7 @@ def main():
     )
 
     # 4. Install from the repaired wheel.
-    subprocess.call(
+    subprocess.check_call(
         (
             "python",
             "-m",
