@@ -66,11 +66,11 @@ The command line tool `auditwheel`_ adds a ``bezier.libs`` directory to
    libs_directory = os.path.abspath(os.path.join(base_dir, "..", "bezier.libs"))
 
 
-   def invoke_shell(*args):
+   def invoke_shell(*args, cwd=base_dir):
        print("$ " + " ".join(args))
        # NOTE: We print to the stdout of the doctest, rather than using
        #       ``subprocess.call()`` directly.
-       output_bytes = subprocess.check_output(args, cwd=base_dir)
+       output_bytes = subprocess.check_output(args, cwd=cwd)
        print(output_bytes.decode("utf-8"), end="")
 
 .. doctest:: linux-libs
@@ -222,16 +222,49 @@ it indirectly depends on ``libgfortran``, ``libquadmath`` and ``libgcc_s``:
 Windows
 =======
 
+The command line tool `delvewheel`_ adds a ``bezier.libs`` directory to
+``site-packages`` (i.e. it is **next to** ``bezier``) with a modified
+``libbezier`` DLL
+
+.. delvewheel: https://github.com/adang1345/delvewheel
+
+.. doctest:: windows-libs
+   :windows-only:
+
+   >>> libs_directory
+   '.../site-packages/bezier.libs'
+   >>> print_tree(libs_directory)
+   bezier.libs/
+     bezier-49215506ad8b5a6c4980e92c71dbc4fd.dll
+
 A single Windows shared library (DLL) is provided: ``bezier.dll``.
 The Python extension module (``.pyd`` file) depends directly on this library:
 
-.. testsetup:: windows-extension, windows-dll
+.. testsetup:: windows-libs, windows-extension, windows-dll
 
    import distutils.ccompiler
    import os
+   import pathlib
+   import re
    import subprocess
 
    import bezier
+   import tests.utils
+
+
+   base_dir = os.path.abspath(os.path.dirname(bezier.__file__))
+   site_packages = os.path.abspath(os.path.join(base_dir, ".."))
+   libs_directory = os.path.join(site_packages, "bezier.libs")
+   # Use regex replacement to handle the fact that the ``bezier.dll``
+   # file contents are non-deterministic (across time / builds)
+   dll_pattern = "bezier-[0-9a-f]{32}.dll"
+   dll_sentinel = "bezier-49215506ad8b5a6c4980e92c71dbc4fd.dll"
+
+
+   def print_tree(directory):
+       return tests.utils.print_tree(
+           directory, replacements=((dll_pattern, dll_sentinel))
+       )
 
 
    if os.name == "nt":
@@ -246,8 +279,6 @@ The Python extension module (``.pyd`` file) depends directly on this library:
        # This won't matter if not on Windows.
        dumpbin_exe = None
 
-   bezier_directory = os.path.dirname(bezier.__file__)
-
 
    def replace_dumpbin(value):
        if value == "dumpbin":
@@ -256,14 +287,16 @@ The Python extension module (``.pyd`` file) depends directly on this library:
            return value
 
 
-   def invoke_shell(*args):
+   def invoke_shell(*args, cwd=base_dir):
        print("> " + " ".join(args))
        # Replace ``"dumpbin"`` with ``dumpbin_exe``.
        cmd = tuple(map(replace_dumpbin, args))
        # NOTE: We print to the stdout of the doctest, rather than using
        #       ``subprocess.call()`` directly.
-       output_bytes = subprocess.check_output(cmd, cwd=bezier_directory)
-       print(output_bytes.decode("utf-8"), end="")
+       output_bytes = subprocess.check_output(cmd, cwd=cwd)
+       output_str = output_bytes.decode("utf-8")
+       output_str = re.sub(dll_pattern, dll_sentinel, output_str)
+       print(output_str, end="")
 
 .. testcode:: windows-extension
    :hide:
@@ -299,11 +332,11 @@ The Python extension module (``.pyd`` file) depends directly on this library:
    ...
 
 For built wheels, the dependency will be renamed from ``bezier.dll`` to a
-unique name containing the first 8 characters of the SHA256 hash of the DLL
-file (to avoid a name collision) and placed in a directory within the
-``bezier`` package: for example
-``extra-dll/bezier-49215506ad8b5a6c4980e92c71dbc4fd.dll``.
-TODO
+unique name containing the first 32 characters of a SHA256 hash (the hash
+input is ``bezier`` followed by the contents of the DLL file) to avoid a name
+collision and placed in the ``bezier.libs`` directory next to the ``bezier``
+package: for example
+``bezier.libs/bezier-49215506ad8b5a6c4980e92c71dbc4fd.dll``.
 
 The ``libbezier`` DLL has **no external dependencies**, but does have
 a corresponding `import library`_ --- ``usr/lib/bezier.lib`` --- which is
@@ -392,18 +425,21 @@ on MinGW:
 .. testcode:: windows-dll
    :hide:
 
-   invoke_shell("dumpbin", "/dependents", "extra-dll\\bezier-49215506ad8b5a6c4980e92c71dbc4fd.dll")
+   site_packages_path = pathlib.Path(site_packages)
+   dll_path, = site_packages_path.glob("bezier.libs/bezier-*.dll")
+   dll_path = dll_path.relative_to(site_packages_path)
+   invoke_shell("dumpbin", "/dependents", str(dll_path), cwd=site_packages)
 
 .. testoutput:: windows-dll
    :options: +NORMALIZE_WHITESPACE
    :windows-only:
 
-   > dumpbin /dependents extra-dll\bezier-49215506ad8b5a6c4980e92c71dbc4fd.dll
+   > dumpbin /dependents bezier.libs\bezier-49215506ad8b5a6c4980e92c71dbc4fd.dll
    Microsoft (R) COFF/PE Dumper Version ...
    Copyright (C) Microsoft Corporation.  All rights reserved.
 
 
-   Dump of file extra-dll\bezier-49215506ad8b5a6c4980e92c71dbc4fd.dll
+   Dump of file bezier.libs\bezier-49215506ad8b5a6c4980e92c71dbc4fd.dll
 
    File Type: DLL
 
