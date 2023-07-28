@@ -382,7 +382,7 @@ To build the documentation locally:
 
    $ nox --session docs
    $ # OR (from a Python 3.8 or later environment)
-   $ PYTHONPATH=src/python/ ./scripts/build_docs.sh
+   $ PYTHONPATH=src/python/ ./scripts/build-docs.sh
 
 Documentation Snippets
 ======================
@@ -528,10 +528,6 @@ This project uses environment variables for building the
 - ``BEZIER_NO_EXTENSION``: If set, this will indicate that only the pure
   Python package should be built and installed (i.e. without the binary
   extension).
-- ``BEZIER_WHEEL``: If set, this will indicate to ``setup.py`` that the
-  current build is intended for a wheel. On Windows, this will involve
-  renaming ``bezier.dll`` to a unique name (to avoid name collision) and
-  updating ``_speedup*.pyd`` to refer to the new name.
 - ``BEZIER_IGNORE_VERSION_CHECK``: Will instruct ``pip`` and ``setup.py`` to
   ignore a check on the current version of Python. By default, Python installs
   of ``bezier`` will explicitly check for supported versions and this opts
@@ -539,18 +535,9 @@ This project uses environment variables for building the
   This will only be relevant when installing from source, but a new version of
   Python will also mean the existing wheels on PyPI won't support that new
   version.
-- ``BEZIER_DLL_HASH``: If set, this will indicate to ``setup.py`` that the
-  built ``bezier.dll`` should be renamed to ``bezier-${{BEZIER_DLL_HASH}}.dll``
-  in situations such as tests where this filename should be deterministic.
-
-for interacting with the system at import time:
-
-- ``PATH``: On Windows, we add the ``bezier/extra-dll`` package directory to
-  the path so that the ``bezier.dll`` shared library can be loaded at
-  import time for Python versions **before** 3.8. After 3.8, modifying ``PATH``
-  no longer works for these purposes; the ``os.add_dll_directory()``
-  `function <https://docs.python.org/3/library/os.html#os.add_dll_directory>`__
-  is used.
+- ``BEZIER_EXTRA_DLL``: Used to add (optional) extra directory to DLL search
+  path on Windows. This is intended to be used in tests primarily, but may also
+  be required when building from source.
 
 and for running tests and interacting with Continuous Integration
 services:

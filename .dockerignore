@@ -24,8 +24,6 @@ Dockerfile
 **/src/fortran/*.o
 **/src/python/bezier/_speedup*.so
 **/wheelhouse/
-**/scripts/macos/dist_wheels/
-**/scripts/macos/fixed_wheels/
 **/tests/fortran/*.gcda
 **/tests/fortran/*.gcno
 **/tests/fortran/*.o

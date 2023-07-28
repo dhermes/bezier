@@ -18,10 +18,6 @@ dist
 
 # Generated files
 docs/abi/example
-scripts/macos/dist_wheels/
-scripts/macos/fixed_wheels/
-scripts/macos/test-venv/
-scripts/manylinux/fixed_wheels/
 src/fortran/*.o
 src/python/bezier/_speedup*.so
 tests/fortran/*.gcda

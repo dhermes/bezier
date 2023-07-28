@@ -13,6 +13,7 @@
 import functools
 import os
 import pathlib
+import re
 import shlex
 import subprocess
 import sys
@@ -239,8 +240,20 @@ def tree(directory, suffix=None):
         return None
 
 
-def print_tree(directory, suffix=None):
+def print_tree(directory, suffix=None, replacements=()):
     """Pretty print a file tree."""
-    print(os.path.basename(directory) + os.path.sep)
     full_tree = tree(directory, suffix=suffix)
-    print(textwrap.indent(full_tree, "  "))
+    # NOTE: We explicitly use newline over ``os.linesep`` here because this
+    #       will be used in Sphinx assertions for content authored in our
+    #       codebase (with uses UNIX line endings).
+    content = "\n".join(
+        [
+            os.path.basename(directory) + os.path.sep,
+            textwrap.indent(full_tree, "  "),
+        ]
+    )
+
+    for pattern, replacement in replacements:
+        content = re.sub(pattern, replacement, content)
+
+    print(content)

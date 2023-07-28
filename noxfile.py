@@ -15,6 +15,7 @@ import os
 import pathlib
 import shutil
 import sys
+import tempfile
 
 import nox
 import nox.sessions
@@ -32,12 +33,12 @@ DEPS = {
     "cmake": "cmake >= 3.25.2",
     "coverage": "coverage",
     "Cython": "Cython >= 3.0.0",
+    "delvewheel": "delvewheel >= 1.4.0",
     "docutils": "docutils",
     "flake8": "flake8",
     "flake8-import-order": "flake8-import-order",
     "jsonschema": "jsonschema >= 4.17.3",
     "lcov-cobertura": "lcov-cobertura >= 2.0.2",
-    "machomachomangler": "machomachomangler == 0.0.1",
     "matplotlib": "matplotlib >= 3.7.1",
     "numpy": "numpy >= 1.24.2",
     "pycobertura": "pycobertura >= 3.0.0",
@@ -73,8 +74,7 @@ BUILD_TYPE_RELEASE = "Release"
 DEBUG_SESSION_NAME = "libbezier-debug"
 RELEASE_SESSION_NAME = "libbezier-release"
 INSTALL_PREFIX_ENV = "BEZIER_INSTALL_PREFIX"
-WHEEL_ENV = "BEZIER_WHEEL"
-DLL_HASH_ENV = "BEZIER_DLL_HASH"
+EXTRA_DLL_ENV = "BEZIER_EXTRA_DLL"
 
 
 def get_path(*names):
@@ -135,7 +135,12 @@ def install_bezier(session, debug=False, env=None):
     env[INSTALL_PREFIX_ENV] = install_prefix
 
     session.install(".", env=env)
-    return install_prefix
+
+    runtime_env = {}
+    if IS_WINDOWS:
+        runtime_env[EXTRA_DLL_ENV] = os.path.join(install_prefix, "bin")
+
+    return install_prefix, runtime_env
 
 
 @nox.session(py=DEFAULT_INTERPRETER)
@@ -178,14 +183,14 @@ def unit(session):
     # Install all test dependencies.
     session.install(*local_deps)
     # Install this package.
-    install_bezier(session, debug=True)
+    _, env = install_bezier(session, debug=True)
     # Run pytest against the unit tests.
     run_args = (
         ["python", "-m", "pytest"]
         + session.posargs
         + [get_path("tests", "unit")]
     )
-    session.run(*run_args)
+    session.run(*run_args, env=env)
 
 
 @nox.session(py=DEFAULT_INTERPRETER)
@@ -199,12 +204,12 @@ def cover(session):
     )
     session.install(*local_deps)
     # Install this package.
-    install_bezier(session, debug=True)
+    _, env = install_bezier(session, debug=True)
     # Run pytest with coverage against the unit tests.
     run_args = ["python", "-m", "pytest", "--cov=bezier", "--cov=tests.unit"]
     run_args += session.posargs
     run_args += [get_path("tests", "unit")]
-    session.run(*run_args)
+    session.run(*run_args, env=env)
 
 
 @nox.session(py=ALL_INTERPRETERS)
@@ -218,14 +223,14 @@ def functional(session):
     # Install all test dependencies.
     session.install(*local_deps)
     # Install this package.
-    install_bezier(session, debug=True)
+    _, env = install_bezier(session, debug=True)
     # Run pytest against the functional tests.
     run_args = (
         ["python", "-m", "pytest"]
         + session.posargs
         + [get_path("tests", "functional")]
     )
-    session.run(*run_args)
+    session.run(*run_args, env=env)
 
 
 @nox.session(py=DEFAULT_INTERPRETER)
@@ -235,7 +240,7 @@ def docs(session):
     # Install this package.
     install_bezier(session, env={"BEZIER_NO_EXTENSION": "True"})
     # Run the script for building docs.
-    command = get_path("scripts", "build_docs.sh")
+    command = get_path("scripts", "build-docs.sh")
     session.run(command, external=True)
 
 
@@ -254,6 +259,41 @@ def get_doctest_args(session):
     return run_args
 
 
+def _windows_doctest_install(session, install_prefix):
+    # 1. Install the ``delvewheel`` tool.
+    session.install(DEPS["delvewheel"])
+    # 2. Build the wheel from source.
+    basic_dir = tempfile.mkdtemp()
+    session.run(
+        "pip",
+        "wheel",
+        ".",
+        "--wheel-dir",
+        basic_dir,
+        env={INSTALL_PREFIX_ENV: install_prefix},
+    )
+    # 3. Repair the built wheel.
+    basic_dir_path = pathlib.Path(basic_dir)
+    wheels = list(basic_dir_path.glob("bezier*.whl"))
+    repaired_dir = tempfile.mkdtemp()
+    session.run(
+        "delvewheel",
+        "repair",
+        "--wheel-dir",
+        repaired_dir,
+        "--add-path",
+        os.path.join(install_prefix, "bin"),
+        *wheels,
+    )
+    # 4. Install from the repaired wheel.
+    session.run(
+        "pip", "install", "bezier", "--no-index", "--find-links", repaired_dir
+    )
+    # 5. Clean up temporary directories.
+    shutil.rmtree(basic_dir, ignore_errors=True)
+    shutil.rmtree(repaired_dir, ignore_errors=True)
+
+
 @nox.session(py=DEFAULT_INTERPRETER)
 def doctest(session):
     # Install all dependencies.
@@ -269,10 +309,8 @@ def doctest(session):
         session.run(command, external=True)
         install_prefix = _cmake(session, BUILD_TYPE_RELEASE)
     elif IS_WINDOWS:
-        session.install(DEPS["machomachomangler"])
-        install_prefix = install_bezier(
-            session, env={WHEEL_ENV: "true", DLL_HASH_ENV: "e5dbb97a"}
-        )
+        install_prefix = _cmake(session, BUILD_TYPE_RELEASE)
+        _windows_doctest_install(session, install_prefix)
     else:
         raise OSError("Unknown operating system")
 
@@ -302,7 +340,7 @@ def docs_images(session):
         env = {INSTALL_PREFIX_ENV: install_prefix}
         session.run(command, external=True, env=env)
     else:
-        install_prefix = install_bezier(session)
+        install_prefix, _ = install_bezier(session)
     # Use custom RC-file for matplotlib.
     env = {
         INSTALL_PREFIX_ENV: install_prefix,
@@ -611,13 +649,9 @@ def clean(session):
         get_path("docs", "__pycache__"),
         get_path("docs", "build"),
         get_path("scripts", "macos", "__pycache__"),
-        get_path("scripts", "macos", "dist_wheels"),
-        get_path("scripts", "macos", "fixed_wheels"),
-        get_path("scripts", "macos", "test-venv"),
         get_path("scripts", "manylinux", "fixed_wheels"),
         get_path("src", "python", "bezier.egg-info"),
         get_path("src", "python", "bezier", "__pycache__"),
-        get_path("src", "python", "bezier", "extra-dll"),
         get_path("tests", "__pycache__"),
         get_path("tests", "functional", "__pycache__"),
         get_path("tests", "unit", "__pycache__"),

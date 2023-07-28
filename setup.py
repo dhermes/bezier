@@ -12,15 +12,11 @@
 
 """Setup file for ``bezier``."""
 
-import hashlib
 import os
-import pathlib
-import shutil
 import sys
 
 import pkg_resources
 import setuptools
-import setuptools.command.build_ext
 import setuptools.dist
 
 
@@ -80,15 +76,6 @@ instructions for the C ABI (`libbezier`).
 """.format(
     install_prefix=INSTALL_PREFIX_ENV, no_extension=NO_EXTENSION_ENV
 )
-WHEEL_ENV = "BEZIER_WHEEL"
-"""Environment variable used to indicate a wheel is being built.
-
-If this is present (e.g. ``BEZIER_WHEEL="True"``) then copied DLL on Windows
-will be modified.
-"""
-# NOTE: This is a workaround, put in place for "deterministic" hashing of the
-#       DLL in cases where that matters (i.e. ``doctest``.)
-DLL_HASH_ENV = "BEZIER_DLL_HASH"
 REQUIREMENTS = ("numpy >= 1.24.2",)
 # See: https://www.python.org/dev/peps/pep-0508/
 #      Dependency specification for Python Software Packages
@@ -100,8 +87,6 @@ DESCRIPTION = (
 )
 _IS_WINDOWS = os.name == "nt"
 _IS_PYPY = sys.implementation.name == "pypy"
-_EXTRA_DLL = "extra-dll"
-_DLL_FILENAME = "bezier.dll"
 
 
 def is_installed(requirement):
@@ -122,24 +107,6 @@ def numpy_include_dir():
     import numpy as np
 
     return np.get_include()
-
-
-def _sha256_hash(filename, blocksize=65536):
-    """Hash the contents of an open file handle with SHA256"""
-    hash_obj = hashlib.sha256()
-
-    with open(filename, "rb") as file_obj:
-        block = file_obj.read(blocksize)
-        while block:
-            hash_obj.update(block)
-            block = file_obj.read(blocksize)
-
-    return hash_obj.hexdigest()
-
-
-def _sha256_short_hash(filename):
-    full_hash = _sha256_hash(filename)
-    return full_hash[:8]
 
 
 def extension_modules():
@@ -182,70 +149,6 @@ def make_readme():
         return file_obj.read()
 
 
-def copy_dll(build_lib):
-    if not _IS_WINDOWS:
-        return None
-
-    install_prefix = os.environ.get(INSTALL_PREFIX_ENV)
-    if install_prefix is None:
-        return None
-
-    # NOTE: ``bin`` is hardcoded here, expected to correspond to
-    #       ``CMAKE_INSTALL_BINDIR`` on Windows.
-    installed_dll = os.path.join(install_prefix, "bin", _DLL_FILENAME)
-    build_lib_extra_dll = os.path.join(build_lib, "bezier", _EXTRA_DLL)
-    os.makedirs(build_lib_extra_dll, exist_ok=True)
-
-    if WHEEL_ENV in os.environ:
-        short_hash = os.environ.get(DLL_HASH_ENV)
-        if short_hash is None:
-            short_hash = _sha256_short_hash(installed_dll)
-        dll_name = f"bezier-{short_hash}.dll"
-        return_value = dll_name
-    else:
-        dll_name = _DLL_FILENAME
-        return_value = None
-
-    relocated_dll = os.path.join(build_lib_extra_dll, dll_name)
-    shutil.copyfile(installed_dll, relocated_dll)
-
-    return return_value
-
-
-def _find_speedup_pyd(build_lib):
-    bezier_dir = pathlib.Path(build_lib) / "bezier"
-    speedup_glob = "_speedup*.pyd"
-    matches = list(bezier_dir.glob(speedup_glob))
-    if len(matches) != 1:
-        raise ValueError(f"Could not find unique ``{speedup_glob}``", matches)
-
-    return str(matches[0])
-
-
-def rewrite_pyd_reference(dll_name, build_lib):
-    if dll_name is None:
-        return
-
-    import machomachomangler.pe
-
-    speedup_filename = _find_speedup_pyd(build_lib)
-    with open(speedup_filename, "rb") as file_obj:
-        pyd_bytes = file_obj.read()
-
-    new_pyd_bytes = machomachomangler.pe.redll(
-        pyd_bytes, {_DLL_FILENAME.encode("ascii"): dll_name.encode("ascii")}
-    )
-    with open(speedup_filename, "wb") as file_obj:
-        file_obj.write(new_pyd_bytes)
-
-
-class BuildExtWithDLL(setuptools.command.build_ext.build_ext):
-    def run(self):
-        dll_name = copy_dll(self.build_lib)
-        setuptools.command.build_ext.build_ext.run(self)
-        rewrite_pyd_reference(dll_name, self.build_lib)
-
-
 def setup():
     setuptools.setup(
         name="bezier",
@@ -268,12 +171,7 @@ def setup():
         package_dir={"": os.path.join("src", "python")},
         license="Apache 2.0",
         platforms="Posix; macOS; Windows",
-        package_data={
-            "bezier": [
-                "*.pxd",
-                os.path.join("extra-dll", "*.dll"),
-            ]
-        },
+        package_data={"bezier": ["*.pxd"]},
         zip_safe=True,
         install_requires=REQUIREMENTS,
         extras_require=EXTRAS_REQUIRE,
@@ -294,7 +192,6 @@ def setup():
             "Programming Language :: Python :: Implementation :: CPython",
             "Programming Language :: Python :: Implementation :: PyPy",
         ],
-        cmdclass={"build_ext": BuildExtWithDLL},
     )
 
 

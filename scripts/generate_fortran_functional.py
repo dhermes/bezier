@@ -17,7 +17,9 @@ from tests.functional import utils
 
 SCRIPTS_DIR = os.path.abspath(os.path.dirname(__file__))
 GENERATED_FILENAME = os.path.abspath(
-    os.path.join(SCRIPTS_DIR, "..", "tests", "fortran", "functional_curve.f90")
+    os.path.join(
+        SCRIPTS_DIR, os.pardir, "tests", "fortran", "functional_curve.f90"
+    )
 )
 COL_TEMPLATE = "    nodes{:d}(:, {:d}) = [{}_dp, {}_dp]"
 PARAM_TEMPLATE_COMPACT = "    expected_params({:d}, :) = [{}]"
