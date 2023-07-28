@@ -171,11 +171,7 @@ def setup():
         package_dir={"": os.path.join("src", "python")},
         license="Apache 2.0",
         platforms="Posix; macOS; Windows",
-        package_data={
-            "bezier": [
-                "*.pxd",
-            ]
-        },
+        package_data={"bezier": ["*.pxd"]},
         zip_safe=True,
         install_requires=REQUIREMENTS,
         extras_require=EXTRAS_REQUIRE,

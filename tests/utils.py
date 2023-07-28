@@ -240,11 +240,8 @@ def tree(directory, suffix=None):
         return None
 
 
-def print_tree(directory, suffix=None, replacements=None):
+def print_tree(directory, suffix=None, replacements=()):
     """Pretty print a file tree."""
-    if replacements is None:
-        replacements = ()
-
     full_tree = tree(directory, suffix=suffix)
     # NOTE: We explicitly use newline over ``os.linesep`` here because this
     #       will be used in Sphinx assertions for content authored in our
