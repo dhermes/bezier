@@ -475,10 +475,11 @@ reasons:
   completed (will be the build that occurred when the tag was pushed). If
   the builds pushed to PyPI automatically, a build would need to
   link to itself **while** being run.
-* Wheels need be built for Linux, macOS and Windows. This process
-  is **becoming** better, but is still scattered across many
-  different build systems. Each wheel will be pushed directly to
-  PyPI via `twine`_.
+* Wheels need be built for Linux, macOS and Windows. Building wheels
+  occurs **largely** via the `Building Wheels workflow`_, but still requires
+  access to an ARM macOS (M1) machine and may require building ARM Linux images
+  outside of GitHub Actions. After being built, each wheel will be pushed
+  directly to PyPI via `twine`_.
 * The release will be manually pushed to `TestPyPI`_ so the landing
   page can be visually inspected and the package can be installed
   from TestPyPI rather than from a local file.
@@ -486,6 +487,7 @@ reasons:
 .. _PyPI: https://pypi.org/project/bezier/
 .. _twine: https://packaging.python.org/distributing/
 .. _TestPyPI: https://packaging.python.org/guides/using-testpypi/
+.. _Building Wheels workflow: https://github.com/dhermes/bezier/blob/main/.github/workflows/wheels.yaml
 
 Supported Python Versions
 =========================
