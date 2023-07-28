@@ -100,7 +100,7 @@ This code is Public Domain, so does not conflict with the Apache 2.0 license
 QUADPACK is used to perform numerical quadrature to compute the length
 of a curve segment.
 
-.. _file: https://github.com/dhermes/bezier/tree/main/src/fortran/quadpack.90
+.. _file: https://github.com/dhermes/bezier/tree/main/src/fortran/quadpack.f90
 .. _QUADPACK: https://en.wikipedia.org/wiki/QUADPACK
 .. _John Burkardt: https://people.math.sc.edu/Burkardt/f_src/quadpack_double/quadpack_double.html
 
