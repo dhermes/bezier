@@ -44,14 +44,14 @@ def main():
     )
 
     # 2. Build the wheel from source.
-    basic_dir = tempfile.TemporaryDirectory()
+    basic_dir = tempfile.mkdtemp()
     # NOTE: ``pip wheel`` requires ``BEZIER_INSTALL_PREFIX`` to be set.
     subprocess.call(
         ("python", "-m", "pip", "wheel", ".", "--wheel-dir", basic_dir)
     )
 
     # 3. repair the built wheel.
-    repaired_dir = tempfile.TemporaryDirectory()
+    repaired_dir = tempfile.mkdtemp()
     subprocess.call(
         (
             "python",
