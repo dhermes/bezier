@@ -135,7 +135,12 @@ def install_bezier(session, debug=False, env=None):
     env[INSTALL_PREFIX_ENV] = install_prefix
 
     session.install(".", env=env)
-    return install_prefix
+
+    runtime_env = {}
+    if IS_WINDOWS:
+        runtime_env[EXTRA_DLL_ENV] = os.path.join(install_prefix, "bin")
+
+    return install_prefix, runtime_env
 
 
 @nox.session(py=DEFAULT_INTERPRETER)
@@ -178,10 +183,7 @@ def unit(session):
     # Install all test dependencies.
     session.install(*local_deps)
     # Install this package.
-    install_prefix = install_bezier(session, debug=True)
-    env = {}
-    if IS_WINDOWS:
-        env[EXTRA_DLL_ENV] = os.path.join(install_prefix, "bin")
+    _, env = install_bezier(session, debug=True)
     # Run pytest against the unit tests.
     run_args = (
         ["python", "-m", "pytest"]
@@ -338,7 +340,7 @@ def docs_images(session):
         env = {INSTALL_PREFIX_ENV: install_prefix}
         session.run(command, external=True, env=env)
     else:
-        install_prefix = install_bezier(session)
+        install_prefix, _ = install_bezier(session)
     # Use custom RC-file for matplotlib.
     env = {
         INSTALL_PREFIX_ENV: install_prefix,
