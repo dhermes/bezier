@@ -535,6 +535,9 @@ This project uses environment variables for building the
   This will only be relevant when installing from source, but a new version of
   Python will also mean the existing wheels on PyPI won't support that new
   version.
+- ``BEZIER_EXTRA_DLL``: Used to add (optional) extra directory to DLL search
+  path on Windows. This is intended to be used in tests primarily, but may also
+  be required when building from source.
 
 and for running tests and interacting with Continuous Integration
 services:
