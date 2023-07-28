@@ -246,7 +246,10 @@ def print_tree(directory, suffix=None, replacements=None):
         replacements = ()
 
     full_tree = tree(directory, suffix=suffix)
-    content = os.linesep.join(
+    # NOTE: We explicitly use newline over ``os.linesep`` here because this
+    #       will be used in Sphinx assertions for content authored in our
+    #       codebase (with uses UNIX line endings).
+    content = "\n".join(
         [
             os.path.basename(directory) + os.path.sep,
             textwrap.indent(full_tree, "  "),
