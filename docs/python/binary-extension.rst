@@ -63,7 +63,7 @@ The command line tool `auditwheel`_ adds a ``bezier.libs`` directory to
    # macOS specific.
    dylibs_directory = os.path.join(base_dir, ".dylibs")
    # Linux specific.
-   libs_directory = os.path.abspath(os.path.join(base_dir, "..", "bezier.libs"))
+   libs_directory = os.path.abspath(os.path.join(base_dir, os.pardir, "bezier.libs"))
 
 
    def invoke_shell(*args, cwd=base_dir):
@@ -253,7 +253,7 @@ The Python extension module (``.pyd`` file) depends directly on this library:
 
 
    base_dir = os.path.abspath(os.path.dirname(bezier.__file__))
-   site_packages = os.path.abspath(os.path.join(base_dir, ".."))
+   site_packages = os.path.abspath(os.path.join(base_dir, os.pardir))
    libs_directory = os.path.join(site_packages, "bezier.libs")
    # Use regex replacement to handle the fact that the ``bezier.dll``
    # file contents are non-deterministic (across time / builds)
