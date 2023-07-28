@@ -21,6 +21,11 @@ Python Changes
 Packaging
 ~~~~~~~~~
 
+-  Switched to `delvewheel <https://github.com/adang1345/delvewheel>`__ for
+   repairing Windows wheels
+   (`#307 <https://github.com/dhermes/bezier/pull/307>`__). This is similar to
+   how Linux and macOS packaging already work. This is vastly superior to the
+   homegrown approach previously used with ``extra-dll``.
 -  Dropped support for Python 3.7 and added support for Python 3.10 and 3.11
    (`#271 <https://github.com/dhermes/bezier/pull/271>`__,
    `#302 <https://github.com/dhermes/bezier/pull/302>`__).
@@ -34,12 +39,12 @@ Packaging
 Bug Fixes
 ~~~~~~~~~
 
--  Allow the ``extra-dll`` directory to be absent on Windows. For binary wheel
+-  Allow the extra DLL directory to be absent on Windows. For binary wheel
    installs, this directory contains the ``libbezier`` DLL (e.g.
-   ``extra-dll\bezier-2a44d276.dll`` was in the most recent release for 64-bit
-   Python 3.9). For pure Python installs, the ``extra-dll`` directory will
-   be absent.
-   (`#255 <https://github.com/dhermes/bezier/pull/255>`__). Fixed
+   ``bezier.libs\bezier-2a44d276.dll``). For pure Python installs, the
+   ``bezier.libs`` directory will be absent.
+   (`#307 <https://github.com/dhermes/bezier/pull/307>`__,
+   `#255 <https://github.com/dhermes/bezier/pull/255>`__). Fixed
    `#254 <https://github.com/dhermes/bezier/issues/254>`__.
 -  Bug fix for ``clip_range()``
    (`doc <https://bezier.readthedocs.io/en/2023.7.27/python/reference/bezier.hazmat.clipping.html#bezier.hazmat.clipping.clip_range>`__).
