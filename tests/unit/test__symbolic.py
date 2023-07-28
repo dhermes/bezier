@@ -44,6 +44,7 @@ class Test_to_symbolic:
 
         return _symbolic.to_symbolic(nodes)
 
+    @pytest.mark.skipif(sympy is None, reason="SymPy not installed")
     def test_bad_shape(self):
         nodes = np.empty((1, 1, 1), order="F")
         with pytest.raises(ValueError) as exc_info:
