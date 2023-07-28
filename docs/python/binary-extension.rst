@@ -286,19 +286,23 @@ The Python extension module (``.pyd`` file) depends directly on this library:
 
      Image has the following dependencies:
 
-       bezier-e5dbb97a.dll
+       bezier-49215506ad8b5a6c4980e92c71dbc4fd.dll
        python311.dll
        KERNEL32.dll
        VCRUNTIME140.dll
        api-ms-win-crt-stdio-l1-1-0.dll
        api-ms-win-crt-heap-l1-1-0.dll
        api-ms-win-crt-runtime-l1-1-0.dll
+       api-ms-win-crt-math-l1-1-0.dll
+
+     Summary
    ...
 
 For built wheels, the dependency will be renamed from ``bezier.dll`` to a
 unique name containing the first 8 characters of the SHA256 hash of the DLL
 file (to avoid a name collision) and placed in a directory within the
-``bezier`` package: for example ``extra-dll/bezier-e5dbb97a.dll``.
+``bezier`` package: for example
+``extra-dll/bezier-49215506ad8b5a6c4980e92c71dbc4fd.dll``.
 TODO
 
 The ``libbezier`` DLL has **no external dependencies**, but does have
@@ -388,18 +392,18 @@ on MinGW:
 .. testcode:: windows-dll
    :hide:
 
-   invoke_shell("dumpbin", "/dependents", "extra-dll\\bezier-e5dbb97a.dll")
+   invoke_shell("dumpbin", "/dependents", "extra-dll\\bezier-49215506ad8b5a6c4980e92c71dbc4fd.dll")
 
 .. testoutput:: windows-dll
    :options: +NORMALIZE_WHITESPACE
    :windows-only:
 
-   > dumpbin /dependents extra-dll\bezier-e5dbb97a.dll
+   > dumpbin /dependents extra-dll\bezier-49215506ad8b5a6c4980e92c71dbc4fd.dll
    Microsoft (R) COFF/PE Dumper Version ...
    Copyright (C) Microsoft Corporation.  All rights reserved.
 
 
-   Dump of file extra-dll\bezier-e5dbb97a.dll
+   Dump of file extra-dll\bezier-49215506ad8b5a6c4980e92c71dbc4fd.dll
 
    File Type: DLL
 
@@ -408,7 +412,7 @@ on MinGW:
        KERNEL32.dll
        msvcrt.dll
 
-   Summary
+     Summary
    ...
 
 .. note::
