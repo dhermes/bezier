@@ -288,13 +288,19 @@ The Python extension module (``.pyd`` file) depends directly on this library:
 
 
    def invoke_shell(*args, cwd=base_dir):
-       print("> " + " ".join(args))
        # Replace ``"dumpbin"`` with ``dumpbin_exe``.
        cmd = tuple(map(replace_dumpbin, args))
        # NOTE: We print to the stdout of the doctest, rather than using
        #       ``subprocess.call()`` directly.
        output_bytes = subprocess.check_output(cmd, cwd=cwd)
-       output_str = output_bytes.decode("utf-8")
+
+       output_str = "\n".join(
+           [
+               "> " + " ".join(args),
+               output_bytes.decode("utf-8"),
+           ]
+       )
+
        output_str = re.sub(dll_pattern, dll_sentinel, output_str)
        print(output_str, end="")
 
