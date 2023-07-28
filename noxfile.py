@@ -175,14 +175,20 @@ def unit(session):
     # Install all test dependencies.
     session.install(*local_deps)
     # Install this package.
-    install_bezier(session, debug=True)
+    install_prefix = install_bezier(session, debug=True)
+    # Ensure DLL is on search path
+    env = {}
+    if IS_WINDOWS:
+        env["PATH"] = os.pathsep.join(
+            [os.path.join(install_prefix, "bin"), os.environ["PATH"]]
+        )
     # Run pytest against the unit tests.
     run_args = (
         ["python", "-m", "pytest"]
         + session.posargs
         + [get_path("tests", "unit")]
     )
-    session.run(*run_args)
+    session.run(*run_args, env=env)
 
 
 @nox.session(py=DEFAULT_INTERPRETER)
