@@ -25,7 +25,8 @@ import subprocess
 import tempfile
 
 
-_SCRIPTS_DIR = os.path.abspath(os.path.dirname(__file__))
+_WINDOWS_DIR = os.path.abspath(os.path.dirname(__file__))
+_SCRIPTS_DIR = os.path.dirname(_WINDOWS_DIR)
 ROOT_DIR = os.path.dirname(_SCRIPTS_DIR)
 INSTALL_PREFIX_ENV = "BEZIER_INSTALL_PREFIX"
 
