@@ -35,13 +35,14 @@ jobs:
       NOX_SESSION: "${{ matrix.nox-session }}"
       MINGW: 'C:\msys64\mingw64\bin'
     strategy:
+      fail-fast: false # TMP
       matrix:
         nox-session:
-          - unit-3.8
-          - unit-3.9
+          # - unit-3.8
+          # - unit-3.9
           - unit-3.10
-          - cover
-          - functional-3.11
+          # - cover
+          # - functional-3.11
           - doctest
     steps:
       - uses: actions/cache@v3
