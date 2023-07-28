@@ -235,7 +235,7 @@ The command line tool `delvewheel`_ adds a ``bezier.libs`` directory to
    '.../site-packages/bezier.libs'
    >>> print_tree(libs_directory)
    bezier.libs/
-     bezier-49215506ad8b5a6c4980e92c71dbc4fd.dll
+     bezier-40ff1ce7372f05ba11436ffbadd11324.dll
 
 A single Windows shared library (DLL) is provided: ``bezier.dll``.
 The Python extension module (``.pyd`` file) depends directly on this library:
@@ -258,7 +258,7 @@ The Python extension module (``.pyd`` file) depends directly on this library:
    # Use regex replacement to handle the fact that the ``bezier.dll``
    # file contents are non-deterministic (across time / builds)
    dll_pattern = "bezier-[0-9a-f]{32}.dll"
-   dll_sentinel = "bezier-49215506ad8b5a6c4980e92c71dbc4fd.dll"
+   dll_sentinel = "bezier-40ff1ce7372f05ba11436ffbadd11324.dll"
 
 
    def print_tree(directory):
@@ -319,7 +319,7 @@ The Python extension module (``.pyd`` file) depends directly on this library:
 
      Image has the following dependencies:
 
-       bezier-49215506ad8b5a6c4980e92c71dbc4fd.dll
+       bezier-40ff1ce7372f05ba11436ffbadd11324.dll
        python311.dll
        KERNEL32.dll
        VCRUNTIME140.dll
@@ -336,7 +336,7 @@ unique name containing the first 32 characters of a SHA256 hash (the hash
 input is ``bezier`` followed by the contents of the DLL file) to avoid a name
 collision and placed in the ``bezier.libs`` directory next to the ``bezier``
 package: for example
-``bezier.libs/bezier-49215506ad8b5a6c4980e92c71dbc4fd.dll``.
+``bezier.libs/bezier-40ff1ce7372f05ba11436ffbadd11324.dll``.
 
 The ``libbezier`` DLL has **no external dependencies**, but does have
 a corresponding `import library`_ --- ``usr/lib/bezier.lib`` --- which is
@@ -434,12 +434,12 @@ on MinGW:
    :options: +NORMALIZE_WHITESPACE
    :windows-only:
 
-   > dumpbin /dependents bezier.libs\bezier-49215506ad8b5a6c4980e92c71dbc4fd.dll
+   > dumpbin /dependents bezier.libs\bezier-40ff1ce7372f05ba11436ffbadd11324.dll
    Microsoft (R) COFF/PE Dumper Version ...
    Copyright (C) Microsoft Corporation.  All rights reserved.
 
 
-   Dump of file bezier.libs\bezier-49215506ad8b5a6c4980e92c71dbc4fd.dll
+   Dump of file bezier.libs\bezier-40ff1ce7372f05ba11436ffbadd11324.dll
 
    File Type: DLL
 
