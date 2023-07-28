@@ -39,6 +39,11 @@ def main():
     if install_prefix is None:
         raise RuntimeError("Install prefix must be set", INSTALL_PREFIX_ENV)
 
+    # TMP
+    subprocess.check_call(
+        ("python", "-c", "import sys; print(sys.executable)")
+    )
+
     # 1. Install the ``delocate`` tool.
     subprocess.check_call(
         ("python", "-m", "pip", "install", "--upgrade", "delvewheel")
