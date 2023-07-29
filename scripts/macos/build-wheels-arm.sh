@@ -17,6 +17,7 @@ set -e -x
 GIT_ROOT=$(git rev-parse --show-toplevel)
 cd "${GIT_ROOT}"
 
+export TARGET_NATIVE_ARCH=OFF
 nox --session libbezier-release --reuse-existing-virtualenvs
 
 export CIBW_BEFORE_BUILD='pip install numpy'
