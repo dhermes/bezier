@@ -121,6 +121,27 @@ jobs:
           name: macos-intel
           path: ./wheelhouse/*.whl
 
+  sdist:
+    runs-on: ubuntu-22.04
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+
+      - name: Generate sdist (source distribution)
+        env:
+          BEZIER_NO_EXTENSION: "True"
+        run: |
+          python3.11 setup.py sdist
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: sdist
+          path: ./dist/*.tar.gz
+
   windows-intel:
     runs-on: windows-2022
 
