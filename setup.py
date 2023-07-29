@@ -176,7 +176,7 @@ def setup():
         install_requires=REQUIREMENTS,
         extras_require=EXTRAS_REQUIRE,
         ext_modules=extension_modules(),
-        python_requires=">=3.8",
+        python_requires=">=3.9",
         classifiers=[
             "Development Status :: 4 - Beta",
             "Intended Audience :: Developers",
@@ -185,7 +185,6 @@ def setup():
             "License :: OSI Approved :: Apache Software License",
             "Operating System :: OS Independent",
             "Programming Language :: Python :: 3",
-            "Programming Language :: Python :: 3.8",
             "Programming Language :: Python :: 3.9",
             "Programming Language :: Python :: 3.10",
             "Programming Language :: Python :: 3.11",
@@ -209,11 +208,11 @@ def _check_python_version():
 
     major = sys.version_info.major
     minor = sys.version_info.minor
-    if (major, minor) in ((3, 8), (3, 9), (3, 10), (3, 11)):
+    if (major, minor) in ((3, 9), (3, 10), (3, 11)):
         return
 
     message = INVALID_VERSION_MESSAGE.format(
-        major=major, minor=minor, versions="3.8, 3.9, 3.10 and 3.11"
+        major=major, minor=minor, versions="3.9, 3.10 and 3.11"
     )
     print(message, file=sys.stderr, end="")
     sys.exit(1)

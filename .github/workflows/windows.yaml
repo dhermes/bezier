@@ -37,7 +37,6 @@ jobs:
     strategy:
       matrix:
         nox-session:
-          - unit-3.8
           - unit-3.9
           - unit-3.10
           - cover
