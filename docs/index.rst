@@ -5,8 +5,6 @@
 
 |linux-build| |macos-build| |windows-build| |coverage|
 
-|pypi| |versions|
-
 |zenodo| |JOSS|
 
 .. |eacute| unicode:: U+000E9 .. LATIN SMALL LETTER E WITH ACUTE
@@ -252,25 +250,19 @@ License
 ``bezier`` is made available under the Apache 2.0 License. For more
 details, see `the LICENSE`_.
 
-.. _the LICENSE: https://github.com/dhermes/bezier/blob/main/LICENSE
+.. _the LICENSE: https://github.com/dhermes/bezier/blob/2023.7.28/LICENSE
 
-.. |linux-build| image:: https://github.com/dhermes/bezier/workflows/Linux/badge.svg?branch=main&event=push
-   :target: https://github.com/dhermes/bezier/actions?query=workflow%3ALinux
+.. |linux-build| image:: https://raw.githubusercontent.com/dhermes/bezier/2023.7.28/docs/linux-passing.svg?sanitize=true
+   :target: https://github.com/dhermes/bezier/actions/runs/5698156661
    :alt: Linux Build (GitHub Actions)
-.. |macos-build| image:: https://github.com/dhermes/bezier/workflows/macOS/badge.svg?branch=main&event=push
-   :target: https://github.com/dhermes/bezier/actions?query=workflow%3AmacOS
+.. |macos-build| image:: https://raw.githubusercontent.com/dhermes/bezier/2023.7.28/docs/macos-passing.svg?sanitize=true
+   :target: https://github.com/dhermes/bezier/actions/runs/5698156663
    :alt: macOS Build (GitHub Actions)
-.. |windows-build| image:: https://github.com/dhermes/bezier/workflows/Windows/badge.svg?branch=main&event=push
-   :target: https://github.com/dhermes/bezier/actions?query=workflow%3AWindows
+.. |windows-build| image:: https://raw.githubusercontent.com/dhermes/bezier/2023.7.28/docs/windows-passing.svg?sanitize=true
+   :target: https://github.com/dhermes/bezier/actions/runs/5698156662
    :alt: Windows Build (GitHub Actions)
-.. |pypi| image:: https://img.shields.io/pypi/v/bezier.svg
-   :target: https://pypi.org/project/bezier/
-   :alt: PyPI Latest
-.. |versions| image:: https://img.shields.io/pypi/pyversions/bezier.svg
-   :target: https://pypi.org/project/bezier/
-   :alt: Package Versions
-.. |coverage| image:: https://coveralls.io/repos/github/dhermes/bezier/badge.svg
-   :target: https://coveralls.io/github/dhermes/bezier
+.. |coverage| image:: https://s3.amazonaws.com/assets.coveralls.io/badges/coveralls_100.svg
+   :target: https://coveralls.io/builds/61654285
    :alt: Code Coverage
 .. |zenodo| image:: https://zenodo.org/badge/73047402.svg
    :target: https://zenodo.org/badge/latestdoi/73047402
