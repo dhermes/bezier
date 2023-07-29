@@ -44,8 +44,8 @@ Bug Fixes
 
 -  Allow the extra DLL directory to be absent on Windows. For binary wheel
    installs, this directory contains the ``libbezier`` DLL (e.g.
-   ``bezier.libs\bezier-2a44d276.dll``). For pure Python installs, the
-   ``bezier.libs`` directory will be absent.
+   ``bezier.libs\bezier-40ff1ce7372f05ba11436ffbadd11324.dll``). For pure
+   Python installs, the ``bezier.libs`` directory will be absent.
    (`#307 <https://github.com/dhermes/bezier/pull/307>`__,
    `#255 <https://github.com/dhermes/bezier/pull/255>`__). Fixed
    `#254 <https://github.com/dhermes/bezier/issues/254>`__.
