@@ -13,6 +13,9 @@
 name: Building Wheels
 
 on:
+  push: # TMP
+    branches: # TMP
+      - build-wheels # TMP
   workflow_dispatch:
     inputs:
       reason:
