@@ -390,7 +390,7 @@ def release_readme_verify():
         macos_badge=MACOS_BADGE_RELEASE,
         macos_path="/runs/{macos_run}",
         windows_badge=WINDOWS_BADGE_RELEASE,
-        windows_path="/run/{windows_run}",
+        windows_path="/runs/{windows_run}",
         coveralls_badge=COVERALLS_BADGE_RELEASE,
         coveralls_path="builds/{coveralls_build}",
         citation=CITATION.replace("{", "{{").replace("}", "}}"),

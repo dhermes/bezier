@@ -209,7 +209,7 @@ details, see `the LICENSE`_.
    :target: https://github.com/dhermes/bezier/actions/runs/{macos_run}
    :alt: macOS Build (GitHub Actions)
 .. |windows-build| image:: https://raw.githubusercontent.com/dhermes/bezier/{version}/docs/windows-passing.svg?sanitize=true
-   :target: https://github.com/dhermes/bezier/actions/run/{windows_run}
+   :target: https://github.com/dhermes/bezier/actions/runs/{windows_run}
    :alt: Windows Build (GitHub Actions)
 .. |coverage| image:: https://s3.amazonaws.com/assets.coveralls.io/badges/coveralls_100.svg
    :target: https://coveralls.io/builds/{coveralls_build}
