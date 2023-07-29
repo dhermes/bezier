@@ -60,11 +60,8 @@ DEFAULT_INTERPRETER = "3.11"
 PYPY = "pypy3"
 ALL_INTERPRETERS = (
     "3.9",
-    "3.9-32",
     "3.10",
-    "3.10-32",
     "3.11",
-    "3.11-32",
     PYPY,
 )
 BUILD_TYPE_DEBUG = "Debug"
