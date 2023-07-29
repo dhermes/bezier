@@ -58,12 +58,7 @@ DOCS_DEPS = (
 )
 DEFAULT_INTERPRETER = "3.11"
 PYPY = "pypy3"
-ALL_INTERPRETERS = (
-    "3.9",
-    "3.10",
-    "3.11",
-    PYPY,
-)
+ALL_INTERPRETERS = ("3.9", "3.10", "3.11", PYPY)
 BUILD_TYPE_DEBUG = "Debug"
 BUILD_TYPE_RELEASE = "Release"
 DEBUG_SESSION_NAME = "libbezier-debug"

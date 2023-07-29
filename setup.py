@@ -15,7 +15,10 @@
 import os
 import sys
 
-import pkg_resources
+try:
+    import numpy as np
+except ImportError:
+    np = None
 import setuptools
 import setuptools.dist
 
@@ -89,22 +92,10 @@ _IS_WINDOWS = os.name == "nt"
 _IS_PYPY = sys.implementation.name == "pypy"
 
 
-def is_installed(requirement):
-    try:
-        pkg_resources.require(requirement)
-    except pkg_resources.ResolutionError:
-        return False
-
-    else:
-        return True
-
-
 def numpy_include_dir():
-    if not is_installed("numpy >= 1.9.0"):
+    if np is None:
         print(NUMPY_MESSAGE, file=sys.stderr, end="")
         sys.exit(1)
-
-    import numpy as np
 
     return np.get_include()
 
