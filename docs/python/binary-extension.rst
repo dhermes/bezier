@@ -302,6 +302,8 @@ The Python extension module (``.pyd`` file) depends directly on this library:
        )
 
        output_str = re.sub(dll_pattern, dll_sentinel, output_str)
+       # Normalize line endings (content is authored with UNIX-style)
+       output_str = output_str.replace(os.linesep, "\n")
        print(output_str, end="")
 
 .. testcode:: windows-extension
@@ -310,7 +312,6 @@ The Python extension module (``.pyd`` file) depends directly on this library:
    invoke_shell("dumpbin", "/dependents", "_speedup.cp311-win_amd64.pyd")
 
 .. testoutput:: windows-extension
-   :options: +NORMALIZE_WHITESPACE
    :windows-only:
    :pyversion: >= 3.11
 
@@ -437,7 +438,6 @@ on MinGW:
    invoke_shell("dumpbin", "/dependents", str(dll_path), cwd=site_packages)
 
 .. testoutput:: windows-dll
-   :options: +NORMALIZE_WHITESPACE
    :windows-only:
 
    > dumpbin /dependents bezier.libs\bezier-40ff1ce7372f05ba11436ffbadd11324.dll
