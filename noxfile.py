@@ -233,7 +233,7 @@ def functional(session):
     session.run(*run_args, env=env)
 
 
-@nox.session(py=DEFAULT_INTERPRETER)
+@nox.session(py="3.9")
 def docs(session):
     # Install all dependencies.
     session.install(*DOCS_DEPS)
