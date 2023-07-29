@@ -2059,11 +2059,16 @@ static CYTHON_INLINE PyObject* __Pyx_PyObject_GetAttrStrNoError(PyObject* obj, P
 /* GetBuiltinName.proto */
 static PyObject *__Pyx_GetBuiltinName(PyObject *name);
 
-/* Import.proto */
-static PyObject *__Pyx_Import(PyObject *name, PyObject *from_list, int level);
-
-/* ImportFrom.proto */
-static PyObject* __Pyx_ImportFrom(PyObject* module, PyObject* name);
+/* DictGetItem.proto */
+#if PY_MAJOR_VERSION >= 3 && !CYTHON_COMPILING_IN_PYPY
+static PyObject *__Pyx_PyDict_GetItem(PyObject *d, PyObject* key);
+#define __Pyx_PyObject_Dict_GetItem(obj, name)\
+    (likely(PyDict_CheckExact(obj)) ?\
+     __Pyx_PyDict_GetItem(obj, name) : PyObject_GetItem(obj, name))
+#else
+#define __Pyx_PyDict_GetItem(d, key) PyObject_GetItem(d, key)
+#define __Pyx_PyObject_Dict_GetItem(obj, name)  PyObject_GetItem(obj, name)
+#endif
 
 /* GetTopmostException.proto */
 #if CYTHON_USE_EXC_INFO_STACK && CYTHON_FAST_THREAD_STATE
@@ -2089,72 +2094,11 @@ static int __Pyx__GetException(PyThreadState *tstate, PyObject **type, PyObject 
 static int __Pyx_GetException(PyObject **type, PyObject **value, PyObject **tb);
 #endif
 
-/* ImportDottedModule.proto */
-static PyObject *__Pyx_ImportDottedModule(PyObject *name, PyObject *parts_tuple);
-#if PY_MAJOR_VERSION >= 3
-static PyObject *__Pyx_ImportDottedModule_WalkParts(PyObject *module, PyObject *name, PyObject *parts_tuple);
-#endif
-
-/* PyFunctionFastCall.proto */
-#if CYTHON_FAST_PYCALL
-#if !CYTHON_VECTORCALL
-#define __Pyx_PyFunction_FastCall(func, args, nargs)\
-    __Pyx_PyFunction_FastCallDict((func), (args), (nargs), NULL)
-static PyObject *__Pyx_PyFunction_FastCallDict(PyObject *func, PyObject **args, Py_ssize_t nargs, PyObject *kwargs);
-#endif
-#define __Pyx_BUILD_ASSERT_EXPR(cond)\
-    (sizeof(char [1 - 2*!(cond)]) - 1)
-#ifndef Py_MEMBER_SIZE
-#define Py_MEMBER_SIZE(type, member) sizeof(((type *)0)->member)
-#endif
-#if !CYTHON_VECTORCALL
-#if PY_VERSION_HEX >= 0x03080000
-  #include "frameobject.h"
-#if PY_VERSION_HEX >= 0x030b00a6
-  #ifndef Py_BUILD_CORE
-    #define Py_BUILD_CORE 1
-  #endif
-  #include "internal/pycore_frame.h"
-#endif
-  #define __Pxy_PyFrame_Initialize_Offsets()
-  #define __Pyx_PyFrame_GetLocalsplus(frame)  ((frame)->f_localsplus)
-#else
-  static size_t __pyx_pyframe_localsplus_offset = 0;
-  #include "frameobject.h"
-  #define __Pxy_PyFrame_Initialize_Offsets()\
-    ((void)__Pyx_BUILD_ASSERT_EXPR(sizeof(PyFrameObject) == offsetof(PyFrameObject, f_localsplus) + Py_MEMBER_SIZE(PyFrameObject, f_localsplus)),\
-     (void)(__pyx_pyframe_localsplus_offset = ((size_t)PyFrame_Type.tp_basicsize) - Py_MEMBER_SIZE(PyFrameObject, f_localsplus)))
-  #define __Pyx_PyFrame_GetLocalsplus(frame)\
-    (assert(__pyx_pyframe_localsplus_offset), (PyObject **)(((char *)(frame)) + __pyx_pyframe_localsplus_offset))
-#endif
-#endif
-#endif
-
 /* PyObjectCall.proto */
 #if CYTHON_COMPILING_IN_CPYTHON
 static CYTHON_INLINE PyObject* __Pyx_PyObject_Call(PyObject *func, PyObject *arg, PyObject *kw);
 #else
 #define __Pyx_PyObject_Call(func, arg, kw) PyObject_Call(func, arg, kw)
-#endif
-
-/* PyObjectCallMethO.proto */
-#if CYTHON_COMPILING_IN_CPYTHON
-static CYTHON_INLINE PyObject* __Pyx_PyObject_CallMethO(PyObject *func, PyObject *arg);
-#endif
-
-/* PyObjectFastCall.proto */
-#define __Pyx_PyObject_FastCall(func, args, nargs)  __Pyx_PyObject_FastCallDict(func, args, (size_t)(nargs), NULL)
-static CYTHON_INLINE PyObject* __Pyx_PyObject_FastCallDict(PyObject *func, PyObject **args, size_t nargs, PyObject *kwargs);
-
-/* DictGetItem.proto */
-#if PY_MAJOR_VERSION >= 3 && !CYTHON_COMPILING_IN_PYPY
-static PyObject *__Pyx_PyDict_GetItem(PyObject *d, PyObject* key);
-#define __Pyx_PyObject_Dict_GetItem(obj, name)\
-    (likely(PyDict_CheckExact(obj)) ?\
-     __Pyx_PyDict_GetItem(obj, name) : PyObject_GetItem(obj, name))
-#else
-#define __Pyx_PyDict_GetItem(d, key) PyObject_GetItem(d, key)
-#define __Pyx_PyObject_Dict_GetItem(obj, name)  PyObject_GetItem(obj, name)
 #endif
 
 /* RaiseException.proto */
@@ -2220,6 +2164,50 @@ static int __Pyx_ParseOptionalKeywords(PyObject *kwds, PyObject *const *kwvalues
     ((likely(__Pyx_IS_TYPE(obj, type) | (none_allowed && (obj == Py_None)))) ? 1 :\
         __Pyx__ArgTypeTest(obj, type, name, exact))
 static int __Pyx__ArgTypeTest(PyObject *obj, PyTypeObject *type, const char *name, int exact);
+
+/* PyFunctionFastCall.proto */
+#if CYTHON_FAST_PYCALL
+#if !CYTHON_VECTORCALL
+#define __Pyx_PyFunction_FastCall(func, args, nargs)\
+    __Pyx_PyFunction_FastCallDict((func), (args), (nargs), NULL)
+static PyObject *__Pyx_PyFunction_FastCallDict(PyObject *func, PyObject **args, Py_ssize_t nargs, PyObject *kwargs);
+#endif
+#define __Pyx_BUILD_ASSERT_EXPR(cond)\
+    (sizeof(char [1 - 2*!(cond)]) - 1)
+#ifndef Py_MEMBER_SIZE
+#define Py_MEMBER_SIZE(type, member) sizeof(((type *)0)->member)
+#endif
+#if !CYTHON_VECTORCALL
+#if PY_VERSION_HEX >= 0x03080000
+  #include "frameobject.h"
+#if PY_VERSION_HEX >= 0x030b00a6
+  #ifndef Py_BUILD_CORE
+    #define Py_BUILD_CORE 1
+  #endif
+  #include "internal/pycore_frame.h"
+#endif
+  #define __Pxy_PyFrame_Initialize_Offsets()
+  #define __Pyx_PyFrame_GetLocalsplus(frame)  ((frame)->f_localsplus)
+#else
+  static size_t __pyx_pyframe_localsplus_offset = 0;
+  #include "frameobject.h"
+  #define __Pxy_PyFrame_Initialize_Offsets()\
+    ((void)__Pyx_BUILD_ASSERT_EXPR(sizeof(PyFrameObject) == offsetof(PyFrameObject, f_localsplus) + Py_MEMBER_SIZE(PyFrameObject, f_localsplus)),\
+     (void)(__pyx_pyframe_localsplus_offset = ((size_t)PyFrame_Type.tp_basicsize) - Py_MEMBER_SIZE(PyFrameObject, f_localsplus)))
+  #define __Pyx_PyFrame_GetLocalsplus(frame)\
+    (assert(__pyx_pyframe_localsplus_offset), (PyObject **)(((char *)(frame)) + __pyx_pyframe_localsplus_offset))
+#endif
+#endif
+#endif
+
+/* PyObjectCallMethO.proto */
+#if CYTHON_COMPILING_IN_CPYTHON
+static CYTHON_INLINE PyObject* __Pyx_PyObject_CallMethO(PyObject *func, PyObject *arg);
+#endif
+
+/* PyObjectFastCall.proto */
+#define __Pyx_PyObject_FastCall(func, args, nargs)  __Pyx_PyObject_FastCallDict(func, args, (size_t)(nargs), NULL)
+static CYTHON_INLINE PyObject* __Pyx_PyObject_FastCallDict(PyObject *func, PyObject **args, size_t nargs, PyObject *kwargs);
 
 /* RaiseUnexpectedTypeError.proto */
 static int __Pyx_RaiseUnexpectedTypeError(const char *expected, PyObject *obj);
@@ -2406,6 +2394,15 @@ static CYTHON_INLINE void __Pyx__ExceptionSwap(PyThreadState *tstate, PyObject *
 static CYTHON_INLINE void __Pyx_ExceptionSwap(PyObject **type, PyObject **value, PyObject **tb);
 #endif
 
+/* Import.proto */
+static PyObject *__Pyx_Import(PyObject *name, PyObject *from_list, int level);
+
+/* ImportDottedModule.proto */
+static PyObject *__Pyx_ImportDottedModule(PyObject *name, PyObject *parts_tuple);
+#if PY_MAJOR_VERSION >= 3
+static PyObject *__Pyx_ImportDottedModule_WalkParts(PyObject *module, PyObject *name, PyObject *parts_tuple);
+#endif
+
 /* ssize_strlen.proto */
 static CYTHON_INLINE Py_ssize_t __Pyx_ssize_strlen(const char *s);
 
@@ -2469,6 +2466,9 @@ static CYTHON_INLINE int __Pyx_PySequence_ContainsTF(PyObject* item, PyObject* s
     int result = PySequence_Contains(seq, item);
     return unlikely(result < 0) ? result : (result == (eq == Py_EQ));
 }
+
+/* ImportFrom.proto */
+static PyObject* __Pyx_ImportFrom(PyObject* module, PyObject* name);
 
 /* HasAttr.proto */
 static CYTHON_INLINE int __Pyx_HasAttr(PyObject *, PyObject *);
@@ -2954,6 +2954,12 @@ static CYTHON_INLINE PyObject* __Pyx_PyInt_From_int(int value);
 /* CIntToPy.proto */
 static CYTHON_INLINE PyObject* __Pyx_PyInt_From_long(long value);
 
+/* CIntToPy.proto */
+static CYTHON_INLINE PyObject* __Pyx_PyInt_From_enum__BoxIntersectionType(enum BoxIntersectionType value);
+
+/* CIntToPy.proto */
+static CYTHON_INLINE PyObject* __Pyx_PyInt_From_enum__Status(enum Status value);
+
 /* CIntFromPy.proto */
 static CYTHON_INLINE size_t __Pyx_PyInt_As_size_t(PyObject *);
 
@@ -3137,8 +3143,6 @@ static PyObject *contiguous = 0;
 static PyObject *indirect_contiguous = 0;
 static int __pyx_memoryview_thread_locks_used;
 static PyThread_type_lock __pyx_memoryview_thread_locks[8];
-static PyObject *__Pyx_Enum_BoxIntersectionType_to_py(enum BoxIntersectionType); /*proto*/
-static PyObject *__Pyx_Enum_Status_to_py(enum Status); /*proto*/
 static CurvedPolygonSegment __pyx_convert__from_py_CurvedPolygonSegment(PyObject *); /*proto*/
 static int __pyx_array_allocate_buffer(struct __pyx_array_obj *); /*proto*/
 static struct __pyx_array_obj *__pyx_array_new(PyObject *, Py_ssize_t, char *, char *, char *); /*proto*/
@@ -3197,7 +3201,6 @@ static PyObject *__pyx_builtin_NotImplementedError;
 static PyObject *__pyx_builtin_enumerate;
 static PyObject *__pyx_builtin_range;
 static PyObject *__pyx_builtin_RuntimeError;
-static PyObject *__pyx_builtin_ImportError;
 static PyObject *__pyx_builtin_KeyError;
 static PyObject *__pyx_builtin___import__;
 static PyObject *__pyx_builtin_MemoryError;
@@ -3206,8 +3209,8 @@ static PyObject *__pyx_builtin_AssertionError;
 static PyObject *__pyx_builtin_Ellipsis;
 static PyObject *__pyx_builtin_id;
 static PyObject *__pyx_builtin_IndexError;
+static PyObject *__pyx_builtin_ImportError;
 /* #### Code section: string_decls ### */
-static const char __pyx_k_[] = ".";
 static const char __pyx_k_F[] = "F";
 static const char __pyx_k_O[] = "O";
 static const char __pyx_k_c[] = "c";
@@ -3215,8 +3218,9 @@ static const char __pyx_k_i[] = "i";
 static const char __pyx_k_j[] = "j";
 static const char __pyx_k_s[] = "s";
 static const char __pyx_k_t[] = "t";
-static const char __pyx_k__2[] = "*";
-static const char __pyx_k__6[] = ": ";
+static const char __pyx_k__4[] = ": ";
+static const char __pyx_k__5[] = ".";
+static const char __pyx_k__6[] = "*";
 static const char __pyx_k__9[] = "'";
 static const char __pyx_k_gc[] = "gc";
 static const char __pyx_k_id[] = "id";
@@ -3285,7 +3289,6 @@ static const char __pyx_k_throw[] = "throw";
 static const char __pyx_k_value[] = "value";
 static const char __pyx_k_x_val[] = "x_val";
 static const char __pyx_k_y_val[] = "y_val";
-static const char __pyx_k_Status[] = "Status";
 static const char __pyx_k_bottom[] = "bottom";
 static const char __pyx_k_degree[] = "degree";
 static const char __pyx_k_double[] = "double";
@@ -3308,9 +3311,6 @@ static const char __pyx_k_struct[] = "struct";
 static const char __pyx_k_unpack[] = "unpack";
 static const char __pyx_k_update[] = "update";
 static const char __pyx_k_verify[] = "verify";
-static const char __pyx_k_SUCCESS[] = "SUCCESS";
-static const char __pyx_k_TANGENT[] = "TANGENT";
-static const char __pyx_k_UNKNOWN[] = "UNKNOWN";
 static const char __pyx_k_asarray[] = "asarray";
 static const char __pyx_k_degree1[] = "degree1";
 static const char __pyx_k_degree2[] = "degree2";
@@ -3332,11 +3332,8 @@ static const char __pyx_k_reduced[] = "reduced";
 static const char __pyx_k_st_vals[] = "st_vals";
 static const char __pyx_k_success[] = "success";
 static const char __pyx_k_triples[] = "triples";
-static const char __pyx_k_DISJOINT[] = "DISJOINT";
-static const char __pyx_k_EDGE_END[] = "EDGE_END";
 static const char __pyx_k_Ellipsis[] = "Ellipsis";
 static const char __pyx_k_KeyError[] = "KeyError";
-static const char __pyx_k_SINGULAR[] = "SINGULAR";
 static const char __pyx_k_Sequence[] = "Sequence";
 static const char __pyx_k_elevated[] = "elevated";
 static const char __pyx_k_enum_val[] = "enum_val";
@@ -3390,7 +3387,6 @@ static const char __pyx_k_pyx_result[] = "__pyx_result";
 static const char __pyx_k_pyx_vtable[] = "__pyx_vtable__";
 static const char __pyx_k_ImportError[] = "ImportError";
 static const char __pyx_k_MemoryError[] = "MemoryError";
-static const char __pyx_k_NO_CONVERGE[] = "NO_CONVERGE";
 static const char __pyx_k_PickleError[] = "PickleError";
 static const char __pyx_k_UserWarning[] = "UserWarning";
 static const char __pyx_k_begin_index[] = "begin_index";
@@ -3408,8 +3404,6 @@ static const char __pyx_k_nodes_first[] = "nodes_first";
 static const char __pyx_k_right_nodes[] = "right_nodes";
 static const char __pyx_k_specialized[] = "specialized";
 static const char __pyx_k_tangent_vec[] = "tangent_vec";
-static const char __pyx_k_BAD_INTERIOR[] = "BAD_INTERIOR";
-static const char __pyx_k_INTERSECTION[] = "INTERSECTION";
 static const char __pyx_k_RuntimeError[] = "RuntimeError";
 static const char __pyx_k_allow_resize[] = "allow_resize";
 static const char __pyx_k_compute_area[] = "compute_area";
@@ -3435,10 +3429,8 @@ static const char __pyx_k_polygon_size2[] = "polygon_size2";
 static const char __pyx_k_reduce_cython[] = "__reduce_cython__";
 static const char __pyx_k_segments_size[] = "segments_size";
 static const char __pyx_k_AssertionError[] = "AssertionError";
-static const char __pyx_k_SAME_CURVATURE[] = "SAME_CURVATURE";
 static const char __pyx_k_all_edge_nodes[] = "all_edge_nodes";
 static const char __pyx_k_bbox_intersect[] = "bbox_intersect";
-static const char __pyx_k_bezier__status[] = "bezier._status";
 static const char __pyx_k_compute_length[] = "compute_length";
 static const char __pyx_k_evaluate_multi[] = "evaluate_multi";
 static const char __pyx_k_nodes_pointers[] = "nodes_pointers";
@@ -3459,7 +3451,6 @@ static const char __pyx_k_pyx_PickleError[] = "__pyx_PickleError";
 static const char __pyx_k_resizes_allowed[] = "resizes_allowed";
 static const char __pyx_k_setstate_cython[] = "__setstate_cython__";
 static const char __pyx_k_wiggle_interval[] = "wiggle_interval";
-static const char __pyx_k_BAD_MULTIPLICITY[] = "BAD_MULTIPLICITY";
 static const char __pyx_k_num_nodes_second[] = "num_nodes_second";
 static const char __pyx_k_specialize_curve[] = "specialize_curve";
 static const char __pyx_k_TOO_MANY_TEMPLATE[] = "TOO_MANY_TEMPLATE";
@@ -3468,7 +3459,6 @@ static const char __pyx_k_num_intersections[] = "num_intersections";
 static const char __pyx_k_num_reduced_nodes[] = "num_reduced_nodes";
 static const char __pyx_k_pyx_unpickle_Enum[] = "__pyx_unpickle_Enum";
 static const char __pyx_k_segment_ends_size[] = "segment_ends_size";
-static const char __pyx_k_INSUFFICIENT_SPACE[] = "INSUFFICIENT_SPACE";
 static const char __pyx_k_NEWTON_NO_CONVERGE[] = "NEWTON_NO_CONVERGE";
 static const char __pyx_k_SEGMENTS_TOO_SMALL[] = "SEGMENTS_TOO_SMALL";
 static const char __pyx_k_TOO_SMALL_TEMPLATE[] = "TOO_SMALL_TEMPLATE";
@@ -3480,7 +3470,6 @@ static const char __pyx_k_intersections_size[] = "intersections_size";
 static const char __pyx_k_locate_point_curve[] = "locate_point_curve";
 static const char __pyx_k_simple_convex_hull[] = "simple_convex_hull";
 static const char __pyx_k_strided_and_direct[] = "<strided and direct>";
-static const char __pyx_k_BoxIntersectionType[] = "BoxIntersectionType";
 static const char __pyx_k_NotImplementedError[] = "NotImplementedError";
 static const char __pyx_k_curve_intersections[] = "curve_intersections";
 static const char __pyx_k_newton_refine_curve[] = "newton_refine_curve";
@@ -3514,7 +3503,6 @@ static const char __pyx_k_reset_triangle_workspaces[] = "reset_triangle_workspac
 static const char __pyx_k_Index_out_of_bounds_axis_d[] = "Index out of bounds (axis %d)";
 static const char __pyx_k_Unexpected_number_of_edges[] = "Unexpected number of edges";
 static const char __pyx_k_Unknown_error_has_occurred[] = "Unknown error has occurred.";
-static const char __pyx_k_bezier__curve_intersection[] = "bezier._curve_intersection";
 static const char __pyx_k_evaluate_barycentric_multi[] = "evaluate_barycentric_multi";
 static const char __pyx_k_evaluate_multi_barycentric[] = "evaluate_multi_barycentric";
 static const char __pyx_k_Step_may_not_be_zero_axis_d[] = "Step may not be zero (axis %d)";
@@ -3555,8 +3543,6 @@ static const char __pyx_k_Roundoff_error_detected_which_pr[] = "Roundoff error d
 static const char __pyx_k_Tangent_curves_have_same_curvatu[] = "Tangent curves have same curvature.";
 static const char __pyx_k_The_number_of_candidate_intersec[] = "The number of candidate intersections is too high.\n{:d} candidate pairs.";
 static const char __pyx_k_Unable_to_convert_item_to_object[] = "Unable to convert item to object";
-static const char __pyx_k_enum_class_BoxIntersectionType_n[] = "enum class BoxIntersectionType not importable from bezier._curve_intersection. You are probably using a cpdef enum declared in a .pxd file that does not have a .py  or .pyx file.";
-static const char __pyx_k_enum_class_Status_not_importable[] = "enum class Status not importable from bezier._status. You are probably using a cpdef enum declared in a .pxd file that does not have a .py  or .pyx file.";
 static const char __pyx_k_free_curve_intersections_workspa[] = "free_curve_intersections_workspace";
 static const char __pyx_k_free_triangle_intersections_work[] = "free_triangle_intersections_workspace";
 static const char __pyx_k_got_differing_extents_in_dimensi[] = "got differing extents in dimension ";
@@ -3752,14 +3738,10 @@ typedef struct {
   PyTypeObject *__pyx_MemviewEnum_type;
   PyTypeObject *__pyx_memoryview_type;
   PyTypeObject *__pyx_memoryviewslice_type;
-  PyObject *__pyx_kp_u_;
   PyObject *__pyx_n_s_ASCII;
   PyObject *__pyx_kp_s_All_dimensions_preceding_dimensi;
   PyObject *__pyx_n_s_AssertionError;
   PyObject *__pyx_kp_u_Assumed_the_requested_tolerance;
-  PyObject *__pyx_n_s_BAD_INTERIOR;
-  PyObject *__pyx_n_s_BAD_MULTIPLICITY;
-  PyObject *__pyx_n_s_BoxIntersectionType;
   PyObject *__pyx_kp_s_Buffer_view_does_not_expose_stri;
   PyObject *__pyx_kp_s_Can_only_create_a_buffer_that_is;
   PyObject *__pyx_kp_s_Cannot_assign_to_read_only_memor;
@@ -3768,18 +3750,14 @@ typedef struct {
   PyObject *__pyx_kp_s_Cannot_transpose_memoryview_with;
   PyObject *__pyx_kp_u_Curve_intersection_failed_to_con;
   PyObject *__pyx_kp_u_Curve_should_have_at_least_one_n;
-  PyObject *__pyx_n_s_DISJOINT;
   PyObject *__pyx_n_s_DQAGSE_ERR_MSGS;
   PyObject *__pyx_kp_u_Did_not_have_enough_space_for_in;
   PyObject *__pyx_kp_u_Did_not_have_enough_space_for_se;
   PyObject *__pyx_kp_u_Did_not_have_enough_space_for_se_2;
   PyObject *__pyx_kp_s_Dimension_d_is_not_direct;
-  PyObject *__pyx_n_s_EDGE_END;
   PyObject *__pyx_n_s_Ellipsis;
   PyObject *__pyx_kp_s_Empty_shape_tuple_for_cython_arr;
   PyObject *__pyx_n_u_F;
-  PyObject *__pyx_n_s_INSUFFICIENT_SPACE;
-  PyObject *__pyx_n_s_INTERSECTION;
   PyObject *__pyx_n_s_ImportError;
   PyObject *__pyx_kp_s_Incompatible_checksums_0x_x_vs_0;
   PyObject *__pyx_n_s_IndexError;
@@ -3798,7 +3776,6 @@ typedef struct {
   PyObject *__pyx_kp_s_MemoryView_of_r_at_0x_x;
   PyObject *__pyx_kp_s_MemoryView_of_r_object;
   PyObject *__pyx_n_s_NEWTON_NO_CONVERGE;
-  PyObject *__pyx_n_s_NO_CONVERGE;
   PyObject *__pyx_kp_s_No_value_specified_for_struct_at;
   PyObject *__pyx_kp_s_No_value_specified_for_struct_at_2;
   PyObject *__pyx_kp_s_No_value_specified_for_struct_at_3;
@@ -3810,22 +3787,16 @@ typedef struct {
   PyObject *__pyx_kp_u_Point_was_expected_to_have_shape;
   PyObject *__pyx_kp_u_Roundoff_error_detected_which_pr;
   PyObject *__pyx_n_s_RuntimeError;
-  PyObject *__pyx_n_s_SAME_CURVATURE;
   PyObject *__pyx_n_s_SEGMENTS_TOO_SMALL;
   PyObject *__pyx_n_s_SEGMENT_ENDS_TOO_SMALL;
-  PyObject *__pyx_n_s_SINGULAR;
   PyObject *__pyx_n_s_SUBDIVISION_NO_CONVERGE;
-  PyObject *__pyx_n_s_SUCCESS;
   PyObject *__pyx_n_s_Sequence;
-  PyObject *__pyx_n_s_Status;
   PyObject *__pyx_kp_s_Step_may_not_be_zero_axis_d;
-  PyObject *__pyx_n_s_TANGENT;
   PyObject *__pyx_n_s_TOO_MANY_TEMPLATE;
   PyObject *__pyx_n_s_TOO_SMALL_TEMPLATE;
   PyObject *__pyx_kp_u_Tangent_curves_have_same_curvatu;
   PyObject *__pyx_kp_u_The_number_of_candidate_intersec;
   PyObject *__pyx_n_s_TypeError;
-  PyObject *__pyx_n_s_UNKNOWN;
   PyObject *__pyx_kp_s_Unable_to_convert_item_to_object;
   PyObject *__pyx_kp_u_Unexpected_number_of_edges;
   PyObject *__pyx_kp_u_Unknown_error_has_occurred;
@@ -3837,9 +3808,10 @@ typedef struct {
   PyObject *__pyx_n_s_View_MemoryView;
   PyObject *__pyx_kp_u__10;
   PyObject *__pyx_n_s__128;
-  PyObject *__pyx_n_s__2;
+  PyObject *__pyx_kp_u__4;
+  PyObject *__pyx_kp_u__5;
   PyObject *__pyx_n_s__58;
-  PyObject *__pyx_kp_u__6;
+  PyObject *__pyx_n_s__6;
   PyObject *__pyx_kp_u__9;
   PyObject *__pyx_n_s_abc;
   PyObject *__pyx_n_s_align;
@@ -3855,9 +3827,7 @@ typedef struct {
   PyObject *__pyx_n_s_bbox;
   PyObject *__pyx_n_s_bbox_intersect;
   PyObject *__pyx_n_s_begin_index;
-  PyObject *__pyx_n_s_bezier__curve_intersection;
   PyObject *__pyx_n_s_bezier__speedup;
-  PyObject *__pyx_n_s_bezier__status;
   PyObject *__pyx_n_s_bezier_hazmat_helpers;
   PyObject *__pyx_n_s_bottom;
   PyObject *__pyx_n_s_c;
@@ -3911,8 +3881,6 @@ typedef struct {
   PyObject *__pyx_n_s_end;
   PyObject *__pyx_n_u_end;
   PyObject *__pyx_n_s_end_index;
-  PyObject *__pyx_kp_u_enum_class_BoxIntersectionType_n;
-  PyObject *__pyx_kp_u_enum_class_Status_not_importable;
   PyObject *__pyx_n_s_enum_val;
   PyObject *__pyx_n_s_enumerate;
   PyObject *__pyx_n_s_eps;
@@ -4126,10 +4094,10 @@ typedef struct {
   PyObject *__pyx_int_136983863;
   PyObject *__pyx_int_184977713;
   PyObject *__pyx_int_neg_1;
+  PyObject *__pyx_tuple_;
   PyObject *__pyx_slice__8;
+  PyObject *__pyx_tuple__2;
   PyObject *__pyx_tuple__3;
-  PyObject *__pyx_tuple__4;
-  PyObject *__pyx_tuple__5;
   PyObject *__pyx_tuple__7;
   PyObject *__pyx_tuple__11;
   PyObject *__pyx_tuple__12;
@@ -4315,14 +4283,10 @@ static int __pyx_m_clear(PyObject *m) {
   Py_CLEAR(clear_module_state->__pyx_type___pyx_memoryview);
   Py_CLEAR(clear_module_state->__pyx_memoryviewslice_type);
   Py_CLEAR(clear_module_state->__pyx_type___pyx_memoryviewslice);
-  Py_CLEAR(clear_module_state->__pyx_kp_u_);
   Py_CLEAR(clear_module_state->__pyx_n_s_ASCII);
   Py_CLEAR(clear_module_state->__pyx_kp_s_All_dimensions_preceding_dimensi);
   Py_CLEAR(clear_module_state->__pyx_n_s_AssertionError);
   Py_CLEAR(clear_module_state->__pyx_kp_u_Assumed_the_requested_tolerance);
-  Py_CLEAR(clear_module_state->__pyx_n_s_BAD_INTERIOR);
-  Py_CLEAR(clear_module_state->__pyx_n_s_BAD_MULTIPLICITY);
-  Py_CLEAR(clear_module_state->__pyx_n_s_BoxIntersectionType);
   Py_CLEAR(clear_module_state->__pyx_kp_s_Buffer_view_does_not_expose_stri);
   Py_CLEAR(clear_module_state->__pyx_kp_s_Can_only_create_a_buffer_that_is);
   Py_CLEAR(clear_module_state->__pyx_kp_s_Cannot_assign_to_read_only_memor);
@@ -4331,18 +4295,14 @@ static int __pyx_m_clear(PyObject *m) {
   Py_CLEAR(clear_module_state->__pyx_kp_s_Cannot_transpose_memoryview_with);
   Py_CLEAR(clear_module_state->__pyx_kp_u_Curve_intersection_failed_to_con);
   Py_CLEAR(clear_module_state->__pyx_kp_u_Curve_should_have_at_least_one_n);
-  Py_CLEAR(clear_module_state->__pyx_n_s_DISJOINT);
   Py_CLEAR(clear_module_state->__pyx_n_s_DQAGSE_ERR_MSGS);
   Py_CLEAR(clear_module_state->__pyx_kp_u_Did_not_have_enough_space_for_in);
   Py_CLEAR(clear_module_state->__pyx_kp_u_Did_not_have_enough_space_for_se);
   Py_CLEAR(clear_module_state->__pyx_kp_u_Did_not_have_enough_space_for_se_2);
   Py_CLEAR(clear_module_state->__pyx_kp_s_Dimension_d_is_not_direct);
-  Py_CLEAR(clear_module_state->__pyx_n_s_EDGE_END);
   Py_CLEAR(clear_module_state->__pyx_n_s_Ellipsis);
   Py_CLEAR(clear_module_state->__pyx_kp_s_Empty_shape_tuple_for_cython_arr);
   Py_CLEAR(clear_module_state->__pyx_n_u_F);
-  Py_CLEAR(clear_module_state->__pyx_n_s_INSUFFICIENT_SPACE);
-  Py_CLEAR(clear_module_state->__pyx_n_s_INTERSECTION);
   Py_CLEAR(clear_module_state->__pyx_n_s_ImportError);
   Py_CLEAR(clear_module_state->__pyx_kp_s_Incompatible_checksums_0x_x_vs_0);
   Py_CLEAR(clear_module_state->__pyx_n_s_IndexError);
@@ -4361,7 +4321,6 @@ static int __pyx_m_clear(PyObject *m) {
   Py_CLEAR(clear_module_state->__pyx_kp_s_MemoryView_of_r_at_0x_x);
   Py_CLEAR(clear_module_state->__pyx_kp_s_MemoryView_of_r_object);
   Py_CLEAR(clear_module_state->__pyx_n_s_NEWTON_NO_CONVERGE);
-  Py_CLEAR(clear_module_state->__pyx_n_s_NO_CONVERGE);
   Py_CLEAR(clear_module_state->__pyx_kp_s_No_value_specified_for_struct_at);
   Py_CLEAR(clear_module_state->__pyx_kp_s_No_value_specified_for_struct_at_2);
   Py_CLEAR(clear_module_state->__pyx_kp_s_No_value_specified_for_struct_at_3);
@@ -4373,22 +4332,16 @@ static int __pyx_m_clear(PyObject *m) {
   Py_CLEAR(clear_module_state->__pyx_kp_u_Point_was_expected_to_have_shape);
   Py_CLEAR(clear_module_state->__pyx_kp_u_Roundoff_error_detected_which_pr);
   Py_CLEAR(clear_module_state->__pyx_n_s_RuntimeError);
-  Py_CLEAR(clear_module_state->__pyx_n_s_SAME_CURVATURE);
   Py_CLEAR(clear_module_state->__pyx_n_s_SEGMENTS_TOO_SMALL);
   Py_CLEAR(clear_module_state->__pyx_n_s_SEGMENT_ENDS_TOO_SMALL);
-  Py_CLEAR(clear_module_state->__pyx_n_s_SINGULAR);
   Py_CLEAR(clear_module_state->__pyx_n_s_SUBDIVISION_NO_CONVERGE);
-  Py_CLEAR(clear_module_state->__pyx_n_s_SUCCESS);
   Py_CLEAR(clear_module_state->__pyx_n_s_Sequence);
-  Py_CLEAR(clear_module_state->__pyx_n_s_Status);
   Py_CLEAR(clear_module_state->__pyx_kp_s_Step_may_not_be_zero_axis_d);
-  Py_CLEAR(clear_module_state->__pyx_n_s_TANGENT);
   Py_CLEAR(clear_module_state->__pyx_n_s_TOO_MANY_TEMPLATE);
   Py_CLEAR(clear_module_state->__pyx_n_s_TOO_SMALL_TEMPLATE);
   Py_CLEAR(clear_module_state->__pyx_kp_u_Tangent_curves_have_same_curvatu);
   Py_CLEAR(clear_module_state->__pyx_kp_u_The_number_of_candidate_intersec);
   Py_CLEAR(clear_module_state->__pyx_n_s_TypeError);
-  Py_CLEAR(clear_module_state->__pyx_n_s_UNKNOWN);
   Py_CLEAR(clear_module_state->__pyx_kp_s_Unable_to_convert_item_to_object);
   Py_CLEAR(clear_module_state->__pyx_kp_u_Unexpected_number_of_edges);
   Py_CLEAR(clear_module_state->__pyx_kp_u_Unknown_error_has_occurred);
@@ -4400,9 +4353,10 @@ static int __pyx_m_clear(PyObject *m) {
   Py_CLEAR(clear_module_state->__pyx_n_s_View_MemoryView);
   Py_CLEAR(clear_module_state->__pyx_kp_u__10);
   Py_CLEAR(clear_module_state->__pyx_n_s__128);
-  Py_CLEAR(clear_module_state->__pyx_n_s__2);
+  Py_CLEAR(clear_module_state->__pyx_kp_u__4);
+  Py_CLEAR(clear_module_state->__pyx_kp_u__5);
   Py_CLEAR(clear_module_state->__pyx_n_s__58);
-  Py_CLEAR(clear_module_state->__pyx_kp_u__6);
+  Py_CLEAR(clear_module_state->__pyx_n_s__6);
   Py_CLEAR(clear_module_state->__pyx_kp_u__9);
   Py_CLEAR(clear_module_state->__pyx_n_s_abc);
   Py_CLEAR(clear_module_state->__pyx_n_s_align);
@@ -4418,9 +4372,7 @@ static int __pyx_m_clear(PyObject *m) {
   Py_CLEAR(clear_module_state->__pyx_n_s_bbox);
   Py_CLEAR(clear_module_state->__pyx_n_s_bbox_intersect);
   Py_CLEAR(clear_module_state->__pyx_n_s_begin_index);
-  Py_CLEAR(clear_module_state->__pyx_n_s_bezier__curve_intersection);
   Py_CLEAR(clear_module_state->__pyx_n_s_bezier__speedup);
-  Py_CLEAR(clear_module_state->__pyx_n_s_bezier__status);
   Py_CLEAR(clear_module_state->__pyx_n_s_bezier_hazmat_helpers);
   Py_CLEAR(clear_module_state->__pyx_n_s_bottom);
   Py_CLEAR(clear_module_state->__pyx_n_s_c);
@@ -4474,8 +4426,6 @@ static int __pyx_m_clear(PyObject *m) {
   Py_CLEAR(clear_module_state->__pyx_n_s_end);
   Py_CLEAR(clear_module_state->__pyx_n_u_end);
   Py_CLEAR(clear_module_state->__pyx_n_s_end_index);
-  Py_CLEAR(clear_module_state->__pyx_kp_u_enum_class_BoxIntersectionType_n);
-  Py_CLEAR(clear_module_state->__pyx_kp_u_enum_class_Status_not_importable);
   Py_CLEAR(clear_module_state->__pyx_n_s_enum_val);
   Py_CLEAR(clear_module_state->__pyx_n_s_enumerate);
   Py_CLEAR(clear_module_state->__pyx_n_s_eps);
@@ -4689,10 +4639,10 @@ static int __pyx_m_clear(PyObject *m) {
   Py_CLEAR(clear_module_state->__pyx_int_136983863);
   Py_CLEAR(clear_module_state->__pyx_int_184977713);
   Py_CLEAR(clear_module_state->__pyx_int_neg_1);
+  Py_CLEAR(clear_module_state->__pyx_tuple_);
   Py_CLEAR(clear_module_state->__pyx_slice__8);
+  Py_CLEAR(clear_module_state->__pyx_tuple__2);
   Py_CLEAR(clear_module_state->__pyx_tuple__3);
-  Py_CLEAR(clear_module_state->__pyx_tuple__4);
-  Py_CLEAR(clear_module_state->__pyx_tuple__5);
   Py_CLEAR(clear_module_state->__pyx_tuple__7);
   Py_CLEAR(clear_module_state->__pyx_tuple__11);
   Py_CLEAR(clear_module_state->__pyx_tuple__12);
@@ -4856,14 +4806,10 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
   Py_VISIT(traverse_module_state->__pyx_type___pyx_memoryview);
   Py_VISIT(traverse_module_state->__pyx_memoryviewslice_type);
   Py_VISIT(traverse_module_state->__pyx_type___pyx_memoryviewslice);
-  Py_VISIT(traverse_module_state->__pyx_kp_u_);
   Py_VISIT(traverse_module_state->__pyx_n_s_ASCII);
   Py_VISIT(traverse_module_state->__pyx_kp_s_All_dimensions_preceding_dimensi);
   Py_VISIT(traverse_module_state->__pyx_n_s_AssertionError);
   Py_VISIT(traverse_module_state->__pyx_kp_u_Assumed_the_requested_tolerance);
-  Py_VISIT(traverse_module_state->__pyx_n_s_BAD_INTERIOR);
-  Py_VISIT(traverse_module_state->__pyx_n_s_BAD_MULTIPLICITY);
-  Py_VISIT(traverse_module_state->__pyx_n_s_BoxIntersectionType);
   Py_VISIT(traverse_module_state->__pyx_kp_s_Buffer_view_does_not_expose_stri);
   Py_VISIT(traverse_module_state->__pyx_kp_s_Can_only_create_a_buffer_that_is);
   Py_VISIT(traverse_module_state->__pyx_kp_s_Cannot_assign_to_read_only_memor);
@@ -4872,18 +4818,14 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
   Py_VISIT(traverse_module_state->__pyx_kp_s_Cannot_transpose_memoryview_with);
   Py_VISIT(traverse_module_state->__pyx_kp_u_Curve_intersection_failed_to_con);
   Py_VISIT(traverse_module_state->__pyx_kp_u_Curve_should_have_at_least_one_n);
-  Py_VISIT(traverse_module_state->__pyx_n_s_DISJOINT);
   Py_VISIT(traverse_module_state->__pyx_n_s_DQAGSE_ERR_MSGS);
   Py_VISIT(traverse_module_state->__pyx_kp_u_Did_not_have_enough_space_for_in);
   Py_VISIT(traverse_module_state->__pyx_kp_u_Did_not_have_enough_space_for_se);
   Py_VISIT(traverse_module_state->__pyx_kp_u_Did_not_have_enough_space_for_se_2);
   Py_VISIT(traverse_module_state->__pyx_kp_s_Dimension_d_is_not_direct);
-  Py_VISIT(traverse_module_state->__pyx_n_s_EDGE_END);
   Py_VISIT(traverse_module_state->__pyx_n_s_Ellipsis);
   Py_VISIT(traverse_module_state->__pyx_kp_s_Empty_shape_tuple_for_cython_arr);
   Py_VISIT(traverse_module_state->__pyx_n_u_F);
-  Py_VISIT(traverse_module_state->__pyx_n_s_INSUFFICIENT_SPACE);
-  Py_VISIT(traverse_module_state->__pyx_n_s_INTERSECTION);
   Py_VISIT(traverse_module_state->__pyx_n_s_ImportError);
   Py_VISIT(traverse_module_state->__pyx_kp_s_Incompatible_checksums_0x_x_vs_0);
   Py_VISIT(traverse_module_state->__pyx_n_s_IndexError);
@@ -4902,7 +4844,6 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
   Py_VISIT(traverse_module_state->__pyx_kp_s_MemoryView_of_r_at_0x_x);
   Py_VISIT(traverse_module_state->__pyx_kp_s_MemoryView_of_r_object);
   Py_VISIT(traverse_module_state->__pyx_n_s_NEWTON_NO_CONVERGE);
-  Py_VISIT(traverse_module_state->__pyx_n_s_NO_CONVERGE);
   Py_VISIT(traverse_module_state->__pyx_kp_s_No_value_specified_for_struct_at);
   Py_VISIT(traverse_module_state->__pyx_kp_s_No_value_specified_for_struct_at_2);
   Py_VISIT(traverse_module_state->__pyx_kp_s_No_value_specified_for_struct_at_3);
@@ -4914,22 +4855,16 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
   Py_VISIT(traverse_module_state->__pyx_kp_u_Point_was_expected_to_have_shape);
   Py_VISIT(traverse_module_state->__pyx_kp_u_Roundoff_error_detected_which_pr);
   Py_VISIT(traverse_module_state->__pyx_n_s_RuntimeError);
-  Py_VISIT(traverse_module_state->__pyx_n_s_SAME_CURVATURE);
   Py_VISIT(traverse_module_state->__pyx_n_s_SEGMENTS_TOO_SMALL);
   Py_VISIT(traverse_module_state->__pyx_n_s_SEGMENT_ENDS_TOO_SMALL);
-  Py_VISIT(traverse_module_state->__pyx_n_s_SINGULAR);
   Py_VISIT(traverse_module_state->__pyx_n_s_SUBDIVISION_NO_CONVERGE);
-  Py_VISIT(traverse_module_state->__pyx_n_s_SUCCESS);
   Py_VISIT(traverse_module_state->__pyx_n_s_Sequence);
-  Py_VISIT(traverse_module_state->__pyx_n_s_Status);
   Py_VISIT(traverse_module_state->__pyx_kp_s_Step_may_not_be_zero_axis_d);
-  Py_VISIT(traverse_module_state->__pyx_n_s_TANGENT);
   Py_VISIT(traverse_module_state->__pyx_n_s_TOO_MANY_TEMPLATE);
   Py_VISIT(traverse_module_state->__pyx_n_s_TOO_SMALL_TEMPLATE);
   Py_VISIT(traverse_module_state->__pyx_kp_u_Tangent_curves_have_same_curvatu);
   Py_VISIT(traverse_module_state->__pyx_kp_u_The_number_of_candidate_intersec);
   Py_VISIT(traverse_module_state->__pyx_n_s_TypeError);
-  Py_VISIT(traverse_module_state->__pyx_n_s_UNKNOWN);
   Py_VISIT(traverse_module_state->__pyx_kp_s_Unable_to_convert_item_to_object);
   Py_VISIT(traverse_module_state->__pyx_kp_u_Unexpected_number_of_edges);
   Py_VISIT(traverse_module_state->__pyx_kp_u_Unknown_error_has_occurred);
@@ -4941,9 +4876,10 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
   Py_VISIT(traverse_module_state->__pyx_n_s_View_MemoryView);
   Py_VISIT(traverse_module_state->__pyx_kp_u__10);
   Py_VISIT(traverse_module_state->__pyx_n_s__128);
-  Py_VISIT(traverse_module_state->__pyx_n_s__2);
+  Py_VISIT(traverse_module_state->__pyx_kp_u__4);
+  Py_VISIT(traverse_module_state->__pyx_kp_u__5);
   Py_VISIT(traverse_module_state->__pyx_n_s__58);
-  Py_VISIT(traverse_module_state->__pyx_kp_u__6);
+  Py_VISIT(traverse_module_state->__pyx_n_s__6);
   Py_VISIT(traverse_module_state->__pyx_kp_u__9);
   Py_VISIT(traverse_module_state->__pyx_n_s_abc);
   Py_VISIT(traverse_module_state->__pyx_n_s_align);
@@ -4959,9 +4895,7 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
   Py_VISIT(traverse_module_state->__pyx_n_s_bbox);
   Py_VISIT(traverse_module_state->__pyx_n_s_bbox_intersect);
   Py_VISIT(traverse_module_state->__pyx_n_s_begin_index);
-  Py_VISIT(traverse_module_state->__pyx_n_s_bezier__curve_intersection);
   Py_VISIT(traverse_module_state->__pyx_n_s_bezier__speedup);
-  Py_VISIT(traverse_module_state->__pyx_n_s_bezier__status);
   Py_VISIT(traverse_module_state->__pyx_n_s_bezier_hazmat_helpers);
   Py_VISIT(traverse_module_state->__pyx_n_s_bottom);
   Py_VISIT(traverse_module_state->__pyx_n_s_c);
@@ -5015,8 +4949,6 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
   Py_VISIT(traverse_module_state->__pyx_n_s_end);
   Py_VISIT(traverse_module_state->__pyx_n_u_end);
   Py_VISIT(traverse_module_state->__pyx_n_s_end_index);
-  Py_VISIT(traverse_module_state->__pyx_kp_u_enum_class_BoxIntersectionType_n);
-  Py_VISIT(traverse_module_state->__pyx_kp_u_enum_class_Status_not_importable);
   Py_VISIT(traverse_module_state->__pyx_n_s_enum_val);
   Py_VISIT(traverse_module_state->__pyx_n_s_enumerate);
   Py_VISIT(traverse_module_state->__pyx_n_s_eps);
@@ -5230,10 +5162,10 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
   Py_VISIT(traverse_module_state->__pyx_int_136983863);
   Py_VISIT(traverse_module_state->__pyx_int_184977713);
   Py_VISIT(traverse_module_state->__pyx_int_neg_1);
+  Py_VISIT(traverse_module_state->__pyx_tuple_);
   Py_VISIT(traverse_module_state->__pyx_slice__8);
+  Py_VISIT(traverse_module_state->__pyx_tuple__2);
   Py_VISIT(traverse_module_state->__pyx_tuple__3);
-  Py_VISIT(traverse_module_state->__pyx_tuple__4);
-  Py_VISIT(traverse_module_state->__pyx_tuple__5);
   Py_VISIT(traverse_module_state->__pyx_tuple__7);
   Py_VISIT(traverse_module_state->__pyx_tuple__11);
   Py_VISIT(traverse_module_state->__pyx_tuple__12);
@@ -5443,14 +5375,10 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
 #define __pyx_MemviewEnum_type __pyx_mstate_global->__pyx_MemviewEnum_type
 #define __pyx_memoryview_type __pyx_mstate_global->__pyx_memoryview_type
 #define __pyx_memoryviewslice_type __pyx_mstate_global->__pyx_memoryviewslice_type
-#define __pyx_kp_u_ __pyx_mstate_global->__pyx_kp_u_
 #define __pyx_n_s_ASCII __pyx_mstate_global->__pyx_n_s_ASCII
 #define __pyx_kp_s_All_dimensions_preceding_dimensi __pyx_mstate_global->__pyx_kp_s_All_dimensions_preceding_dimensi
 #define __pyx_n_s_AssertionError __pyx_mstate_global->__pyx_n_s_AssertionError
 #define __pyx_kp_u_Assumed_the_requested_tolerance __pyx_mstate_global->__pyx_kp_u_Assumed_the_requested_tolerance
-#define __pyx_n_s_BAD_INTERIOR __pyx_mstate_global->__pyx_n_s_BAD_INTERIOR
-#define __pyx_n_s_BAD_MULTIPLICITY __pyx_mstate_global->__pyx_n_s_BAD_MULTIPLICITY
-#define __pyx_n_s_BoxIntersectionType __pyx_mstate_global->__pyx_n_s_BoxIntersectionType
 #define __pyx_kp_s_Buffer_view_does_not_expose_stri __pyx_mstate_global->__pyx_kp_s_Buffer_view_does_not_expose_stri
 #define __pyx_kp_s_Can_only_create_a_buffer_that_is __pyx_mstate_global->__pyx_kp_s_Can_only_create_a_buffer_that_is
 #define __pyx_kp_s_Cannot_assign_to_read_only_memor __pyx_mstate_global->__pyx_kp_s_Cannot_assign_to_read_only_memor
@@ -5459,18 +5387,14 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
 #define __pyx_kp_s_Cannot_transpose_memoryview_with __pyx_mstate_global->__pyx_kp_s_Cannot_transpose_memoryview_with
 #define __pyx_kp_u_Curve_intersection_failed_to_con __pyx_mstate_global->__pyx_kp_u_Curve_intersection_failed_to_con
 #define __pyx_kp_u_Curve_should_have_at_least_one_n __pyx_mstate_global->__pyx_kp_u_Curve_should_have_at_least_one_n
-#define __pyx_n_s_DISJOINT __pyx_mstate_global->__pyx_n_s_DISJOINT
 #define __pyx_n_s_DQAGSE_ERR_MSGS __pyx_mstate_global->__pyx_n_s_DQAGSE_ERR_MSGS
 #define __pyx_kp_u_Did_not_have_enough_space_for_in __pyx_mstate_global->__pyx_kp_u_Did_not_have_enough_space_for_in
 #define __pyx_kp_u_Did_not_have_enough_space_for_se __pyx_mstate_global->__pyx_kp_u_Did_not_have_enough_space_for_se
 #define __pyx_kp_u_Did_not_have_enough_space_for_se_2 __pyx_mstate_global->__pyx_kp_u_Did_not_have_enough_space_for_se_2
 #define __pyx_kp_s_Dimension_d_is_not_direct __pyx_mstate_global->__pyx_kp_s_Dimension_d_is_not_direct
-#define __pyx_n_s_EDGE_END __pyx_mstate_global->__pyx_n_s_EDGE_END
 #define __pyx_n_s_Ellipsis __pyx_mstate_global->__pyx_n_s_Ellipsis
 #define __pyx_kp_s_Empty_shape_tuple_for_cython_arr __pyx_mstate_global->__pyx_kp_s_Empty_shape_tuple_for_cython_arr
 #define __pyx_n_u_F __pyx_mstate_global->__pyx_n_u_F
-#define __pyx_n_s_INSUFFICIENT_SPACE __pyx_mstate_global->__pyx_n_s_INSUFFICIENT_SPACE
-#define __pyx_n_s_INTERSECTION __pyx_mstate_global->__pyx_n_s_INTERSECTION
 #define __pyx_n_s_ImportError __pyx_mstate_global->__pyx_n_s_ImportError
 #define __pyx_kp_s_Incompatible_checksums_0x_x_vs_0 __pyx_mstate_global->__pyx_kp_s_Incompatible_checksums_0x_x_vs_0
 #define __pyx_n_s_IndexError __pyx_mstate_global->__pyx_n_s_IndexError
@@ -5489,7 +5413,6 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
 #define __pyx_kp_s_MemoryView_of_r_at_0x_x __pyx_mstate_global->__pyx_kp_s_MemoryView_of_r_at_0x_x
 #define __pyx_kp_s_MemoryView_of_r_object __pyx_mstate_global->__pyx_kp_s_MemoryView_of_r_object
 #define __pyx_n_s_NEWTON_NO_CONVERGE __pyx_mstate_global->__pyx_n_s_NEWTON_NO_CONVERGE
-#define __pyx_n_s_NO_CONVERGE __pyx_mstate_global->__pyx_n_s_NO_CONVERGE
 #define __pyx_kp_s_No_value_specified_for_struct_at __pyx_mstate_global->__pyx_kp_s_No_value_specified_for_struct_at
 #define __pyx_kp_s_No_value_specified_for_struct_at_2 __pyx_mstate_global->__pyx_kp_s_No_value_specified_for_struct_at_2
 #define __pyx_kp_s_No_value_specified_for_struct_at_3 __pyx_mstate_global->__pyx_kp_s_No_value_specified_for_struct_at_3
@@ -5501,22 +5424,16 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
 #define __pyx_kp_u_Point_was_expected_to_have_shape __pyx_mstate_global->__pyx_kp_u_Point_was_expected_to_have_shape
 #define __pyx_kp_u_Roundoff_error_detected_which_pr __pyx_mstate_global->__pyx_kp_u_Roundoff_error_detected_which_pr
 #define __pyx_n_s_RuntimeError __pyx_mstate_global->__pyx_n_s_RuntimeError
-#define __pyx_n_s_SAME_CURVATURE __pyx_mstate_global->__pyx_n_s_SAME_CURVATURE
 #define __pyx_n_s_SEGMENTS_TOO_SMALL __pyx_mstate_global->__pyx_n_s_SEGMENTS_TOO_SMALL
 #define __pyx_n_s_SEGMENT_ENDS_TOO_SMALL __pyx_mstate_global->__pyx_n_s_SEGMENT_ENDS_TOO_SMALL
-#define __pyx_n_s_SINGULAR __pyx_mstate_global->__pyx_n_s_SINGULAR
 #define __pyx_n_s_SUBDIVISION_NO_CONVERGE __pyx_mstate_global->__pyx_n_s_SUBDIVISION_NO_CONVERGE
-#define __pyx_n_s_SUCCESS __pyx_mstate_global->__pyx_n_s_SUCCESS
 #define __pyx_n_s_Sequence __pyx_mstate_global->__pyx_n_s_Sequence
-#define __pyx_n_s_Status __pyx_mstate_global->__pyx_n_s_Status
 #define __pyx_kp_s_Step_may_not_be_zero_axis_d __pyx_mstate_global->__pyx_kp_s_Step_may_not_be_zero_axis_d
-#define __pyx_n_s_TANGENT __pyx_mstate_global->__pyx_n_s_TANGENT
 #define __pyx_n_s_TOO_MANY_TEMPLATE __pyx_mstate_global->__pyx_n_s_TOO_MANY_TEMPLATE
 #define __pyx_n_s_TOO_SMALL_TEMPLATE __pyx_mstate_global->__pyx_n_s_TOO_SMALL_TEMPLATE
 #define __pyx_kp_u_Tangent_curves_have_same_curvatu __pyx_mstate_global->__pyx_kp_u_Tangent_curves_have_same_curvatu
 #define __pyx_kp_u_The_number_of_candidate_intersec __pyx_mstate_global->__pyx_kp_u_The_number_of_candidate_intersec
 #define __pyx_n_s_TypeError __pyx_mstate_global->__pyx_n_s_TypeError
-#define __pyx_n_s_UNKNOWN __pyx_mstate_global->__pyx_n_s_UNKNOWN
 #define __pyx_kp_s_Unable_to_convert_item_to_object __pyx_mstate_global->__pyx_kp_s_Unable_to_convert_item_to_object
 #define __pyx_kp_u_Unexpected_number_of_edges __pyx_mstate_global->__pyx_kp_u_Unexpected_number_of_edges
 #define __pyx_kp_u_Unknown_error_has_occurred __pyx_mstate_global->__pyx_kp_u_Unknown_error_has_occurred
@@ -5528,9 +5445,10 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
 #define __pyx_n_s_View_MemoryView __pyx_mstate_global->__pyx_n_s_View_MemoryView
 #define __pyx_kp_u__10 __pyx_mstate_global->__pyx_kp_u__10
 #define __pyx_n_s__128 __pyx_mstate_global->__pyx_n_s__128
-#define __pyx_n_s__2 __pyx_mstate_global->__pyx_n_s__2
+#define __pyx_kp_u__4 __pyx_mstate_global->__pyx_kp_u__4
+#define __pyx_kp_u__5 __pyx_mstate_global->__pyx_kp_u__5
 #define __pyx_n_s__58 __pyx_mstate_global->__pyx_n_s__58
-#define __pyx_kp_u__6 __pyx_mstate_global->__pyx_kp_u__6
+#define __pyx_n_s__6 __pyx_mstate_global->__pyx_n_s__6
 #define __pyx_kp_u__9 __pyx_mstate_global->__pyx_kp_u__9
 #define __pyx_n_s_abc __pyx_mstate_global->__pyx_n_s_abc
 #define __pyx_n_s_align __pyx_mstate_global->__pyx_n_s_align
@@ -5546,9 +5464,7 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
 #define __pyx_n_s_bbox __pyx_mstate_global->__pyx_n_s_bbox
 #define __pyx_n_s_bbox_intersect __pyx_mstate_global->__pyx_n_s_bbox_intersect
 #define __pyx_n_s_begin_index __pyx_mstate_global->__pyx_n_s_begin_index
-#define __pyx_n_s_bezier__curve_intersection __pyx_mstate_global->__pyx_n_s_bezier__curve_intersection
 #define __pyx_n_s_bezier__speedup __pyx_mstate_global->__pyx_n_s_bezier__speedup
-#define __pyx_n_s_bezier__status __pyx_mstate_global->__pyx_n_s_bezier__status
 #define __pyx_n_s_bezier_hazmat_helpers __pyx_mstate_global->__pyx_n_s_bezier_hazmat_helpers
 #define __pyx_n_s_bottom __pyx_mstate_global->__pyx_n_s_bottom
 #define __pyx_n_s_c __pyx_mstate_global->__pyx_n_s_c
@@ -5602,8 +5518,6 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
 #define __pyx_n_s_end __pyx_mstate_global->__pyx_n_s_end
 #define __pyx_n_u_end __pyx_mstate_global->__pyx_n_u_end
 #define __pyx_n_s_end_index __pyx_mstate_global->__pyx_n_s_end_index
-#define __pyx_kp_u_enum_class_BoxIntersectionType_n __pyx_mstate_global->__pyx_kp_u_enum_class_BoxIntersectionType_n
-#define __pyx_kp_u_enum_class_Status_not_importable __pyx_mstate_global->__pyx_kp_u_enum_class_Status_not_importable
 #define __pyx_n_s_enum_val __pyx_mstate_global->__pyx_n_s_enum_val
 #define __pyx_n_s_enumerate __pyx_mstate_global->__pyx_n_s_enumerate
 #define __pyx_n_s_eps __pyx_mstate_global->__pyx_n_s_eps
@@ -5817,10 +5731,10 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
 #define __pyx_int_136983863 __pyx_mstate_global->__pyx_int_136983863
 #define __pyx_int_184977713 __pyx_mstate_global->__pyx_int_184977713
 #define __pyx_int_neg_1 __pyx_mstate_global->__pyx_int_neg_1
+#define __pyx_tuple_ __pyx_mstate_global->__pyx_tuple_
 #define __pyx_slice__8 __pyx_mstate_global->__pyx_slice__8
+#define __pyx_tuple__2 __pyx_mstate_global->__pyx_tuple__2
 #define __pyx_tuple__3 __pyx_mstate_global->__pyx_tuple__3
-#define __pyx_tuple__4 __pyx_mstate_global->__pyx_tuple__4
-#define __pyx_tuple__5 __pyx_mstate_global->__pyx_tuple__5
 #define __pyx_tuple__7 __pyx_mstate_global->__pyx_tuple__7
 #define __pyx_tuple__11 __pyx_mstate_global->__pyx_tuple__11
 #define __pyx_tuple__12 __pyx_mstate_global->__pyx_tuple__12
@@ -5939,814 +5853,6 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
 #define __pyx_codeobj__126 __pyx_mstate_global->__pyx_codeobj__126
 #define __pyx_codeobj__127 __pyx_mstate_global->__pyx_codeobj__127
 /* #### Code section: module_code ### */
-
-/* "EnumTypeToPy":132
- *
- * @cname("__Pyx_Enum_BoxIntersectionType_to_py")
- * cdef __Pyx_Enum_BoxIntersectionType_to_py(BoxIntersectionType c_val):             # <<<<<<<<<<<<<<
- *     cdef object __pyx_enum
- *
- */
-
-static PyObject *__Pyx_Enum_BoxIntersectionType_to_py(enum BoxIntersectionType __pyx_v_c_val) {
-  PyObject *__pyx_v___pyx_enum = 0;
-  PyObject *__pyx_v_warnings = NULL;
-  int __pyx_v_underlying_c_val;
-  PyObject *__pyx_r = NULL;
-  __Pyx_RefNannyDeclarations
-  PyObject *__pyx_t_1 = NULL;
-  PyObject *__pyx_t_2 = NULL;
-  PyObject *__pyx_t_3 = NULL;
-  PyObject *__pyx_t_4 = NULL;
-  PyObject *__pyx_t_5 = NULL;
-  int __pyx_t_6;
-  PyObject *__pyx_t_7 = NULL;
-  PyObject *__pyx_t_8 = NULL;
-  PyObject *__pyx_t_9 = NULL;
-  PyObject *__pyx_t_10 = NULL;
-  int __pyx_lineno = 0;
-  const char *__pyx_filename = NULL;
-  int __pyx_clineno = 0;
-  __Pyx_RefNannySetupContext("__Pyx_Enum_BoxIntersectionType_to_py", 0);
-
-  /* "EnumTypeToPy":137
- *
- *
- *     try:             # <<<<<<<<<<<<<<
- *         from bezier._curve_intersection import BoxIntersectionType as __pyx_enum
- *     except ImportError:
- */
-  {
-    __Pyx_PyThreadState_declare
-    __Pyx_PyThreadState_assign
-    __Pyx_ExceptionSave(&__pyx_t_1, &__pyx_t_2, &__pyx_t_3);
-    __Pyx_XGOTREF(__pyx_t_1);
-    __Pyx_XGOTREF(__pyx_t_2);
-    __Pyx_XGOTREF(__pyx_t_3);
-    /*try:*/ {
-
-      /* "EnumTypeToPy":138
- *
- *     try:
- *         from bezier._curve_intersection import BoxIntersectionType as __pyx_enum             # <<<<<<<<<<<<<<
- *     except ImportError:
- *         import warnings
- */
-      __pyx_t_4 = PyList_New(1); if (unlikely(!__pyx_t_4)) __PYX_ERR(1, 138, __pyx_L3_error)
-      __Pyx_GOTREF(__pyx_t_4);
-      __Pyx_INCREF(__pyx_n_s_BoxIntersectionType);
-      __Pyx_GIVEREF(__pyx_n_s_BoxIntersectionType);
-      PyList_SET_ITEM(__pyx_t_4, 0, __pyx_n_s_BoxIntersectionType);
-      __pyx_t_5 = __Pyx_Import(__pyx_n_s_bezier__curve_intersection, __pyx_t_4, 0); if (unlikely(!__pyx_t_5)) __PYX_ERR(1, 138, __pyx_L3_error)
-      __Pyx_GOTREF(__pyx_t_5);
-      __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-      __pyx_t_4 = __Pyx_ImportFrom(__pyx_t_5, __pyx_n_s_BoxIntersectionType); if (unlikely(!__pyx_t_4)) __PYX_ERR(1, 138, __pyx_L3_error)
-      __Pyx_GOTREF(__pyx_t_4);
-      __Pyx_INCREF(__pyx_t_4);
-      __pyx_v___pyx_enum = __pyx_t_4;
-      __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-      __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-
-      /* "EnumTypeToPy":137
- *
- *
- *     try:             # <<<<<<<<<<<<<<
- *         from bezier._curve_intersection import BoxIntersectionType as __pyx_enum
- *     except ImportError:
- */
-    }
-    __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
-    __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
-    __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
-    goto __pyx_L8_try_end;
-    __pyx_L3_error:;
-    __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
-    __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
-
-    /* "EnumTypeToPy":139
- *     try:
- *         from bezier._curve_intersection import BoxIntersectionType as __pyx_enum
- *     except ImportError:             # <<<<<<<<<<<<<<
- *         import warnings
- *         warnings.warn(
- */
-    __pyx_t_6 = __Pyx_PyErr_ExceptionMatches(__pyx_builtin_ImportError);
-    if (__pyx_t_6) {
-      __Pyx_AddTraceback("EnumTypeToPy.__Pyx_Enum_BoxIntersectionType_to_py", __pyx_clineno, __pyx_lineno, __pyx_filename);
-      if (__Pyx_GetException(&__pyx_t_5, &__pyx_t_4, &__pyx_t_7) < 0) __PYX_ERR(1, 139, __pyx_L5_except_error)
-      __Pyx_XGOTREF(__pyx_t_5);
-      __Pyx_XGOTREF(__pyx_t_4);
-      __Pyx_XGOTREF(__pyx_t_7);
-
-      /* "EnumTypeToPy":140
- *         from bezier._curve_intersection import BoxIntersectionType as __pyx_enum
- *     except ImportError:
- *         import warnings             # <<<<<<<<<<<<<<
- *         warnings.warn(
- *             f"enum class BoxIntersectionType not importable from bezier._curve_intersection. "
- */
-      __pyx_t_8 = __Pyx_ImportDottedModule(__pyx_n_s_warnings, NULL); if (unlikely(!__pyx_t_8)) __PYX_ERR(1, 140, __pyx_L5_except_error)
-      __Pyx_GOTREF(__pyx_t_8);
-      __pyx_v_warnings = __pyx_t_8;
-      __pyx_t_8 = 0;
-
-      /* "EnumTypeToPy":141
- *     except ImportError:
- *         import warnings
- *         warnings.warn(             # <<<<<<<<<<<<<<
- *             f"enum class BoxIntersectionType not importable from bezier._curve_intersection. "
- *             "You are probably using a cpdef enum declared in a .pxd file that "
- */
-      __pyx_t_9 = __Pyx_PyObject_GetAttrStr(__pyx_v_warnings, __pyx_n_s_warn); if (unlikely(!__pyx_t_9)) __PYX_ERR(1, 141, __pyx_L5_except_error)
-      __Pyx_GOTREF(__pyx_t_9);
-      __pyx_t_10 = NULL;
-      __pyx_t_6 = 0;
-      if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_9))) {
-        __pyx_t_10 = PyMethod_GET_SELF(__pyx_t_9);
-        if (likely(__pyx_t_10)) {
-          PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_9);
-          __Pyx_INCREF(__pyx_t_10);
-          __Pyx_INCREF(function);
-          __Pyx_DECREF_SET(__pyx_t_9, function);
-          __pyx_t_6 = 1;
-        }
-      }
-      {
-        PyObject *__pyx_callargs[2] = {__pyx_t_10, __pyx_kp_u_enum_class_BoxIntersectionType_n};
-        __pyx_t_8 = __Pyx_PyObject_FastCall(__pyx_t_9, __pyx_callargs+1-__pyx_t_6, 1+__pyx_t_6);
-        __Pyx_XDECREF(__pyx_t_10); __pyx_t_10 = 0;
-        if (unlikely(!__pyx_t_8)) __PYX_ERR(1, 141, __pyx_L5_except_error)
-        __Pyx_GOTREF(__pyx_t_8);
-        __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
-      }
-      __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-
-      /* "EnumTypeToPy":145
- *             "You are probably using a cpdef enum declared in a .pxd file that "
- *             "does not have a .py  or .pyx file.")
- *         return <int>c_val             # <<<<<<<<<<<<<<
- *
- *     if 0:
- */
-      __Pyx_XDECREF(__pyx_r);
-      __pyx_t_8 = __Pyx_PyInt_From_int(((int)__pyx_v_c_val)); if (unlikely(!__pyx_t_8)) __PYX_ERR(1, 145, __pyx_L5_except_error)
-      __Pyx_GOTREF(__pyx_t_8);
-      __pyx_r = __pyx_t_8;
-      __pyx_t_8 = 0;
-      __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-      __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-      __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-      goto __pyx_L6_except_return;
-    }
-    goto __pyx_L5_except_error;
-
-    /* "EnumTypeToPy":137
- *
- *
- *     try:             # <<<<<<<<<<<<<<
- *         from bezier._curve_intersection import BoxIntersectionType as __pyx_enum
- *     except ImportError:
- */
-    __pyx_L5_except_error:;
-    __Pyx_XGIVEREF(__pyx_t_1);
-    __Pyx_XGIVEREF(__pyx_t_2);
-    __Pyx_XGIVEREF(__pyx_t_3);
-    __Pyx_ExceptionReset(__pyx_t_1, __pyx_t_2, __pyx_t_3);
-    goto __pyx_L1_error;
-    __pyx_L6_except_return:;
-    __Pyx_XGIVEREF(__pyx_t_1);
-    __Pyx_XGIVEREF(__pyx_t_2);
-    __Pyx_XGIVEREF(__pyx_t_3);
-    __Pyx_ExceptionReset(__pyx_t_1, __pyx_t_2, __pyx_t_3);
-    goto __pyx_L0;
-    __pyx_L8_try_end:;
-  }
-
-  /* "EnumTypeToPy":147
- *         return <int>c_val
- *
- *     if 0:             # <<<<<<<<<<<<<<
- *         pass
- *     elif c_val == BoxIntersectionType.INTERSECTION:
- */
-  switch (__pyx_v_c_val) {
-    case INTERSECTION:
-
-    /* "EnumTypeToPy":150
- *         pass
- *     elif c_val == BoxIntersectionType.INTERSECTION:
- *         return __pyx_enum.INTERSECTION             # <<<<<<<<<<<<<<
- *     elif c_val == BoxIntersectionType.TANGENT:
- *         return __pyx_enum.TANGENT
- */
-    __Pyx_XDECREF(__pyx_r);
-    __pyx_t_7 = __Pyx_PyObject_GetAttrStr(__pyx_v___pyx_enum, __pyx_n_s_INTERSECTION); if (unlikely(!__pyx_t_7)) __PYX_ERR(1, 150, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_7);
-    __pyx_r = __pyx_t_7;
-    __pyx_t_7 = 0;
-    goto __pyx_L0;
-
-    /* "EnumTypeToPy":149
- *     if 0:
- *         pass
- *     elif c_val == BoxIntersectionType.INTERSECTION:             # <<<<<<<<<<<<<<
- *         return __pyx_enum.INTERSECTION
- *     elif c_val == BoxIntersectionType.TANGENT:
- */
-    break;
-    case TANGENT:
-
-    /* "EnumTypeToPy":152
- *         return __pyx_enum.INTERSECTION
- *     elif c_val == BoxIntersectionType.TANGENT:
- *         return __pyx_enum.TANGENT             # <<<<<<<<<<<<<<
- *     elif c_val == BoxIntersectionType.DISJOINT:
- *         return __pyx_enum.DISJOINT
- */
-    __Pyx_XDECREF(__pyx_r);
-    __pyx_t_7 = __Pyx_PyObject_GetAttrStr(__pyx_v___pyx_enum, __pyx_n_s_TANGENT); if (unlikely(!__pyx_t_7)) __PYX_ERR(1, 152, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_7);
-    __pyx_r = __pyx_t_7;
-    __pyx_t_7 = 0;
-    goto __pyx_L0;
-
-    /* "EnumTypeToPy":151
- *     elif c_val == BoxIntersectionType.INTERSECTION:
- *         return __pyx_enum.INTERSECTION
- *     elif c_val == BoxIntersectionType.TANGENT:             # <<<<<<<<<<<<<<
- *         return __pyx_enum.TANGENT
- *     elif c_val == BoxIntersectionType.DISJOINT:
- */
-    break;
-    case DISJOINT:
-
-    /* "EnumTypeToPy":154
- *         return __pyx_enum.TANGENT
- *     elif c_val == BoxIntersectionType.DISJOINT:
- *         return __pyx_enum.DISJOINT             # <<<<<<<<<<<<<<
- *     else:
- *         underlying_c_val = <int>c_val
- */
-    __Pyx_XDECREF(__pyx_r);
-    __pyx_t_7 = __Pyx_PyObject_GetAttrStr(__pyx_v___pyx_enum, __pyx_n_s_DISJOINT); if (unlikely(!__pyx_t_7)) __PYX_ERR(1, 154, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_7);
-    __pyx_r = __pyx_t_7;
-    __pyx_t_7 = 0;
-    goto __pyx_L0;
-
-    /* "EnumTypeToPy":153
- *     elif c_val == BoxIntersectionType.TANGENT:
- *         return __pyx_enum.TANGENT
- *     elif c_val == BoxIntersectionType.DISJOINT:             # <<<<<<<<<<<<<<
- *         return __pyx_enum.DISJOINT
- *     else:
- */
-    break;
-    default:
-
-    /* "EnumTypeToPy":156
- *         return __pyx_enum.DISJOINT
- *     else:
- *         underlying_c_val = <int>c_val             # <<<<<<<<<<<<<<
- *         return __pyx_enum(underlying_c_val)
- *
- */
-    __pyx_v_underlying_c_val = ((int)__pyx_v_c_val);
-
-    /* "EnumTypeToPy":157
- *     else:
- *         underlying_c_val = <int>c_val
- *         return __pyx_enum(underlying_c_val)             # <<<<<<<<<<<<<<
- *
- */
-    __Pyx_XDECREF(__pyx_r);
-    __pyx_t_4 = __Pyx_PyInt_From_int(__pyx_v_underlying_c_val); if (unlikely(!__pyx_t_4)) __PYX_ERR(1, 157, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_4);
-    __Pyx_INCREF(__pyx_v___pyx_enum);
-    __pyx_t_5 = __pyx_v___pyx_enum; __pyx_t_8 = NULL;
-    __pyx_t_6 = 0;
-    if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_5))) {
-      __pyx_t_8 = PyMethod_GET_SELF(__pyx_t_5);
-      if (likely(__pyx_t_8)) {
-        PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_5);
-        __Pyx_INCREF(__pyx_t_8);
-        __Pyx_INCREF(function);
-        __Pyx_DECREF_SET(__pyx_t_5, function);
-        __pyx_t_6 = 1;
-      }
-    }
-    {
-      PyObject *__pyx_callargs[2] = {__pyx_t_8, __pyx_t_4};
-      __pyx_t_7 = __Pyx_PyObject_FastCall(__pyx_t_5, __pyx_callargs+1-__pyx_t_6, 1+__pyx_t_6);
-      __Pyx_XDECREF(__pyx_t_8); __pyx_t_8 = 0;
-      __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-      if (unlikely(!__pyx_t_7)) __PYX_ERR(1, 157, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_7);
-      __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-    }
-    __pyx_r = __pyx_t_7;
-    __pyx_t_7 = 0;
-    goto __pyx_L0;
-    break;
-  }
-
-  /* "EnumTypeToPy":132
- *
- * @cname("__Pyx_Enum_BoxIntersectionType_to_py")
- * cdef __Pyx_Enum_BoxIntersectionType_to_py(BoxIntersectionType c_val):             # <<<<<<<<<<<<<<
- *     cdef object __pyx_enum
- *
- */
-
-  /* function exit code */
-  __pyx_L1_error:;
-  __Pyx_XDECREF(__pyx_t_4);
-  __Pyx_XDECREF(__pyx_t_5);
-  __Pyx_XDECREF(__pyx_t_7);
-  __Pyx_XDECREF(__pyx_t_8);
-  __Pyx_XDECREF(__pyx_t_9);
-  __Pyx_XDECREF(__pyx_t_10);
-  __Pyx_AddTraceback("EnumTypeToPy.__Pyx_Enum_BoxIntersectionType_to_py", __pyx_clineno, __pyx_lineno, __pyx_filename);
-  __pyx_r = 0;
-  __pyx_L0:;
-  __Pyx_XDECREF(__pyx_v___pyx_enum);
-  __Pyx_XDECREF(__pyx_v_warnings);
-  __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_RefNannyFinishContext();
-  return __pyx_r;
-}
-
-static PyObject *__Pyx_Enum_Status_to_py(enum Status __pyx_v_c_val) {
-  PyObject *__pyx_v___pyx_enum = 0;
-  PyObject *__pyx_v_warnings = NULL;
-  int __pyx_v_underlying_c_val;
-  PyObject *__pyx_r = NULL;
-  __Pyx_RefNannyDeclarations
-  PyObject *__pyx_t_1 = NULL;
-  PyObject *__pyx_t_2 = NULL;
-  PyObject *__pyx_t_3 = NULL;
-  PyObject *__pyx_t_4 = NULL;
-  PyObject *__pyx_t_5 = NULL;
-  int __pyx_t_6;
-  PyObject *__pyx_t_7 = NULL;
-  PyObject *__pyx_t_8 = NULL;
-  PyObject *__pyx_t_9 = NULL;
-  PyObject *__pyx_t_10 = NULL;
-  int __pyx_lineno = 0;
-  const char *__pyx_filename = NULL;
-  int __pyx_clineno = 0;
-  __Pyx_RefNannySetupContext("__Pyx_Enum_Status_to_py", 0);
-
-  /* "EnumTypeToPy":137
- *
- *
- *     try:             # <<<<<<<<<<<<<<
- *         from bezier._status import Status as __pyx_enum
- *     except ImportError:
- */
-  {
-    __Pyx_PyThreadState_declare
-    __Pyx_PyThreadState_assign
-    __Pyx_ExceptionSave(&__pyx_t_1, &__pyx_t_2, &__pyx_t_3);
-    __Pyx_XGOTREF(__pyx_t_1);
-    __Pyx_XGOTREF(__pyx_t_2);
-    __Pyx_XGOTREF(__pyx_t_3);
-    /*try:*/ {
-
-      /* "EnumTypeToPy":138
- *
- *     try:
- *         from bezier._status import Status as __pyx_enum             # <<<<<<<<<<<<<<
- *     except ImportError:
- *         import warnings
- */
-      __pyx_t_4 = PyList_New(1); if (unlikely(!__pyx_t_4)) __PYX_ERR(1, 138, __pyx_L3_error)
-      __Pyx_GOTREF(__pyx_t_4);
-      __Pyx_INCREF(__pyx_n_s_Status);
-      __Pyx_GIVEREF(__pyx_n_s_Status);
-      PyList_SET_ITEM(__pyx_t_4, 0, __pyx_n_s_Status);
-      __pyx_t_5 = __Pyx_Import(__pyx_n_s_bezier__status, __pyx_t_4, 0); if (unlikely(!__pyx_t_5)) __PYX_ERR(1, 138, __pyx_L3_error)
-      __Pyx_GOTREF(__pyx_t_5);
-      __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-      __pyx_t_4 = __Pyx_ImportFrom(__pyx_t_5, __pyx_n_s_Status); if (unlikely(!__pyx_t_4)) __PYX_ERR(1, 138, __pyx_L3_error)
-      __Pyx_GOTREF(__pyx_t_4);
-      __Pyx_INCREF(__pyx_t_4);
-      __pyx_v___pyx_enum = __pyx_t_4;
-      __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-      __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-
-      /* "EnumTypeToPy":137
- *
- *
- *     try:             # <<<<<<<<<<<<<<
- *         from bezier._status import Status as __pyx_enum
- *     except ImportError:
- */
-    }
-    __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
-    __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
-    __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
-    goto __pyx_L8_try_end;
-    __pyx_L3_error:;
-    __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
-    __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
-
-    /* "EnumTypeToPy":139
- *     try:
- *         from bezier._status import Status as __pyx_enum
- *     except ImportError:             # <<<<<<<<<<<<<<
- *         import warnings
- *         warnings.warn(
- */
-    __pyx_t_6 = __Pyx_PyErr_ExceptionMatches(__pyx_builtin_ImportError);
-    if (__pyx_t_6) {
-      __Pyx_AddTraceback("EnumTypeToPy.__Pyx_Enum_Status_to_py", __pyx_clineno, __pyx_lineno, __pyx_filename);
-      if (__Pyx_GetException(&__pyx_t_5, &__pyx_t_4, &__pyx_t_7) < 0) __PYX_ERR(1, 139, __pyx_L5_except_error)
-      __Pyx_XGOTREF(__pyx_t_5);
-      __Pyx_XGOTREF(__pyx_t_4);
-      __Pyx_XGOTREF(__pyx_t_7);
-
-      /* "EnumTypeToPy":140
- *         from bezier._status import Status as __pyx_enum
- *     except ImportError:
- *         import warnings             # <<<<<<<<<<<<<<
- *         warnings.warn(
- *             f"enum class Status not importable from bezier._status. "
- */
-      __pyx_t_8 = __Pyx_ImportDottedModule(__pyx_n_s_warnings, NULL); if (unlikely(!__pyx_t_8)) __PYX_ERR(1, 140, __pyx_L5_except_error)
-      __Pyx_GOTREF(__pyx_t_8);
-      __pyx_v_warnings = __pyx_t_8;
-      __pyx_t_8 = 0;
-
-      /* "EnumTypeToPy":141
- *     except ImportError:
- *         import warnings
- *         warnings.warn(             # <<<<<<<<<<<<<<
- *             f"enum class Status not importable from bezier._status. "
- *             "You are probably using a cpdef enum declared in a .pxd file that "
- */
-      __pyx_t_9 = __Pyx_PyObject_GetAttrStr(__pyx_v_warnings, __pyx_n_s_warn); if (unlikely(!__pyx_t_9)) __PYX_ERR(1, 141, __pyx_L5_except_error)
-      __Pyx_GOTREF(__pyx_t_9);
-      __pyx_t_10 = NULL;
-      __pyx_t_6 = 0;
-      if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_9))) {
-        __pyx_t_10 = PyMethod_GET_SELF(__pyx_t_9);
-        if (likely(__pyx_t_10)) {
-          PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_9);
-          __Pyx_INCREF(__pyx_t_10);
-          __Pyx_INCREF(function);
-          __Pyx_DECREF_SET(__pyx_t_9, function);
-          __pyx_t_6 = 1;
-        }
-      }
-      {
-        PyObject *__pyx_callargs[2] = {__pyx_t_10, __pyx_kp_u_enum_class_Status_not_importable};
-        __pyx_t_8 = __Pyx_PyObject_FastCall(__pyx_t_9, __pyx_callargs+1-__pyx_t_6, 1+__pyx_t_6);
-        __Pyx_XDECREF(__pyx_t_10); __pyx_t_10 = 0;
-        if (unlikely(!__pyx_t_8)) __PYX_ERR(1, 141, __pyx_L5_except_error)
-        __Pyx_GOTREF(__pyx_t_8);
-        __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
-      }
-      __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-
-      /* "EnumTypeToPy":145
- *             "You are probably using a cpdef enum declared in a .pxd file that "
- *             "does not have a .py  or .pyx file.")
- *         return <int>c_val             # <<<<<<<<<<<<<<
- *
- *     if 0:
- */
-      __Pyx_XDECREF(__pyx_r);
-      __pyx_t_8 = __Pyx_PyInt_From_int(((int)__pyx_v_c_val)); if (unlikely(!__pyx_t_8)) __PYX_ERR(1, 145, __pyx_L5_except_error)
-      __Pyx_GOTREF(__pyx_t_8);
-      __pyx_r = __pyx_t_8;
-      __pyx_t_8 = 0;
-      __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-      __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-      __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-      goto __pyx_L6_except_return;
-    }
-    goto __pyx_L5_except_error;
-
-    /* "EnumTypeToPy":137
- *
- *
- *     try:             # <<<<<<<<<<<<<<
- *         from bezier._status import Status as __pyx_enum
- *     except ImportError:
- */
-    __pyx_L5_except_error:;
-    __Pyx_XGIVEREF(__pyx_t_1);
-    __Pyx_XGIVEREF(__pyx_t_2);
-    __Pyx_XGIVEREF(__pyx_t_3);
-    __Pyx_ExceptionReset(__pyx_t_1, __pyx_t_2, __pyx_t_3);
-    goto __pyx_L1_error;
-    __pyx_L6_except_return:;
-    __Pyx_XGIVEREF(__pyx_t_1);
-    __Pyx_XGIVEREF(__pyx_t_2);
-    __Pyx_XGIVEREF(__pyx_t_3);
-    __Pyx_ExceptionReset(__pyx_t_1, __pyx_t_2, __pyx_t_3);
-    goto __pyx_L0;
-    __pyx_L8_try_end:;
-  }
-
-  /* "EnumTypeToPy":147
- *         return <int>c_val
- *
- *     if 0:             # <<<<<<<<<<<<<<
- *         pass
- *     elif c_val == Status.SUCCESS:
- */
-  switch (__pyx_v_c_val) {
-    case SUCCESS:
-
-    /* "EnumTypeToPy":150
- *         pass
- *     elif c_val == Status.SUCCESS:
- *         return __pyx_enum.SUCCESS             # <<<<<<<<<<<<<<
- *     elif c_val == Status.BAD_MULTIPLICITY:
- *         return __pyx_enum.BAD_MULTIPLICITY
- */
-    __Pyx_XDECREF(__pyx_r);
-    __pyx_t_7 = __Pyx_PyObject_GetAttrStr(__pyx_v___pyx_enum, __pyx_n_s_SUCCESS); if (unlikely(!__pyx_t_7)) __PYX_ERR(1, 150, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_7);
-    __pyx_r = __pyx_t_7;
-    __pyx_t_7 = 0;
-    goto __pyx_L0;
-
-    /* "EnumTypeToPy":149
- *     if 0:
- *         pass
- *     elif c_val == Status.SUCCESS:             # <<<<<<<<<<<<<<
- *         return __pyx_enum.SUCCESS
- *     elif c_val == Status.BAD_MULTIPLICITY:
- */
-    break;
-    case BAD_MULTIPLICITY:
-
-    /* "EnumTypeToPy":152
- *         return __pyx_enum.SUCCESS
- *     elif c_val == Status.BAD_MULTIPLICITY:
- *         return __pyx_enum.BAD_MULTIPLICITY             # <<<<<<<<<<<<<<
- *     elif c_val == Status.NO_CONVERGE:
- *         return __pyx_enum.NO_CONVERGE
- */
-    __Pyx_XDECREF(__pyx_r);
-    __pyx_t_7 = __Pyx_PyObject_GetAttrStr(__pyx_v___pyx_enum, __pyx_n_s_BAD_MULTIPLICITY); if (unlikely(!__pyx_t_7)) __PYX_ERR(1, 152, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_7);
-    __pyx_r = __pyx_t_7;
-    __pyx_t_7 = 0;
-    goto __pyx_L0;
-
-    /* "EnumTypeToPy":151
- *     elif c_val == Status.SUCCESS:
- *         return __pyx_enum.SUCCESS
- *     elif c_val == Status.BAD_MULTIPLICITY:             # <<<<<<<<<<<<<<
- *         return __pyx_enum.BAD_MULTIPLICITY
- *     elif c_val == Status.NO_CONVERGE:
- */
-    break;
-    case NO_CONVERGE:
-
-    /* "EnumTypeToPy":154
- *         return __pyx_enum.BAD_MULTIPLICITY
- *     elif c_val == Status.NO_CONVERGE:
- *         return __pyx_enum.NO_CONVERGE             # <<<<<<<<<<<<<<
- *     elif c_val == Status.INSUFFICIENT_SPACE:
- *         return __pyx_enum.INSUFFICIENT_SPACE
- */
-    __Pyx_XDECREF(__pyx_r);
-    __pyx_t_7 = __Pyx_PyObject_GetAttrStr(__pyx_v___pyx_enum, __pyx_n_s_NO_CONVERGE); if (unlikely(!__pyx_t_7)) __PYX_ERR(1, 154, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_7);
-    __pyx_r = __pyx_t_7;
-    __pyx_t_7 = 0;
-    goto __pyx_L0;
-
-    /* "EnumTypeToPy":153
- *     elif c_val == Status.BAD_MULTIPLICITY:
- *         return __pyx_enum.BAD_MULTIPLICITY
- *     elif c_val == Status.NO_CONVERGE:             # <<<<<<<<<<<<<<
- *         return __pyx_enum.NO_CONVERGE
- *     elif c_val == Status.INSUFFICIENT_SPACE:
- */
-    break;
-    case INSUFFICIENT_SPACE:
-
-    /* "EnumTypeToPy":156
- *         return __pyx_enum.NO_CONVERGE
- *     elif c_val == Status.INSUFFICIENT_SPACE:
- *         return __pyx_enum.INSUFFICIENT_SPACE             # <<<<<<<<<<<<<<
- *     elif c_val == Status.SAME_CURVATURE:
- *         return __pyx_enum.SAME_CURVATURE
- */
-    __Pyx_XDECREF(__pyx_r);
-    __pyx_t_7 = __Pyx_PyObject_GetAttrStr(__pyx_v___pyx_enum, __pyx_n_s_INSUFFICIENT_SPACE); if (unlikely(!__pyx_t_7)) __PYX_ERR(1, 156, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_7);
-    __pyx_r = __pyx_t_7;
-    __pyx_t_7 = 0;
-    goto __pyx_L0;
-
-    /* "EnumTypeToPy":155
- *     elif c_val == Status.NO_CONVERGE:
- *         return __pyx_enum.NO_CONVERGE
- *     elif c_val == Status.INSUFFICIENT_SPACE:             # <<<<<<<<<<<<<<
- *         return __pyx_enum.INSUFFICIENT_SPACE
- *     elif c_val == Status.SAME_CURVATURE:
- */
-    break;
-    case SAME_CURVATURE:
-
-    /* "EnumTypeToPy":158
- *         return __pyx_enum.INSUFFICIENT_SPACE
- *     elif c_val == Status.SAME_CURVATURE:
- *         return __pyx_enum.SAME_CURVATURE             # <<<<<<<<<<<<<<
- *     elif c_val == Status.BAD_INTERIOR:
- *         return __pyx_enum.BAD_INTERIOR
- */
-    __Pyx_XDECREF(__pyx_r);
-    __pyx_t_7 = __Pyx_PyObject_GetAttrStr(__pyx_v___pyx_enum, __pyx_n_s_SAME_CURVATURE); if (unlikely(!__pyx_t_7)) __PYX_ERR(1, 158, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_7);
-    __pyx_r = __pyx_t_7;
-    __pyx_t_7 = 0;
-    goto __pyx_L0;
-
-    /* "EnumTypeToPy":157
- *     elif c_val == Status.INSUFFICIENT_SPACE:
- *         return __pyx_enum.INSUFFICIENT_SPACE
- *     elif c_val == Status.SAME_CURVATURE:             # <<<<<<<<<<<<<<
- *         return __pyx_enum.SAME_CURVATURE
- *     elif c_val == Status.BAD_INTERIOR:
- */
-    break;
-    case BAD_INTERIOR:
-
-    /* "EnumTypeToPy":160
- *         return __pyx_enum.SAME_CURVATURE
- *     elif c_val == Status.BAD_INTERIOR:
- *         return __pyx_enum.BAD_INTERIOR             # <<<<<<<<<<<<<<
- *     elif c_val == Status.EDGE_END:
- *         return __pyx_enum.EDGE_END
- */
-    __Pyx_XDECREF(__pyx_r);
-    __pyx_t_7 = __Pyx_PyObject_GetAttrStr(__pyx_v___pyx_enum, __pyx_n_s_BAD_INTERIOR); if (unlikely(!__pyx_t_7)) __PYX_ERR(1, 160, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_7);
-    __pyx_r = __pyx_t_7;
-    __pyx_t_7 = 0;
-    goto __pyx_L0;
-
-    /* "EnumTypeToPy":159
- *     elif c_val == Status.SAME_CURVATURE:
- *         return __pyx_enum.SAME_CURVATURE
- *     elif c_val == Status.BAD_INTERIOR:             # <<<<<<<<<<<<<<
- *         return __pyx_enum.BAD_INTERIOR
- *     elif c_val == Status.EDGE_END:
- */
-    break;
-    case EDGE_END:
-
-    /* "EnumTypeToPy":162
- *         return __pyx_enum.BAD_INTERIOR
- *     elif c_val == Status.EDGE_END:
- *         return __pyx_enum.EDGE_END             # <<<<<<<<<<<<<<
- *     elif c_val == Status.SINGULAR:
- *         return __pyx_enum.SINGULAR
- */
-    __Pyx_XDECREF(__pyx_r);
-    __pyx_t_7 = __Pyx_PyObject_GetAttrStr(__pyx_v___pyx_enum, __pyx_n_s_EDGE_END); if (unlikely(!__pyx_t_7)) __PYX_ERR(1, 162, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_7);
-    __pyx_r = __pyx_t_7;
-    __pyx_t_7 = 0;
-    goto __pyx_L0;
-
-    /* "EnumTypeToPy":161
- *     elif c_val == Status.BAD_INTERIOR:
- *         return __pyx_enum.BAD_INTERIOR
- *     elif c_val == Status.EDGE_END:             # <<<<<<<<<<<<<<
- *         return __pyx_enum.EDGE_END
- *     elif c_val == Status.SINGULAR:
- */
-    break;
-    case SINGULAR:
-
-    /* "EnumTypeToPy":164
- *         return __pyx_enum.EDGE_END
- *     elif c_val == Status.SINGULAR:
- *         return __pyx_enum.SINGULAR             # <<<<<<<<<<<<<<
- *     elif c_val == Status.UNKNOWN:
- *         return __pyx_enum.UNKNOWN
- */
-    __Pyx_XDECREF(__pyx_r);
-    __pyx_t_7 = __Pyx_PyObject_GetAttrStr(__pyx_v___pyx_enum, __pyx_n_s_SINGULAR); if (unlikely(!__pyx_t_7)) __PYX_ERR(1, 164, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_7);
-    __pyx_r = __pyx_t_7;
-    __pyx_t_7 = 0;
-    goto __pyx_L0;
-
-    /* "EnumTypeToPy":163
- *     elif c_val == Status.EDGE_END:
- *         return __pyx_enum.EDGE_END
- *     elif c_val == Status.SINGULAR:             # <<<<<<<<<<<<<<
- *         return __pyx_enum.SINGULAR
- *     elif c_val == Status.UNKNOWN:
- */
-    break;
-    case UNKNOWN:
-
-    /* "EnumTypeToPy":166
- *         return __pyx_enum.SINGULAR
- *     elif c_val == Status.UNKNOWN:
- *         return __pyx_enum.UNKNOWN             # <<<<<<<<<<<<<<
- *     else:
- *         underlying_c_val = <int>c_val
- */
-    __Pyx_XDECREF(__pyx_r);
-    __pyx_t_7 = __Pyx_PyObject_GetAttrStr(__pyx_v___pyx_enum, __pyx_n_s_UNKNOWN); if (unlikely(!__pyx_t_7)) __PYX_ERR(1, 166, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_7);
-    __pyx_r = __pyx_t_7;
-    __pyx_t_7 = 0;
-    goto __pyx_L0;
-
-    /* "EnumTypeToPy":165
- *     elif c_val == Status.SINGULAR:
- *         return __pyx_enum.SINGULAR
- *     elif c_val == Status.UNKNOWN:             # <<<<<<<<<<<<<<
- *         return __pyx_enum.UNKNOWN
- *     else:
- */
-    break;
-    default:
-
-    /* "EnumTypeToPy":168
- *         return __pyx_enum.UNKNOWN
- *     else:
- *         underlying_c_val = <int>c_val             # <<<<<<<<<<<<<<
- *         return __pyx_enum(underlying_c_val)
- *
- */
-    __pyx_v_underlying_c_val = ((int)__pyx_v_c_val);
-
-    /* "EnumTypeToPy":169
- *     else:
- *         underlying_c_val = <int>c_val
- *         return __pyx_enum(underlying_c_val)             # <<<<<<<<<<<<<<
- *
- */
-    __Pyx_XDECREF(__pyx_r);
-    __pyx_t_4 = __Pyx_PyInt_From_int(__pyx_v_underlying_c_val); if (unlikely(!__pyx_t_4)) __PYX_ERR(1, 169, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_4);
-    __Pyx_INCREF(__pyx_v___pyx_enum);
-    __pyx_t_5 = __pyx_v___pyx_enum; __pyx_t_8 = NULL;
-    __pyx_t_6 = 0;
-    if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_5))) {
-      __pyx_t_8 = PyMethod_GET_SELF(__pyx_t_5);
-      if (likely(__pyx_t_8)) {
-        PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_5);
-        __Pyx_INCREF(__pyx_t_8);
-        __Pyx_INCREF(function);
-        __Pyx_DECREF_SET(__pyx_t_5, function);
-        __pyx_t_6 = 1;
-      }
-    }
-    {
-      PyObject *__pyx_callargs[2] = {__pyx_t_8, __pyx_t_4};
-      __pyx_t_7 = __Pyx_PyObject_FastCall(__pyx_t_5, __pyx_callargs+1-__pyx_t_6, 1+__pyx_t_6);
-      __Pyx_XDECREF(__pyx_t_8); __pyx_t_8 = 0;
-      __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-      if (unlikely(!__pyx_t_7)) __PYX_ERR(1, 169, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_7);
-      __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-    }
-    __pyx_r = __pyx_t_7;
-    __pyx_t_7 = 0;
-    goto __pyx_L0;
-    break;
-  }
-
-  /* "EnumTypeToPy":132
- *
- * @cname("__Pyx_Enum_Status_to_py")
- * cdef __Pyx_Enum_Status_to_py(Status c_val):             # <<<<<<<<<<<<<<
- *     cdef object __pyx_enum
- *
- */
-
-  /* function exit code */
-  __pyx_L1_error:;
-  __Pyx_XDECREF(__pyx_t_4);
-  __Pyx_XDECREF(__pyx_t_5);
-  __Pyx_XDECREF(__pyx_t_7);
-  __Pyx_XDECREF(__pyx_t_8);
-  __Pyx_XDECREF(__pyx_t_9);
-  __Pyx_XDECREF(__pyx_t_10);
-  __Pyx_AddTraceback("EnumTypeToPy.__Pyx_Enum_Status_to_py", __pyx_clineno, __pyx_lineno, __pyx_filename);
-  __pyx_r = 0;
-  __pyx_L0:;
-  __Pyx_XDECREF(__pyx_v___pyx_enum);
-  __Pyx_XDECREF(__pyx_v_warnings);
-  __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_RefNannyFinishContext();
-  return __pyx_r;
-}
 
 /* "FromPyStructUtility":12
  *
@@ -6869,7 +5975,7 @@ static CurvedPolygonSegment __pyx_convert__from_py_CurvedPolygonSegment(PyObject
  *     result.start = value
  *     try:
  */
-      __pyx_t_9 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__3, NULL); if (unlikely(!__pyx_t_9)) __PYX_ERR(1, 20, __pyx_L6_except_error)
+      __pyx_t_9 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple_, NULL); if (unlikely(!__pyx_t_9)) __PYX_ERR(1, 20, __pyx_L6_except_error)
       __Pyx_GOTREF(__pyx_t_9);
       __Pyx_Raise(__pyx_t_9, 0, 0, 0);
       __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
@@ -6971,7 +6077,7 @@ static CurvedPolygonSegment __pyx_convert__from_py_CurvedPolygonSegment(PyObject
  *     result.end = value
  *     try:
  */
-      __pyx_t_9 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__4, NULL); if (unlikely(!__pyx_t_9)) __PYX_ERR(1, 25, __pyx_L14_except_error)
+      __pyx_t_9 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__2, NULL); if (unlikely(!__pyx_t_9)) __PYX_ERR(1, 25, __pyx_L14_except_error)
       __Pyx_GOTREF(__pyx_t_9);
       __Pyx_Raise(__pyx_t_9, 0, 0, 0);
       __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
@@ -7073,7 +6179,7 @@ static CurvedPolygonSegment __pyx_convert__from_py_CurvedPolygonSegment(PyObject
  *     result.edge_index = value
  *     return result
  */
-      __pyx_t_9 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__5, NULL); if (unlikely(!__pyx_t_9)) __PYX_ERR(1, 30, __pyx_L22_except_error)
+      __pyx_t_9 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__3, NULL); if (unlikely(!__pyx_t_9)) __PYX_ERR(1, 30, __pyx_L22_except_error)
       __Pyx_GOTREF(__pyx_t_9);
       __Pyx_Raise(__pyx_t_9, 0, 0, 0);
       __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
@@ -7570,20 +6676,20 @@ static int __pyx_array___pyx_pf_15View_dot_MemoryView_5array___cinit__(struct __
       __Pyx_GIVEREF(__pyx_t_6);
       PyTuple_SET_ITEM(__pyx_t_5, 1, __pyx_t_6);
       __pyx_t_6 = 0;
-      __Pyx_INCREF(__pyx_kp_u__6);
+      __Pyx_INCREF(__pyx_kp_u__4);
       __pyx_t_9 += 2;
-      __Pyx_GIVEREF(__pyx_kp_u__6);
-      PyTuple_SET_ITEM(__pyx_t_5, 2, __pyx_kp_u__6);
+      __Pyx_GIVEREF(__pyx_kp_u__4);
+      PyTuple_SET_ITEM(__pyx_t_5, 2, __pyx_kp_u__4);
       __pyx_t_6 = __Pyx_PyUnicode_From_Py_ssize_t(__pyx_v_dim, 0, ' ', 'd'); if (unlikely(!__pyx_t_6)) __PYX_ERR(1, 161, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_6);
       __pyx_t_9 += __Pyx_PyUnicode_GET_LENGTH(__pyx_t_6);
       __Pyx_GIVEREF(__pyx_t_6);
       PyTuple_SET_ITEM(__pyx_t_5, 3, __pyx_t_6);
       __pyx_t_6 = 0;
-      __Pyx_INCREF(__pyx_kp_u_);
+      __Pyx_INCREF(__pyx_kp_u__5);
       __pyx_t_9 += 1;
-      __Pyx_GIVEREF(__pyx_kp_u_);
-      PyTuple_SET_ITEM(__pyx_t_5, 4, __pyx_kp_u_);
+      __Pyx_GIVEREF(__pyx_kp_u__5);
+      PyTuple_SET_ITEM(__pyx_t_5, 4, __pyx_kp_u__5);
       __pyx_t_6 = __Pyx_PyUnicode_Join(__pyx_t_5, 5, __pyx_t_9, __pyx_t_10); if (unlikely(!__pyx_t_6)) __PYX_ERR(1, 161, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_6);
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
@@ -27118,7 +26224,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_26bbox_intersect(CYTHON_UNUSED PyObj
  *
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __Pyx_Enum_BoxIntersectionType_to_py(__pyx_v_enum_val); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 437, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyInt_From_enum__BoxIntersectionType(__pyx_v_enum_val); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 437, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -28339,7 +27445,7 @@ __pyx_t_4 = __pyx_memoryview_fromslice(__pyx_t_17, 2, (PyObject *(*)(char *)) __
     __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_format); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 502, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-    __pyx_t_3 = __Pyx_Enum_Status_to_py(__pyx_v_status); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 502, __pyx_L1_error)
+    __pyx_t_3 = __Pyx_PyInt_From_enum__Status(__pyx_v_status); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 502, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
     __pyx_t_1 = NULL;
     __pyx_t_5 = 0;
@@ -39033,7 +38139,7 @@ static PyObject *__pyx_pf_6bezier_8_speedup_84triangle_intersections(CYTHON_UNUS
     __pyx_t_19 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_format); if (unlikely(!__pyx_t_19)) __PYX_ERR(0, 1153, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_19);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-    __pyx_t_3 = __Pyx_Enum_Status_to_py(__pyx_v_status); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 1153, __pyx_L1_error)
+    __pyx_t_3 = __Pyx_PyInt_From_enum__Status(__pyx_v_status); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 1153, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
     __pyx_t_18 = NULL;
     __pyx_t_7 = 0;
@@ -40352,14 +39458,10 @@ static PyMethodDef __pyx_methods[] = {
 
 static int __Pyx_CreateStringTabAndInitStrings(void) {
   __Pyx_StringTabEntry __pyx_string_tab[] = {
-    {&__pyx_kp_u_, __pyx_k_, sizeof(__pyx_k_), 0, 1, 0, 0},
     {&__pyx_n_s_ASCII, __pyx_k_ASCII, sizeof(__pyx_k_ASCII), 0, 0, 1, 1},
     {&__pyx_kp_s_All_dimensions_preceding_dimensi, __pyx_k_All_dimensions_preceding_dimensi, sizeof(__pyx_k_All_dimensions_preceding_dimensi), 0, 0, 1, 0},
     {&__pyx_n_s_AssertionError, __pyx_k_AssertionError, sizeof(__pyx_k_AssertionError), 0, 0, 1, 1},
     {&__pyx_kp_u_Assumed_the_requested_tolerance, __pyx_k_Assumed_the_requested_tolerance, sizeof(__pyx_k_Assumed_the_requested_tolerance), 0, 1, 0, 0},
-    {&__pyx_n_s_BAD_INTERIOR, __pyx_k_BAD_INTERIOR, sizeof(__pyx_k_BAD_INTERIOR), 0, 0, 1, 1},
-    {&__pyx_n_s_BAD_MULTIPLICITY, __pyx_k_BAD_MULTIPLICITY, sizeof(__pyx_k_BAD_MULTIPLICITY), 0, 0, 1, 1},
-    {&__pyx_n_s_BoxIntersectionType, __pyx_k_BoxIntersectionType, sizeof(__pyx_k_BoxIntersectionType), 0, 0, 1, 1},
     {&__pyx_kp_s_Buffer_view_does_not_expose_stri, __pyx_k_Buffer_view_does_not_expose_stri, sizeof(__pyx_k_Buffer_view_does_not_expose_stri), 0, 0, 1, 0},
     {&__pyx_kp_s_Can_only_create_a_buffer_that_is, __pyx_k_Can_only_create_a_buffer_that_is, sizeof(__pyx_k_Can_only_create_a_buffer_that_is), 0, 0, 1, 0},
     {&__pyx_kp_s_Cannot_assign_to_read_only_memor, __pyx_k_Cannot_assign_to_read_only_memor, sizeof(__pyx_k_Cannot_assign_to_read_only_memor), 0, 0, 1, 0},
@@ -40368,18 +39470,14 @@ static int __Pyx_CreateStringTabAndInitStrings(void) {
     {&__pyx_kp_s_Cannot_transpose_memoryview_with, __pyx_k_Cannot_transpose_memoryview_with, sizeof(__pyx_k_Cannot_transpose_memoryview_with), 0, 0, 1, 0},
     {&__pyx_kp_u_Curve_intersection_failed_to_con, __pyx_k_Curve_intersection_failed_to_con, sizeof(__pyx_k_Curve_intersection_failed_to_con), 0, 1, 0, 0},
     {&__pyx_kp_u_Curve_should_have_at_least_one_n, __pyx_k_Curve_should_have_at_least_one_n, sizeof(__pyx_k_Curve_should_have_at_least_one_n), 0, 1, 0, 0},
-    {&__pyx_n_s_DISJOINT, __pyx_k_DISJOINT, sizeof(__pyx_k_DISJOINT), 0, 0, 1, 1},
     {&__pyx_n_s_DQAGSE_ERR_MSGS, __pyx_k_DQAGSE_ERR_MSGS, sizeof(__pyx_k_DQAGSE_ERR_MSGS), 0, 0, 1, 1},
     {&__pyx_kp_u_Did_not_have_enough_space_for_in, __pyx_k_Did_not_have_enough_space_for_in, sizeof(__pyx_k_Did_not_have_enough_space_for_in), 0, 1, 0, 0},
     {&__pyx_kp_u_Did_not_have_enough_space_for_se, __pyx_k_Did_not_have_enough_space_for_se, sizeof(__pyx_k_Did_not_have_enough_space_for_se), 0, 1, 0, 0},
     {&__pyx_kp_u_Did_not_have_enough_space_for_se_2, __pyx_k_Did_not_have_enough_space_for_se_2, sizeof(__pyx_k_Did_not_have_enough_space_for_se_2), 0, 1, 0, 0},
     {&__pyx_kp_s_Dimension_d_is_not_direct, __pyx_k_Dimension_d_is_not_direct, sizeof(__pyx_k_Dimension_d_is_not_direct), 0, 0, 1, 0},
-    {&__pyx_n_s_EDGE_END, __pyx_k_EDGE_END, sizeof(__pyx_k_EDGE_END), 0, 0, 1, 1},
     {&__pyx_n_s_Ellipsis, __pyx_k_Ellipsis, sizeof(__pyx_k_Ellipsis), 0, 0, 1, 1},
     {&__pyx_kp_s_Empty_shape_tuple_for_cython_arr, __pyx_k_Empty_shape_tuple_for_cython_arr, sizeof(__pyx_k_Empty_shape_tuple_for_cython_arr), 0, 0, 1, 0},
     {&__pyx_n_u_F, __pyx_k_F, sizeof(__pyx_k_F), 0, 1, 0, 1},
-    {&__pyx_n_s_INSUFFICIENT_SPACE, __pyx_k_INSUFFICIENT_SPACE, sizeof(__pyx_k_INSUFFICIENT_SPACE), 0, 0, 1, 1},
-    {&__pyx_n_s_INTERSECTION, __pyx_k_INTERSECTION, sizeof(__pyx_k_INTERSECTION), 0, 0, 1, 1},
     {&__pyx_n_s_ImportError, __pyx_k_ImportError, sizeof(__pyx_k_ImportError), 0, 0, 1, 1},
     {&__pyx_kp_s_Incompatible_checksums_0x_x_vs_0, __pyx_k_Incompatible_checksums_0x_x_vs_0, sizeof(__pyx_k_Incompatible_checksums_0x_x_vs_0), 0, 0, 1, 0},
     {&__pyx_n_s_IndexError, __pyx_k_IndexError, sizeof(__pyx_k_IndexError), 0, 0, 1, 1},
@@ -40398,7 +39496,6 @@ static int __Pyx_CreateStringTabAndInitStrings(void) {
     {&__pyx_kp_s_MemoryView_of_r_at_0x_x, __pyx_k_MemoryView_of_r_at_0x_x, sizeof(__pyx_k_MemoryView_of_r_at_0x_x), 0, 0, 1, 0},
     {&__pyx_kp_s_MemoryView_of_r_object, __pyx_k_MemoryView_of_r_object, sizeof(__pyx_k_MemoryView_of_r_object), 0, 0, 1, 0},
     {&__pyx_n_s_NEWTON_NO_CONVERGE, __pyx_k_NEWTON_NO_CONVERGE, sizeof(__pyx_k_NEWTON_NO_CONVERGE), 0, 0, 1, 1},
-    {&__pyx_n_s_NO_CONVERGE, __pyx_k_NO_CONVERGE, sizeof(__pyx_k_NO_CONVERGE), 0, 0, 1, 1},
     {&__pyx_kp_s_No_value_specified_for_struct_at, __pyx_k_No_value_specified_for_struct_at, sizeof(__pyx_k_No_value_specified_for_struct_at), 0, 0, 1, 0},
     {&__pyx_kp_s_No_value_specified_for_struct_at_2, __pyx_k_No_value_specified_for_struct_at_2, sizeof(__pyx_k_No_value_specified_for_struct_at_2), 0, 0, 1, 0},
     {&__pyx_kp_s_No_value_specified_for_struct_at_3, __pyx_k_No_value_specified_for_struct_at_3, sizeof(__pyx_k_No_value_specified_for_struct_at_3), 0, 0, 1, 0},
@@ -40410,22 +39507,16 @@ static int __Pyx_CreateStringTabAndInitStrings(void) {
     {&__pyx_kp_u_Point_was_expected_to_have_shape, __pyx_k_Point_was_expected_to_have_shape, sizeof(__pyx_k_Point_was_expected_to_have_shape), 0, 1, 0, 0},
     {&__pyx_kp_u_Roundoff_error_detected_which_pr, __pyx_k_Roundoff_error_detected_which_pr, sizeof(__pyx_k_Roundoff_error_detected_which_pr), 0, 1, 0, 0},
     {&__pyx_n_s_RuntimeError, __pyx_k_RuntimeError, sizeof(__pyx_k_RuntimeError), 0, 0, 1, 1},
-    {&__pyx_n_s_SAME_CURVATURE, __pyx_k_SAME_CURVATURE, sizeof(__pyx_k_SAME_CURVATURE), 0, 0, 1, 1},
     {&__pyx_n_s_SEGMENTS_TOO_SMALL, __pyx_k_SEGMENTS_TOO_SMALL, sizeof(__pyx_k_SEGMENTS_TOO_SMALL), 0, 0, 1, 1},
     {&__pyx_n_s_SEGMENT_ENDS_TOO_SMALL, __pyx_k_SEGMENT_ENDS_TOO_SMALL, sizeof(__pyx_k_SEGMENT_ENDS_TOO_SMALL), 0, 0, 1, 1},
-    {&__pyx_n_s_SINGULAR, __pyx_k_SINGULAR, sizeof(__pyx_k_SINGULAR), 0, 0, 1, 1},
     {&__pyx_n_s_SUBDIVISION_NO_CONVERGE, __pyx_k_SUBDIVISION_NO_CONVERGE, sizeof(__pyx_k_SUBDIVISION_NO_CONVERGE), 0, 0, 1, 1},
-    {&__pyx_n_s_SUCCESS, __pyx_k_SUCCESS, sizeof(__pyx_k_SUCCESS), 0, 0, 1, 1},
     {&__pyx_n_s_Sequence, __pyx_k_Sequence, sizeof(__pyx_k_Sequence), 0, 0, 1, 1},
-    {&__pyx_n_s_Status, __pyx_k_Status, sizeof(__pyx_k_Status), 0, 0, 1, 1},
     {&__pyx_kp_s_Step_may_not_be_zero_axis_d, __pyx_k_Step_may_not_be_zero_axis_d, sizeof(__pyx_k_Step_may_not_be_zero_axis_d), 0, 0, 1, 0},
-    {&__pyx_n_s_TANGENT, __pyx_k_TANGENT, sizeof(__pyx_k_TANGENT), 0, 0, 1, 1},
     {&__pyx_n_s_TOO_MANY_TEMPLATE, __pyx_k_TOO_MANY_TEMPLATE, sizeof(__pyx_k_TOO_MANY_TEMPLATE), 0, 0, 1, 1},
     {&__pyx_n_s_TOO_SMALL_TEMPLATE, __pyx_k_TOO_SMALL_TEMPLATE, sizeof(__pyx_k_TOO_SMALL_TEMPLATE), 0, 0, 1, 1},
     {&__pyx_kp_u_Tangent_curves_have_same_curvatu, __pyx_k_Tangent_curves_have_same_curvatu, sizeof(__pyx_k_Tangent_curves_have_same_curvatu), 0, 1, 0, 0},
     {&__pyx_kp_u_The_number_of_candidate_intersec, __pyx_k_The_number_of_candidate_intersec, sizeof(__pyx_k_The_number_of_candidate_intersec), 0, 1, 0, 0},
     {&__pyx_n_s_TypeError, __pyx_k_TypeError, sizeof(__pyx_k_TypeError), 0, 0, 1, 1},
-    {&__pyx_n_s_UNKNOWN, __pyx_k_UNKNOWN, sizeof(__pyx_k_UNKNOWN), 0, 0, 1, 1},
     {&__pyx_kp_s_Unable_to_convert_item_to_object, __pyx_k_Unable_to_convert_item_to_object, sizeof(__pyx_k_Unable_to_convert_item_to_object), 0, 0, 1, 0},
     {&__pyx_kp_u_Unexpected_number_of_edges, __pyx_k_Unexpected_number_of_edges, sizeof(__pyx_k_Unexpected_number_of_edges), 0, 1, 0, 0},
     {&__pyx_kp_u_Unknown_error_has_occurred, __pyx_k_Unknown_error_has_occurred, sizeof(__pyx_k_Unknown_error_has_occurred), 0, 1, 0, 0},
@@ -40437,9 +39528,10 @@ static int __Pyx_CreateStringTabAndInitStrings(void) {
     {&__pyx_n_s_View_MemoryView, __pyx_k_View_MemoryView, sizeof(__pyx_k_View_MemoryView), 0, 0, 1, 1},
     {&__pyx_kp_u__10, __pyx_k__10, sizeof(__pyx_k__10), 0, 1, 0, 0},
     {&__pyx_n_s__128, __pyx_k__128, sizeof(__pyx_k__128), 0, 0, 1, 1},
-    {&__pyx_n_s__2, __pyx_k__2, sizeof(__pyx_k__2), 0, 0, 1, 1},
+    {&__pyx_kp_u__4, __pyx_k__4, sizeof(__pyx_k__4), 0, 1, 0, 0},
+    {&__pyx_kp_u__5, __pyx_k__5, sizeof(__pyx_k__5), 0, 1, 0, 0},
     {&__pyx_n_s__58, __pyx_k__58, sizeof(__pyx_k__58), 0, 0, 1, 1},
-    {&__pyx_kp_u__6, __pyx_k__6, sizeof(__pyx_k__6), 0, 1, 0, 0},
+    {&__pyx_n_s__6, __pyx_k__6, sizeof(__pyx_k__6), 0, 0, 1, 1},
     {&__pyx_kp_u__9, __pyx_k__9, sizeof(__pyx_k__9), 0, 1, 0, 0},
     {&__pyx_n_s_abc, __pyx_k_abc, sizeof(__pyx_k_abc), 0, 0, 1, 1},
     {&__pyx_n_s_align, __pyx_k_align, sizeof(__pyx_k_align), 0, 0, 1, 1},
@@ -40455,9 +39547,7 @@ static int __Pyx_CreateStringTabAndInitStrings(void) {
     {&__pyx_n_s_bbox, __pyx_k_bbox, sizeof(__pyx_k_bbox), 0, 0, 1, 1},
     {&__pyx_n_s_bbox_intersect, __pyx_k_bbox_intersect, sizeof(__pyx_k_bbox_intersect), 0, 0, 1, 1},
     {&__pyx_n_s_begin_index, __pyx_k_begin_index, sizeof(__pyx_k_begin_index), 0, 0, 1, 1},
-    {&__pyx_n_s_bezier__curve_intersection, __pyx_k_bezier__curve_intersection, sizeof(__pyx_k_bezier__curve_intersection), 0, 0, 1, 1},
     {&__pyx_n_s_bezier__speedup, __pyx_k_bezier__speedup, sizeof(__pyx_k_bezier__speedup), 0, 0, 1, 1},
-    {&__pyx_n_s_bezier__status, __pyx_k_bezier__status, sizeof(__pyx_k_bezier__status), 0, 0, 1, 1},
     {&__pyx_n_s_bezier_hazmat_helpers, __pyx_k_bezier_hazmat_helpers, sizeof(__pyx_k_bezier_hazmat_helpers), 0, 0, 1, 1},
     {&__pyx_n_s_bottom, __pyx_k_bottom, sizeof(__pyx_k_bottom), 0, 0, 1, 1},
     {&__pyx_n_s_c, __pyx_k_c, sizeof(__pyx_k_c), 0, 0, 1, 1},
@@ -40511,8 +39601,6 @@ static int __Pyx_CreateStringTabAndInitStrings(void) {
     {&__pyx_n_s_end, __pyx_k_end, sizeof(__pyx_k_end), 0, 0, 1, 1},
     {&__pyx_n_u_end, __pyx_k_end, sizeof(__pyx_k_end), 0, 1, 0, 1},
     {&__pyx_n_s_end_index, __pyx_k_end_index, sizeof(__pyx_k_end_index), 0, 0, 1, 1},
-    {&__pyx_kp_u_enum_class_BoxIntersectionType_n, __pyx_k_enum_class_BoxIntersectionType_n, sizeof(__pyx_k_enum_class_BoxIntersectionType_n), 0, 1, 0, 0},
-    {&__pyx_kp_u_enum_class_Status_not_importable, __pyx_k_enum_class_Status_not_importable, sizeof(__pyx_k_enum_class_Status_not_importable), 0, 1, 0, 0},
     {&__pyx_n_s_enum_val, __pyx_k_enum_val, sizeof(__pyx_k_enum_val), 0, 0, 1, 1},
     {&__pyx_n_s_enumerate, __pyx_k_enumerate, sizeof(__pyx_k_enumerate), 0, 0, 1, 1},
     {&__pyx_n_s_eps, __pyx_k_eps, sizeof(__pyx_k_eps), 0, 0, 1, 1},
@@ -40728,7 +39816,6 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedBuiltins(void) {
   __pyx_builtin_enumerate = __Pyx_GetBuiltinName(__pyx_n_s_enumerate); if (!__pyx_builtin_enumerate) __PYX_ERR(0, 868, __pyx_L1_error)
   __pyx_builtin_range = __Pyx_GetBuiltinName(__pyx_n_s_range); if (!__pyx_builtin_range) __PYX_ERR(0, 987, __pyx_L1_error)
   __pyx_builtin_RuntimeError = __Pyx_GetBuiltinName(__pyx_n_s_RuntimeError); if (!__pyx_builtin_RuntimeError) __PYX_ERR(0, 1147, __pyx_L1_error)
-  __pyx_builtin_ImportError = __Pyx_GetBuiltinName(__pyx_n_s_ImportError); if (!__pyx_builtin_ImportError) __PYX_ERR(1, 139, __pyx_L1_error)
   __pyx_builtin_KeyError = __Pyx_GetBuiltinName(__pyx_n_s_KeyError); if (!__pyx_builtin_KeyError) __PYX_ERR(1, 19, __pyx_L1_error)
   __pyx_builtin___import__ = __Pyx_GetBuiltinName(__pyx_n_s_import); if (!__pyx_builtin___import__) __PYX_ERR(1, 100, __pyx_L1_error)
   __pyx_builtin_MemoryError = __Pyx_GetBuiltinName(__pyx_n_s_MemoryError); if (!__pyx_builtin_MemoryError) __PYX_ERR(1, 156, __pyx_L1_error)
@@ -40737,6 +39824,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedBuiltins(void) {
   __pyx_builtin_Ellipsis = __Pyx_GetBuiltinName(__pyx_n_s_Ellipsis); if (!__pyx_builtin_Ellipsis) __PYX_ERR(1, 408, __pyx_L1_error)
   __pyx_builtin_id = __Pyx_GetBuiltinName(__pyx_n_s_id); if (!__pyx_builtin_id) __PYX_ERR(1, 618, __pyx_L1_error)
   __pyx_builtin_IndexError = __Pyx_GetBuiltinName(__pyx_n_s_IndexError); if (!__pyx_builtin_IndexError) __PYX_ERR(1, 914, __pyx_L1_error)
+  __pyx_builtin_ImportError = __Pyx_GetBuiltinName(__pyx_n_s_ImportError); if (!__pyx_builtin_ImportError) __PYX_ERR(2, 991, __pyx_L1_error)
   return 0;
   __pyx_L1_error:;
   return -1;
@@ -40754,9 +39842,9 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
  *     result.start = value
  *     try:
  */
-  __pyx_tuple__3 = PyTuple_Pack(1, __pyx_kp_s_No_value_specified_for_struct_at); if (unlikely(!__pyx_tuple__3)) __PYX_ERR(1, 20, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__3);
-  __Pyx_GIVEREF(__pyx_tuple__3);
+  __pyx_tuple_ = PyTuple_Pack(1, __pyx_kp_s_No_value_specified_for_struct_at); if (unlikely(!__pyx_tuple_)) __PYX_ERR(1, 20, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple_);
+  __Pyx_GIVEREF(__pyx_tuple_);
 
   /* "FromPyStructUtility":25
  *         value = obj['end']
@@ -40765,9 +39853,9 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
  *     result.end = value
  *     try:
  */
-  __pyx_tuple__4 = PyTuple_Pack(1, __pyx_kp_s_No_value_specified_for_struct_at_2); if (unlikely(!__pyx_tuple__4)) __PYX_ERR(1, 25, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__4);
-  __Pyx_GIVEREF(__pyx_tuple__4);
+  __pyx_tuple__2 = PyTuple_Pack(1, __pyx_kp_s_No_value_specified_for_struct_at_2); if (unlikely(!__pyx_tuple__2)) __PYX_ERR(1, 25, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__2);
+  __Pyx_GIVEREF(__pyx_tuple__2);
 
   /* "FromPyStructUtility":30
  *         value = obj['edge_index']
@@ -40776,9 +39864,9 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
  *     result.edge_index = value
  *     return result
  */
-  __pyx_tuple__5 = PyTuple_Pack(1, __pyx_kp_s_No_value_specified_for_struct_at_3); if (unlikely(!__pyx_tuple__5)) __PYX_ERR(1, 30, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__5);
-  __Pyx_GIVEREF(__pyx_tuple__5);
+  __pyx_tuple__3 = PyTuple_Pack(1, __pyx_kp_s_No_value_specified_for_struct_at_3); if (unlikely(!__pyx_tuple__3)) __PYX_ERR(1, 30, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__3);
+  __Pyx_GIVEREF(__pyx_tuple__3);
 
   /* "View.MemoryView":582
  *     def suboffsets(self):
@@ -43961,116 +43049,29 @@ static PyObject *__Pyx_GetBuiltinName(PyObject *name) {
     return result;
 }
 
-/* Import */
-static PyObject *__Pyx_Import(PyObject *name, PyObject *from_list, int level) {
-    PyObject *module = 0;
-    PyObject *empty_dict = 0;
-    PyObject *empty_list = 0;
-    #if PY_MAJOR_VERSION < 3
-    PyObject *py_import;
-    py_import = __Pyx_PyObject_GetAttrStr(__pyx_b, __pyx_n_s_import);
-    if (unlikely(!py_import))
-        goto bad;
-    if (!from_list) {
-        empty_list = PyList_New(0);
-        if (unlikely(!empty_list))
-            goto bad;
-        from_list = empty_list;
-    }
-    #endif
-    empty_dict = PyDict_New();
-    if (unlikely(!empty_dict))
-        goto bad;
-    {
-        #if PY_MAJOR_VERSION >= 3
-        if (level == -1) {
-            if ((1) && (strchr(__Pyx_MODULE_NAME, '.'))) {
-                #if CYTHON_COMPILING_IN_LIMITED_API
-                module = PyImport_ImportModuleLevelObject(
-                    name, empty_dict, empty_dict, from_list, 1);
-                #else
-                module = PyImport_ImportModuleLevelObject(
-                    name, __pyx_d, empty_dict, from_list, 1);
-                #endif
-                if (unlikely(!module)) {
-                    if (unlikely(!PyErr_ExceptionMatches(PyExc_ImportError)))
-                        goto bad;
-                    PyErr_Clear();
-                }
-            }
-            level = 0;
-        }
-        #endif
-        if (!module) {
-            #if PY_MAJOR_VERSION < 3
-            PyObject *py_level = PyInt_FromLong(level);
-            if (unlikely(!py_level))
-                goto bad;
-            module = PyObject_CallFunctionObjArgs(py_import,
-                name, __pyx_d, empty_dict, from_list, py_level, (PyObject *)NULL);
-            Py_DECREF(py_level);
-            #else
-            #if CYTHON_COMPILING_IN_LIMITED_API
-            module = PyImport_ImportModuleLevelObject(
-                name, empty_dict, empty_dict, from_list, level);
-            #else
-            module = PyImport_ImportModuleLevelObject(
-                name, __pyx_d, empty_dict, from_list, level);
-            #endif
-            #endif
-        }
-    }
-bad:
-    Py_XDECREF(empty_dict);
-    Py_XDECREF(empty_list);
-    #if PY_MAJOR_VERSION < 3
-    Py_XDECREF(py_import);
-    #endif
-    return module;
-}
-
-/* ImportFrom */
-static PyObject* __Pyx_ImportFrom(PyObject* module, PyObject* name) {
-    PyObject* value = __Pyx_PyObject_GetAttrStr(module, name);
-    if (unlikely(!value) && PyErr_ExceptionMatches(PyExc_AttributeError)) {
-        const char* module_name_str = 0;
-        PyObject* module_name = 0;
-        PyObject* module_dot = 0;
-        PyObject* full_name = 0;
-        PyErr_Clear();
-        module_name_str = PyModule_GetName(module);
-        if (unlikely(!module_name_str)) { goto modbad; }
-        module_name = PyUnicode_FromString(module_name_str);
-        if (unlikely(!module_name)) { goto modbad; }
-        module_dot = PyUnicode_Concat(module_name, __pyx_kp_u_);
-        if (unlikely(!module_dot)) { goto modbad; }
-        full_name = PyUnicode_Concat(module_dot, name);
-        if (unlikely(!full_name)) { goto modbad; }
-        #if PY_VERSION_HEX < 0x030700A1 || (CYTHON_COMPILING_IN_PYPY && PYPY_VERSION_NUM  < 0x07030400)
-        {
-            PyObject *modules = PyImport_GetModuleDict();
-            if (unlikely(!modules))
-                goto modbad;
-            value = PyObject_GetItem(modules, full_name);
-        }
-        #else
-        value = PyImport_GetModule(full_name);
-        #endif
-      modbad:
-        Py_XDECREF(full_name);
-        Py_XDECREF(module_dot);
-        Py_XDECREF(module_name);
-    }
+/* DictGetItem */
+#if PY_MAJOR_VERSION >= 3 && !CYTHON_COMPILING_IN_PYPY
+static PyObject *__Pyx_PyDict_GetItem(PyObject *d, PyObject* key) {
+    PyObject *value;
+    value = PyDict_GetItemWithError(d, key);
     if (unlikely(!value)) {
-        PyErr_Format(PyExc_ImportError,
-        #if PY_MAJOR_VERSION < 3
-            "cannot import name %.230s", PyString_AS_STRING(name));
-        #else
-            "cannot import name %S", name);
-        #endif
+        if (!PyErr_Occurred()) {
+            if (unlikely(PyTuple_Check(key))) {
+                PyObject* args = PyTuple_Pack(1, key);
+                if (likely(args)) {
+                    PyErr_SetObject(PyExc_KeyError, args);
+                    Py_DECREF(args);
+                }
+            } else {
+                PyErr_SetObject(PyExc_KeyError, key);
+            }
+        }
+        return NULL;
     }
+    Py_INCREF(value);
     return value;
 }
+#endif
 
 /* GetTopmostException */
 #if CYTHON_USE_EXC_INFO_STACK && CYTHON_FAST_THREAD_STATE
@@ -44249,251 +43250,6 @@ bad:
     return -1;
 }
 
-/* ImportDottedModule */
-#if PY_MAJOR_VERSION >= 3
-static PyObject *__Pyx__ImportDottedModule_Error(PyObject *name, PyObject *parts_tuple, Py_ssize_t count) {
-    PyObject *partial_name = NULL, *slice = NULL, *sep = NULL;
-    if (unlikely(PyErr_Occurred())) {
-        PyErr_Clear();
-    }
-    if (likely(PyTuple_GET_SIZE(parts_tuple) == count)) {
-        partial_name = name;
-    } else {
-        slice = PySequence_GetSlice(parts_tuple, 0, count);
-        if (unlikely(!slice))
-            goto bad;
-        sep = PyUnicode_FromStringAndSize(".", 1);
-        if (unlikely(!sep))
-            goto bad;
-        partial_name = PyUnicode_Join(sep, slice);
-    }
-    PyErr_Format(
-#if PY_MAJOR_VERSION < 3
-        PyExc_ImportError,
-        "No module named '%s'", PyString_AS_STRING(partial_name));
-#else
-#if PY_VERSION_HEX >= 0x030600B1
-        PyExc_ModuleNotFoundError,
-#else
-        PyExc_ImportError,
-#endif
-        "No module named '%U'", partial_name);
-#endif
-bad:
-    Py_XDECREF(sep);
-    Py_XDECREF(slice);
-    Py_XDECREF(partial_name);
-    return NULL;
-}
-#endif
-#if PY_MAJOR_VERSION >= 3
-static PyObject *__Pyx__ImportDottedModule_Lookup(PyObject *name) {
-    PyObject *imported_module;
-#if PY_VERSION_HEX < 0x030700A1 || (CYTHON_COMPILING_IN_PYPY && PYPY_VERSION_NUM  < 0x07030400)
-    PyObject *modules = PyImport_GetModuleDict();
-    if (unlikely(!modules))
-        return NULL;
-    imported_module = __Pyx_PyDict_GetItemStr(modules, name);
-    Py_XINCREF(imported_module);
-#else
-    imported_module = PyImport_GetModule(name);
-#endif
-    return imported_module;
-}
-#endif
-#if PY_MAJOR_VERSION >= 3
-static PyObject *__Pyx_ImportDottedModule_WalkParts(PyObject *module, PyObject *name, PyObject *parts_tuple) {
-    Py_ssize_t i, nparts;
-    nparts = PyTuple_GET_SIZE(parts_tuple);
-    for (i=1; i < nparts && module; i++) {
-        PyObject *part, *submodule;
-#if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-        part = PyTuple_GET_ITEM(parts_tuple, i);
-#else
-        part = PySequence_ITEM(parts_tuple, i);
-#endif
-        submodule = __Pyx_PyObject_GetAttrStrNoError(module, part);
-#if !(CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS)
-        Py_DECREF(part);
-#endif
-        Py_DECREF(module);
-        module = submodule;
-    }
-    if (unlikely(!module)) {
-        return __Pyx__ImportDottedModule_Error(name, parts_tuple, i);
-    }
-    return module;
-}
-#endif
-static PyObject *__Pyx__ImportDottedModule(PyObject *name, PyObject *parts_tuple) {
-#if PY_MAJOR_VERSION < 3
-    PyObject *module, *from_list, *star = __pyx_n_s__2;
-    CYTHON_UNUSED_VAR(parts_tuple);
-    from_list = PyList_New(1);
-    if (unlikely(!from_list))
-        return NULL;
-    Py_INCREF(star);
-    PyList_SET_ITEM(from_list, 0, star);
-    module = __Pyx_Import(name, from_list, 0);
-    Py_DECREF(from_list);
-    return module;
-#else
-    PyObject *imported_module;
-    PyObject *module = __Pyx_Import(name, NULL, 0);
-    if (!parts_tuple || unlikely(!module))
-        return module;
-    imported_module = __Pyx__ImportDottedModule_Lookup(name);
-    if (likely(imported_module)) {
-        Py_DECREF(module);
-        return imported_module;
-    }
-    PyErr_Clear();
-    return __Pyx_ImportDottedModule_WalkParts(module, name, parts_tuple);
-#endif
-}
-static PyObject *__Pyx_ImportDottedModule(PyObject *name, PyObject *parts_tuple) {
-#if CYTHON_COMPILING_IN_CPYTHON && PY_VERSION_HEX >= 0x030400B1
-    PyObject *module = __Pyx__ImportDottedModule_Lookup(name);
-    if (likely(module)) {
-        PyObject *spec = __Pyx_PyObject_GetAttrStrNoError(module, __pyx_n_s_spec);
-        if (likely(spec)) {
-            PyObject *unsafe = __Pyx_PyObject_GetAttrStrNoError(spec, __pyx_n_s_initializing);
-            if (likely(!unsafe || !__Pyx_PyObject_IsTrue(unsafe))) {
-                Py_DECREF(spec);
-                spec = NULL;
-            }
-            Py_XDECREF(unsafe);
-        }
-        if (likely(!spec)) {
-            PyErr_Clear();
-            return module;
-        }
-        Py_DECREF(spec);
-        Py_DECREF(module);
-    } else if (PyErr_Occurred()) {
-        PyErr_Clear();
-    }
-#endif
-    return __Pyx__ImportDottedModule(name, parts_tuple);
-}
-
-/* PyFunctionFastCall */
-#if CYTHON_FAST_PYCALL && !CYTHON_VECTORCALL
-static PyObject* __Pyx_PyFunction_FastCallNoKw(PyCodeObject *co, PyObject **args, Py_ssize_t na,
-                                               PyObject *globals) {
-    PyFrameObject *f;
-    PyThreadState *tstate = __Pyx_PyThreadState_Current;
-    PyObject **fastlocals;
-    Py_ssize_t i;
-    PyObject *result;
-    assert(globals != NULL);
-    /* XXX Perhaps we should create a specialized
-       PyFrame_New() that doesn't take locals, but does
-       take builtins without sanity checking them.
-       */
-    assert(tstate != NULL);
-    f = PyFrame_New(tstate, co, globals, NULL);
-    if (f == NULL) {
-        return NULL;
-    }
-    fastlocals = __Pyx_PyFrame_GetLocalsplus(f);
-    for (i = 0; i < na; i++) {
-        Py_INCREF(*args);
-        fastlocals[i] = *args++;
-    }
-    result = PyEval_EvalFrameEx(f,0);
-    ++tstate->recursion_depth;
-    Py_DECREF(f);
-    --tstate->recursion_depth;
-    return result;
-}
-static PyObject *__Pyx_PyFunction_FastCallDict(PyObject *func, PyObject **args, Py_ssize_t nargs, PyObject *kwargs) {
-    PyCodeObject *co = (PyCodeObject *)PyFunction_GET_CODE(func);
-    PyObject *globals = PyFunction_GET_GLOBALS(func);
-    PyObject *argdefs = PyFunction_GET_DEFAULTS(func);
-    PyObject *closure;
-#if PY_MAJOR_VERSION >= 3
-    PyObject *kwdefs;
-#endif
-    PyObject *kwtuple, **k;
-    PyObject **d;
-    Py_ssize_t nd;
-    Py_ssize_t nk;
-    PyObject *result;
-    assert(kwargs == NULL || PyDict_Check(kwargs));
-    nk = kwargs ? PyDict_Size(kwargs) : 0;
-    if (unlikely(Py_EnterRecursiveCall((char*)" while calling a Python object"))) {
-        return NULL;
-    }
-    if (
-#if PY_MAJOR_VERSION >= 3
-            co->co_kwonlyargcount == 0 &&
-#endif
-            likely(kwargs == NULL || nk == 0) &&
-            co->co_flags == (CO_OPTIMIZED | CO_NEWLOCALS | CO_NOFREE)) {
-        if (argdefs == NULL && co->co_argcount == nargs) {
-            result = __Pyx_PyFunction_FastCallNoKw(co, args, nargs, globals);
-            goto done;
-        }
-        else if (nargs == 0 && argdefs != NULL
-                 && co->co_argcount == Py_SIZE(argdefs)) {
-            /* function called with no arguments, but all parameters have
-               a default value: use default values as arguments .*/
-            args = &PyTuple_GET_ITEM(argdefs, 0);
-            result =__Pyx_PyFunction_FastCallNoKw(co, args, Py_SIZE(argdefs), globals);
-            goto done;
-        }
-    }
-    if (kwargs != NULL) {
-        Py_ssize_t pos, i;
-        kwtuple = PyTuple_New(2 * nk);
-        if (kwtuple == NULL) {
-            result = NULL;
-            goto done;
-        }
-        k = &PyTuple_GET_ITEM(kwtuple, 0);
-        pos = i = 0;
-        while (PyDict_Next(kwargs, &pos, &k[i], &k[i+1])) {
-            Py_INCREF(k[i]);
-            Py_INCREF(k[i+1]);
-            i += 2;
-        }
-        nk = i / 2;
-    }
-    else {
-        kwtuple = NULL;
-        k = NULL;
-    }
-    closure = PyFunction_GET_CLOSURE(func);
-#if PY_MAJOR_VERSION >= 3
-    kwdefs = PyFunction_GET_KW_DEFAULTS(func);
-#endif
-    if (argdefs != NULL) {
-        d = &PyTuple_GET_ITEM(argdefs, 0);
-        nd = Py_SIZE(argdefs);
-    }
-    else {
-        d = NULL;
-        nd = 0;
-    }
-#if PY_MAJOR_VERSION >= 3
-    result = PyEval_EvalCodeEx((PyObject*)co, globals, (PyObject *)NULL,
-                               args, (int)nargs,
-                               k, (int)nk,
-                               d, (int)nd, kwdefs, closure);
-#else
-    result = PyEval_EvalCodeEx(co, globals, (PyObject *)NULL,
-                               args, (int)nargs,
-                               k, (int)nk,
-                               d, (int)nd, closure);
-#endif
-    Py_XDECREF(kwtuple);
-done:
-    Py_LeaveRecursiveCall();
-    return result;
-}
-#endif
-
 /* PyObjectCall */
 #if CYTHON_COMPILING_IN_CPYTHON
 static CYTHON_INLINE PyObject* __Pyx_PyObject_Call(PyObject *func, PyObject *arg, PyObject *kw) {
@@ -44511,127 +43267,6 @@ static CYTHON_INLINE PyObject* __Pyx_PyObject_Call(PyObject *func, PyObject *arg
             "NULL result without error in PyObject_Call");
     }
     return result;
-}
-#endif
-
-/* PyObjectCallMethO */
-#if CYTHON_COMPILING_IN_CPYTHON
-static CYTHON_INLINE PyObject* __Pyx_PyObject_CallMethO(PyObject *func, PyObject *arg) {
-    PyObject *self, *result;
-    PyCFunction cfunc;
-    cfunc = PyCFunction_GET_FUNCTION(func);
-    self = PyCFunction_GET_SELF(func);
-    if (unlikely(Py_EnterRecursiveCall((char*)" while calling a Python object")))
-        return NULL;
-    result = cfunc(self, arg);
-    Py_LeaveRecursiveCall();
-    if (unlikely(!result) && unlikely(!PyErr_Occurred())) {
-        PyErr_SetString(
-            PyExc_SystemError,
-            "NULL result without error in PyObject_Call");
-    }
-    return result;
-}
-#endif
-
-/* PyObjectFastCall */
-static PyObject* __Pyx_PyObject_FastCall_fallback(PyObject *func, PyObject **args, size_t nargs, PyObject *kwargs) {
-    PyObject *argstuple;
-    PyObject *result;
-    size_t i;
-    argstuple = PyTuple_New((Py_ssize_t)nargs);
-    if (unlikely(!argstuple)) return NULL;
-    for (i = 0; i < nargs; i++) {
-        Py_INCREF(args[i]);
-        PyTuple_SET_ITEM(argstuple, (Py_ssize_t)i, args[i]);
-    }
-    result = __Pyx_PyObject_Call(func, argstuple, kwargs);
-    Py_DECREF(argstuple);
-    return result;
-}
-static CYTHON_INLINE PyObject* __Pyx_PyObject_FastCallDict(PyObject *func, PyObject **args, size_t _nargs, PyObject *kwargs) {
-    Py_ssize_t nargs = __Pyx_PyVectorcall_NARGS(_nargs);
-#if CYTHON_COMPILING_IN_CPYTHON
-    if (nargs == 0 && kwargs == NULL) {
-#if defined(__Pyx_CyFunction_USED) && defined(NDEBUG)
-        if (__Pyx_IsCyOrPyCFunction(func))
-#else
-        if (PyCFunction_Check(func))
-#endif
-        {
-            if (likely(PyCFunction_GET_FLAGS(func) & METH_NOARGS)) {
-                return __Pyx_PyObject_CallMethO(func, NULL);
-            }
-        }
-    }
-    else if (nargs == 1 && kwargs == NULL) {
-        if (PyCFunction_Check(func))
-        {
-            if (likely(PyCFunction_GET_FLAGS(func) & METH_O)) {
-                return __Pyx_PyObject_CallMethO(func, args[0]);
-            }
-        }
-    }
-#endif
-    #if PY_VERSION_HEX < 0x030800B1
-    #if CYTHON_FAST_PYCCALL
-    if (PyCFunction_Check(func)) {
-        if (kwargs) {
-            return _PyCFunction_FastCallDict(func, args, nargs, kwargs);
-        } else {
-            return _PyCFunction_FastCallKeywords(func, args, nargs, NULL);
-        }
-    }
-    #if PY_VERSION_HEX >= 0x030700A1
-    if (!kwargs && __Pyx_IS_TYPE(func, &PyMethodDescr_Type)) {
-        return _PyMethodDescr_FastCallKeywords(func, args, nargs, NULL);
-    }
-    #endif
-    #endif
-    #if CYTHON_FAST_PYCALL
-    if (PyFunction_Check(func)) {
-        return __Pyx_PyFunction_FastCallDict(func, args, nargs, kwargs);
-    }
-    #endif
-    #endif
-    #if CYTHON_VECTORCALL
-    vectorcallfunc f = _PyVectorcall_Function(func);
-    if (f) {
-        return f(func, args, (size_t)nargs, kwargs);
-    }
-    #elif defined(__Pyx_CyFunction_USED) && CYTHON_BACKPORT_VECTORCALL
-    if (__Pyx_CyFunction_CheckExact(func)) {
-        __pyx_vectorcallfunc f = __Pyx_CyFunction_func_vectorcall(func);
-        if (f) return f(func, args, (size_t)nargs, kwargs);
-    }
-    #endif
-    if (nargs == 0) {
-        return __Pyx_PyObject_Call(func, __pyx_empty_tuple, kwargs);
-    }
-    return __Pyx_PyObject_FastCall_fallback(func, args, (size_t)nargs, kwargs);
-}
-
-/* DictGetItem */
-#if PY_MAJOR_VERSION >= 3 && !CYTHON_COMPILING_IN_PYPY
-static PyObject *__Pyx_PyDict_GetItem(PyObject *d, PyObject* key) {
-    PyObject *value;
-    value = PyDict_GetItemWithError(d, key);
-    if (unlikely(!value)) {
-        if (!PyErr_Occurred()) {
-            if (unlikely(PyTuple_Check(key))) {
-                PyObject* args = PyTuple_Pack(1, key);
-                if (likely(args)) {
-                    PyErr_SetObject(PyExc_KeyError, args);
-                    Py_DECREF(args);
-                }
-            } else {
-                PyErr_SetObject(PyExc_KeyError, key);
-            }
-        }
-        return NULL;
-    }
-    Py_INCREF(value);
-    return value;
 }
 #endif
 
@@ -45184,6 +43819,220 @@ static int __Pyx__ArgTypeTest(PyObject *obj, PyTypeObject *type, const char *nam
     __Pyx_DECREF_TypeName(type_name);
     __Pyx_DECREF_TypeName(obj_type_name);
     return 0;
+}
+
+/* PyFunctionFastCall */
+#if CYTHON_FAST_PYCALL && !CYTHON_VECTORCALL
+static PyObject* __Pyx_PyFunction_FastCallNoKw(PyCodeObject *co, PyObject **args, Py_ssize_t na,
+                                               PyObject *globals) {
+    PyFrameObject *f;
+    PyThreadState *tstate = __Pyx_PyThreadState_Current;
+    PyObject **fastlocals;
+    Py_ssize_t i;
+    PyObject *result;
+    assert(globals != NULL);
+    /* XXX Perhaps we should create a specialized
+       PyFrame_New() that doesn't take locals, but does
+       take builtins without sanity checking them.
+       */
+    assert(tstate != NULL);
+    f = PyFrame_New(tstate, co, globals, NULL);
+    if (f == NULL) {
+        return NULL;
+    }
+    fastlocals = __Pyx_PyFrame_GetLocalsplus(f);
+    for (i = 0; i < na; i++) {
+        Py_INCREF(*args);
+        fastlocals[i] = *args++;
+    }
+    result = PyEval_EvalFrameEx(f,0);
+    ++tstate->recursion_depth;
+    Py_DECREF(f);
+    --tstate->recursion_depth;
+    return result;
+}
+static PyObject *__Pyx_PyFunction_FastCallDict(PyObject *func, PyObject **args, Py_ssize_t nargs, PyObject *kwargs) {
+    PyCodeObject *co = (PyCodeObject *)PyFunction_GET_CODE(func);
+    PyObject *globals = PyFunction_GET_GLOBALS(func);
+    PyObject *argdefs = PyFunction_GET_DEFAULTS(func);
+    PyObject *closure;
+#if PY_MAJOR_VERSION >= 3
+    PyObject *kwdefs;
+#endif
+    PyObject *kwtuple, **k;
+    PyObject **d;
+    Py_ssize_t nd;
+    Py_ssize_t nk;
+    PyObject *result;
+    assert(kwargs == NULL || PyDict_Check(kwargs));
+    nk = kwargs ? PyDict_Size(kwargs) : 0;
+    if (unlikely(Py_EnterRecursiveCall((char*)" while calling a Python object"))) {
+        return NULL;
+    }
+    if (
+#if PY_MAJOR_VERSION >= 3
+            co->co_kwonlyargcount == 0 &&
+#endif
+            likely(kwargs == NULL || nk == 0) &&
+            co->co_flags == (CO_OPTIMIZED | CO_NEWLOCALS | CO_NOFREE)) {
+        if (argdefs == NULL && co->co_argcount == nargs) {
+            result = __Pyx_PyFunction_FastCallNoKw(co, args, nargs, globals);
+            goto done;
+        }
+        else if (nargs == 0 && argdefs != NULL
+                 && co->co_argcount == Py_SIZE(argdefs)) {
+            /* function called with no arguments, but all parameters have
+               a default value: use default values as arguments .*/
+            args = &PyTuple_GET_ITEM(argdefs, 0);
+            result =__Pyx_PyFunction_FastCallNoKw(co, args, Py_SIZE(argdefs), globals);
+            goto done;
+        }
+    }
+    if (kwargs != NULL) {
+        Py_ssize_t pos, i;
+        kwtuple = PyTuple_New(2 * nk);
+        if (kwtuple == NULL) {
+            result = NULL;
+            goto done;
+        }
+        k = &PyTuple_GET_ITEM(kwtuple, 0);
+        pos = i = 0;
+        while (PyDict_Next(kwargs, &pos, &k[i], &k[i+1])) {
+            Py_INCREF(k[i]);
+            Py_INCREF(k[i+1]);
+            i += 2;
+        }
+        nk = i / 2;
+    }
+    else {
+        kwtuple = NULL;
+        k = NULL;
+    }
+    closure = PyFunction_GET_CLOSURE(func);
+#if PY_MAJOR_VERSION >= 3
+    kwdefs = PyFunction_GET_KW_DEFAULTS(func);
+#endif
+    if (argdefs != NULL) {
+        d = &PyTuple_GET_ITEM(argdefs, 0);
+        nd = Py_SIZE(argdefs);
+    }
+    else {
+        d = NULL;
+        nd = 0;
+    }
+#if PY_MAJOR_VERSION >= 3
+    result = PyEval_EvalCodeEx((PyObject*)co, globals, (PyObject *)NULL,
+                               args, (int)nargs,
+                               k, (int)nk,
+                               d, (int)nd, kwdefs, closure);
+#else
+    result = PyEval_EvalCodeEx(co, globals, (PyObject *)NULL,
+                               args, (int)nargs,
+                               k, (int)nk,
+                               d, (int)nd, closure);
+#endif
+    Py_XDECREF(kwtuple);
+done:
+    Py_LeaveRecursiveCall();
+    return result;
+}
+#endif
+
+/* PyObjectCallMethO */
+#if CYTHON_COMPILING_IN_CPYTHON
+static CYTHON_INLINE PyObject* __Pyx_PyObject_CallMethO(PyObject *func, PyObject *arg) {
+    PyObject *self, *result;
+    PyCFunction cfunc;
+    cfunc = PyCFunction_GET_FUNCTION(func);
+    self = PyCFunction_GET_SELF(func);
+    if (unlikely(Py_EnterRecursiveCall((char*)" while calling a Python object")))
+        return NULL;
+    result = cfunc(self, arg);
+    Py_LeaveRecursiveCall();
+    if (unlikely(!result) && unlikely(!PyErr_Occurred())) {
+        PyErr_SetString(
+            PyExc_SystemError,
+            "NULL result without error in PyObject_Call");
+    }
+    return result;
+}
+#endif
+
+/* PyObjectFastCall */
+static PyObject* __Pyx_PyObject_FastCall_fallback(PyObject *func, PyObject **args, size_t nargs, PyObject *kwargs) {
+    PyObject *argstuple;
+    PyObject *result;
+    size_t i;
+    argstuple = PyTuple_New((Py_ssize_t)nargs);
+    if (unlikely(!argstuple)) return NULL;
+    for (i = 0; i < nargs; i++) {
+        Py_INCREF(args[i]);
+        PyTuple_SET_ITEM(argstuple, (Py_ssize_t)i, args[i]);
+    }
+    result = __Pyx_PyObject_Call(func, argstuple, kwargs);
+    Py_DECREF(argstuple);
+    return result;
+}
+static CYTHON_INLINE PyObject* __Pyx_PyObject_FastCallDict(PyObject *func, PyObject **args, size_t _nargs, PyObject *kwargs) {
+    Py_ssize_t nargs = __Pyx_PyVectorcall_NARGS(_nargs);
+#if CYTHON_COMPILING_IN_CPYTHON
+    if (nargs == 0 && kwargs == NULL) {
+#if defined(__Pyx_CyFunction_USED) && defined(NDEBUG)
+        if (__Pyx_IsCyOrPyCFunction(func))
+#else
+        if (PyCFunction_Check(func))
+#endif
+        {
+            if (likely(PyCFunction_GET_FLAGS(func) & METH_NOARGS)) {
+                return __Pyx_PyObject_CallMethO(func, NULL);
+            }
+        }
+    }
+    else if (nargs == 1 && kwargs == NULL) {
+        if (PyCFunction_Check(func))
+        {
+            if (likely(PyCFunction_GET_FLAGS(func) & METH_O)) {
+                return __Pyx_PyObject_CallMethO(func, args[0]);
+            }
+        }
+    }
+#endif
+    #if PY_VERSION_HEX < 0x030800B1
+    #if CYTHON_FAST_PYCCALL
+    if (PyCFunction_Check(func)) {
+        if (kwargs) {
+            return _PyCFunction_FastCallDict(func, args, nargs, kwargs);
+        } else {
+            return _PyCFunction_FastCallKeywords(func, args, nargs, NULL);
+        }
+    }
+    #if PY_VERSION_HEX >= 0x030700A1
+    if (!kwargs && __Pyx_IS_TYPE(func, &PyMethodDescr_Type)) {
+        return _PyMethodDescr_FastCallKeywords(func, args, nargs, NULL);
+    }
+    #endif
+    #endif
+    #if CYTHON_FAST_PYCALL
+    if (PyFunction_Check(func)) {
+        return __Pyx_PyFunction_FastCallDict(func, args, nargs, kwargs);
+    }
+    #endif
+    #endif
+    #if CYTHON_VECTORCALL
+    vectorcallfunc f = _PyVectorcall_Function(func);
+    if (f) {
+        return f(func, args, (size_t)nargs, kwargs);
+    }
+    #elif defined(__Pyx_CyFunction_USED) && CYTHON_BACKPORT_VECTORCALL
+    if (__Pyx_CyFunction_CheckExact(func)) {
+        __pyx_vectorcallfunc f = __Pyx_CyFunction_func_vectorcall(func);
+        if (f) return f(func, args, (size_t)nargs, kwargs);
+    }
+    #endif
+    if (nargs == 0) {
+        return __Pyx_PyObject_Call(func, __pyx_empty_tuple, kwargs);
+    }
+    return __Pyx_PyObject_FastCall_fallback(func, args, (size_t)nargs, kwargs);
 }
 
 /* RaiseUnexpectedTypeError */
@@ -45925,6 +44774,202 @@ static CYTHON_INLINE void __Pyx_ExceptionSwap(PyObject **type, PyObject **value,
 }
 #endif
 
+/* Import */
+static PyObject *__Pyx_Import(PyObject *name, PyObject *from_list, int level) {
+    PyObject *module = 0;
+    PyObject *empty_dict = 0;
+    PyObject *empty_list = 0;
+    #if PY_MAJOR_VERSION < 3
+    PyObject *py_import;
+    py_import = __Pyx_PyObject_GetAttrStr(__pyx_b, __pyx_n_s_import);
+    if (unlikely(!py_import))
+        goto bad;
+    if (!from_list) {
+        empty_list = PyList_New(0);
+        if (unlikely(!empty_list))
+            goto bad;
+        from_list = empty_list;
+    }
+    #endif
+    empty_dict = PyDict_New();
+    if (unlikely(!empty_dict))
+        goto bad;
+    {
+        #if PY_MAJOR_VERSION >= 3
+        if (level == -1) {
+            if ((1) && (strchr(__Pyx_MODULE_NAME, '.'))) {
+                #if CYTHON_COMPILING_IN_LIMITED_API
+                module = PyImport_ImportModuleLevelObject(
+                    name, empty_dict, empty_dict, from_list, 1);
+                #else
+                module = PyImport_ImportModuleLevelObject(
+                    name, __pyx_d, empty_dict, from_list, 1);
+                #endif
+                if (unlikely(!module)) {
+                    if (unlikely(!PyErr_ExceptionMatches(PyExc_ImportError)))
+                        goto bad;
+                    PyErr_Clear();
+                }
+            }
+            level = 0;
+        }
+        #endif
+        if (!module) {
+            #if PY_MAJOR_VERSION < 3
+            PyObject *py_level = PyInt_FromLong(level);
+            if (unlikely(!py_level))
+                goto bad;
+            module = PyObject_CallFunctionObjArgs(py_import,
+                name, __pyx_d, empty_dict, from_list, py_level, (PyObject *)NULL);
+            Py_DECREF(py_level);
+            #else
+            #if CYTHON_COMPILING_IN_LIMITED_API
+            module = PyImport_ImportModuleLevelObject(
+                name, empty_dict, empty_dict, from_list, level);
+            #else
+            module = PyImport_ImportModuleLevelObject(
+                name, __pyx_d, empty_dict, from_list, level);
+            #endif
+            #endif
+        }
+    }
+bad:
+    Py_XDECREF(empty_dict);
+    Py_XDECREF(empty_list);
+    #if PY_MAJOR_VERSION < 3
+    Py_XDECREF(py_import);
+    #endif
+    return module;
+}
+
+/* ImportDottedModule */
+#if PY_MAJOR_VERSION >= 3
+static PyObject *__Pyx__ImportDottedModule_Error(PyObject *name, PyObject *parts_tuple, Py_ssize_t count) {
+    PyObject *partial_name = NULL, *slice = NULL, *sep = NULL;
+    if (unlikely(PyErr_Occurred())) {
+        PyErr_Clear();
+    }
+    if (likely(PyTuple_GET_SIZE(parts_tuple) == count)) {
+        partial_name = name;
+    } else {
+        slice = PySequence_GetSlice(parts_tuple, 0, count);
+        if (unlikely(!slice))
+            goto bad;
+        sep = PyUnicode_FromStringAndSize(".", 1);
+        if (unlikely(!sep))
+            goto bad;
+        partial_name = PyUnicode_Join(sep, slice);
+    }
+    PyErr_Format(
+#if PY_MAJOR_VERSION < 3
+        PyExc_ImportError,
+        "No module named '%s'", PyString_AS_STRING(partial_name));
+#else
+#if PY_VERSION_HEX >= 0x030600B1
+        PyExc_ModuleNotFoundError,
+#else
+        PyExc_ImportError,
+#endif
+        "No module named '%U'", partial_name);
+#endif
+bad:
+    Py_XDECREF(sep);
+    Py_XDECREF(slice);
+    Py_XDECREF(partial_name);
+    return NULL;
+}
+#endif
+#if PY_MAJOR_VERSION >= 3
+static PyObject *__Pyx__ImportDottedModule_Lookup(PyObject *name) {
+    PyObject *imported_module;
+#if PY_VERSION_HEX < 0x030700A1 || (CYTHON_COMPILING_IN_PYPY && PYPY_VERSION_NUM  < 0x07030400)
+    PyObject *modules = PyImport_GetModuleDict();
+    if (unlikely(!modules))
+        return NULL;
+    imported_module = __Pyx_PyDict_GetItemStr(modules, name);
+    Py_XINCREF(imported_module);
+#else
+    imported_module = PyImport_GetModule(name);
+#endif
+    return imported_module;
+}
+#endif
+#if PY_MAJOR_VERSION >= 3
+static PyObject *__Pyx_ImportDottedModule_WalkParts(PyObject *module, PyObject *name, PyObject *parts_tuple) {
+    Py_ssize_t i, nparts;
+    nparts = PyTuple_GET_SIZE(parts_tuple);
+    for (i=1; i < nparts && module; i++) {
+        PyObject *part, *submodule;
+#if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
+        part = PyTuple_GET_ITEM(parts_tuple, i);
+#else
+        part = PySequence_ITEM(parts_tuple, i);
+#endif
+        submodule = __Pyx_PyObject_GetAttrStrNoError(module, part);
+#if !(CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS)
+        Py_DECREF(part);
+#endif
+        Py_DECREF(module);
+        module = submodule;
+    }
+    if (unlikely(!module)) {
+        return __Pyx__ImportDottedModule_Error(name, parts_tuple, i);
+    }
+    return module;
+}
+#endif
+static PyObject *__Pyx__ImportDottedModule(PyObject *name, PyObject *parts_tuple) {
+#if PY_MAJOR_VERSION < 3
+    PyObject *module, *from_list, *star = __pyx_n_s__6;
+    CYTHON_UNUSED_VAR(parts_tuple);
+    from_list = PyList_New(1);
+    if (unlikely(!from_list))
+        return NULL;
+    Py_INCREF(star);
+    PyList_SET_ITEM(from_list, 0, star);
+    module = __Pyx_Import(name, from_list, 0);
+    Py_DECREF(from_list);
+    return module;
+#else
+    PyObject *imported_module;
+    PyObject *module = __Pyx_Import(name, NULL, 0);
+    if (!parts_tuple || unlikely(!module))
+        return module;
+    imported_module = __Pyx__ImportDottedModule_Lookup(name);
+    if (likely(imported_module)) {
+        Py_DECREF(module);
+        return imported_module;
+    }
+    PyErr_Clear();
+    return __Pyx_ImportDottedModule_WalkParts(module, name, parts_tuple);
+#endif
+}
+static PyObject *__Pyx_ImportDottedModule(PyObject *name, PyObject *parts_tuple) {
+#if CYTHON_COMPILING_IN_CPYTHON && PY_VERSION_HEX >= 0x030400B1
+    PyObject *module = __Pyx__ImportDottedModule_Lookup(name);
+    if (likely(module)) {
+        PyObject *spec = __Pyx_PyObject_GetAttrStrNoError(module, __pyx_n_s_spec);
+        if (likely(spec)) {
+            PyObject *unsafe = __Pyx_PyObject_GetAttrStrNoError(spec, __pyx_n_s_initializing);
+            if (likely(!unsafe || !__Pyx_PyObject_IsTrue(unsafe))) {
+                Py_DECREF(spec);
+                spec = NULL;
+            }
+            Py_XDECREF(unsafe);
+        }
+        if (likely(!spec)) {
+            PyErr_Clear();
+            return module;
+        }
+        Py_DECREF(spec);
+        Py_DECREF(module);
+    } else if (PyErr_Occurred()) {
+        PyErr_Clear();
+    }
+#endif
+    return __Pyx__ImportDottedModule(name, parts_tuple);
+}
+
 /* ssize_strlen */
 static CYTHON_INLINE Py_ssize_t __Pyx_ssize_strlen(const char *s) {
     size_t len = strlen(s);
@@ -46141,6 +45186,49 @@ static CYTHON_INLINE long __Pyx_div_long(long a, long b) {
     long r = a - q*b;
     q -= ((r != 0) & ((r ^ b) < 0));
     return q;
+}
+
+/* ImportFrom */
+static PyObject* __Pyx_ImportFrom(PyObject* module, PyObject* name) {
+    PyObject* value = __Pyx_PyObject_GetAttrStr(module, name);
+    if (unlikely(!value) && PyErr_ExceptionMatches(PyExc_AttributeError)) {
+        const char* module_name_str = 0;
+        PyObject* module_name = 0;
+        PyObject* module_dot = 0;
+        PyObject* full_name = 0;
+        PyErr_Clear();
+        module_name_str = PyModule_GetName(module);
+        if (unlikely(!module_name_str)) { goto modbad; }
+        module_name = PyUnicode_FromString(module_name_str);
+        if (unlikely(!module_name)) { goto modbad; }
+        module_dot = PyUnicode_Concat(module_name, __pyx_kp_u__5);
+        if (unlikely(!module_dot)) { goto modbad; }
+        full_name = PyUnicode_Concat(module_dot, name);
+        if (unlikely(!full_name)) { goto modbad; }
+        #if PY_VERSION_HEX < 0x030700A1 || (CYTHON_COMPILING_IN_PYPY && PYPY_VERSION_NUM  < 0x07030400)
+        {
+            PyObject *modules = PyImport_GetModuleDict();
+            if (unlikely(!modules))
+                goto modbad;
+            value = PyObject_GetItem(modules, full_name);
+        }
+        #else
+        value = PyImport_GetModule(full_name);
+        #endif
+      modbad:
+        Py_XDECREF(full_name);
+        Py_XDECREF(module_dot);
+        Py_XDECREF(module_name);
+    }
+    if (unlikely(!value)) {
+        PyErr_Format(PyExc_ImportError,
+        #if PY_MAJOR_VERSION < 3
+            "cannot import name %.230s", PyString_AS_STRING(name));
+        #else
+            "cannot import name %S", name);
+        #endif
+    }
+    return value;
 }
 
 /* HasAttr */
@@ -50062,6 +49150,82 @@ raise_neg_overflow:
         int one = 1; int little = (int)*(unsigned char *)&one;
         unsigned char *bytes = (unsigned char *)&value;
         return _PyLong_FromByteArray(bytes, sizeof(long),
+                                     little, !is_unsigned);
+    }
+}
+
+/* CIntToPy */
+  static CYTHON_INLINE PyObject* __Pyx_PyInt_From_enum__BoxIntersectionType(enum BoxIntersectionType value) {
+#ifdef __Pyx_HAS_GCC_DIAGNOSTIC
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wconversion"
+#endif
+    const enum BoxIntersectionType neg_one = (enum BoxIntersectionType) -1, const_zero = (enum BoxIntersectionType) 0;
+#ifdef __Pyx_HAS_GCC_DIAGNOSTIC
+#pragma GCC diagnostic pop
+#endif
+    const int is_unsigned = neg_one > const_zero;
+    if (is_unsigned) {
+        if (sizeof(enum BoxIntersectionType) < sizeof(long)) {
+            return PyInt_FromLong((long) value);
+        } else if (sizeof(enum BoxIntersectionType) <= sizeof(unsigned long)) {
+            return PyLong_FromUnsignedLong((unsigned long) value);
+#ifdef HAVE_LONG_LONG
+        } else if (sizeof(enum BoxIntersectionType) <= sizeof(unsigned PY_LONG_LONG)) {
+            return PyLong_FromUnsignedLongLong((unsigned PY_LONG_LONG) value);
+#endif
+        }
+    } else {
+        if (sizeof(enum BoxIntersectionType) <= sizeof(long)) {
+            return PyInt_FromLong((long) value);
+#ifdef HAVE_LONG_LONG
+        } else if (sizeof(enum BoxIntersectionType) <= sizeof(PY_LONG_LONG)) {
+            return PyLong_FromLongLong((PY_LONG_LONG) value);
+#endif
+        }
+    }
+    {
+        int one = 1; int little = (int)*(unsigned char *)&one;
+        unsigned char *bytes = (unsigned char *)&value;
+        return _PyLong_FromByteArray(bytes, sizeof(enum BoxIntersectionType),
+                                     little, !is_unsigned);
+    }
+}
+
+/* CIntToPy */
+  static CYTHON_INLINE PyObject* __Pyx_PyInt_From_enum__Status(enum Status value) {
+#ifdef __Pyx_HAS_GCC_DIAGNOSTIC
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wconversion"
+#endif
+    const enum Status neg_one = (enum Status) -1, const_zero = (enum Status) 0;
+#ifdef __Pyx_HAS_GCC_DIAGNOSTIC
+#pragma GCC diagnostic pop
+#endif
+    const int is_unsigned = neg_one > const_zero;
+    if (is_unsigned) {
+        if (sizeof(enum Status) < sizeof(long)) {
+            return PyInt_FromLong((long) value);
+        } else if (sizeof(enum Status) <= sizeof(unsigned long)) {
+            return PyLong_FromUnsignedLong((unsigned long) value);
+#ifdef HAVE_LONG_LONG
+        } else if (sizeof(enum Status) <= sizeof(unsigned PY_LONG_LONG)) {
+            return PyLong_FromUnsignedLongLong((unsigned PY_LONG_LONG) value);
+#endif
+        }
+    } else {
+        if (sizeof(enum Status) <= sizeof(long)) {
+            return PyInt_FromLong((long) value);
+#ifdef HAVE_LONG_LONG
+        } else if (sizeof(enum Status) <= sizeof(PY_LONG_LONG)) {
+            return PyLong_FromLongLong((PY_LONG_LONG) value);
+#endif
+        }
+    }
+    {
+        int one = 1; int little = (int)*(unsigned char *)&one;
+        unsigned char *bytes = (unsigned char *)&value;
+        return _PyLong_FromByteArray(bytes, sizeof(enum Status),
                                      little, !is_unsigned);
     }
 }
