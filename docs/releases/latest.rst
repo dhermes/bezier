@@ -35,6 +35,9 @@ Packaging
    In particular, add a suggestion to set ``BEZIER_NO_EXTENSION`` for a source
    only install if ``BEZIER_INSTALL_PREFIX`` cannot be set.
    Fixed `#277 <https://github.com/dhermes/bezier/issues/277>`__.
+-  Use `cibuildwheel <https://github.com/pypa/cibuildwheel>`__ to automate
+   building wheels as part of release
+   (`#308 <https://github.com/dhermes/bezier/pull/308>`__).
 
 Bug Fixes
 ~~~~~~~~~

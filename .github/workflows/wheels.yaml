@@ -1,0 +1,171 @@
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+---
+name: Building Wheels
+
+on:
+  workflow_dispatch:
+    inputs:
+      reason:
+        description: Reason for manually triggering workflow
+        required: true
+
+jobs:
+  linux:
+    runs-on: ubuntu-22.04
+    strategy:
+      matrix:
+        include:
+          # NOTE: The ARM build(s) take considerably longer on GitHub Actions.
+          - artifact-name: linux-arm
+            cibw-archs: aarch64
+          - artifact-name: linux-intel
+            cibw-archs: x86_64
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+        if: matrix.cibw-archs == 'aarch64'
+
+      - name: Build wheels
+        uses: pypa/cibuildwheel@v2.14.1
+        env:
+          CIBW_ARCHS: ${{ matrix.cibw-archs }}
+          CIBW_BEFORE_BUILD: |
+            python -m pip install cmake nox numpy
+            nox --session libbezier-release --reuse-existing-virtualenvs
+          CIBW_BUILD: >-
+            cp38-*
+            cp39-*
+            cp310-*
+            cp311-*
+          CIBW_ENVIRONMENT: >-
+            BEZIER_INSTALL_PREFIX=/project/.nox/.cache/libbezier-release/usr
+            LD_LIBRARY_PATH=/project/.nox/.cache/libbezier-release/usr/lib
+            TARGET_NATIVE_ARCH=OFF
+          CIBW_TEST_COMMAND: pytest {project}/tests/unit
+          CIBW_TEST_REQUIRES: pytest
+          CIBW_SKIP: "*musllinux*"
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: ${{ matrix.artifact-name }}
+          path: ./wheelhouse/*.whl
+
+  macos-intel:
+    # NOTE: For now `scripts/macos/build-wheels-arm.sh` must be used for
+    #       the ARM (M1) wheels.
+    runs-on: macos-13
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+
+      - name: Install `gcc`
+        run: |
+          brew install gcc
+          brew unlink gcc
+          brew link gcc
+
+      - name: Build `libbezier`
+        env:
+          TARGET_NATIVE_ARCH: "OFF"
+        run: |
+          python3.11 -m pip install cmake nox
+          nox --session libbezier-release --reuse-existing-virtualenvs
+
+      - name: Build wheels
+        uses: pypa/cibuildwheel@v2.14.1
+        env:
+          BEZIER_INSTALL_PREFIX: ./.nox/.cache/libbezier-release/usr
+          CIBW_BEFORE_BUILD: |
+            python -m pip install numpy
+          CIBW_BUILD: >-
+            cp38-*
+            cp39-*
+            cp310-*
+            cp311-*
+          CIBW_TEST_COMMAND: pytest {project}/tests/unit
+          CIBW_TEST_REQUIRES: pytest
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: macos-intel
+          path: ./wheelhouse/*.whl
+
+  sdist:
+    runs-on: ubuntu-22.04
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+
+      - name: Generate sdist (source distribution)
+        env:
+          BEZIER_NO_EXTENSION: "True"
+        run: |
+          python3.11 setup.py sdist
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: sdist
+          path: ./dist/*.tar.gz
+
+  windows-intel:
+    runs-on: windows-2022
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+
+      - name: Build `libbezier`
+        env:
+          TARGET_NATIVE_ARCH: "OFF"
+        run: |
+          py -3.11 -m pip install cmake nox
+          nox --session libbezier-release --reuse-existing-virtualenvs
+
+      - name: Build wheels
+        uses: pypa/cibuildwheel@v2.14.1
+        env:
+          BEZIER_INSTALL_PREFIX: ./.nox/.cache/libbezier-release/usr
+          CIBW_ARCHS: AMD64
+          CIBW_BEFORE_BUILD: |
+            python -m pip install delvewheel numpy
+          CIBW_BUILD: >-
+            cp38-*
+            cp39-*
+            cp310-*
+            cp311-*
+          CIBW_REPAIR_WHEEL_COMMAND_WINDOWS: >-
+            delvewheel repair
+            --wheel-dir {dest_dir}
+            --add-path ./.nox/.cache/libbezier-release/usr/bin
+            {wheel}
+          CIBW_TEST_COMMAND: pytest {project}/tests/unit
+          CIBW_TEST_REQUIRES: pytest
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: windows-intel
+          path: ./wheelhouse/*.whl
