@@ -46,7 +46,6 @@ jobs:
             python -m pip install cmake nox numpy
             nox --session libbezier-release --reuse-existing-virtualenvs
           CIBW_BUILD: >-
-            cp38-*
             cp39-*
             cp310-*
             cp311-*
@@ -95,7 +94,6 @@ jobs:
           CIBW_BEFORE_BUILD: |
             python -m pip install numpy
           CIBW_BUILD: >-
-            cp38-*
             cp39-*
             cp310-*
             cp311-*
@@ -153,7 +151,6 @@ jobs:
           CIBW_BEFORE_BUILD: |
             python -m pip install delvewheel numpy
           CIBW_BUILD: >-
-            cp38-*
             cp39-*
             cp310-*
             cp311-*

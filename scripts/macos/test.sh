@@ -24,9 +24,7 @@ if [[ -z "${Python_ROOT_DIR}" ]]; then
     exit 1
 fi
 
-if [[ "${PY_VERSION}" == "3.8" ]]; then
-    "${Python_ROOT_DIR}/bin/nox" --session "unit-3.8"
-elif [[ "${PY_VERSION}" == "3.9" ]]; then
+if [[ "${PY_VERSION}" == "3.9" ]]; then
     "${Python_ROOT_DIR}/bin/nox" --session "unit-3.9"
 elif [[ "${PY_VERSION}" == "3.10" ]]; then
     "${Python_ROOT_DIR}/bin/nox" --session "unit-3.10"

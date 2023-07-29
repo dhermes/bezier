@@ -56,11 +56,6 @@ jobs:
             dhermes/bezier:latest \
             sleep 3600
 
-      - name: Unit tests in Python 3.8
-        run: |
-          docker exec dhermes-bezier \
-            nox --session "unit-3.8"
-
       - name: Unit tests in Python 3.9
         run: |
           docker exec dhermes-bezier \
