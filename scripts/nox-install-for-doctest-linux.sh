@@ -25,7 +25,7 @@ SCRIPTS_DIR=$(dirname ${SCRIPT_FI})
 REPO_ROOT=$(dirname ${SCRIPTS_DIR})
 LOCAL_WHEELHOUSE="${REPO_ROOT}/scripts/manylinux/fixed_wheels"
 DOCKER_IMAGE=quay.io/pypa/manylinux2014_x86_64
-DUMMY_IMAGE_NAME=bezier-manylinux
+DUMMY_CONTAINER_NAME=bezier-manylinux
 # Variables within the container.
 PY_ROOT="/opt/python/cp311-cp311"
 # NOTE: This path determines the hash of `libbezier.so` (i.e. the builds
@@ -39,13 +39,13 @@ if [[ "${CI}" == "true" || "$(echo "${CURRENT_CONTAINER_ID}" | wc -w)" == "1" ]]
     # Create a dummy container which will hold a volume.
     docker create \
         --volume "$(dirname "${BEZIER_ROOT}")" \
-        --name "${DUMMY_IMAGE_NAME}" \
+        --name "${DUMMY_CONTAINER_NAME}" \
         "${DOCKER_IMAGE}" \
         /bin/true
     # Copy source tree into this volume.
-    docker cp "${REPO_ROOT}" "${DUMMY_IMAGE_NAME}":"${BEZIER_ROOT}"
+    docker cp "${REPO_ROOT}" "${DUMMY_CONTAINER_NAME}":"${BEZIER_ROOT}"
     # Rely on this dummy container.
-    VOLUME_ARGS=("--volumes-from=${DUMMY_IMAGE_NAME}")
+    VOLUME_ARGS=("--volumes-from=${DUMMY_CONTAINER_NAME}")
     VOLUME_COPY="yes"
 else
     # Running on host.
@@ -64,7 +64,7 @@ docker run \
 
 if [[ "${VOLUME_COPY}" == "yes" ]]; then
     # Copy built wheel(s) back into this container.
-    docker cp "${DUMMY_IMAGE_NAME}":"${WHEELHOUSE}" "${LOCAL_WHEELHOUSE}"
+    docker cp "${DUMMY_CONTAINER_NAME}":"${WHEELHOUSE}" "${LOCAL_WHEELHOUSE}"
 fi
 
 # 1. Install the `manylinux` wheel
