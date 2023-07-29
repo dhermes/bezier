@@ -15,17 +15,17 @@
 set -e -x
 
 if [[ -z "${PY_ROOT}" ]]; then
-    echo "PY_ROOT environment variable should be set by the caller."
+    echo "PY_ROOT environment variable should be set by the caller." >&2
     exit 1
 fi
 
 if [[ -z "${WHEELHOUSE}" ]]; then
-    echo "WHEELHOUSE environment variable should be set by the caller."
+    echo "WHEELHOUSE environment variable should be set by the caller." >&2
     exit 1
 fi
 
 if [[ -z "${BEZIER_ROOT}" ]]; then
-    echo "BEZIER_ROOT environment variable should be set by the caller."
+    echo "BEZIER_ROOT environment variable should be set by the caller." >&2
     exit 1
 fi
 

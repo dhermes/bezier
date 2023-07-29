@@ -16,7 +16,7 @@ set -e -x
 
 # NOTE: This is assumed to be running within an activated virtual environment.
 if [[ "$(python -c 'import sys; print(".".join(map(str, sys.version_info[:2])))')" != "3.11" ]]; then
-    echo "Python 3.11 required."
+    echo "Python 3.11 required." >&2
     exit 1
 fi
 

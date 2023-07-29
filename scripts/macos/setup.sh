@@ -15,7 +15,7 @@
 set -e -x
 
 if [[ -z "${Python_ROOT_DIR}" ]]; then
-    echo "Python_ROOT_DIR environment variable should be set by the caller."
+    echo "Python_ROOT_DIR environment variable should be set by the caller." >&2
     exit 1
 fi
 

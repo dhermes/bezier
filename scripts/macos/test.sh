@@ -15,12 +15,12 @@
 set -e -x
 
 if [[ -z "${PY_VERSION}" ]]; then
-    echo "PY_VERSION environment variable should be set by the caller."
+    echo "PY_VERSION environment variable should be set by the caller." >&2
     exit 1
 fi
 
 if [[ -z "${Python_ROOT_DIR}" ]]; then
-    echo "Python_ROOT_DIR environment variable should be set by the caller."
+    echo "Python_ROOT_DIR environment variable should be set by the caller." >&2
     exit 1
 fi
 
@@ -33,6 +33,6 @@ elif [[ "${PY_VERSION}" == "3.11" ]]; then
     "${Python_ROOT_DIR}/bin/nox" --session "functional-3.11"
     "${Python_ROOT_DIR}/bin/nox" --session doctest
 else
-    echo "Unexpected version: ${PY_VERSION}"
+    echo "Unexpected version: ${PY_VERSION}" >&2
     exit 1
 fi
