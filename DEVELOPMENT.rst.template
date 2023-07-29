@@ -449,9 +449,9 @@ Python versions we test in. The image used in our Linux builds (from
 ``nox`` and NumPy).
 
 .. _GitHub Actions: https://github.com/dhermes/bezier/actions
-.. _Linux config: https://github.com/dhermes/bezier/blob/{revision}/.github/workflows/linux.yml
-.. _macOS config: https://github.com/dhermes/bezier/blob/{revision}/.github/workflows/macos.yml
-.. _Windows config: https://github.com/dhermes/bezier/blob/{revision}/.github/workflows/windows.yml
+.. _Linux config: https://github.com/dhermes/bezier/blob/{revision}/.github/workflows/linux.yaml
+.. _macOS config: https://github.com/dhermes/bezier/blob/{revision}/.github/workflows/macos.yaml
+.. _Windows config: https://github.com/dhermes/bezier/blob/{revision}/.github/workflows/windows.yaml
 .. _python-multi Dockerfile: https://github.com/dhermes/python-multi/blob/master/src/Dockerfile
 .. _bezier Dockerfile: https://github.com/dhermes/bezier/blob/{revision}/scripts/docker/bezier.Dockerfile
 
