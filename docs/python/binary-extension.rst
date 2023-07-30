@@ -249,6 +249,10 @@ The command line tool `delvewheel`_ adds a ``bezier.libs`` directory to
    >>> print_tree(libs_directory)
    bezier.libs\
      bezier-40ff1ce7372f05ba11436ffbadd11324.dll
+     libgcc_s_seh-1-5c71c85c0ca01174917203266ba98140.dll
+     libgfortran-5-08073c6868a1df2cbc5609e49cbe3ad8.dll
+     libquadmath-0-55d07eaa5b490be06911c864dcae60fd.dll
+     libwinpthread-1-737bdf20e708783437e6fdbd7b05edf7.dll
 
 A single Windows shared library (DLL) is provided: ``bezier.dll``.
 The Python extension module (``.pyd`` file) depends directly on this library:
@@ -464,8 +468,10 @@ on MinGW:
 
      Image has the following dependencies:
 
+       libgcc_s_seh-1-5c71c85c0ca01174917203266ba98140.dll
        KERNEL32.dll
        msvcrt.dll
+       libgfortran-5-08073c6868a1df2cbc5609e49cbe3ad8.dll
 
      Summary
    ...
