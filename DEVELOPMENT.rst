@@ -130,8 +130,9 @@ sessions where ``bezier`` is being developed:
 
    > $env:Path = "C:\msys64\mingw64\bin;" + $env:Path
 
-Additionally, the ``BEZIER_EXTRA_DLL`` environment variable should be set for
-most ``nox`` sessions to add MinGW-w64 DLLs to the search path:
+Additionally, the ``BEZIER_EXTRA_DLL`` environment variable may need to be
+set for ``nox`` sessions if the MinGW-w64 DLLs cannot be found (to be added the
+DLL search path):
 
 .. code-block:: powershell
 

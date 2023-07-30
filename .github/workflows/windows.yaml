@@ -60,7 +60,5 @@ jobs:
 
       - name: Invoke nox
         shell: powershell
-        env:
-          BEZIER_EXTRA_DLL: 'C:\msys64\mingw64\bin'
         run: |
           nox --session "${{ matrix.nox-session }}"
