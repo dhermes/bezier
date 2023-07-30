@@ -531,7 +531,8 @@ This project uses environment variables for building the
   version.
 - ``BEZIER_EXTRA_DLL``: Used to add (optional) extra directory to DLL search
   path on Windows. This is intended to be used in tests primarily, but may also
-  be required when building from source.
+  be required when building from source. Multiple directories can be provided,
+  separated by the Windows path separator (``;``).
 
 and for running tests and interacting with Continuous Integration
 services:

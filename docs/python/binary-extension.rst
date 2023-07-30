@@ -4,7 +4,7 @@ Binary Extension
 
 .. note::
 
-   This content was last updated May 19, 2020. Much of the content is tested
+   This content was last updated July 30, 2023. Much of the content is tested
    automatically to keep from getting stale, but some of the console code
    blocks are not. As a result, this material may be out of date. If anything
    does not seem correct --- or even if the explanation is insufficient ---
@@ -30,12 +30,19 @@ result, ``libbezier`` will depend on ``libgfortran``. This can be problematic
 due to version conflicts, ABI incompatibility, a desire to use a different
 Fortran compiler (e.g. Intel's ``ifort``) and a host of other reasons.
 
-Some of the standard tooling for distributing wheels tries to address this. On
-Linux and macOS, the tools address it by placing a copy of ``libgfortran`` (and
-potentially its dependencies) in the built wheel. (On Windows, there is no
-standard tooling beyond that provided by ``distutils`` and ``setuptools``.)
-This means that libraries that depend on ``libbezier`` may also need to link
-against these local copies of dependencies.
+There is standard tooling for distributing wheels that address this:
+
+* Linux: `auditwheel`_
+* macOS: `delocate`_
+* Windows: `delvewheel`_
+
+.. _auditwheel: https://github.com/pypa/auditwheel
+.. _delocate: https://github.com/matthew-brett/delocate
+.. _delvewheel: https://github.com/adang1345/delvewheel
+
+The tools address it by placing a copy of ``libgfortran`` (and potentially its
+dependencies) in the built wheel. This means that libraries that depend on
+``libbezier`` may also need to link against these local copies of dependencies.
 
 .. _pip: https://pip.pypa.io
 .. _Python wheel: https://wheel.readthedocs.io
@@ -153,8 +160,6 @@ and the local copy of ``libbezier`` depends on the other dependencies in
    The runtime path (``RPATH``) uses ``$ORIGIN`` to specify a path
    relative to the directory where the extension module (``.so`` file) is.
 
-.. _auditwheel: https://github.com/pypa/auditwheel
-
 macOS
 =====
 
@@ -230,16 +235,12 @@ it indirectly depends on ``libgfortran``, ``libquadmath`` and ``libgcc_s``:
    the ``install_name`` of ``libbezier`` to avoid accidentally pointing
    to an existing file on the target system.
 
-.. _delocate: https://github.com/matthew-brett/delocate
-
 Windows
 =======
 
 The command line tool `delvewheel`_ adds a ``bezier.libs`` directory to
 ``site-packages`` (i.e. it is **next to** ``bezier``) with a modified
 ``libbezier`` DLL
-
-.. _delvewheel: https://github.com/adang1345/delvewheel
 
 .. doctest:: windows-libs
    :windows-only:
@@ -254,8 +255,8 @@ The command line tool `delvewheel`_ adds a ``bezier.libs`` directory to
      libquadmath-0-55d07eaa5b490be06911c864dcae60fd.dll
      libwinpthread-1-737bdf20e708783437e6fdbd7b05edf7.dll
 
-A single Windows shared library (DLL) is provided: ``bezier.dll``.
-The Python extension module (``.pyd`` file) depends directly on this library:
+The ``bezier._speedup`` module (``.pyd`` file) depends on this local copy of
+``libbezier``:
 
 .. testsetup:: windows-libs, windows-extension, windows-dll
 
@@ -355,14 +356,41 @@ The Python extension module (``.pyd`` file) depends directly on this library:
      Summary
    ...
 
-For built wheels, the dependency will be renamed from ``bezier.dll`` to a
-unique name containing the first 32 characters of a SHA256 hash (the hash
-input is ``bezier`` followed by the contents of the DLL file) to avoid a name
-collision and placed in the ``bezier.libs`` directory next to the ``bezier``
-package: for example
-``bezier.libs/bezier-40ff1ce7372f05ba11436ffbadd11324.dll``.
+and the local copy of ``libbezier`` depends on the other dependencies in
+``bezier.libs/`` (both directly and indirectly):
 
-The ``libbezier`` DLL has **no external dependencies**, but does have
+.. testcode:: windows-dll
+   :hide:
+
+   site_packages_path = pathlib.Path(site_packages)
+   dll_path, = site_packages_path.glob("bezier.libs/bezier-*.dll")
+   dll_path = dll_path.relative_to(site_packages_path)
+   dll_path = os.path.join(os.pardir, str(dll_path))
+   invoke_shell("dumpbin", "/dependents", dll_path, cwd=base_dir)
+
+.. testoutput:: windows-dll
+   :windows-only:
+
+   > dumpbin /dependents ..\bezier.libs\bezier-40ff1ce7372f05ba11436ffbadd11324.dll
+   Microsoft (R) COFF/PE Dumper Version ...
+   Copyright (C) Microsoft Corporation.  All rights reserved.
+
+
+   Dump of file ..\bezier.libs\bezier-40ff1ce7372f05ba11436ffbadd11324.dll
+
+   File Type: DLL
+
+     Image has the following dependencies:
+
+       libgcc_s_seh-1-5c71c85c0ca01174917203266ba98140.dll
+       KERNEL32.dll
+       msvcrt.dll
+       libgfortran-5-08073c6868a1df2cbc5609e49cbe3ad8.dll
+
+     Summary
+   ...
+
+To enable building the Python binary extension, the ``libbezier`` DLL also has
 a corresponding `import library`_ --- ``usr/lib/bezier.lib`` --- which is
 provided to specify the symbols in the DLL.
 
@@ -397,85 +425,6 @@ two compiler families (MSVC and MinGW) can be problematic because MinGW uses
 a fixed version of the C runtime (``MSVCRT.dll``) and this dependency cannot
 be easily dropped or changed.
 
-A Windows shared library (DLL) can be created after compiling
-each of the Fortran submodules:
-
-.. code-block:: console
-
-   $ gfortran \
-   >   -shared \
-   >   -o bezier.dll \
-   >   ${OBJ_FILES} \
-   >   -Wl,--output-def,bezier.def
-
-.. note::
-
-   Invoking ``gfortran`` **can** be done from the Windows command prompt, but
-   it is easier to do from a shell that explicitly supports MinGW, such as
-   MSYS2.
-
-By default, the created shared library will depend on ``gcc`` libraries
-provided by MinGW:
-
-.. code-block:: rest
-
-   > dumpbin /dependents ...\bezier.dll
-   ...
-     Image has the following dependencies:
-
-       KERNEL32.dll
-       msvcrt.dll
-       libgcc_s_seh-1.dll
-       libgfortran-3.dll
-
-Unlike Linux and macOS, on Windows relocating and copying any dependencies
-on MinGW (at either compile, link or run time) is explicitly avoided. By adding
-the ``-static`` flag
-
-.. code-block:: console
-   :emphasize-lines: 2
-
-   $ gfortran \
-   >   -static \
-   >   -shared \
-   >   -o bezier.dll \
-   >   ${OBJ_FILES} \
-   >   -Wl,--output-def,bezier.def
-
-all the symbols used from ``libgfortran`` or ``libgcc_s`` are statically
-included and the resulting shared library ``bezier.dll`` has no dependency
-on MinGW:
-
-.. testcode:: windows-dll
-   :hide:
-
-   site_packages_path = pathlib.Path(site_packages)
-   dll_path, = site_packages_path.glob("bezier.libs/bezier-*.dll")
-   dll_path = dll_path.relative_to(site_packages_path)
-   invoke_shell("dumpbin", "/dependents", str(dll_path), cwd=site_packages)
-
-.. testoutput:: windows-dll
-   :windows-only:
-
-   > dumpbin /dependents bezier.libs\bezier-40ff1ce7372f05ba11436ffbadd11324.dll
-   Microsoft (R) COFF/PE Dumper Version ...
-   Copyright (C) Microsoft Corporation.  All rights reserved.
-
-
-   Dump of file bezier.libs\bezier-40ff1ce7372f05ba11436ffbadd11324.dll
-
-   File Type: DLL
-
-     Image has the following dependencies:
-
-       libgcc_s_seh-1-5c71c85c0ca01174917203266ba98140.dll
-       KERNEL32.dll
-       msvcrt.dll
-       libgfortran-5-08073c6868a1df2cbc5609e49cbe3ad8.dll
-
-     Summary
-   ...
-
 .. note::
 
    Although ``msvcrt.dll`` is a dependency of ``bezier.dll``, it is not
@@ -504,17 +453,6 @@ on MinGW:
 
    .. _other dependencies: https://www.spiria.com/en/blog/desktop-software/building-mingw-w64-toolchain-links-specific-visual-studio-runtime-library
    .. _Removing dependencies: http://www.pygame.org/wiki/PreparingMinGW
-
-From there, an `import library`_ must be created
-
-.. code-block:: rest
-
-   > lib /def:.\bezier.def /out:.\lib\bezier.lib /machine:${ARCH}
-
-.. note::
-
-   ``lib.exe`` is used from the same version of MSVC that compiled the
-   target Python. Luckily ``distutils`` enables this without difficulty.
 
 .. _version of MSVC: http://matthew-brett.github.io/pydagogue/python_msvc.html
 .. _largely fixed: http://stevedower.id.au/blog/building-for-python-3-5-part-two/
