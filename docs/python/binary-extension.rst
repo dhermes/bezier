@@ -66,12 +66,17 @@ The command line tool `auditwheel`_ adds a ``bezier.libs`` directory to
    libs_directory = os.path.abspath(os.path.join(base_dir, os.pardir, "bezier.libs"))
 
 
-   def invoke_shell(*args, cwd=base_dir):
+   def invoke_shell(*args, cwd=base_dir, replacements=()):
        print("$ " + " ".join(args))
        # NOTE: We print to the stdout of the doctest, rather than using
        #       ``subprocess.call()`` directly.
        output_bytes = subprocess.check_output(args, cwd=cwd)
-       print(output_bytes.decode("utf-8"), end="")
+       output_str = output_bytes.decode("utf-8")
+
+       for before, after in replacements:
+           output_str = output_str.replace(before, after)
+
+       print(output_str, end="")
 
 .. doctest:: linux-libs
    :linux-only:
@@ -175,10 +180,14 @@ of ``libbezier``:
 .. testcode:: macos-extension
    :hide:
 
-   invoke_shell("otool", "-L", "_speedup.cpython-311-darwin.so")
+   invoke_shell(
+      "otool",
+      "-L",
+      "_speedup.cpython-311-darwin.so",
+      replacements=(("\t", "        "),),
+   )
 
 .. testoutput:: macos-extension
-   :options: +NORMALIZE_WHITESPACE
    :macos-only:
    :pyversion: >= 3.11
 
@@ -193,18 +202,22 @@ it indirectly depends on ``libgfortran``, ``libquadmath`` and ``libgcc_s``:
 .. testcode:: macos-delocated-libgfortran
    :hide:
 
-   invoke_shell("otool", "-L", ".dylibs/libbezier.2023.7.28.dylib")
+   invoke_shell(
+      "otool",
+      "-L",
+      ".dylibs/libbezier.2023.7.28.dylib",
+      replacements=(("\t", "        "),),
+   )
 
 .. testoutput:: macos-delocated-libgfortran
-   :options: +NORMALIZE_WHITESPACE
    :macos-only:
 
    $ otool -L .dylibs/libbezier.2023.7.28.dylib
    .dylibs/libbezier.2023.7.28.dylib:
-       /DLC/bezier/.dylibs/libbezier.2023.7.28.dylib (...)
-       @loader_path/libgfortran.5.dylib (...)
-       @loader_path/libquadmath.0.dylib (...)
-       /usr/lib/libSystem.B.dylib (...)
+           /DLC/bezier/.dylibs/libbezier.2023.7.28.dylib (...)
+           @loader_path/libgfortran.5.dylib (...)
+           @loader_path/libquadmath.0.dylib (...)
+           /usr/lib/libSystem.B.dylib (...)
 
 .. note::
 
