@@ -129,7 +129,11 @@ def install_bezier(session, debug=False, env=None):
 
     runtime_env = {}
     if IS_WINDOWS:
-        runtime_env[EXTRA_DLL_ENV] = os.path.join(install_prefix, "bin")
+        bezier_extra_dll = os.path.join(install_prefix, "bin")
+        existing = os.environ.get(EXTRA_DLL_ENV)
+        if existing is not None:
+            bezier_extra_dll = f"{bezier_extra_dll}{os.pathsep}{existing}"
+        runtime_env[EXTRA_DLL_ENV] = bezier_extra_dll
 
     return install_prefix, runtime_env
 
