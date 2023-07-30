@@ -33,6 +33,7 @@ DEPS = {
     "cmake": "cmake >= 3.25.2",
     "coverage": "coverage",
     "Cython": "Cython >= 3.0.0",
+    "delocate": "delocate >= 0.10.4",
     "delvewheel": "delvewheel >= 1.4.0",
     "docutils": "docutils",
     "flake8": "flake8",
@@ -249,6 +250,40 @@ def get_doctest_args(session):
     return run_args
 
 
+def _macos_doctest_install(session, install_prefix):
+    # 1. Install the ``delocate`` tool.
+    session.install(DEPS["delocate"])
+    # 2. Build the wheel from source.
+    basic_dir = tempfile.mkdtemp()
+    session.run(
+        "pip",
+        "wheel",
+        ".",
+        "--wheel-dir",
+        basic_dir,
+        env={INSTALL_PREFIX_ENV: install_prefix},
+    )
+    # 3. Repair the built wheel.
+    basic_dir_path = pathlib.Path(basic_dir)
+    wheels = list(basic_dir_path.glob("bezier*.whl"))
+    repaired_dir = tempfile.mkdtemp()
+    session.run(
+        # NOTE: This intentionally does not use ``--check-archs``.
+        "delocate-wheel",
+        "--wheel-dir",
+        repaired_dir,
+        "--verbose",
+        *wheels,
+    )
+    # 4. Install from the repaired wheel.
+    session.run(
+        "pip", "install", "bezier", "--no-index", "--find-links", repaired_dir
+    )
+    # 5. Clean up temporary directories.
+    shutil.rmtree(basic_dir, ignore_errors=True)
+    shutil.rmtree(repaired_dir, ignore_errors=True)
+
+
 def _windows_doctest_install(session, install_prefix):
     # 1. Install the ``delvewheel`` tool.
     session.install(DEPS["delvewheel"])
@@ -291,9 +326,7 @@ def doctest(session):
     # Install this package.
     if IS_MACOS:
         install_prefix = _cmake(session, BUILD_TYPE_RELEASE)
-        command = get_path("scripts", "macos", "nox-install-for-doctest.sh")
-        env = {INSTALL_PREFIX_ENV: install_prefix}
-        session.run(command, external=True, env=env)
+        _macos_doctest_install(session, install_prefix)
     elif IS_LINUX:
         command = get_path("scripts", "nox-install-for-doctest-linux.sh")
         session.run(command, external=True)
@@ -326,9 +359,7 @@ def docs_images(session):
     # Install this package.
     if IS_MACOS:
         install_prefix = _cmake(session, BUILD_TYPE_RELEASE)
-        command = get_path("scripts", "macos", "nox-install-for-doctest.sh")
-        env = {INSTALL_PREFIX_ENV: install_prefix}
-        session.run(command, external=True, env=env)
+        _macos_doctest_install(session, install_prefix)
     else:
         install_prefix, _ = install_bezier(session)
     # Use custom RC-file for matplotlib.
