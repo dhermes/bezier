@@ -31,9 +31,6 @@ on:
 jobs:
   ci:
     runs-on: windows-2022
-    env:
-      NOX_SESSION: "${{ matrix.nox-session }}"
-      MINGW: 'C:\msys64\mingw64\bin'
     strategy:
       matrix:
         nox-session:
@@ -59,11 +56,11 @@ jobs:
       - name: Show gfortran version
         shell: powershell
         run: |
-          $env:Path = "$env:MINGW;" + $env:Path
           gfortran --version
 
       - name: Invoke nox
         shell: powershell
+        env:
+          BEZIER_EXTRA_DLL: 'C:\msys64\mingw64\bin'
         run: |
-          $env:Path = "$env:MINGW;" + $env:Path
-          nox --session $env:NOX_SESSION
+          nox --session "${{ matrix.nox-session }}"
