@@ -124,7 +124,10 @@ def _get_mingw_dll_dir():
     This assumes the DLL is in the same directory as ``gfortran.exe`` based on
     the MinGW-w64 layout (as of 2023-07-30).
     """
-    gfortran_exe = shutil.which('gfortran')
+    gfortran_exe = shutil.which("gfortran")
+    if gfortran_exe is None:
+        return None
+
     gfortran_exe = pathlib.Path(gfortran_exe)
     bin_dir = gfortran_exe.resolve().parent
     matches = list(bin_dir.glob("libgfortran*.dll"))
