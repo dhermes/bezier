@@ -390,9 +390,9 @@ and the local copy of ``libbezier`` depends on the other dependencies in
      Image has the following dependencies:
 
        libgcc_s_seh-1-5c71c85c0ca01174917203266ba98140.dll
+       libgfortran-5-08073c6868a1df2cbc5609e49cbe3ad8.dll
        KERNEL32.dll
        msvcrt.dll
-       libgfortran-5-08073c6868a1df2cbc5609e49cbe3ad8.dll
 
      Summary
    ...
