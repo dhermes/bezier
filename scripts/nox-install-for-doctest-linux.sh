@@ -53,7 +53,7 @@ docker run \
     "${DOCKER_IMAGE}" \
     "${BEZIER_ROOT}/scripts/manylinux/build-wheel-for-doctest.sh"
 
-# 4. Copy built wheel(s) back into this container.
+# 4. Copy built wheel(s) back onto the host.
 docker cp "${DUMMY_CONTAINER_NAME}":"${WHEELHOUSE}" "${LOCAL_WHEELHOUSE}"
 
 # 5. Install the `manylinux` wheel
