@@ -274,15 +274,20 @@ The ``bezier._speedup`` module (``.pyd`` file) depends on this local copy of
    site_packages = os.path.abspath(os.path.join(base_dir, os.pardir))
    libs_directory = os.path.join(site_packages, "bezier.libs")
    # Use regex replacement to handle the fact that the ``bezier.dll``
-   # file contents are non-deterministic (across time / builds)
-   dll_pattern = "bezier-[0-9a-f]{32}.dll"
-   dll_sentinel = "bezier-40ff1ce7372f05ba11436ffbadd11324.dll"
+   # file contents are non-deterministic (across time / builds). The
+   # MinGW packages **are** deterministic (for a given version) but those
+   # may differ across different build machines so we replace them too.
+   dll_replacements = (
+      ("bezier-[0-9a-f]{32}.dll", "bezier-40ff1ce7372f05ba11436ffbadd11324.dll"),
+      ("libgcc_s_seh-1-[0-9a-f]{32}.dll", "libgcc_s_seh-1-5c71c85c0ca01174917203266ba98140.dll"),
+      ("libgfortran-5-[0-9a-f]{32}.dll", "libgfortran-5-08073c6868a1df2cbc5609e49cbe3ad8.dll"),
+      ("libquadmath-0-[0-9a-f]{32}.dll", "libquadmath-0-55d07eaa5b490be06911c864dcae60fd.dll"),
+      ("libwinpthread-1-[0-9a-f]{32}.dll", "libwinpthread-1-737bdf20e708783437e6fdbd7b05edf7.dll"),
+   )
 
 
    def print_tree(directory):
-       return tests.utils.print_tree(
-           directory, replacements=((dll_pattern, dll_sentinel),)
-       )
+       return tests.utils.print_tree(directory, replacements=dll_replacements)
 
 
    if os.name == "nt":
@@ -319,7 +324,9 @@ The ``bezier._speedup`` module (``.pyd`` file) depends on this local copy of
            ]
        )
 
-       output_str = re.sub(dll_pattern, dll_sentinel, output_str)
+       for pattern, replacement in dll_replacements:
+           output_str = re.sub(pattern, replacement, output_str)
+
        # Normalize line endings (content is authored with UNIX-style)
        output_str = output_str.replace(os.linesep, "\n")
        print(output_str, end="")
