@@ -122,14 +122,16 @@ def extension_modules():
         extra_link_args.append("-Wl,-rpath,{}".format(rpath))
 
     extension = setuptools.Extension(
-        "bezier._speedup",
-        [os.path.join("src", "python", "bezier", "_speedup.c")],
+        name="bezier._speedup",
+        sources=[os.path.join("src", "python", "bezier", "_speedup.c")],
         include_dirs=[
             numpy_include_dir(),
             os.path.join(install_prefix, "include"),
         ],
         libraries=["bezier"],
         library_dirs=[rpath],
+        define_macros=[("NPY_NO_DEPRECATED_API", "NPY_1_7_API_VERSION")],
+        extra_compile_args=[],
         extra_link_args=extra_link_args,
     )
     return [extension]

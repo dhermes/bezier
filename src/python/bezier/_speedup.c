@@ -42816,7 +42816,7 @@ if (!__Pyx_RefNanny) {
 
   /* "bezier/_speedup.pyx":1
  * #!python             # <<<<<<<<<<<<<<
- * #cython: boundscheck=False, wraparound=False, language_level=3
+ * # cython: boundscheck=False, wraparound=False, language_level=3
  * # Licensed under the Apache License, Version 2.0 (the "License");
  */
   __pyx_t_12 = __Pyx_PyDict_NewPresized(0); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 1, __pyx_L1_error)
