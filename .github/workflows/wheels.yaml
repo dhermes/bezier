@@ -26,10 +26,21 @@ jobs:
       matrix:
         include:
           # NOTE: The ARM build(s) take considerably longer on GitHub Actions.
-          - artifact-name: linux-arm
+          - artifact-name: linux-arm-3.9
             cibw-archs: aarch64
+            cibw-build: cp39-*
+          - artifact-name: linux-arm-3.10
+            cibw-archs: aarch64
+            cibw-build: cp310-*
+          - artifact-name: linux-arm-3.11
+            cibw-archs: aarch64
+            cibw-build: cp311-*
           - artifact-name: linux-intel
             cibw-archs: x86_64
+            cibw-build: >-
+              cp39-*
+              cp310-*
+              cp311-*
 
     steps:
       - uses: actions/checkout@v3
@@ -45,10 +56,7 @@ jobs:
           CIBW_BEFORE_BUILD: |
             python -m pip install cmake nox numpy
             nox --session libbezier-release --reuse-existing-virtualenvs
-          CIBW_BUILD: >-
-            cp39-*
-            cp310-*
-            cp311-*
+          CIBW_BUILD: ${{ matrix.cibw-build }}
           CIBW_ENVIRONMENT: >-
             BEZIER_INSTALL_PREFIX=/project/.nox/.cache/libbezier-release/usr
             LD_LIBRARY_PATH=/project/.nox/.cache/libbezier-release/usr/lib
