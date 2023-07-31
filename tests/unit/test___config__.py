@@ -76,7 +76,7 @@ class Test_add_dll_directory(unittest.TestCase):
         os,
         name="nt",
         pathsep=";",
-        environ={"BEZIER_EXTRA_DLL": f"builtdir\\raw;another\\built"},
+        environ={"BEZIER_EXTRA_DLL": "builtdir\\raw;another\\built"},
     )
     @unittest.mock.patch("os.path.isdir", return_value=True)
     @unittest.mock.patch("os.add_dll_directory", create=True)
@@ -85,7 +85,7 @@ class Test_add_dll_directory(unittest.TestCase):
         self.assertIsNone(return_value)
         self.assertEqual(
             os.environ,
-            {"BEZIER_EXTRA_DLL": f"builtdir\\raw;another\\built"},
+            {"BEZIER_EXTRA_DLL": "builtdir\\raw;another\\built"},
         )
         # Check mocks.
         self.assertEqual(isdir.call_count, 2)
