@@ -20,9 +20,9 @@ if [[ "$(python -c 'import sys; print(".".join(map(str, sys.version_info[:2])))'
     exit 1
 fi
 
-SCRIPT_FI=$(readlink -f ${0})
-SCRIPTS_DIR=$(dirname ${SCRIPT_FI})
-REPO_ROOT=$(dirname ${SCRIPTS_DIR})
+SCRIPT_FI=$(readlink -f "${0}")
+SCRIPTS_DIR=$(dirname "${SCRIPT_FI}")
+REPO_ROOT=$(dirname "${SCRIPTS_DIR}")
 LOCAL_WHEELHOUSE="${REPO_ROOT}/scripts/manylinux/fixed_wheels"
 DOCKER_IMAGE=quay.io/pypa/manylinux2014_x86_64
 DUMMY_CONTAINER_NAME=bezier-manylinux
@@ -33,41 +33,30 @@ PY_ROOT="/opt/python/cp311-cp311"
 BEZIER_ROOT="/var/code/bezier"
 WHEELHOUSE="/var/code/wheelhouse"  # Under same path as `${BEZIER_ROOT}`
 
-# 0. Build the `manylinux` wheel (repaired with `auditwheel`).
-CURRENT_CONTAINER_ID=$(docker ps --no-trunc --filter "id=$(hostname)" --format '{{ .ID }}')
-if [[ "${CI}" == "true" || "$(echo "${CURRENT_CONTAINER_ID}" | wc -w)" == "1" ]]; then
-    # Create a dummy container which will hold a volume.
-    docker create \
-        --volume "$(dirname "${BEZIER_ROOT}")" \
-        --name "${DUMMY_CONTAINER_NAME}" \
-        "${DOCKER_IMAGE}" \
-        /bin/true
-    # Copy source tree into this volume.
-    docker cp "${REPO_ROOT}" "${DUMMY_CONTAINER_NAME}":"${BEZIER_ROOT}"
-    # Rely on this dummy container.
-    VOLUME_ARGS=("--volumes-from=${DUMMY_CONTAINER_NAME}")
-    VOLUME_COPY="yes"
-else
-    # Running on host.
-    VOLUME_ARGS=("--volume=${REPO_ROOT}:${BEZIER_ROOT}" "--volume=${LOCAL_WHEELHOUSE}:${WHEELHOUSE}")
-    VOLUME_COPY="no"
-fi
+# 1. Create a dummy container which will hold a volume.
+docker create \
+    --volume "$(dirname "${BEZIER_ROOT}")" \
+    --name "${DUMMY_CONTAINER_NAME}" \
+    "${DOCKER_IMAGE}" \
+    /bin/true
 
+# 2. Copy source tree into this volume.
+docker cp "${REPO_ROOT}" "${DUMMY_CONTAINER_NAME}":"${BEZIER_ROOT}"
+
+# 3. Build the `manylinux` wheel (repaired with `auditwheel`).
 docker run \
     --rm \
     --env PY_ROOT="${PY_ROOT}" \
     --env WHEELHOUSE="${WHEELHOUSE}" \
     --env BEZIER_ROOT="${BEZIER_ROOT}" \
-    "${VOLUME_ARGS[@]}" \
+    --volumes-from="${DUMMY_CONTAINER_NAME}" \
     "${DOCKER_IMAGE}" \
     "${BEZIER_ROOT}/scripts/manylinux/build-wheel-for-doctest.sh"
 
-if [[ "${VOLUME_COPY}" == "yes" ]]; then
-    # Copy built wheel(s) back into this container.
-    docker cp "${DUMMY_CONTAINER_NAME}":"${WHEELHOUSE}" "${LOCAL_WHEELHOUSE}"
-fi
+# 4. Copy built wheel(s) back onto the host.
+docker cp "${DUMMY_CONTAINER_NAME}":"${WHEELHOUSE}" "${LOCAL_WHEELHOUSE}"
 
-# 1. Install the `manylinux` wheel
+# 5. Install the `manylinux` wheel
 python -m pip install bezier \
     --no-index \
     --find-links "${LOCAL_WHEELHOUSE}"

@@ -240,41 +240,30 @@ and then marked with ``pytest.mark.skipif``.
 Slow Install
 ============
 
-Installing NumPy with `PyPy`_ can take upwards of two minutes and
-installing SciPy can take as much as seven minutes. This makes it
-prohibitive to create a new environment for testing.
+Installing NumPy with `PyPy`_ can take upwards of two minutes (however
+the NumPy project has started publishing built wheels for PyPy) and installing
+SciPy can take as much as seven minutes. This makes it prohibitive to create a
+new environment for testing.
 
 .. _PyPy: https://pypy.org/
 
-In order to avoid this penalty, the ``WHEELHOUSE`` environment
-variable can be used to instruct ``nox`` to install NumPy and SciPy
-from locally built wheels when installing the ``pypy3`` sessions.
+In order to avoid this penalty, the ``WHEELHOUSE`` environment variable can be
+used to instruct ``nox`` to install NumPy and SciPy from locally built wheels
+when installing the ``pypy3`` sessions.
 
 To pre-build NumPy and SciPy wheels:
 
 .. code-block:: console
 
    $ pypy3 -m virtualenv pypy3-venv
-   $ pypy3-venv/bin/python -m pip wheel --wheel-dir=${{WHEELHOUSE}} numpy
-   $ pypy3-venv/bin/python -m pip install ${{WHEELHOUSE}}/numpy*.whl
-   $ pypy3-venv/bin/python -m pip wheel --wheel-dir=${{WHEELHOUSE}} scipy
+   $ pypy3-venv/bin/python -m pip wheel --wheel-dir="${{WHEELHOUSE}}" numpy
+   $ pypy3-venv/bin/python -m pip install "${{WHEELHOUSE}}/numpy*.whl"
+   $ pypy3-venv/bin/python -m pip wheel --wheel-dir="${{WHEELHOUSE}}" scipy
    $ rm -fr pypy3-venv/
 
 In addition to the ``WHEELHOUSE`` environment variable, the paths
 ``${{HOME}}/wheelhouse`` and ``/wheelhouse`` will also be searched for
 pre-built wheels.
-
-Alternatively, wheels can be downloaded from `pypy-wheels`_, however
-the SciPy wheel will still require ``libatlas-dev``, ``libblas-dev`` and
-``liblapack-dev``.
-
-The `Docker`_ image for the Linux test environment has already
-pre-built these wheels and stored them in the ``/wheelhouse`` directory.
-So, in the container, the ``WHEELHOUSE`` environment
-variable is set to ``/wheelhouse``.
-
-.. _Docker: https://www.docker.com/
-.. _pypy-wheels: https://antocuni.github.io/pypy-wheels/
 
 ****************
 Functional Tests
@@ -479,19 +468,10 @@ Tests are run on `GitHub Actions`_ (Linux, macOS and Windows)
 after every commit. To see which tests are run, see
 the `Linux config`_, the `macOS config`_ and the `Windows config`_.
 
-For Linux, a `Docker`_ image is used to provide
-fine-grained control over the environment. There is a base
-`python-multi Dockerfile`_ that just has the
-Python versions we test in. The image used in our Linux builds (from
-`bezier Dockerfile`_) installs dependencies needed for testing (such as
-``nox`` and NumPy).
-
 .. _GitHub Actions: https://github.com/dhermes/bezier/actions
 .. _Linux config: https://github.com/dhermes/bezier/blob/{revision}/.github/workflows/linux.yaml
 .. _macOS config: https://github.com/dhermes/bezier/blob/{revision}/.github/workflows/macos.yaml
 .. _Windows config: https://github.com/dhermes/bezier/blob/{revision}/.github/workflows/windows.yaml
-.. _python-multi Dockerfile: https://github.com/dhermes/python-multi/blob/master/src/Dockerfile
-.. _bezier Dockerfile: https://github.com/dhermes/bezier/blob/{revision}/scripts/docker/bezier.Dockerfile
 
 ****************************************
 Release Process / Deploying New Versions

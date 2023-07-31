@@ -39,57 +39,59 @@ jobs:
 
       - uses: actions/checkout@v3
 
-      - name: Pull Docker image used for CI
-        run: docker pull dhermes/bezier:latest
+      # NOTE: The last specified version will be used as a default one.
+      - uses: actions/setup-python@v4
+        with:
+          python-version: |
+            pypy3.9
+            3.9
+            3.10
+            3.11
 
-      - name: Start and detach a Docker container (max lifetime 1 hour)
+      - name: Update host Python packaging
         run: |
-          docker run \
-            --name dhermes-bezier \
-            --rm \
-            --detach \
-            --volume /var/run/docker.sock:/var/run/docker.sock \
-            --volume "${GITHUB_WORKSPACE}:/var/code/bezier/" \
-            --env MATPLOTLIBRC=tests \
-            --env "GITHUB_REF=${GITHUB_REF}" \
-            --workdir /var/code/bezier/ \
-            dhermes/bezier:latest \
-            sleep 3600
+          python -m pip install --upgrade "nox >= 2022.11.21" pip
+
+      - name: Install OpenBLAS (for SciPy build in PyPy)
+        run: |
+          sudo apt-get update
+          sudo apt-get install libopenblas-dev
 
       - name: Unit tests in Python 3.9
         run: |
-          docker exec dhermes-bezier \
-            nox --session "unit-3.9"
+          nox --session unit-3.9
+
+      - name: Sanity check Python 3.9 (ensure not resolved as PyPy by mistake)
+        run: |
+          IMPLEMENTATION_NAME=$(.nox/unit-3-9/bin/python -c 'import sys; print(sys.implementation.name)')
+
+          if [[ "${IMPLEMENTATION_NAME}" != "cpython" ]]; then
+              echo "Unexpected implementation (${IMPLEMENTATION_NAME}), expected CPython" >&2
+              exit 1
+          fi
 
       - name: Unit tests in Python 3.10
         run: |
-          docker exec dhermes-bezier \
-            nox --session "unit-3.10"
+          nox --session unit-3.10
 
       - name: Unit tests in pypy3
         run: |
-          docker exec dhermes-bezier \
-            nox --session "unit-pypy3"
+          nox --session unit-pypy3
 
       - name: Unit tests AND line coverage in Python 3.11
         run: |
-          docker exec dhermes-bezier \
-            nox --session cover
+          nox --session cover
 
       - name: Functional tests in Python 3.11
         run: |
-          docker exec dhermes-bezier \
-            nox --session "functional-3.11"
+          nox --session functional-3.11
 
       - name: Upload coverage to coveralls
         if: github.event_name != 'pull_request'
         env:
           COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
         run: |
-          docker exec \
-            --env "COVERALLS_REPO_TOKEN=${COVERALLS_REPO_TOKEN}" \
-            dhermes-bezier \
-            ./scripts/upload-coveralls.sh
+          ./scripts/upload-coveralls.sh
 
   lint:
     runs-on: ubuntu-20.04
@@ -101,39 +103,25 @@ jobs:
 
       - uses: actions/checkout@v3
 
-      - name: Pull Docker image used for CI
-        run: docker pull dhermes/bezier:latest
+      - uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
 
-      - name: Start and detach a Docker container (max lifetime 1 hour)
+      - name: Update host Python packaging
         run: |
-          docker run \
-            --name dhermes-bezier \
-            --rm \
-            --detach \
-            --volume /var/run/docker.sock:/var/run/docker.sock \
-            --volume "${GITHUB_WORKSPACE}:/var/code/bezier/" \
-            --env MATPLOTLIBRC=tests \
-            --env "GITHUB_REF=${GITHUB_REF}" \
-            --workdir /var/code/bezier/ \
-            dhermes/bezier:latest \
-            sleep 3600
+          python -m pip install --upgrade "nox >= 2022.11.21" pip
 
       - name: Check that all Cython generated files have been updated
         run: |
-          docker exec dhermes-bezier \
-            git config --global --add safe.directory /var/code/bezier
-          docker exec dhermes-bezier \
-            nox --session "update_generated(check=True)"
+          nox --session "update_generated(check=True)"
 
       - name: Lint code for style issues
         run: |
-          docker exec dhermes-bezier \
-            nox --session lint
+          nox --session lint
 
       - name: Check that test case examples are valid for JSON schema
         run: |
-          docker exec dhermes-bezier \
-            nox --session validate_functional_test_cases
+          nox --session validate_functional_test_cases
 
   docs:
     runs-on: ubuntu-20.04
@@ -145,31 +133,25 @@ jobs:
 
       - uses: actions/checkout@v3
 
-      - name: Pull Docker image used for CI
-        run: docker pull dhermes/bezier:latest
+      # NOTE: The last specified version will be used as a default one.
+      - uses: actions/setup-python@v4
+        with:
+          python-version: |
+            3.9
+            3.11
 
-      - name: Start and detach a Docker container (max lifetime 1 hour)
+      - name: Update host Python packaging
         run: |
-          docker run \
-            --name dhermes-bezier \
-            --rm \
-            --detach \
-            --volume /var/run/docker.sock:/var/run/docker.sock \
-            --volume "${GITHUB_WORKSPACE}:/var/code/bezier/" \
-            --env MATPLOTLIBRC=tests \
-            --env "GITHUB_REF=${GITHUB_REF}" \
-            --workdir /var/code/bezier/ \
-            dhermes/bezier:latest \
-            sleep 3600
+          python -m pip install --upgrade "nox >= 2022.11.21" pip
 
       - name: Run all doctests
+        env:
+          MATPLOTLIBRC: tests
         run: |
-          docker exec dhermes-bezier \
-            git config --global --add safe.directory /var/code/bezier
-          docker exec dhermes-bezier \
-            nox --session doctest
+          nox --session doctest
 
       - name: Build docs
+        env:
+          MATPLOTLIBRC: tests
         run: |
-          docker exec dhermes-bezier \
-            nox --session docs
+          nox --session docs
