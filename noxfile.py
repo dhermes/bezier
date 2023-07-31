@@ -115,6 +115,28 @@ def pypy_setup(local_deps, session):
     return local_deps
 
 
+def _get_mingw_dll_dir():
+    """Attempt to locate MinGW-w64 DLL directory (on Windows).
+
+    This is intended to be used to add to a DLL search path. Does so by
+    searching for ``libgfortran*.dll``.
+
+    This assumes the DLL is in the same directory as ``gfortran.exe`` based on
+    the MinGW-w64 layout (as of 2023-07-30).
+    """
+    gfortran_exe = shutil.which("gfortran")
+    if gfortran_exe is None:
+        return None
+
+    gfortran_exe = pathlib.Path(gfortran_exe)
+    bin_dir = gfortran_exe.resolve().parent
+    matches = list(bin_dir.glob("libgfortran*.dll"))
+    if len(matches) == 0:
+        return None
+
+    return str(bin_dir)
+
+
 def install_bezier(session, debug=False, env=None):
     if env is None:
         env = {}
@@ -129,7 +151,14 @@ def install_bezier(session, debug=False, env=None):
 
     runtime_env = {}
     if IS_WINDOWS:
-        runtime_env[EXTRA_DLL_ENV] = os.path.join(install_prefix, "bin")
+        bezier_extra_dll = os.path.join(install_prefix, "bin")
+        mingw_dll_dir = _get_mingw_dll_dir()
+        if mingw_dll_dir is not None:
+            bezier_extra_dll = f"{bezier_extra_dll}{os.pathsep}{mingw_dll_dir}"
+        existing = os.environ.get(EXTRA_DLL_ENV)
+        if existing is not None:
+            bezier_extra_dll = f"{bezier_extra_dll}{os.pathsep}{existing}"
+        runtime_env[EXTRA_DLL_ENV] = bezier_extra_dll
 
     return install_prefix, runtime_env
 

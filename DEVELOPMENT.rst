@@ -104,6 +104,49 @@ of a curve segment.
 .. _QUADPACK: https://en.wikipedia.org/wiki/QUADPACK
 .. _John Burkardt: https://people.math.sc.edu/Burkardt/f_src/quadpack_double/quadpack_double.html
 
+Windows
+=======
+
+Building the binary extension requires a Fortran compiler. Unfortunately, there
+is no Fortran compiler provided by MSVC. The `MinGW-w64`_ suite of tools is a
+port of the GNU Compiler Collection (``gcc``) for Windows. In particular, MinGW
+includes ``gfortran``.
+
+To `install MinGW-w64`_, download a recent `MSYS2 Installer`_ (e.g.
+``msys2-x86_64-20230526.exe``). When installing, take note of the install
+location. It should default to ``C:\msys64``. After installing, use
+``pacman`` (provided by MSYS2) to install the MinGW-w64 toolchain:
+
+.. code-block:: powershell
+
+   > pacman -S --needed base-devel mingw-w64-x86_64-toolchain
+
+After doing this, you may want to permanently add the MinGW bin directory
+(e.g. ``C:\msys64\mingw64\bin``) to your ``PATH``. If you don't want to make
+a permanent change, you'll need to temporarily modify your ``PATH`` in shell
+sessions where ``bezier`` is being developed:
+
+.. code-block:: powershell
+
+   > $env:Path = "C:\msys64\mingw64\bin;" + $env:Path
+
+Additionally, the ``BEZIER_EXTRA_DLL`` environment variable may need to be
+set for ``nox`` sessions if the MinGW-w64 DLLs cannot be found (to be added the
+DLL search path):
+
+.. code-block:: powershell
+
+   > $env:BEZIER_EXTRA_DLL = "C:\msys64\mingw64\bin"
+
+In addition to a Fortran toolchain, you will also need to MSVC toolchain that
+was used to build each version of Python. The `Microsoft C++ Build Tools`_ must
+be installed as well.
+
+.. _MinGW-w64: http://mingw-w64.org
+.. _install MinGW-w64: https://code.visualstudio.com/docs/cpp/config-mingw
+.. _MSYS2 Installer: https://github.com/msys2/msys2-installer/releases
+.. _Microsoft C++ Build Tools: https://visualstudio.microsoft.com/visual-cpp-build-tools/
+
 ******************
 Running Unit Tests
 ******************
@@ -531,7 +574,8 @@ This project uses environment variables for building the
   version.
 - ``BEZIER_EXTRA_DLL``: Used to add (optional) extra directory to DLL search
   path on Windows. This is intended to be used in tests primarily, but may also
-  be required when building from source.
+  be required when building from source. Multiple directories can be provided,
+  separated by the Windows path separator (``;``).
 
 and for running tests and interacting with Continuous Integration
 services:

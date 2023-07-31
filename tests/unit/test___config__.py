@@ -72,6 +72,29 @@ class Test_add_dll_directory(unittest.TestCase):
         isdir.assert_called_once_with("builtdir\\raw")
         os_add_dll_directory.assert_not_called()
 
+    @unittest.mock.patch.multiple(
+        os,
+        name="nt",
+        pathsep=";",
+        environ={"BEZIER_EXTRA_DLL": "builtdir\\raw;another\\built"},
+    )
+    @unittest.mock.patch("os.path.isdir", return_value=True)
+    @unittest.mock.patch("os.add_dll_directory", create=True)
+    def test_windows_with_multiple_dll_env(self, os_add_dll_directory, isdir):
+        return_value = self._call_function_under_test()
+        self.assertIsNone(return_value)
+        self.assertEqual(
+            os.environ,
+            {"BEZIER_EXTRA_DLL": "builtdir\\raw;another\\built"},
+        )
+        # Check mocks.
+        self.assertEqual(isdir.call_count, 2)
+        isdir.assert_any_call("builtdir\\raw")
+        isdir.assert_any_call("another\\built")
+        self.assertEqual(os_add_dll_directory.call_count, 2)
+        os_add_dll_directory.assert_any_call("builtdir\\raw")
+        os_add_dll_directory.assert_any_call("another\\built")
+
 
 class Test_handle_import_error(unittest.TestCase):
     @staticmethod

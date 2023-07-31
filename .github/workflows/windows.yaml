@@ -31,9 +31,6 @@ on:
 jobs:
   ci:
     runs-on: windows-2022
-    env:
-      NOX_SESSION: "${{ matrix.nox-session }}"
-      MINGW: 'C:\msys64\mingw64\bin'
     strategy:
       matrix:
         nox-session:
@@ -56,14 +53,21 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install --upgrade setuptools wheel "nox >= 2022.11.21"
 
+      # MinGW is installed (by default) via Chocolatey:
+      # - https://github.com/actions/runner-images/blob/win22%2F20230724.1/images/win/toolsets/toolset-2022.json#L165
+      # - https://community.chocolatey.org/packages/mingw/11.2.0.07112021
+      # - https://github.com/actions/runner-images/issues/6103
+      - name: Add MinGW bin dir to PATH
+        shell: powershell
+        run: |
+          "C:\ProgramData\chocolatey\lib\mingw\tools\install\mingw64\bin" >> $env:GITHUB_PATH
+
       - name: Show gfortran version
         shell: powershell
         run: |
-          $env:Path = "$env:MINGW;" + $env:Path
           gfortran --version
 
       - name: Invoke nox
         shell: powershell
         run: |
-          $env:Path = "$env:MINGW;" + $env:Path
-          nox --session $env:NOX_SESSION
+          nox --session "${{ matrix.nox-session }}"

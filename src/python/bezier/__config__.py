@@ -37,14 +37,16 @@ def add_dll_directory():
     if os.name != "nt":
         return
 
-    extra_dll_dir = os.environ.get(EXTRA_DLL_ENV)
-    if extra_dll_dir is None:
+    bezier_extra_dll = os.environ.get(EXTRA_DLL_ENV)
+    if bezier_extra_dll is None:
         return
 
-    if not os.path.isdir(extra_dll_dir):
-        return
+    extra_dll_dirs = bezier_extra_dll.split(os.pathsep)
+    for extra_dll_dir in extra_dll_dirs:
+        if not os.path.isdir(extra_dll_dir):
+            continue
 
-    os.add_dll_directory(extra_dll_dir)
+        os.add_dll_directory(extra_dll_dir)
 
 
 def handle_import_error(caught_exc, name):
