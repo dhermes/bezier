@@ -138,9 +138,9 @@ DLL search path):
 
    > $env:BEZIER_EXTRA_DLL = "C:\msys64\mingw64\bin"
 
-In addition to a Fortran toolchain, you will also need to MSVC toolchain that
-was used to build each version of Python. The `Microsoft C++ Build Tools`_ must
-be installed as well.
+In addition to a Fortran toolchain, you will also need the MSVC toolchain that
+was used to build each version of Python. The `Microsoft C++ Build Tools`_ can
+be installed to enable this toolchain.
 
 .. _MinGW-w64: http://mingw-w64.org
 .. _install MinGW-w64: https://code.visualstudio.com/docs/cpp/config-mingw
