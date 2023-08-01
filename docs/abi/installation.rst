@@ -49,7 +49,6 @@ Linux
    print_tree = tests.utils.print_tree
 
 .. doctest:: libbezier-linux
-   :options: +NORMALIZE_WHITESPACE
    :linux-only:
 
    >>> print_tree(install_prefix)
@@ -77,7 +76,6 @@ macOS
 =====
 
 .. doctest:: libbezier-macos
-   :options: +NORMALIZE_WHITESPACE
    :macos-only:
 
    >>> print_tree(install_prefix)
@@ -105,7 +103,6 @@ Windows
 =======
 
 .. doctest:: libbezier-windows
-   :options: +NORMALIZE_WHITESPACE
    :windows-only:
 
    >>> print_tree(install_prefix)
