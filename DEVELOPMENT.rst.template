@@ -30,7 +30,7 @@ In order to add a feature to ``bezier``:
 *************
 
 To build the Fortran shared library directly, use `CMake`_ version
-``3.1`` or later:
+``3.5`` or later:
 
 .. code-block:: console
 

@@ -3,7 +3,7 @@ Installation
 ############
 
 To build the Fortran shared library directly, use `CMake`_ version
-``3.1`` or later. By `default`_, the ``CMAKE_INSTALL_PREFIX`` will install
+``3.5`` or later. By `default`_, the ``CMAKE_INSTALL_PREFIX`` will install
 the package into ``/usr/local/``. For a more temporary install location,
 ``-DCMAKE_INSTALL_PREFIX:PATH`` can be provided at build time.
 
