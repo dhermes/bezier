@@ -28,9 +28,9 @@ IS_LINUX = sys.platform in ("linux", "linux2")
 IS_MACOS = sys.platform == "darwin"
 IS_WINDOWS = os.name == "nt"
 DEPS = {
-    "black": "black >= 23.1.0",
+    "black": "black >= 23.7.0",
     "cmake-format": "cmake-format >= 0.6.13",
-    "cmake": "cmake >= 3.25.2",
+    "cmake": "cmake >= 3.27.0",
     "coverage": "coverage",
     "Cython": "Cython >= 3.0.0",
     "delocate": "delocate >= 0.10.4",
@@ -38,18 +38,18 @@ DEPS = {
     "docutils": "docutils",
     "flake8": "flake8",
     "flake8-import-order": "flake8-import-order",
-    "jsonschema": "jsonschema >= 4.17.3",
+    "jsonschema": "jsonschema >= 4.18.4",
     "lcov-cobertura": "lcov-cobertura >= 2.0.2",
-    "matplotlib": "matplotlib >= 3.7.1",
-    "numpy": "numpy >= 1.24.2",
-    "pycobertura": "pycobertura >= 3.0.0",
+    "matplotlib": "matplotlib >= 3.7.2",
+    "numpy": "numpy >= 1.25.2",
+    "pycobertura": "pycobertura >= 3.2.1",
     "Pygments": "Pygments",
-    "pylint": "pylint >= 2.17.0",
-    "pytest": "pytest >= 7.2.2",
+    "pylint": "pylint >= 2.17.5",
+    "pytest": "pytest >= 7.4.0",
     "pytest-cov": "pytest-cov",
     "referencing": "referencing >= 0.30.0",
-    "scipy": "scipy >= 1.10.1",
-    "sympy": "sympy >= 1.11.1",
+    "scipy": "scipy >= 1.11.1",
+    "sympy": "sympy >= 1.12",
     "seaborn": "seaborn >= 0.12.2",
 }
 BASE_DEPS = (DEPS["numpy"], DEPS["pytest"])

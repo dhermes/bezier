@@ -31,7 +31,7 @@ fi
 
 # 0. Install the Python dependencies
 "${PY_ROOT}/bin/python" -m pip install --upgrade pip
-"${PY_ROOT}/bin/python" -m pip install --upgrade auditwheel "cmake >= 3.25.2" nox numpy
+"${PY_ROOT}/bin/python" -m pip install --upgrade auditwheel cmake nox numpy
 
 # 1. Make sure no previous build artifacts are still around
 cd "${BEZIER_ROOT}"

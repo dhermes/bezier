@@ -72,11 +72,11 @@ instructions for the C ABI (`libbezier`).
 """.format(
     install_prefix=INSTALL_PREFIX_ENV, no_extension=NO_EXTENSION_ENV
 )
-REQUIREMENTS = ("numpy >= 1.24.2",)
+REQUIREMENTS = ("numpy >= 1.25.2",)
 # See: https://www.python.org/dev/peps/pep-0508/
 #      Dependency specification for Python Software Packages
 EXTRAS_REQUIRE = {
-    "full": ["matplotlib >= 3.4.3", "scipy >= 1.10.1", "sympy >= 1.11.1"],
+    "full": ["matplotlib >= 3.7.2", "scipy >= 1.11.1", "sympy >= 1.12"],
 }
 DESCRIPTION = (
     "Helper for B\u00e9zier Curves, Triangles, and Higher Order Objects"

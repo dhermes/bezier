@@ -50,8 +50,7 @@ jobs:
       - name: Update host Python packaging
         shell: cmd
         run: |
-          python -m pip install --upgrade pip
-          python -m pip install --upgrade setuptools wheel "nox >= 2022.11.21"
+          python -m pip install --upgrade nox pip setuptools wheel
 
       # MinGW is installed (by default) via Chocolatey:
       # - https://github.com/actions/runner-images/blob/win22%2F20230724.1/images/win/toolsets/toolset-2022.json#L165

@@ -50,7 +50,7 @@ jobs:
 
       - name: Update host Python packaging
         run: |
-          python -m pip install --upgrade "nox >= 2022.11.21" pip
+          python -m pip install --upgrade nox pip
 
       - name: Install OpenBLAS (for SciPy build in PyPy)
         run: |
@@ -109,7 +109,7 @@ jobs:
 
       - name: Update host Python packaging
         run: |
-          python -m pip install --upgrade "nox >= 2022.11.21" pip
+          python -m pip install --upgrade nox pip
 
       - name: Check that all Cython generated files have been updated
         run: |
@@ -142,7 +142,7 @@ jobs:
 
       - name: Update host Python packaging
         run: |
-          python -m pip install --upgrade "nox >= 2022.11.21" pip
+          python -m pip install --upgrade nox pip
 
       - name: Run all doctests
         env:

@@ -26,7 +26,6 @@ import doctest
 import os
 import sys
 
-import sphinx.domains.c
 import sphinx_rtd_theme
 
 import bezier  # ``bezier`` must be installed to build the docs.
@@ -40,7 +39,8 @@ sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
 
 # If your documentation needs a minimal Sphinx version, state it here.
 #
-needs_sphinx = "3.5.1"
+needs_sphinx = "6.2.1"
+# See: https://github.com/readthedocs/sphinx_rtd_theme/issues/1463
 
 nitpicky = True
 nitpick_ignore = [

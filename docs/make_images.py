@@ -47,8 +47,8 @@ BLUE = "blue"
 GREEN = "green"
 RED = "red"
 if seaborn is not None:
-    seaborn.set()  # Required in ``seaborn >= 0.8``
-    # As of ``0.9.0``, this palette has
+    seaborn.set()
+    # As of ``seaborn==0.12.2``, this palette has
     # (BLUE, ORANGE, GREEN, RED, PURPLE, BROWN).
     _COLORS = seaborn.color_palette(palette="deep", n_colors=6)
     BLUE = _COLORS[0]
