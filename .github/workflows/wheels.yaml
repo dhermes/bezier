@@ -58,7 +58,7 @@ jobs:
           CIBW_ARCHS: ${{ matrix.cibw-archs }}
           CIBW_BEFORE_BUILD: |
             python -m pip install cmake nox numpy
-            nox --session libbezier-release --reuse-existing-virtualenvs
+            nox --session libbezier-release
           CIBW_BUILD: ${{ matrix.cibw-build }}
           CIBW_ENVIRONMENT: >-
             BEZIER_INSTALL_PREFIX=/project/.nox/.cache/libbezier-release/usr
@@ -96,7 +96,7 @@ jobs:
           TARGET_NATIVE_ARCH: "OFF"
         run: |
           python3.11 -m pip install cmake nox
-          nox --session libbezier-release --reuse-existing-virtualenvs
+          nox --session libbezier-release
 
       - name: Build wheels
         uses: pypa/cibuildwheel@v2.14.1
@@ -152,7 +152,7 @@ jobs:
           TARGET_NATIVE_ARCH: "OFF"
         run: |
           py -3.11 -m pip install cmake nox
-          nox --session libbezier-release --reuse-existing-virtualenvs
+          nox --session libbezier-release
 
       - name: Build wheels
         uses: pypa/cibuildwheel@v2.14.1
