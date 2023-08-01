@@ -31,38 +31,30 @@ fi
 
 # 0. Install the Python dependencies
 "${PY_ROOT}/bin/python" -m pip install --upgrade pip
-"${PY_ROOT}/bin/python" -m pip install --upgrade auditwheel "cmake >= 3.25.2" numpy
+"${PY_ROOT}/bin/python" -m pip install --upgrade auditwheel "cmake >= 3.25.2" nox numpy
 
-# 1. Build and install ``libbezier`` into a custom location.
-BUILD_DIR=$(mktemp -d)
-INSTALL_PREFIX=$(mktemp -d)
-mkdir -p "${BUILD_DIR}"
-"${PY_ROOT}/bin/cmake" \
-    -DCMAKE_BUILD_TYPE=Release \
-    -DCMAKE_INSTALL_PREFIX:PATH="${INSTALL_PREFIX}" \
-    -DCMAKE_VERBOSE_MAKEFILE:BOOL=ON \
-    -DTARGET_NATIVE_ARCH:BOOL=OFF \
-    -S "${BEZIER_ROOT}/src/fortran/" \
-    -B "${BUILD_DIR}"
-"${PY_ROOT}/bin/cmake" \
-    --build "${BUILD_DIR}" \
-    --config Release \
-    --target install
-"${PY_ROOT}/bin/cmake" -L "${BUILD_DIR}"
+# 1. Make sure no previous build artifacts are still around
+cd "${BEZIER_ROOT}"
+"${PY_ROOT}/bin/python" -m nox --session clean
+rm -fr .nox/
 
-# 2. Build the wheel
+# 2. Build and install ``libbezier``. (This script assumes it's running in an
+#    ephemeral directory in an ephemeral container.)
+export TARGET_NATIVE_ARCH=OFF
+"${PY_ROOT}/bin/python" -m nox --session libbezier-release
+
+# 3. Build the wheel
+INSTALL_PREFIX="${BEZIER_ROOT}/.nox/.cache/libbezier-release/usr"
 DIST_WHEELS=$(mktemp -d)
 BEZIER_INSTALL_PREFIX="${INSTALL_PREFIX}" "${PY_ROOT}/bin/python" -m pip wheel \
     "${BEZIER_ROOT}" \
     --wheel-dir "${DIST_WHEELS}"
 
-# 3. "repair" the built wheel.
+# 4. "repair" the built wheel.
 # NOTE: This will **fail** if not run on a ``manylinux`` compatible Linux.
 auditwheel repair \
     --wheel-dir "${WHEELHOUSE}" \
     "${DIST_WHEELS}"/bezier*.whl
 
-# 4. Clean up temporary directories.
-rm -fr "${BUILD_DIR}"
-rm -fr "${INSTALL_PREFIX}"
-rm -fr "${DIST_WHEELS}"
+# NOTE: We don't clean up temporary directories because this script assumes
+#       it's running in an ephemeral directory in an ephemeral container.

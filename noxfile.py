@@ -699,7 +699,6 @@ def clean(session):
         get_path("docs", "__pycache__"),
         get_path("docs", "build"),
         get_path("scripts", "macos", "__pycache__"),
-        get_path("scripts", "manylinux", "fixed_wheels"),
         get_path("src", "python", "bezier.egg-info"),
         get_path("src", "python", "bezier", "__pycache__"),
         get_path("tests", "__pycache__"),

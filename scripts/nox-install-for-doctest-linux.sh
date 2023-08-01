@@ -23,9 +23,9 @@ fi
 SCRIPT_FI=$(readlink -f "${0}")
 SCRIPTS_DIR=$(dirname "${SCRIPT_FI}")
 REPO_ROOT=$(dirname "${SCRIPTS_DIR}")
-LOCAL_WHEELHOUSE="${REPO_ROOT}/scripts/manylinux/fixed_wheels"
+LOCAL_WHEELHOUSE=$(mktemp -d)
 DOCKER_IMAGE=quay.io/pypa/manylinux2014_x86_64
-DUMMY_CONTAINER_NAME=bezier-manylinux
+DUMMY_CONTAINER_NAME="bezier-manylinux-$(openssl rand -hex 6)"
 # Variables within the container.
 PY_ROOT="/opt/python/cp311-cp311"
 # NOTE: This path determines the hash of `libbezier.so` (i.e. the builds
@@ -59,4 +59,8 @@ docker cp "${DUMMY_CONTAINER_NAME}":"${WHEELHOUSE}" "${LOCAL_WHEELHOUSE}"
 # 5. Install the `manylinux` wheel
 python -m pip install bezier \
     --no-index \
-    --find-links "${LOCAL_WHEELHOUSE}"
+    --find-links "${LOCAL_WHEELHOUSE}/wheelhouse"
+
+# 6. Clean up the fixed wheels and dummy container
+docker container rm --volumes "${DUMMY_CONTAINER_NAME}"
+rm -fr "${LOCAL_WHEELHOUSE}"
