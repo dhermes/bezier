@@ -18,4 +18,6 @@ python:
   install:
     - requirements: docs/requirements.txt
     - method: pip
+      # NOTE: ``pip install .`` also relies on ``BEZIER_NO_EXTENSION=true``
+      #       being set in the Read the Docs configuration for the project
       path: "."

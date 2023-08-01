@@ -55,13 +55,6 @@ system (ABI) and architecture (platform). You are likely seeing this message
 because a new version of Python has been released. To disable this check, set
 the `BEZIER_IGNORE_VERSION_CHECK` environment variable.
 """
-READTHEDOCS_ENV = "READTHEDOCS"
-ON_READTHEDOCS_MESSAGE = """\
-The `{}` environment variable has been detected, the binary extension module
-will not be built.
-""".format(
-    READTHEDOCS_ENV
-)
 INSTALL_PREFIX_ENV = "BEZIER_INSTALL_PREFIX"
 NO_INSTALL_PREFIX_MESSAGE = """\
 The `{install_prefix}` environment variable must be set when installing
@@ -101,10 +94,6 @@ def numpy_include_dir():
 
 
 def extension_modules():
-    if os.environ.get(READTHEDOCS_ENV) == "True":
-        print(ON_READTHEDOCS_MESSAGE, file=sys.stderr, end="")
-        return []
-
     if NO_EXTENSION_ENV in os.environ:
         print(NO_SPEEDUPS_MESSAGE, file=sys.stderr, end="")
         return []
