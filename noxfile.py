@@ -47,6 +47,7 @@ DEPS = {
     "pylint": "pylint >= 2.17.0",
     "pytest": "pytest >= 7.2.2",
     "pytest-cov": "pytest-cov",
+    "referencing": "referencing >= 0.30.0",
     "scipy": "scipy >= 1.10.1",
     "sympy": "sympy >= 1.11.1",
     "seaborn": "seaborn >= 0.12.2",
@@ -553,7 +554,7 @@ def fortran_unit(session):
 @nox.session(py=DEFAULT_INTERPRETER)
 def validate_functional_test_cases(session):
     # Install all dependencies.
-    session.install(DEPS["jsonschema"])
+    session.install(DEPS["jsonschema"], DEPS["referencing"])
 
     session.run(
         "python", get_path("scripts", "validate_functional_test_cases.py")

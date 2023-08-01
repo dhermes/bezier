@@ -11,17 +11,41 @@
 # limitations under the License.
 
 import json
-import os
 import pathlib
 import sys
 
 import jsonschema
+import referencing
 
 
 HERE = pathlib.Path(__file__).resolve().parent
 REPO_ROOT = HERE.parent
 DATA_DIR = REPO_ROOT / "tests" / "functional"
 SCHEMA_DIR = DATA_DIR / "schema"
+
+
+def _retrieve_from_filesystem(uri):
+    """Retrieve schema ``$ref`` from the filesystem.
+
+    Args:
+        uri (str): A URI (relative file reference) containing an object schema.
+
+    Returns:
+        referencing.Resource: Resource corresponding to the ``uri``.
+
+    Raises:
+        ValueError: If ``uri`` does not resolve to a valid path on the
+            filesystem, relative to ``SCHEMA_DIR``.
+    """
+    local_path = SCHEMA_DIR / uri
+    local_path = local_path.resolve()
+    if not local_path.is_file():
+        raise ValueError("URI does not resolve", uri)
+
+    with open(SCHEMA_DIR / uri, "r") as file_obj:
+        contents = json.load(file_obj)
+
+    return referencing.Resource.from_contents(contents)
 
 
 def _verify_map(map_filename, schema_filename, name):
@@ -42,16 +66,13 @@ def _verify_map(map_filename, schema_filename, name):
     with open(schema_filename, "r") as file_obj:
         schema = json.load(file_obj)
 
-    # NOTE: We need to set a custom resolver for ``$ref`` to the local
-    #       filesystem.
-    #       See: https://github.com/Julian/jsonschema/issues/313
-    resolver = jsonschema.RefResolver(
-        base_uri=f"file://{SCHEMA_DIR}{os.path.sep}", referrer=schema
-    )
+    registry = referencing.Registry(retrieve=_retrieve_from_filesystem)
+    validator = jsonschema.Draft202012Validator(schema, registry=registry)
+
     failed = False
     for object_id, info in object_map.items():
         try:
-            jsonschema.validate(info, schema, resolver=resolver)
+            validator.validate(info)
         except jsonschema.ValidationError:
             print(f"{name} {object_id} does not adhere to the schema.")
             failed = True
@@ -116,17 +137,14 @@ def _verify_list(list_filename, schema_filename, name):
     with open(schema_filename, "r") as file_obj:
         schema = json.load(file_obj)
 
-    # NOTE: We need to set a custom resolver for ``$ref`` to the local
-    #       filesystem.
-    #       See: https://github.com/Julian/jsonschema/issues/313
-    resolver = jsonschema.RefResolver(
-        base_uri=f"file://{SCHEMA_DIR}{os.path.sep}", referrer=schema
-    )
+    registry = referencing.Registry(retrieve=_retrieve_from_filesystem)
+    validator = jsonschema.Draft202012Validator(schema, registry=registry)
+
     failed = False
     for element in elements:
         id_ = element.get("id", "<unknown>")
         try:
-            jsonschema.validate(element, schema, resolver=resolver)
+            validator.validate(element)
         except jsonschema.ValidationError:
             print(f"{name} {id_} does not adhere to the schema.")
             failed = True
