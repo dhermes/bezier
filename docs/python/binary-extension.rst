@@ -103,6 +103,7 @@ The ``bezier._speedup`` module depends on this local copy of ``libbezier``:
 
 .. testoutput:: linux-readelf-py
    :linux-only:
+   :pyversion: >= 3.11
 
    $ readelf -d _speedup.cpython-311-x86_64-linux-gnu.so
 
