@@ -445,22 +445,6 @@ be easily dropped or changed.
 
    .. _deferred-shape: http://thinkingeek.com/2017/01/14/gfortran-array-descriptor/
 
-   However, the dependency on ``msvcrt.dll`` can still be avoided if desired.
-   The MinGW ``gfortran`` default "specs file" can be captured:
-
-   .. code-block:: console
-
-      $ gfortran -dumpspecs > ${SPECS_FILENAME}
-
-   and modified to replace instances of ``-lmsvcrt`` with a substitute, e.g.
-   ``-lmsvcr90``. Then ``gfortran`` can be invoked with the flag
-   ``-specs=${SPECS_FILENAME}`` to use the custom spec. (Some
-   `other dependencies`_ may also indirectly depend on ``msvcrt.dll``,
-   such as ``-lmoldname``. `Removing dependencies`_ is not an easy process.)
-
-   .. _other dependencies: https://www.spiria.com/en/blog/desktop-software/building-mingw-w64-toolchain-links-specific-visual-studio-runtime-library
-   .. _Removing dependencies: http://www.pygame.org/wiki/PreparingMinGW
-
 .. _version of MSVC: http://matthew-brett.github.io/pydagogue/python_msvc.html
 .. _largely fixed: http://stevedower.id.au/blog/building-for-python-3-5-part-two/
 .. _MinGW-w64: http://mingw-w64.org
