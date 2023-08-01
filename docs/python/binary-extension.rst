@@ -310,7 +310,32 @@ The ``bezier._speedup`` module (``.pyd`` file) depends on this local copy of
            return value
 
 
-   def invoke_shell(*args, cwd=base_dir):
+   def _transform_deps_sort_func(value):
+       if value.strip().startswith("lib"):
+           return 1, value.lower()
+
+       return 2, value.lower()
+
+
+   def transform_deps(output_str):
+       separator_before = "\n  Image has the following dependencies:\n\n"
+       separator_after = "\n\n  Summary\n"
+       before, partial = output_str.split(separator_before)
+       dependency_str, after = partial.split(separator_after)
+       dependencies = dependency_str.split("\n")
+       dependencies.sort(key=_transform_deps_sort_func)
+
+       modified = (
+           before
+           + separator_before
+           + "\n".join(dependencies)
+           + separator_after
+           + after
+       )
+       return modified
+
+
+   def invoke_shell(*args, cwd=base_dir, transform=None):
        # Replace ``"dumpbin"`` with ``dumpbin_exe``.
        cmd = tuple(map(replace_dumpbin, args))
        # NOTE: We print to the stdout of the doctest, rather than using
@@ -329,6 +354,10 @@ The ``bezier._speedup`` module (``.pyd`` file) depends on this local copy of
 
        # Normalize line endings (content is authored with UNIX-style)
        output_str = output_str.replace(os.linesep, "\n")
+
+       if transform is not None:
+           output_str = transform(output_str)
+
        print(output_str, end="")
 
 .. testcode:: windows-extension
@@ -373,7 +402,7 @@ and the local copy of ``libbezier`` depends on the other dependencies in
    dll_path, = site_packages_path.glob("bezier.libs/bezier-*.dll")
    dll_path = dll_path.relative_to(site_packages_path)
    dll_path = os.path.join(os.pardir, str(dll_path))
-   invoke_shell("dumpbin", "/dependents", dll_path, cwd=base_dir)
+   invoke_shell("dumpbin", "/dependents", dll_path, transform=transform_deps)
 
 .. testoutput:: windows-dll
    :windows-only:
