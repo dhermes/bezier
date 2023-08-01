@@ -4,11 +4,9 @@ Binary Extension
 
 .. note::
 
-   This content was last updated July 30, 2023. Much of the content is tested
-   automatically to keep from getting stale, but some of the console code
-   blocks are not. As a result, this material may be out of date. If anything
-   does not seem correct --- or even if the explanation is insufficient ---
-   please `file an issue`_.
+   This content was last updated August 1, 2023. Much of the content is tested
+   automatically to keep from getting stale. If anything does not seem correct
+   --- or even if the explanation is insufficient --- please `file an issue`_.
 
    .. _file an issue: https://github.com/dhermes/bezier/issues/new
 
