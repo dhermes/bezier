@@ -551,7 +551,7 @@ def fortran_unit(session):
     session.run("make", "clean", external=True)
 
 
-@nox.session(py=DEFAULT_INTERPRETER)
+@nox.session(py=DEFAULT_INTERPRETER, name="validate-functional-test-cases")
 def validate_functional_test_cases(session):
     # Install all dependencies.
     session.install(DEPS["jsonschema"], DEPS["referencing"])

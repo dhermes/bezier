@@ -121,7 +121,7 @@ jobs:
 
       - name: Check that test case examples are valid for JSON schema
         run: |
-          nox --session validate_functional_test_cases
+          nox --session validate-functional-test-cases
 
   docs:
     runs-on: ubuntu-20.04
