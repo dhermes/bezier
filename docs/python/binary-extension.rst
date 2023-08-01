@@ -471,11 +471,11 @@ be easily dropped or changed.
    `deferred-shape`_ output variables. Any memory allocated in Fortran will be
    isolated within the Fortran code.
 
-   .. _deferred-shape: http://thinkingeek.com/2017/01/14/gfortran-array-descriptor/
+   .. _deferred-shape: https://thinkingeek.com/2017/01/14/gfortran-array-descriptor/
 
-.. _version of MSVC: http://matthew-brett.github.io/pydagogue/python_msvc.html
-.. _largely fixed: http://stevedower.id.au/blog/building-for-python-3-5-part-two/
-.. _MinGW-w64: http://mingw-w64.org
+.. _version of MSVC: https://matthew-brett.github.io/pydagogue/python_msvc.html
+.. _largely fixed: https://stevedower.id.au/blog/building-for-python-3-5-part-two
+.. _MinGW-w64: https://mingw-w64.org
 
 Source
 ======
