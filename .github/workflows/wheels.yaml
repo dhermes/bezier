@@ -154,10 +154,19 @@ jobs:
           py -3.11 -m pip install cmake nox
           nox --session libbezier-release
 
+      # MinGW is installed (by default) via Chocolatey:
+      # - https://github.com/actions/runner-images/blob/win22%2F20230724.1/images/win/toolsets/toolset-2022.json#L165
+      # - https://community.chocolatey.org/packages/mingw/11.2.0.07112021
+      # - https://github.com/actions/runner-images/issues/6103
+      - name: Add MinGW bin dir to PATH
+        shell: powershell
+        run: |
+          "C:\ProgramData\chocolatey\lib\mingw\tools\install\mingw64\bin" >> $env:GITHUB_PATH
+
       - name: Build wheels
         uses: pypa/cibuildwheel@v2.14.1
         env:
-          BEZIER_INSTALL_PREFIX: ./.nox/.cache/libbezier-release/usr
+          BEZIER_INSTALL_PREFIX: .\.nox\.cache\libbezier-release\usr
           CIBW_ARCHS: AMD64
           CIBW_BEFORE_BUILD: |
             python -m pip install delvewheel numpy
@@ -168,7 +177,7 @@ jobs:
           CIBW_REPAIR_WHEEL_COMMAND_WINDOWS: >-
             delvewheel repair
             --wheel-dir {dest_dir}
-            --add-path ./.nox/.cache/libbezier-release/usr/bin
+            --add-path .\.nox\.cache\libbezier-release\usr\bin
             {wheel}
           CIBW_TEST_COMMAND: pytest {project}/tests/unit
           CIBW_TEST_REQUIRES: pytest
@@ -176,4 +185,4 @@ jobs:
       - uses: actions/upload-artifact@v3
         with:
           name: windows-intel
-          path: ./wheelhouse/*.whl
+          path: .\wheelhouse\*.whl
