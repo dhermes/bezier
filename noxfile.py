@@ -21,6 +21,12 @@ import nox
 import nox.sessions
 
 
+try:
+    import packaging.tags as _packaging_tags
+except ImportError:
+    _packaging_tags = None
+
+
 nox.options.error_on_external_run = True
 nox.options.error_on_missing_interpreters = True
 
@@ -609,6 +615,17 @@ def _cmake_needed():
     return shutil.which("cmake") is None
 
 
+def _is_musllinux():
+    if _packaging_tags is None:
+        return False
+
+    for tag in _packaging_tags.sys_tags():
+        if "musllinux" in tag.platform:
+            return True
+
+    return False
+
+
 def _cmake(session, build_type):
     """Build and install ``libbezier`` via ``cmake``.
 
@@ -642,6 +659,8 @@ def _cmake(session, build_type):
         "-DCMAKE_INSTALL_PREFIX:PATH={}".format(install_prefix),
         "-DCMAKE_VERBOSE_MAKEFILE:BOOL=ON",
     ]
+    if _is_musllinux():
+        build_args.append("-DCMAKE_Fortran_FLAGS=-Wno-trampolines")
     if IS_WINDOWS:
         build_args.extend(["-G", "MinGW Makefiles"])
     if os.environ.get("TARGET_NATIVE_ARCH") == "OFF":
