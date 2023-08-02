@@ -69,7 +69,6 @@ jobs:
             TARGET_NATIVE_ARCH=OFF
           CIBW_TEST_COMMAND: pytest {project}/tests/unit
           CIBW_TEST_REQUIRES: pytest
-          CIBW_SKIP: "*musllinux*"
 
       - uses: actions/upload-artifact@v3
         with:
