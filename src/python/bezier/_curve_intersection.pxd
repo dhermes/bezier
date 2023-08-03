@@ -19,7 +19,7 @@ from bezier._status cimport Status
 
 
 cdef extern from "bezier/curve_intersection.h":
-    cpdef enum BoxIntersectionType:
+    cdef enum BoxIntersectionType:
         INTERSECTION = 0
         TANGENT = 1
         DISJOINT = 2

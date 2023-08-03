@@ -71,7 +71,7 @@ def curve_weights(degree, s):
 
     return sympy.Matrix(
         [
-            [sympy.binomial(degree, k) * s ** k * (1 - s) ** (degree - k)]
+            [sympy.binomial(degree, k) * s**k * (1 - s) ** (degree - k)]
             for k in range(degree + 1)
         ]
     )
@@ -182,7 +182,7 @@ def triangle_weights(degree, s, t):
         for j in range(degree - k + 1):
             i = degree - j - k
             coeff = coeff_k * sympy.binomial(degree - k, j)
-            values.append(coeff * lambda1 ** i * lambda2 ** j * lambda3 ** k)
+            values.append(coeff * lambda1**i * lambda2**j * lambda3**k)
 
     return sympy.Matrix(values).reshape(len(values), 1)
 

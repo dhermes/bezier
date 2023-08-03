@@ -39,7 +39,7 @@ RELEASE_INDEX_FILE = os.path.join(
 DEVELOPMENT_TEMPLATE = os.path.join(_ROOT_DIR, "DEVELOPMENT.rst.template")
 DEVELOPMENT_FILE = os.path.join(_ROOT_DIR, "DEVELOPMENT.rst")
 RTD_VERSION = "latest"
-REVISION = "master"
+REVISION = "main"
 PLAIN_CODE_BLOCK = ".. code-block:: python"
 SPHINX_CODE_BLOCK1 = """\
 .. testsetup:: getting-started
@@ -143,29 +143,29 @@ DOCS_IMG = """\
    :target: https://bezier.readthedocs.io/en/{rtd_version}/
    :alt: Documentation Status
 """
-CIRCLECI_BADGE = (
-    "https://img.shields.io/circleci/project/github/dhermes/bezier/master.svg?"
-    "maxAge=3600&logo=circleci&label=Linux"
+LINUX_BADGE = (
+    "https://github.com/dhermes/bezier/workflows/Linux/badge.svg?"
+    "branch=main&event=push"
 )
-CIRCLECI_BADGE_RELEASE = (
+LINUX_BADGE_RELEASE = (
     "https://raw.githubusercontent.com/dhermes/bezier/{version}/"
-    "docs/circleci-passing.svg?sanitize=true"
+    "docs/linux-passing.svg?sanitize=true"
 )
-TRAVIS_BADGE = (
-    "https://img.shields.io/travis/dhermes/bezier/master.svg?"
-    "maxAge=3600&logo=travis&label=macOS"
+MACOS_BADGE = (
+    "https://github.com/dhermes/bezier/workflows/macOS/badge.svg?"
+    "branch=main&event=push"
 )
-TRAVIS_BADGE_RELEASE = (
+MACOS_BADGE_RELEASE = (
     "https://raw.githubusercontent.com/dhermes/bezier/{version}/"
-    "docs/travis-passing.svg?sanitize=true"
+    "docs/macos-passing.svg?sanitize=true"
 )
-APPVEYOR_BADGE = (
-    "https://img.shields.io/appveyor/ci/dhermes/bezier/master.svg?"
-    "maxAge=3600&logo=appveyor&label=Windows"
+WINDOWS_BADGE = (
+    "https://github.com/dhermes/bezier/workflows/Windows/badge.svg?"
+    "branch=main&event=push"
 )
-APPVEYOR_BADGE_RELEASE = (
+WINDOWS_BADGE_RELEASE = (
     "https://raw.githubusercontent.com/dhermes/bezier/{version}/"
-    "docs/appveyor-passing.svg?sanitize=true"
+    "docs/windows-passing.svg?sanitize=true"
 )
 COVERALLS_BADGE = "https://coveralls.io/repos/github/dhermes/bezier/badge.svg"
 COVERALLS_BADGE_RELEASE = (
@@ -274,7 +274,7 @@ def populate_readme(revision, rtd_version, **extra_kwargs):
 
     Args:
         revision (str): The branch, commit, etc. being referred to (e.g.
-            ``master``).
+            ``main``).
         rtd_version (str): The version to use for RTD (Read the Docs) links
             (e.g. ``latest``).
         extra_kwargs (Dict[str, str]): Over-ride for template arguments.
@@ -315,12 +315,12 @@ def populate_readme(revision, rtd_version, **extra_kwargs):
         "versions_img": VERSIONS_IMG,
         "rtd_version": rtd_version,
         "revision": revision,
-        "circleci_badge": CIRCLECI_BADGE,
-        "circleci_path": "",
-        "travis_badge": TRAVIS_BADGE,
-        "travis_path": "",
-        "appveyor_badge": APPVEYOR_BADGE,
-        "appveyor_path": "",
+        "linux_badge": LINUX_BADGE,
+        "linux_path": "?query=workflow%3ALinux",
+        "macos_badge": MACOS_BADGE,
+        "macos_path": "?query=workflow%3AmacOS",
+        "windows_badge": WINDOWS_BADGE,
+        "windows_path": "?query=workflow%3AWindows",
         "coveralls_badge": COVERALLS_BADGE,
         "coveralls_path": COVERALLS_PATH,
         "zenodo": "|zenodo|",
@@ -386,12 +386,12 @@ def release_readme_verify():
         pypi_img="",
         versions="\n\n",
         versions_img="",
-        circleci_badge=CIRCLECI_BADGE_RELEASE,
-        circleci_path="/{circleci_build}",
-        travis_badge=TRAVIS_BADGE_RELEASE,
-        travis_path="/builds/{travis_build}",
-        appveyor_badge=APPVEYOR_BADGE_RELEASE,
-        appveyor_path="/build/{appveyor_build}",
+        linux_badge=LINUX_BADGE_RELEASE,
+        linux_path="/runs/{linux_run}",
+        macos_badge=MACOS_BADGE_RELEASE,
+        macos_path="/runs/{macos_run}",
+        windows_badge=WINDOWS_BADGE_RELEASE,
+        windows_path="/runs/{windows_run}",
         coveralls_badge=COVERALLS_BADGE_RELEASE,
         coveralls_path="builds/{coveralls_build}",
         citation=CITATION.replace("{", "{{").replace("}", "}}"),
@@ -448,12 +448,12 @@ def _index_verify(index_file, **extra_kwargs):
         "versions_img": VERSIONS_IMG,
         "rtd_version": RTD_VERSION,
         "revision": REVISION,
-        "circleci_badge": CIRCLECI_BADGE,
-        "circleci_path": "",
-        "travis_badge": TRAVIS_BADGE,
-        "travis_path": "",
-        "appveyor_badge": APPVEYOR_BADGE,
-        "appveyor_path": "",
+        "linux_badge": LINUX_BADGE,
+        "linux_path": "?query=workflow%3ALinux",
+        "macos_badge": MACOS_BADGE,
+        "macos_path": "?query=workflow%3AmacOS",
+        "windows_badge": WINDOWS_BADGE,
+        "windows_path": "?query=workflow%3AWindows",
         "coveralls_badge": COVERALLS_BADGE,
         "coveralls_path": COVERALLS_PATH,
         "zenodo": "|zenodo|",
@@ -506,9 +506,9 @@ def release_docs_side_effect(content):
     result = content.replace("{", "{{").replace("}", "}}")
     # Then reset the actual template arguments.
     result = result.replace("{{version}}", "{version}")
-    result = result.replace("{{circleci_build}}", "{circleci_build}")
-    result = result.replace("{{travis_build}}", "{travis_build}")
-    result = result.replace("{{appveyor_build}}", "{appveyor_build}")
+    result = result.replace("{{linux_run}}", "{linux_run}")
+    result = result.replace("{{macos_run}}", "{macos_run}")
+    result = result.replace("{{windows_run}}", "{windows_run}")
     result = result.replace("{{coveralls_build}}", "{coveralls_build}")
     return result
 
@@ -530,12 +530,12 @@ def release_docs_index_verify():
         versions_img="",
         rtd_version=version,
         revision=version,
-        circleci_badge=CIRCLECI_BADGE_RELEASE,
-        circleci_path="/{circleci_build}",
-        travis_badge=TRAVIS_BADGE_RELEASE,
-        travis_path="/builds/{travis_build}",
-        appveyor_badge=APPVEYOR_BADGE_RELEASE,
-        appveyor_path="/build/{appveyor_build}",
+        linux_badge=LINUX_BADGE_RELEASE,
+        linux_path="/runs/{linux_run}",
+        macos_badge=MACOS_BADGE_RELEASE,
+        macos_path="/runs/{macos_run}",
+        windows_badge=WINDOWS_BADGE_RELEASE,
+        windows_path="/runs/{windows_run}",
         coveralls_badge=COVERALLS_BADGE_RELEASE,
         coveralls_path="builds/{coveralls_build}",
     )

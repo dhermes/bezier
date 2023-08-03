@@ -676,7 +676,7 @@ SECOND_TRIANGLE_INFO = (
 # Threshold where a vector cross-product (u x v) is considered
 # to be "zero". This is a "hack", since it doesn't take ||u||
 # or ||v|| into account.
-ALMOST_TANGENT = 0.5 ** 50
+ALMOST_TANGENT = 0.5**50
 # Hardcoded "line integral" helpers for ``shoelace_for_area()``.
 SHOELACE_LINEAR = ((1, 0, 1),)
 SHOELACE_QUADRATIC = ((2, 0, 1), (1, 0, 2), (2, 1, 2))
@@ -965,7 +965,7 @@ def make_transform(degree, weights_a, weights_b, weights_c):
 
        This is a helper used only by :func:`specialize_triangle`.
 
-    Applies the de Casteljau to the identity matrix, thus
+    Applies the de Casteljau algorithm to the identity matrix, thus
     effectively caching the algorithm in a transformation matrix.
 
     .. note::
@@ -1290,6 +1290,8 @@ def jacobian_det(nodes, degree, st_vals):
     .. doctest:: jacobian-det
        :options: +NORMALIZE_WHITESPACE
 
+       >>> import bezier
+       >>> import numpy as np
        >>> nodes = np.asfortranarray([
        ...     [0.0, 1.0, 2.0, 0.0, 1.5, 0.0],
        ...     [0.0, 0.0, 0.0, 1.0, 1.5, 2.0],
@@ -1357,7 +1359,7 @@ def classify_tangent_intersection(
        This is a helper used only by :func:`classify_intersection`.
 
     Args:
-        intersection (.Intersection): An intersection object.
+        intersection (Intersection): An intersection object.
         nodes1 (numpy.ndarray): Control points for the first curve at
             the intersection.
         tangent1 (numpy.ndarray): The tangent vector to the first curve
@@ -1483,7 +1485,7 @@ def ignored_double_corner(
     is done by checking that a few cross products are positive.
 
     Args:
-        intersection (.Intersection): An intersection to "diagnose".
+        intersection (Intersection): An intersection to "diagnose".
         tangent_s (numpy.ndarray): The tangent vector (``2 x 1`` array) to
             the first curve at the intersection.
         tangent_t (numpy.ndarray): The tangent vector (``2 x 1`` array) to
@@ -1572,7 +1574,7 @@ def ignored_corner(
        (rather than also checking for ``1.0``).
 
     Args:
-        intersection (.Intersection): An intersection to "diagnose".
+        intersection (Intersection): An intersection to "diagnose".
         tangent_s (numpy.ndarray): The tangent vector (``2 x 1`` array) to
             the first curve at the intersection.
         tangent_t (numpy.ndarray): The tangent vector (``2 x 1`` array) to
@@ -2032,7 +2034,7 @@ def classify_intersection(intersection, edge_nodes1, edge_nodes2):
        version of this function likely should allow for some round off.
 
     Args:
-        intersection (.Intersection): An intersection object.
+        intersection (Intersection): An intersection object.
         edge_nodes1 (Tuple[numpy.ndarray, numpy.ndarray, numpy.ndarray]): The
             nodes of the three edges of the first triangle being intersected.
         edge_nodes2 (Tuple[numpy.ndarray, numpy.ndarray, numpy.ndarray]): The
@@ -2158,7 +2160,7 @@ def to_front(intersection, intersections, unused):
         some wiggle room.
 
     Args:
-        intersection (.Intersection): The current intersection.
+        intersection (Intersection): The current intersection.
         intersections (List[~bezier.hazmat.intersection_helpers.Intersection]):
             List of all detected intersections, provided as a reference for
             of potential points to arrive at.
@@ -2166,7 +2168,7 @@ def to_front(intersection, intersections, unused):
             nodes that haven't been used yet in an intersection curved polygon
 
     Returns:
-        .Intersection: An intersection to (maybe) move to the beginning
+        Intersection: An intersection to (maybe) move to the beginning
         of the next edge of the triangle.
     """
     if intersection.s == 1.0:
@@ -2220,7 +2222,7 @@ def get_next_first(intersection, intersections, to_end=True):
     other function works with the second.
 
     Args:
-        intersection (.Intersection): The current intersection.
+        intersection (Intersection): The current intersection.
         intersections (List[~bezier.hazmat.intersection_helpers.Intersection]):
             List of all detected intersections, provided as a reference for
             potential points to arrive at.
@@ -2277,7 +2279,7 @@ def get_next_second(intersection, intersections, to_end=True):
     other function works with the first.
 
     Args:
-        intersection (.Intersection): The current intersection.
+        intersection (Intersection): The current intersection.
         intersections (List[~bezier.hazmat.intersection_helpers.Intersection]):
             List of all detected intersections, provided as a reference for
             potential points to arrive at.
@@ -2345,13 +2347,13 @@ def get_next_coincident(intersection, intersections):
     segment won't be part of an intersection.
 
     Args:
-        intersection (.Intersection): The current intersection.
+        intersection (Intersection): The current intersection.
         intersections (List[~bezier.hazmat.intersection_helpers.Intersection]):
             List of all detected intersections, provided as a reference for
             potential points to arrive at.
 
     Returns:
-        .Intersection: The "next" point along a triangle of intersection.
+        Intersection: The "next" point along a triangle of intersection.
         This will produce the next intersection along the current (second)
         edge or the end of the same edge.
     """
@@ -2383,7 +2385,7 @@ def is_first(classification):
     """Check if a classification is on the "first" curve.
 
     Args:
-        classification (.IntersectionClassification): The classification
+        classification (IntersectionClassification): The classification
             being checked.
 
     Returns:
@@ -2399,7 +2401,7 @@ def is_second(classification):
     """Check if a classification is on the "second" curve.
 
     Args:
-        classification (.IntersectionClassification): The classification
+        classification (IntersectionClassification): The classification
             being checked.
 
     Returns:
@@ -2429,7 +2431,7 @@ def get_next(intersection, intersections, unused):
         :class:`.Intersection` to satisfy this need.
 
     Args:
-        intersection (.Intersection): The current intersection.
+        intersection (Intersection): The current intersection.
         intersections (List[~bezier.hazmat.intersection_helpers.Intersection]):
             List of all detected intersections, provided as a reference for
             of potential points to arrive at.
@@ -2437,7 +2439,7 @@ def get_next(intersection, intersections, unused):
             nodes that haven't been used yet in an intersection curved polygon
 
     Returns:
-        .Intersection: The "next" point along a triangle of intersection.
+        Intersection: The "next" point along a triangle of intersection.
         This will produce the next intersection along the current edge or
         the end of the current edge.
 
@@ -2488,8 +2490,8 @@ def ends_to_curve(start_node, end_node):
        This only checks the classification of the ``start_node``.
 
     Args:
-        start_node (.Intersection): The beginning of a segment.
-        end_node (.Intersection): The end of (the same) segment.
+        start_node (Intersection): The beginning of a segment.
+        end_node (Intersection): The end of (the same) segment.
 
     Returns:
         Tuple[int, float, float]: The 3-tuple of:
@@ -2951,7 +2953,7 @@ def shoelace_for_area(nodes):
         float: The computed sum of shoelace terms.
 
     Raises:
-        .UnsupportedDegree: If the degree is not 1, 2, 3 or 4.
+        UnsupportedDegree: If the degree is not 1, 2, 3 or 4.
     """
     _, num_nodes = nodes.shape
     if num_nodes == 2:

@@ -1,5 +1,5 @@
 #!python
-#cython: boundscheck=False, wraparound=False, language_level=3
+# cython: boundscheck=False, wraparound=False, language_level=3
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -1146,7 +1146,7 @@ def triangle_intersections(
         #       edges have been added.
         raise RuntimeError("Unexpected number of edges")
     elif status == bezier._status.Status.UNKNOWN:
-        raise RuntimeError("Unknown error has occured.")
+        raise RuntimeError("Unknown error has occurred.")
     else:
         # NOTE: If ``status`` isn't one of the enum values, then it is the
         #       number of candidate intersections.

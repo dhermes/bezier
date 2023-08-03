@@ -1,0 +1,44 @@
+``2021.2.12``
+=============
+
+|pypi| |docs|
+
+Python Changes
+--------------
+
+Packaging
+~~~~~~~~~
+
+-  Dropped support for Python 3.6 and added support for Python 3.9
+   (`#246 <https://github.com/dhermes/bezier/pull/246>`__).
+
+Documentation
+~~~~~~~~~~~~~
+
+-  Typo fix in ``BEZ_curve_intersections`` (C ABI) for the upper bound on
+   ``intersections_size``
+   (`#232 <https://github.com/dhermes/bezier/pull/232>`__).
+   H/T to `@KIKI007 <https://github.com/KIKI007>`__.
+-  Adding documentation for the ``BEZIER_DLL_HASH`` environment variable
+   (`#239 <https://github.com/dhermes/bezier/pull/239>`__). This environment
+   variable is an escape hatch used during build and testing; it does not apply
+   to ``bezier`` at runtime.
+
+Breaking Changes
+~~~~~~~~~~~~~~~~
+
+-  Moved non-public / experimental ``bezier._clipping`` module to
+   ``bezier.hazmat.clipping``
+   (`#225 <https://github.com/dhermes/bezier/pull/225>`__).
+-  Removed normalization from
+   ``bezier.hazmat.clipping.compute_implicit_line()``
+   (`#233 <https://github.com/dhermes/bezier/pull/233>`__). This avoided
+   unnecessary flops and allowed the ``clip_range()`` docstring example to
+   produce an exact answer instead of an approximate one.
+
+.. |pypi| image:: https://img.shields.io/pypi/v/bezier/2021.2.12.svg
+   :target: https://pypi.org/project/bezier/2021.2.12/
+   :alt: PyPI link to release 2021.2.12
+.. |docs| image:: https://readthedocs.org/projects/bezier/badge/?version=2021.2.12
+   :target: https://bezier.readthedocs.io/en/2021.2.12/
+   :alt: Documentation for release 2021.2.12

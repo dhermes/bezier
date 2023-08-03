@@ -421,7 +421,6 @@ class Test_specialize_triangle(utils.NumPyTestCase):
 
 
 class Test_subdivide_nodes(utils.NumPyTestCase):
-
     REF_TRIANGLE = utils.ref_triangle_uniform_nodes(5)
 
     @staticmethod
@@ -942,7 +941,7 @@ class Test_classify_intersection(unittest.TestCase):
             [[0.5, 2.0625, 3.625], [-0.125, 0.1875, 0.5]]
         )
         edge_nodes2 = (second, None, None)
-        t_val = 2.0 / 25.0 - 0.5 ** 56
+        t_val = 2.0 / 25.0 - 0.5**56
         intersection = make_intersect(0, 0.75, 0, t_val)
         result = self._call_function_under_test(
             intersection, edge_nodes1, edge_nodes2

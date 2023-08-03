@@ -48,6 +48,7 @@ class CurvedPolygon:
     .. doctest:: curved-polygon-constructor
 
        >>> import bezier
+       >>> import numpy as np
        >>> nodes0 = np.asfortranarray([
        ...     [0.0,  1.0, 2.0],
        ...     [0.0, -1.0, 0.0],
@@ -126,7 +127,7 @@ class CurvedPolygon:
               associated with this curved polygon. This is intended to be used
               by callers that have created a curved polygon as an intersection
               between two B |eacute| zier triangles.
-            * ``_verify`` (:class:`bool`): Indicates if the edges should be
+            * ``verify`` (:class:`bool`): Indicates if the edges should be
               verified as having shared endpoints. Defaults to :data:`True`.
 
             Other keyword arguments specified will be silently ignored.
@@ -138,7 +139,7 @@ class CurvedPolygon:
         self._edges = edges
         self._num_sides = len(edges)
         self._metadata = kwargs.pop("metadata", None)
-        if kwargs.pop("_verify", True):
+        if kwargs.pop("verify", True):
             self._verify()
 
     @staticmethod
@@ -256,11 +257,9 @@ class CurvedPolygon:
         Returns:
             str: Object representation.
         """
-        return "<{} (num_sides={:d})>".format(
-            self.__class__.__name__, self._num_sides
-        )
+        return f"<{self.__class__.__name__} (num_sides={self._num_sides:d})>"
 
-    def plot(self, pts_per_edge, color=None, ax=None):
+    def plot(self, pts_per_edge, color=None, ax=None, alpha=0.625):
         """Plot the current curved polygon.
 
         Args:
@@ -268,6 +267,8 @@ class CurvedPolygon:
             color (Optional[Tuple[float, float, float]]): Color as RGB profile.
             ax (Optional[matplotlib.artist.Artist]): matplotlib axis object
                 to add plot to.
+            alpha (Optional[float]): Alpha value of patch center, between 0 and
+                1 inclusive.
 
         Returns:
             matplotlib.artist.Artist: The axis containing the plot. This
@@ -275,5 +276,7 @@ class CurvedPolygon:
         """
         if ax is None:
             ax = _plot_helpers.new_axis()
-        _plot_helpers.add_patch(ax, color, pts_per_edge, *self._edges)
+        _plot_helpers.add_patch(
+            ax, color, pts_per_edge, *self._edges, alpha=alpha
+        )
         return ax

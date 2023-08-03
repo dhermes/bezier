@@ -15,9 +15,9 @@ In order to add a feature to ``bezier``:
    proposed changes (i.e. just sending a large PR with a finished
    feature may catch maintainer(s) off guard).
 
-#. **Add tests**: The feature must work fully on CPython versions 3.6, 3.7 and
-   3.8 and on PyPy 3; on Linux, macOS and Windows. In addition, the feature
-   should have 100% line coverage.
+#. **Add tests**: The feature must work fully on CPython versions 3.9, 3.10
+   and 3.11 and on PyPy 3; on Linux, macOS and Windows. In addition, the
+   feature should have 100% line coverage.
 
 #. **Documentation**: The feature must (should) be documented with
    helpful `doctest`_ examples wherever relevant.
@@ -30,7 +30,7 @@ In order to add a feature to ``bezier``:
 *************
 
 To build the Fortran shared library directly, use `CMake`_ version
-``3.1`` or later:
+``3.5`` or later:
 
 .. code-block:: console
 
@@ -85,24 +85,67 @@ To explicitly disable the building of the extension, the
 
    $ BEZIER_NO_EXTENSION=True .../bin/python -m pip wheel .
 
-This environment variable is actually used for the ``nox -s docs`` session
-to emulate the `RTD`_ build environment (where no Fortran compiler is
+This environment variable is actually used for the ``nox --session docs``
+session to emulate the `RTD`_ build environment (where no Fortran compiler is
 present).
 
 Dependencies
 ============
 
-Currently, the ``src/fortran/quadpack`` `directory`_ has a subset of Fortran 77
-subroutines from `QUADPACK`_. These are Public Domain, so they do not
-conflict with the Apache 2.0 license (as far as we know). In addition it
-contains another popular subroutine from NETLIB: ``d1mach`` (which the
-QUADPACK subroutines depend on).
+Currently, the ``src/fortran/quadpack.f90`` `file`_ has a subset of Fortran 77
+subroutines from `QUADPACK`_ converted into Fortran 90 by `John Burkardt`_.
+This code is Public Domain, so does not conflict with the Apache 2.0 license
+(as far as we know).
 
 QUADPACK is used to perform numerical quadrature to compute the length
 of a curve segment.
 
-.. _directory: https://github.com/dhermes/bezier/tree/{revision}/src/fortran/quadpack
+.. _file: https://github.com/dhermes/bezier/tree/{revision}/src/fortran/quadpack.f90
 .. _QUADPACK: https://en.wikipedia.org/wiki/QUADPACK
+.. _John Burkardt: https://people.math.sc.edu/Burkardt/f_src/quadpack_double/quadpack_double.html
+
+Windows
+=======
+
+Building the binary extension requires a Fortran compiler. Unfortunately, there
+is no Fortran compiler provided by MSVC. The `MinGW-w64`_ suite of tools is a
+port of the GNU Compiler Collection (``gcc``) for Windows. In particular, MinGW
+includes ``gfortran``.
+
+To `install MinGW-w64`_, download a recent `MSYS2 Installer`_ (e.g.
+``msys2-x86_64-20230526.exe``). When installing, take note of the install
+location. It should default to ``C:\msys64``. After installing, use
+``pacman`` (provided by MSYS2) to install the MinGW-w64 toolchain:
+
+.. code-block:: powershell
+
+   > pacman -S --needed base-devel mingw-w64-x86_64-toolchain
+
+After doing this, you may want to permanently add the MinGW bin directory
+(e.g. ``C:\msys64\mingw64\bin``) to your ``PATH``. If you don't want to make
+a permanent change, you'll need to temporarily modify your ``PATH`` in shell
+sessions where ``bezier`` is being developed:
+
+.. code-block:: powershell
+
+   > $env:Path = "C:\msys64\mingw64\bin;" + $env:Path
+
+Additionally, the ``BEZIER_EXTRA_DLL`` environment variable may need to be
+set for ``nox`` sessions if the MinGW-w64 DLLs cannot be found (to be added the
+DLL search path):
+
+.. code-block:: powershell
+
+   > $env:BEZIER_EXTRA_DLL = "C:\msys64\mingw64\bin"
+
+In addition to a Fortran toolchain, you will also need the MSVC toolchain that
+was used to build each version of Python. The `Microsoft C++ Build Tools`_ can
+be installed to enable this toolchain.
+
+.. _MinGW-w64: http://mingw-w64.org
+.. _install MinGW-w64: https://code.visualstudio.com/docs/cpp/config-mingw
+.. _MSYS2 Installer: https://github.com/msys2/msys2-installer/releases
+.. _Microsoft C++ Build Tools: https://visualstudio.microsoft.com/visual-cpp-build-tools/
 
 ******************
 Running Unit Tests
@@ -112,21 +155,21 @@ We recommend using `Nox`_ to run unit tests:
 
 .. code-block:: console
 
-   $ nox -s "unit-3.6"
-   $ nox -s "unit-3.7"
-   $ nox -s "unit-3.8"
-   $ nox -s "unit-pypy3"
-   $ nox -s  unit  # Run all versions
+   $ nox --session "unit-3.9"
+   $ nox --session "unit-3.10"
+   $ nox --session "unit-3.11"
+   $ nox --session "unit-pypy3"
+   $ nox --session  unit  # Run all versions
 
 However, `pytest`_ can be used directly (though it won't
 manage dependencies or build the binary extension):
 
 .. code-block:: console
 
-   $ PYTHONPATH=src/python/ python3.6 -m pytest tests/unit/
-   $ PYTHONPATH=src/python/ python3.7 -m pytest tests/unit/
-   $ PYTHONPATH=src/python/ python3.8 -m pytest tests/unit/
-   $ PYTHONPATH=src/python/ pypy3     -m pytest tests/unit/
+   $ PYTHONPATH=src/python/ python3.9  -m pytest tests/unit/
+   $ PYTHONPATH=src/python/ python3.10 -m pytest tests/unit/
+   $ PYTHONPATH=src/python/ python3.11 -m pytest tests/unit/
+   $ PYTHONPATH=src/python/ pypy3      -m pytest tests/unit/
 
 .. _Nox: https://nox.readthedocs.io
 .. _pytest: https://docs.pytest.org
@@ -155,17 +198,17 @@ Test Coverage
 ``bezier`` has 100% `line coverage`_. The coverage is checked
 on every build and uploaded to `coveralls.io`_ via the
 ``COVERALLS_REPO_TOKEN`` environment variable set in
-the `CircleCI environment`_.
+the `GitHub Actions secrets`_.
 
 .. _line coverage: https://coveralls.io/github/dhermes/bezier
 .. _coveralls.io: https://coveralls.io/
-.. _CircleCI environment: https://circleci.com/gh/dhermes/bezier/edit#env-vars
+.. _GitHub Actions secrets: https://github.com/dhermes/bezier/settings/secrets/actions
 
 To run the coverage report locally:
 
 .. code-block:: console
 
-   $ nox -s cover
+   $ nox --session cover
    $ # OR
    $ PYTHONPATH=src/python/ python -m pytest \
    >     --cov=bezier \
@@ -180,58 +223,47 @@ marked slow, use the ``--ignore-slow`` flag:
 
 .. code-block:: console
 
-   $ nox -s "unit-3.6" -- --ignore-slow
-   $ nox -s "unit-3.7" -- --ignore-slow
-   $ nox -s "unit-3.8" -- --ignore-slow
-   $ nox -s  unit      -- --ignore-slow
+   $ nox --session "unit-3.9"  -- --ignore-slow
+   $ nox --session "unit-3.10" -- --ignore-slow
+   $ nox --session "unit-3.11" -- --ignore-slow
+   $ nox --session  unit       -- --ignore-slow
 
 These slow tests have been identified via:
 
 .. code-block:: console
 
    $ ...
-   $ nox -s "unit-3.8" -- --durations=10
+   $ nox --session "unit-3.11" -- --durations=10
 
 and then marked with ``pytest.mark.skipif``.
 
 Slow Install
 ============
 
-Installing NumPy with `PyPy`_ can take upwards of two minutes and
-installing SciPy can take as much as seven minutes. This makes it
-prohibitive to create a new environment for testing.
+Installing NumPy with `PyPy`_ can take upwards of two minutes (however
+the NumPy project has started publishing built wheels for PyPy) and installing
+SciPy can take as much as seven minutes. This makes it prohibitive to create a
+new environment for testing.
 
 .. _PyPy: https://pypy.org/
 
-In order to avoid this penalty, the ``WHEELHOUSE`` environment
-variable can be used to instruct ``nox`` to install NumPy and SciPy
-from locally built wheels when installing the ``pypy3`` sessions.
+In order to avoid this penalty, the ``WHEELHOUSE`` environment variable can be
+used to instruct ``nox`` to install NumPy and SciPy from locally built wheels
+when installing the ``pypy3`` sessions.
 
 To pre-build NumPy and SciPy wheels:
 
 .. code-block:: console
 
    $ pypy3 -m virtualenv pypy3-venv
-   $ pypy3-venv/bin/python -m pip wheel --wheel-dir=${{WHEELHOUSE}} numpy
-   $ pypy3-venv/bin/python -m pip install ${{WHEELHOUSE}}/numpy*.whl
-   $ pypy3-venv/bin/python -m pip wheel --wheel-dir=${{WHEELHOUSE}} scipy
+   $ pypy3-venv/bin/python -m pip wheel --wheel-dir="${{WHEELHOUSE}}" numpy
+   $ pypy3-venv/bin/python -m pip install "${{WHEELHOUSE}}/numpy*.whl"
+   $ pypy3-venv/bin/python -m pip wheel --wheel-dir="${{WHEELHOUSE}}" scipy
    $ rm -fr pypy3-venv/
 
 In addition to the ``WHEELHOUSE`` environment variable, the paths
 ``${{HOME}}/wheelhouse`` and ``/wheelhouse`` will also be searched for
 pre-built wheels.
-
-Alternatively, wheels can be downloaded from `pypy-wheels`_, however
-the SciPy wheel will still require ``libatlas-dev``, ``libblas-dev`` and
-``liblapack-dev``.
-
-The `Docker`_ image for the CircleCI test environment has already
-pre-built these wheels and stored them in the ``/wheelhouse`` directory.
-So, in the `CircleCI environment`_, the ``WHEELHOUSE`` environment
-variable is set to ``/wheelhouse``.
-
-.. _Docker: https://www.docker.com/
-.. _pypy-wheels: https://antocuni.github.io/pypy-wheels/
 
 ****************
 Functional Tests
@@ -250,16 +282,16 @@ To run the functional tests:
 
 .. code-block:: console
 
-   $ nox -s "functional-3.6"
-   $ nox -s "functional-3.7"
-   $ nox -s "functional-3.8"
-   $ nox -s "functional-pypy3"
-   $ nox -s  functional  # Run all versions
+   $ nox --session "functional-3.9"
+   $ nox --session "functional-3.10"
+   $ nox --session "functional-3.11"
+   $ nox --session "functional-pypy3"
+   $ nox --session  functional  # Run all versions
    $ # OR
-   $ PYTHONPATH=src/python/ python3.6 -m pytest tests/functional/
-   $ PYTHONPATH=src/python/ python3.7 -m pytest tests/functional/
-   $ PYTHONPATH=src/python/ python3.8 -m pytest tests/functional/
-   $ PYTHONPATH=src/python/ pypy3     -m pytest tests/functional/
+   $ PYTHONPATH=src/python/ python3.9  -m pytest tests/functional/
+   $ PYTHONPATH=src/python/ python3.10 -m pytest tests/functional/
+   $ PYTHONPATH=src/python/ python3.11 -m pytest tests/functional/
+   $ PYTHONPATH=src/python/ pypy3      -m pytest tests/functional/
 
 .. _functional tests: https://github.com/dhermes/bezier/tree/{revision}/tests/functional
 
@@ -325,7 +357,7 @@ To check compliance:
 
 .. code-block:: console
 
-   $ nox -s lint
+   $ nox --session lint
 
 A few extensions and overrides have been specified in the `pylintrc`_
 configuration for ``bezier``.
@@ -366,7 +398,7 @@ Documentation
 *************
 
 The documentation is built with `Sphinx`_ and automatically
-updated on `RTD`_ every time a commit is pushed to ``master``.
+updated on `RTD`_ every time a commit is pushed to ``main``.
 
 .. _Sphinx: http://www.sphinx-doc.org
 .. _RTD: https://readthedocs.org/
@@ -375,9 +407,9 @@ To build the documentation locally:
 
 .. code-block:: console
 
-   $ nox -s docs
-   $ # OR (from a Python 3.6 or later environment)
-   $ PYTHONPATH=src/python/ ./scripts/build_docs.sh
+   $ nox --session docs
+   $ # OR (from a Python 3.9 or later environment)
+   $ PYTHONPATH=src/python/ ./scripts/build-docs.sh
 
 Documentation Snippets
 ======================
@@ -391,8 +423,8 @@ To run the documentation tests:
 
 .. code-block:: console
 
-   $ nox -s doctest
-   $ # OR (from a Python 3.6 or later environment)
+   $ nox --session doctest
+   $ # OR (from a Python 3.9 or later environment)
    $ PYTHONPATH=src/python/:. sphinx-build -W \
    >     -b doctest \
    >     -d docs/build/doctrees \
@@ -414,8 +446,8 @@ To regenerate all the images:
 
 .. code-block:: console
 
-   $ nox -s docs_images
-   $ # OR (from a Python 3.6 or later environment)
+   $ nox --session docs_images
+   $ # OR (from a Python 3.9 or later environment)
    $ export MATPLOTLIBRC=docs/ GENERATE_IMAGES=True PYTHONPATH=src/python/
    $ sphinx-build -W \
    >     -b doctest \
@@ -432,33 +464,14 @@ To regenerate all the images:
 Continuous Integration
 **********************
 
-Tests are run on `CircleCI`_ (Linux), `Travis CI`_ (macOS) and
-`AppVeyor`_ (Windows) after every commit. To see which tests are run, see
-the `CircleCI config`_, the `Travis config`_ and the `AppVeyor config`_.
+Tests are run on `GitHub Actions`_ (Linux, macOS and Windows)
+after every commit. To see which tests are run, see
+the `Linux config`_, the `macOS config`_ and the `Windows config`_.
 
-On CircleCI, a `Docker`_ image is used to provide fine-grained control over
-the environment. There is a base `python-multi Dockerfile`_ that just has the
-Python versions we test in. The image used in our CircleCI builds (from
-`bezier Dockerfile`_) installs dependencies needed for testing (such as
-``nox`` and NumPy).
-
-On Travis CI, Matthew Brett's `multibuild`_ is used to install "official"
-python.org CPython binaries for macOS. Then tests are run in 64-bit
-mode (NumPy has `discontinued`_ 32-bit support).
-
-On AppVeyor, the binary extension is built and tested with both 32-bit and
-64-bit Python binaries.
-
-.. _CircleCI: https://circleci.com/gh/dhermes/bezier
-.. _Travis CI: https://travis-ci.org/dhermes/bezier
-.. _AppVeyor: https://ci.appveyor.com/project/dhermes/bezier
-.. _CircleCI config: https://github.com/dhermes/bezier/blob/{revision}/.circleci/config.yml
-.. _Travis config: https://github.com/dhermes/bezier/blob/{revision}/.travis.yml
-.. _AppVeyor config: https://github.com/dhermes/bezier/blob/{revision}/.appveyor.yml
-.. _python-multi Dockerfile: https://github.com/dhermes/python-multi/blob/{revision}/src/Dockerfile
-.. _bezier Dockerfile: https://github.com/dhermes/bezier/blob/{revision}/scripts/docker/bezier.Dockerfile
-.. _multibuild: https://github.com/matthew-brett/multibuild
-.. _discontinued: https://github.com/numpy/numpy/issues/11625
+.. _GitHub Actions: https://github.com/dhermes/bezier/actions
+.. _Linux config: https://github.com/dhermes/bezier/blob/{revision}/.github/workflows/linux.yaml
+.. _macOS config: https://github.com/dhermes/bezier/blob/{revision}/.github/workflows/macos.yaml
+.. _Windows config: https://github.com/dhermes/bezier/blob/{revision}/.github/workflows/windows.yaml
 
 ****************************************
 Release Process / Deploying New Versions
@@ -470,7 +483,7 @@ reasons:
 
 * The documentation and README (which acts as the landing page text on
   PyPI) will be updated with links scoped to the versioned tag (rather
-  than ``master``). This update occurs via the ``doc_template_release.py``
+  than ``main``). This update occurs via the ``doc_template_release.py``
   script.
 * Several badges on the documentation landing page (``index.rst``) are
   irrelevant to a fixed version (such as the "latest" version of the
@@ -480,10 +493,10 @@ reasons:
   completed (will be the build that occurred when the tag was pushed). If
   the builds pushed to PyPI automatically, a build would need to
   link to itself **while** being run.
-* Wheels need be built for Linux, macOS and Windows. This process
-  is **becoming** better, but is still scattered across many
-  different build systems. Each wheel will be pushed directly to
-  PyPI via `twine`_.
+* Wheels need be built for Linux, macOS and Windows. Building wheels
+  occurs **largely** via the `Building Wheels workflow`_, but still requires
+  access to an ARM macOS (M1) machine. After being built, each wheel will be
+  pushed directly to PyPI via `twine`_.
 * The release will be manually pushed to `TestPyPI`_ so the landing
   page can be visually inspected and the package can be installed
   from TestPyPI rather than from a local file.
@@ -491,20 +504,21 @@ reasons:
 .. _PyPI: https://pypi.org/project/bezier/
 .. _twine: https://packaging.python.org/distributing/
 .. _TestPyPI: https://packaging.python.org/guides/using-testpypi/
+.. _Building Wheels workflow: https://github.com/dhermes/bezier/blob/{revision}/.github/workflows/wheels.yaml
 
 Supported Python Versions
 =========================
 
 ``bezier`` explicitly supports:
 
--  `Python 3.6`_
--  `Python 3.7`_
--  `Python 3.8`_
+-  `Python 3.9`_
+-  `Python 3.10`_
+-  `Python 3.11`_
 -  `PyPy 3`_
 
-.. _Python 3.6: https://docs.python.org/3.6/
-.. _Python 3.7: https://docs.python.org/3.7/
-.. _Python 3.8: https://docs.python.org/3.8/
+.. _Python 3.9: https://docs.python.org/3.9/
+.. _Python 3.10: https://docs.python.org/3.10/
+.. _Python 3.11: https://docs.python.org/3.11/
 .. _PyPy 3: https://pypy.org/
 
 Supported versions can be found in the ``noxfile.py`` `config`_.
@@ -531,27 +545,25 @@ This project uses environment variables for building the
 - ``BEZIER_NO_EXTENSION``: If set, this will indicate that only the pure
   Python package should be built and installed (i.e. without the binary
   extension).
-- ``BEZIER_WHEEL``: If set, this will indicate to ``setup.py`` that the
-  current build is intended for a wheel. On Windows, this will involve
-  renaming ``bezier.dll`` to a unique name (to avoid name collision) and
-  updating ``_speedup*.pyd`` to refer to the new name.
-
-for interacting with the system at import time:
-
-- ``PATH``: On Windows, we add the ``bezier/extra-dll`` package directory to
-  the path so that the ``bezier.dll`` shared libary can be loaded at
-  import time for Python versions **before** 3.8. After 3.8, modifying ``PATH``
-  no longer works for these purposes; the ``os.add_dll_directory()``
-  `function <https://docs.python.org/3/library/os.html#os.add_dll_directory>`__
-  is used.
+- ``BEZIER_IGNORE_VERSION_CHECK``: Will instruct ``pip`` and ``setup.py`` to
+  ignore a check on the current version of Python. By default, Python installs
+  of ``bezier`` will explicitly check for supported versions and this opts
+  out of that check (e.g. if a new version of Python was just released).
+  This will only be relevant when installing from source, but a new version of
+  Python will also mean the existing wheels on PyPI won't support that new
+  version.
+- ``BEZIER_EXTRA_DLL``: Used to add (optional) extra directory to DLL search
+  path on Windows. This is intended to be used in tests primarily, but may also
+  be required when building from source. Multiple directories can be provided,
+  separated by the Windows path separator (``;``).
 
 and for running tests and interacting with Continuous Integration
 services:
 
 - ``WHEELHOUSE``: If set, this gives a path to prebuilt NumPy and SciPy wheels
   for PyPy 3.
-- ``GENERATE_IMAGES``: Indicates to ``nox -s doctest`` that images should
-  be generated during cleanup of each test case.
+- ``GENERATE_IMAGES``: Indicates to ``nox --session doctest`` that images
+  should be generated during cleanup of each test case.
 - ``READTHEDOCS``: Indicates currently running on Read The Docs (RTD). This is
   used to tell Sphinx to use the RTD theme when **not** running on RTD.
 - ``COVERALLS_REPO_TOKEN``: To upload the coverage report.

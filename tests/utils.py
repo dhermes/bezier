@@ -10,8 +10,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import functools
 import os
 import pathlib
+import re
 import shlex
 import subprocess
 import sys
@@ -19,9 +21,9 @@ import textwrap
 
 
 # See: https://docs.python.org/3/library/platform.html#cross-platform
-if sys.maxsize == 2 ** 63 - 1:
+if sys.maxsize == 2**63 - 1:
     IS_64_BIT = True
-elif sys.maxsize == 2 ** 31 - 1:  # pragma: NO COVER
+elif sys.maxsize == 2**31 - 1:  # pragma: NO COVER
     IS_64_BIT = False
 else:  # pragma: NO COVER
     raise ImportError("Unexpected maxsize", sys.maxsize)
@@ -71,13 +73,55 @@ def _strip_shell(cmd):
     return " ".join(parts)
 
 
+def _gcc_homebrew_version(gcc_root, gcc_bin):
+    """Determine a semver version for a Homebrew installed ``gcc``.
+
+    This includes **four** parts: major, minor, patch and revision. For
+    example, ``/usr/local/Cellar/gcc/10.2.0/bin/gcc-10`` or
+    ``/usr/local/Cellar/gcc/10.2.0_3/bin/gcc-10`` are examples without and with
+    a ``_N`` revision.
+
+    This function does no error handling; the expectation is that the caller
+    wraps any error with helpful information e.g. the arguments.
+    """
+    relative_path = gcc_bin.relative_to(gcc_root)
+    version_dir = relative_path.parts[0]
+
+    revision = 0
+    if "_" in version_dir:
+        # This also asserts length 2.
+        version_dir, revision_str = version_dir.split("_")
+        revision = int(revision_str)
+
+    major_str, minor_str, patch_str = version_dir.split(".")
+    return int(major_str), int(minor_str), int(patch_str), revision
+
+
 def _find_gcc_homebrew():
     gcc_root_bytes = subprocess.check_output(("brew", "--cellar", "gcc"))
     gcc_root = gcc_root_bytes.decode("utf-8").rstrip()
     matches = list(pathlib.Path(gcc_root).glob("*/bin/gcc-[0-9]*"))
-    if len(matches) != 1:
-        raise ValueError("Could not find unique Homebrew-installed ``gcc``")
-    return str(matches[0])
+
+    if len(matches) == 0:
+        raise ValueError(
+            "Could not find Homebrew-installed ``gcc``",
+            gcc_root,
+        )
+
+    if len(matches) == 1:
+        return str(matches[0])
+
+    sort_func = functools.partial(_gcc_homebrew_version, gcc_root)
+    matches.sort(key=sort_func)
+    chosen = str(matches[-1])
+
+    matches_str = ", ".join(str(match) for match in matches)
+    print(
+        f"Found multiple matches ({matches_str}) for Homebrew-installed "
+        f"``gcc``, using the newest one: {chosen}.",
+        file=sys.stderr,
+    )
+    return chosen
 
 
 def _find_gcc():
@@ -196,8 +240,20 @@ def tree(directory, suffix=None):
         return None
 
 
-def print_tree(directory, suffix=None):
+def print_tree(directory, suffix=None, replacements=()):
     """Pretty print a file tree."""
-    print(os.path.basename(directory) + os.path.sep)
     full_tree = tree(directory, suffix=suffix)
-    print(textwrap.indent(full_tree, "  "))
+    # NOTE: We explicitly use newline over ``os.linesep`` here because this
+    #       will be used in Sphinx assertions for content authored in our
+    #       codebase (with uses UNIX line endings).
+    content = "\n".join(
+        [
+            os.path.basename(directory) + os.path.sep,
+            textwrap.indent(full_tree, "  "),
+        ]
+    )
+
+    for pattern, replacement in replacements:
+        content = re.sub(pattern, replacement, content)
+
+    print(content)

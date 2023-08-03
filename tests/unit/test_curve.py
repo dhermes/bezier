@@ -23,8 +23,10 @@ from tests.unit import test__symbolic
 from tests.unit import utils
 
 
-class TestCurve(utils.NumPyTestCase):
+SPACING = np.spacing  # pylint: disable=no-member
 
+
+class TestCurve(utils.NumPyTestCase):
     ZEROS = np.zeros((2, 2), order="F")
 
     @staticmethod
@@ -248,14 +250,14 @@ class TestCurve(utils.NumPyTestCase):
         result = left.intersect(right, **kwargs)
         expected = np.asfortranarray([[1.0], [2.0]]) / 3.0
         self.assertTrue(
-            np.allclose(result, expected, atol=0.0, rtol=0.5 ** 52)
+            np.allclose(result, expected, atol=0.0, rtol=0.5**52)
         )
 
     def test_intersect(self):
         self._intersect_helper()
 
     def test_intersect_no_verify(self):
-        self._intersect_helper(_verify=False)
+        self._intersect_helper(verify=False)
 
     def test_intersect_non_curve(self):
         nodes = np.asfortranarray([[0.0, 0.5, 1.0], [0.0, -0.25, 0.0]])
@@ -273,6 +275,58 @@ class TestCurve(utils.NumPyTestCase):
             curve1.intersect(curve2)
         with self.assertRaises(NotImplementedError):
             curve2.intersect(curve1)
+
+    def test_self_intersections_unsupported_dimension(self):
+        nodes = np.asfortranarray([[0.0, 1.0, 2.0]])
+        curve = self._make_one(nodes, 2)
+
+        with self.assertRaises(NotImplementedError) as exc_info:
+            curve.self_intersections()
+
+        expected = (
+            "Self-intersection only implemented in 2D",
+            "Current dimension",
+            1,
+        )
+        self.assertEqual(expected, exc_info.exception.args)
+
+    def test_self_intersections_unsupported_strategy(self):
+        from bezier.hazmat import intersection_helpers
+
+        nodes = np.asfortranarray([[0.0, 1.0, 2.0], [0.0, 1.0, 2.0]])
+        curve = self._make_one(nodes, 2)
+
+        strategy = intersection_helpers.IntersectionStrategy.ALGEBRAIC
+        with self.assertRaises(NotImplementedError) as exc_info:
+            curve.self_intersections(strategy=strategy)
+
+        expected = ("Only geometric strategy for self-intersection detection",)
+        self.assertEqual(expected, exc_info.exception.args)
+
+    def test_self_intersections_valid(self):
+        nodes = np.asfortranarray(
+            [
+                [0.0, -1.0, 1.0, -0.75],
+                [2.0, 0.0, 1.0, 1.625],
+            ]
+        )
+        curve = self._make_one(nodes, 3)
+        intersections = curve.self_intersections(verify=False)
+        self.assertEqual((2, 1), intersections.shape)
+        intersections_verified = curve.self_intersections(verify=True)
+        self.assertEqual(intersections, intersections_verified)
+
+        sq5 = np.sqrt(5.0)
+        expected_s = 0.5 - sq5 / 6.0
+        local_eps = 3 * abs(SPACING(expected_s))
+        self.assertAlmostEqual(
+            expected_s, intersections[0, 0], delta=local_eps
+        )
+        expected_t = 0.5 + sq5 / 6.0
+        local_eps = abs(SPACING(expected_t))
+        self.assertAlmostEqual(
+            expected_t, intersections[1, 0], delta=local_eps
+        )
 
     def test_elevate(self):
         nodes = np.asfortranarray([[0.0, 1.0, 3.0, 3.5], [0.5, 1.0, 2.0, 4.0]])
@@ -330,7 +384,7 @@ class TestCurve(utils.NumPyTestCase):
         b_polynomial = curve.to_symbolic()
 
         s = sympy.Symbol("s")
-        expected = 3 * sympy.Matrix([[1 + s ** 2, 1 - s ** 3]]).T
+        expected = 3 * sympy.Matrix([[1 + s**2, 1 - s**3]]).T
         self.assertTrue(
             test__symbolic.sympy_matrix_equal(b_polynomial, expected)
         )
@@ -343,10 +397,10 @@ class TestCurve(utils.NumPyTestCase):
 
         x_sym, y_sym = sympy.symbols("x, y")
         expected = -9 * (
-            x_sym ** 3
-            - 9 * x_sym ** 2
+            x_sym**3
+            - 9 * x_sym**2
             + 27 * x_sym
-            - 3 * y_sym ** 2
+            - 3 * y_sym**2
             + 18 * y_sym
             - 54
         )

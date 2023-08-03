@@ -29,7 +29,7 @@ from bezier.hazmat import triangle_helpers
 
 
 MAX_LOCATE_SUBDIVISIONS = 20
-LOCATE_EPS = 0.5 ** 47
+LOCATE_EPS = 0.5**47
 INTERSECTION_T = geometric_intersection.BoxIntersectionType.INTERSECTION
 CLASSIFICATION_T = intersection_helpers.IntersectionClassification
 UNUSED_T = CLASSIFICATION_T.COINCIDENT_UNUSED
@@ -154,12 +154,12 @@ def newton_refine(nodes, degree, x_val, y_val, s, t):
 
     .. testsetup:: newton-refine-triangle
 
-       import numpy as np
-       import bezier
        from bezier.hazmat.triangle_intersection import newton_refine
 
     .. doctest:: newton-refine-triangle
 
+       >>> import bezier
+       >>> import numpy as np
        >>> nodes = np.asfortranarray([
        ...     [0.0, 1.0, 2.0, 2.0, 2.0, 0.0],
        ...     [0.0, 0.0, 0.0, 1.0, 2.0, 2.0],
@@ -358,7 +358,7 @@ def locate_point(nodes, degree, x_val, y_val):
     return s, t
 
 
-def same_intersection(intersection1, intersection2, wiggle=0.5 ** 40):
+def same_intersection(intersection1, intersection2, wiggle=0.5**40):
     """Check if two intersections are close to machine precision.
 
     .. note::
@@ -367,8 +367,8 @@ def same_intersection(intersection1, intersection2, wiggle=0.5 ** 40):
        is only used by :func:`generic_intersect`.
 
     Args:
-        intersection1 (.Intersection): The first intersection.
-        intersection2 (.Intersection): The second intersection.
+        intersection1 (Intersection): The first intersection.
+        intersection2 (Intersection): The second intersection.
         wiggle (Optional[float]): The amount of relative error allowed
             in parameter values.
 
@@ -496,7 +496,7 @@ def add_edge_end_unused(intersection, duplicates, intersections):
       and ``index_second`` and if it matches the start index exactly
 
     Args:
-        intersection (.Intersection): An intersection to be added.
+        intersection (Intersection): An intersection to be added.
         duplicates (List[~bezier.hazmat.intersection_helpers.Intersection]):
             List of duplicate intersections.
         intersections (List[~bezier.hazmat.intersection_helpers.Intersection]):
@@ -532,7 +532,7 @@ def check_unused(intersection, duplicates, intersections):
       :attr:`~.IntersectionClassification.COINCIDENT_UNUSED`.
 
     Args:
-        intersection (.Intersection): An intersection to be added.
+        intersection (Intersection): An intersection to be added.
         duplicates (List[~bezier.hazmat.intersection_helpers.Intersection]):
             List of duplicate intersections.
         intersections (List[~bezier.hazmat.intersection_helpers.Intersection]):
@@ -677,7 +677,7 @@ def should_use(intersection):
     :attr:`~.IntersectionClassification.TANGENT_SECOND`.
 
     Args:
-        intersection (.Intersection): An intersection to be added.
+        intersection (Intersection): An intersection to be added.
 
     Returns:
         bool: Indicating if the intersection will be used.

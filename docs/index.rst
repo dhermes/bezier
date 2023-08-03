@@ -3,7 +3,7 @@
 
     Helper for B |eacute| zier Curves, Triangles, and Higher Order Objects
 
-|circle-build| |travis-build| |appveyor-build| |coverage|
+|linux-build| |macos-build| |windows-build| |coverage|
 
 |pypi| |versions|
 
@@ -93,17 +93,17 @@ The ``bezier`` Python package can be installed with `pip`_:
 
 .. code-block:: console
 
-   $ python    -m pip install --upgrade bezier
-   $ python3.8 -m pip install --upgrade bezier
+   $ python     -m pip install --upgrade bezier
+   $ python3.11 -m pip install --upgrade bezier
    $ # To install optional dependencies, e.g. SymPy
-   $ python    -m pip install --upgrade bezier[full]
+   $ python     -m pip install --upgrade bezier[full]
 
 To install a pure Python version (i.e. with no binary extension):
 
 .. code-block:: console
 
    $ BEZIER_NO_EXTENSION=true \
-   >   python  -m pip install --upgrade bezier --no-binary=bezier
+   >   python   -m pip install --upgrade bezier --no-binary=bezier
 
 ``bezier`` is open-source, so you can alternatively grab the source
 code from `GitHub`_ and install from source.
@@ -152,6 +152,8 @@ For example, to create a curve:
 
 .. doctest:: getting-started
 
+   >>> import bezier
+   >>> import numpy as np
    >>> nodes1 = np.asfortranarray([
    ...     [0.0, 0.5, 1.0],
    ...     [0.0, 1.0, 0.0],
@@ -251,17 +253,17 @@ License
 ``bezier`` is made available under the Apache 2.0 License. For more
 details, see `the LICENSE`_.
 
-.. _the LICENSE: https://github.com/dhermes/bezier/blob/master/LICENSE
+.. _the LICENSE: https://github.com/dhermes/bezier/blob/main/LICENSE
 
-.. |circle-build| image:: https://img.shields.io/circleci/project/github/dhermes/bezier/master.svg?maxAge=3600&logo=circleci&label=Linux
-   :target: https://circleci.com/gh/dhermes/bezier
-   :alt: CircleCI Build
-.. |travis-build| image:: https://img.shields.io/travis/dhermes/bezier/master.svg?maxAge=3600&logo=travis&label=macOS
-   :target: https://travis-ci.org/dhermes/bezier
-   :alt: Travis Build
-.. |appveyor-build| image:: https://img.shields.io/appveyor/ci/dhermes/bezier/master.svg?maxAge=3600&logo=appveyor&label=Windows
-   :target: https://ci.appveyor.com/project/dhermes/bezier
-   :alt: AppVeyor CI Build
+.. |linux-build| image:: https://github.com/dhermes/bezier/workflows/Linux/badge.svg?branch=main&event=push
+   :target: https://github.com/dhermes/bezier/actions?query=workflow%3ALinux
+   :alt: Linux Build (GitHub Actions)
+.. |macos-build| image:: https://github.com/dhermes/bezier/workflows/macOS/badge.svg?branch=main&event=push
+   :target: https://github.com/dhermes/bezier/actions?query=workflow%3AmacOS
+   :alt: macOS Build (GitHub Actions)
+.. |windows-build| image:: https://github.com/dhermes/bezier/workflows/Windows/badge.svg?branch=main&event=push
+   :target: https://github.com/dhermes/bezier/actions?query=workflow%3AWindows
+   :alt: Windows Build (GitHub Actions)
 .. |pypi| image:: https://img.shields.io/pypi/v/bezier.svg
    :target: https://pypi.org/project/bezier/
    :alt: PyPI Latest

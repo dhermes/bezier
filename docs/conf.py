@@ -26,7 +26,6 @@ import doctest
 import os
 import sys
 
-import sphinx.domains.c
 import sphinx_rtd_theme
 
 import bezier  # ``bezier`` must be installed to build the docs.
@@ -40,21 +39,20 @@ sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
 
 # If your documentation needs a minimal Sphinx version, state it here.
 #
-needs_sphinx = "1.7.0"
+needs_sphinx = "6.2.1"
+# See: https://github.com/readthedocs/sphinx_rtd_theme/issues/1463
 
 nitpicky = True
-# ``bool`` is not a stopword but ``_Bool`` is, because only ``_Bool``
-# is in the language (``bool`` requires ``<stdbool.h>``)
-sphinx.domains.c.CObject.stopwords.update(
-    ("bool", "const double", "const double* const", "const int")
-)
-nitpick_ignore = [("py:class", "bezier._base.Base")]
+nitpick_ignore = [
+    ("py:class", "bezier._base.Base"),
+]
 
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named "sphinx.ext.*") or your custom
 # ones.
 extensions = [
     "sphinx.ext.autodoc",
+    "sphinx_copybutton",
     "sphinx.ext.coverage",
     "sphinx.ext.doctest",
     "sphinx.ext.intersphinx",
@@ -78,12 +76,12 @@ source_suffix = ".rst"
 #
 # source_encoding = "utf-8-sig"
 
-# The master toctree document.
+# The primary toctree document.
 master_doc = "index"
 
 # General information about the project.
-project = u"bezier"
-copyright = u"2016, Danny Hermes"
+project = "bezier"
+copyright = "2016, Danny Hermes"
 author = bezier.__author__
 version = bezier.__version__
 
@@ -100,7 +98,7 @@ release = version
 #
 # This is also used if you do content translation via gettext catalogs.
 # Usually you set "language" from the command line for these cases.
-language = None
+language = "en"
 
 # There are two options for replacing |today|: either, you set today to some
 # non-false value, then it is used:
@@ -283,8 +281,8 @@ latex_documents = [
     (
         master_doc,
         "bezier.tex",
-        u"bezier Documentation",
-        u"Danny Hermes",
+        "bezier Documentation",
+        "Danny Hermes",
         "manual",
     )
 ]
@@ -326,7 +324,7 @@ latex_documents = [
 
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
-man_pages = [(master_doc, "bezier", u"bezier Documentation", [author], 1)]
+man_pages = [(master_doc, "bezier", "bezier Documentation", [author], 1)]
 
 # If true, show URL addresses after external links.
 #
@@ -342,7 +340,7 @@ texinfo_documents = [
     (
         master_doc,
         "bezier",
-        u"bezier Documentation",
+        "bezier Documentation",
         author,
         "bezier",
         "One line description of project.",

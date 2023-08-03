@@ -38,7 +38,7 @@ class Test_vector_close(unittest.TestCase):
 
     def test_close_but_different(self):
         vec1 = np.asfortranarray([2.25, -3.5])
-        vec2 = vec1 + np.asfortranarray([-5.0, 12.0]) / 2.0 ** 43
+        vec2 = vec1 + np.asfortranarray([-5.0, 12.0]) / 2.0**43
         self.assertTrue(self._call_function_under_test(vec1, vec2))
 
     def test_custom_epsilon(self):
@@ -49,11 +49,11 @@ class Test_vector_close(unittest.TestCase):
 
     def test_near_zero(self):
         vec1 = np.asfortranarray([0.0, 0.0])
-        vec2 = np.asfortranarray([3.0, 4.0]) / 2.0 ** 45
+        vec2 = np.asfortranarray([3.0, 4.0]) / 2.0**45
         self.assertTrue(self._call_function_under_test(vec1, vec2))
 
     def test_near_zero_fail(self):
-        vec1 = np.asfortranarray([1.0, 0.0]) / 2.0 ** 20
+        vec1 = np.asfortranarray([1.0, 0.0]) / 2.0**20
         vec2 = np.asfortranarray([0.0, 0.0])
         self.assertFalse(self._call_function_under_test(vec1, vec2))
 
@@ -189,8 +189,8 @@ class Test_matrix_product(utils.NumPyTestCase):
 
 
 class Test_wiggle_interval(unittest.TestCase):
-    WIGGLE = 0.5 ** 44
-    MACHINE_EPS = 0.5 ** 52
+    WIGGLE = 0.5**44
+    MACHINE_EPS = 0.5**52
 
     @staticmethod
     def _call_function_under_test(value, **kwargs):
@@ -208,7 +208,7 @@ class Test_wiggle_interval(unittest.TestCase):
         self.assertEqual(result, 1.0)
 
     def test_near_endpoint(self):
-        _, success = self._call_function_under_test(1.0 + 0.5 ** 20)
+        _, success = self._call_function_under_test(1.0 + 0.5**20)
         self.assertFalse(success)
 
     def test_outside_below(self):
@@ -226,7 +226,7 @@ class Test_wiggle_interval(unittest.TestCase):
         self.assertEqual(result, 0.25)
 
     def test_wiggle_below(self):
-        value = -(0.5 ** 60)
+        value = -(0.5**60)
         result, success = self._call_function_under_test(value)
         self.assertTrue(success)
         self.assertEqual(result, 0.0)

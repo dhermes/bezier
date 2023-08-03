@@ -62,21 +62,19 @@ class Test_speedup_subdivide_nodes(test_triangle_helpers.Test_subdivide_nodes):
     #       the original to remove the ``@pytest.mark.slow`` decorator.
     # pylint: disable=useless-super-delegation
     def test_line_check_evaluate(self):
-        super(Test_speedup_subdivide_nodes, self).test_line_check_evaluate()
+        super().test_line_check_evaluate()
 
     def test_quadratic_check_evaluate(self):
-        super(
-            Test_speedup_subdivide_nodes, self
-        ).test_quadratic_check_evaluate()
+        super().test_quadratic_check_evaluate()
 
     def test_cubic_check_evaluate(self):
-        super(Test_speedup_subdivide_nodes, self).test_cubic_check_evaluate()
+        super().test_cubic_check_evaluate()
 
     def test_quartic_check_evaluate(self):
-        super(Test_speedup_subdivide_nodes, self).test_quartic_check_evaluate()
+        super().test_quartic_check_evaluate()
 
     def test_on_the_fly(self):
-        super(Test_speedup_subdivide_nodes, self).test_on_the_fly()
+        super().test_on_the_fly()
 
     # pylint: enable=useless-super-delegation
 

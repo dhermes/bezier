@@ -110,7 +110,7 @@ class Test_subdivide_nodes(utils.NumPyTestCase):
         left, right = self._call_function_under_test(nodes)
         # Using the exponent means that ds = 1/2**exp, which
         # can be computed without roundoff.
-        num_pts = 2 ** pts_exponent + 1
+        num_pts = 2**pts_exponent + 1
         left_half = np.linspace(0.0, 0.5, num_pts)
         right_half = np.linspace(0.5, 1.0, num_pts)
         unit_interval = np.linspace(0.0, 1.0, num_pts)
@@ -169,64 +169,50 @@ class Test_subdivide_nodes(utils.NumPyTestCase):
         self._points_check(nodes)
 
 
-class Test_evaluate_multi_barycentric(utils.NumPyTestCase):
+def _evaluate_multi_non_unity(test_case):
+    nodes = np.asfortranarray(
+        [[0.0, 0.5, 1.5, 2.0], [0.0, 3.0, 4.0, 8.0], [0.0, 1.0, 1.0, 1.0]]
+    )
+    lambda1 = np.asfortranarray([0.25, 0.5, 0.75])
+    lambda2 = np.asfortranarray([0.25, 0.125, -0.75])
+    result = test_case._call_function_under_test(nodes, lambda1, lambda2)
+    expected = np.asfortranarray(
+        [
+            [0.125, 0.0859375, 0.421875],
+            [0.453125, 0.390625, -2.109375],
+            [0.109375, 0.119140625, -0.421875],
+        ]
+    )
+    test_case.assertEqual(result, expected)
+
+
+def _evaluate_multi_constant(test_case):
+    num_vals = 257
+    lambda1 = np.linspace(0.0, 1.0, num_vals)
+    lambda2 = 1.0 - lambda1
+    # B(s) = [1]
+    nodes = np.ones((1, 8), order="F")
+    result = test_case._call_function_under_test(nodes, lambda1, lambda2)
+    expected = np.ones((1, num_vals), order="F")
+    test_case.assertEqual(result, expected)
+
+
+class Test_evaluate_multi_vs(utils.NumPyTestCase):
     @staticmethod
     def _call_function_under_test(nodes, lambda1, lambda2):
         from bezier.hazmat import curve_helpers
 
-        return curve_helpers.evaluate_multi_barycentric(
-            nodes, lambda1, lambda2
-        )
+        return curve_helpers.evaluate_multi_vs(nodes, lambda1, lambda2)
 
     def test_non_unity(self):
-        nodes = np.asfortranarray(
-            [[0.0, 0.5, 1.5, 2.0], [0.0, 3.0, 4.0, 8.0], [0.0, 1.0, 1.0, 1.0]]
-        )
-        lambda1 = np.asfortranarray([0.25, 0.5, 0.75])
-        lambda2 = np.asfortranarray([0.25, 0.125, -0.75])
-        result = self._call_function_under_test(nodes, lambda1, lambda2)
-        expected = np.asfortranarray(
-            [
-                [0.125, 0.0859375, 0.421875],
-                [0.453125, 0.390625, -2.109375],
-                [0.109375, 0.119140625, -0.421875],
-            ]
-        )
-        self.assertEqual(result, expected)
+        _evaluate_multi_non_unity(self)
 
-
-class Test_evaluate_multi(utils.NumPyTestCase):
-    @staticmethod
-    def _call_function_under_test(nodes, s_vals):
-        from bezier.hazmat import curve_helpers
-
-        return curve_helpers.evaluate_multi(nodes, s_vals)
-
-    def test_linear(self):
-        num_vals = 129
-        s_vals = np.linspace(0.0, 1.0, num_vals)
-        # B(s) = [s + 1, 1 - 2 s, 3 s - 7]
-        nodes = np.asfortranarray([[1.0, 2.0], [1.0, -1.0], [-7.0, -4.0]])
-        result = self._call_function_under_test(nodes, s_vals)
-        expected = np.empty((3, num_vals), order="F")
-        expected[0, :] = 1.0 + s_vals
-        expected[1, :] = 1.0 - 2.0 * s_vals
-        expected[2, :] = -7.0 + 3.0 * s_vals
-        self.assertEqual(result, expected)
-
-    def test_quadratic(self):
-        num_vals = 65
-        s_vals = np.linspace(0.0, 1.0, num_vals)
-        # B(s) = [s(4 - s), 2s(2s - 1)]
-        nodes = np.asfortranarray([[0.0, 2.0, 3.0], [0.0, -1.0, 2.0]])
-        result = self._call_function_under_test(nodes, s_vals)
-        expected = np.empty((2, num_vals), order="F")
-        expected[0, :] = s_vals * (4.0 - s_vals)
-        expected[1, :] = 2.0 * s_vals * (2.0 * s_vals - 1.0)
-        self.assertEqual(result, expected)
+    def test_constant(self):
+        _evaluate_multi_constant(self)
 
     def test_binomial_overflow_int32(self):
-        s_vals = np.asfortranarray([0.5])
+        lambda1 = np.asfortranarray([0.5])
+        lambda2 = np.asfortranarray([0.5])
         degree = 30
         nodes = np.eye(degree + 1, order="F")
 
@@ -265,8 +251,8 @@ class Test_evaluate_multi(utils.NumPyTestCase):
                 1.0,
             ]
         )
-        evaluated = self._call_function_under_test(nodes, s_vals)
-        binomial_coefficients = evaluated.flatten() * 2.0 ** degree
+        evaluated = self._call_function_under_test(nodes, lambda1, lambda2)
+        binomial_coefficients = evaluated.flatten() * 2.0**degree
         self.assertEqual(expected, binomial_coefficients)
 
     @unittest.skipIf(
@@ -274,7 +260,8 @@ class Test_evaluate_multi(utils.NumPyTestCase):
         "32-bit is skipped on Linux",
     )
     def test_binomial_roundoff(self):
-        s_vals = np.asfortranarray([0.5])
+        lamdba1 = np.asfortranarray([0.5])
+        lamdba2 = np.asfortranarray([0.5])
         degree = 55
         nodes = np.eye(degree + 1, order="F")
 
@@ -313,34 +300,237 @@ class Test_evaluate_multi(utils.NumPyTestCase):
                 3085851035479212.0 - 0.5,
                 2488589544741300.0 - 0.5,
                 1866442158555974.0 + 0.5,
-                1300853625660225.0 - 0.5 ** 2,
-                841728816603675.0 - 0.5 ** 3,
-                505037289962205.0 - 0.5 ** 4,
-                280576272201225.0 - 0.5 ** 4,
-                144079707346575.0 - 0.5 ** 5,
-                68248282427325.0 - 0.5 ** 6,
-                29749251314475.0 - 0.5 ** 7,
-                11899700525790.0 - 0.5 ** 8,
-                4353548972850.0 - 3 * 0.5 ** 11,
-                1451182990950.0 - 0.5 ** 11,
-                438729741450.0 - 3 * 0.5 ** 14,
-                119653565850.0 - 3 * 0.5 ** 16,
-                29248649430.0 - 3 * 0.5 ** 18,
-                6358402050.0 - 3 * 0.5 ** 20,
-                1217566350.0 - 0.5 ** 21,
-                202927725.0 - 3 * 0.5 ** 25,
-                28989675.0 - 0.5 ** 26,
-                3478761.0 - 0.5 ** 29,
-                341055.0 - 3 * 0.5 ** 34,
-                26235.0 - 0.5 ** 36,
-                1485.0 - 0.5 ** 40,
-                55.0 - 5 * 0.5 ** 47,
+                1300853625660225.0 - 0.5**2,
+                841728816603675.0 - 0.5**3,
+                505037289962205.0 - 0.5**4,
+                280576272201225.0 - 0.5**4,
+                144079707346575.0 - 0.5**5,
+                68248282427325.0 - 0.5**6,
+                29749251314475.0 - 0.5**7,
+                11899700525790.0 - 0.5**8,
+                4353548972850.0 - 3 * 0.5**11,
+                1451182990950.0 - 0.5**11,
+                438729741450.0 - 3 * 0.5**14,
+                119653565850.0 - 3 * 0.5**16,
+                29248649430.0 - 3 * 0.5**18,
+                6358402050.0 - 3 * 0.5**20,
+                1217566350.0 - 0.5**21,
+                202927725.0 - 3 * 0.5**25,
+                28989675.0 - 0.5**26,
+                3478761.0 - 0.5**29,
+                341055.0 - 3 * 0.5**34,
+                26235.0 - 0.5**36,
+                1485.0 - 0.5**40,
+                55.0 - 5 * 0.5**47,
                 1.0,
             ],
         )
-        evaluated = self._call_function_under_test(nodes, s_vals)
-        binomial_coefficients = evaluated.flatten() * 2.0 ** degree
+        evaluated = self._call_function_under_test(nodes, lamdba1, lamdba2)
+        binomial_coefficients = evaluated.flatten() * 2.0**degree
         self.assertEqual(expected, binomial_coefficients)
+
+
+class Test_evaluate_multi_de_casteljau(utils.NumPyTestCase):
+    @staticmethod
+    def _call_function_under_test(nodes, lambda1, lambda2):
+        from bezier.hazmat import curve_helpers
+
+        return curve_helpers.evaluate_multi_de_casteljau(
+            nodes, lambda1, lambda2
+        )
+
+    def test_non_unity(self):
+        _evaluate_multi_non_unity(self)
+
+    def test_constant(self):
+        _evaluate_multi_constant(self)
+
+    def test_binomial_no_roundoff(self):
+        lamdba1 = np.asfortranarray([0.5])
+        lamdba2 = np.asfortranarray([0.5])
+        degree = 55
+        nodes = np.eye(degree + 1, order="F")
+
+        expected = np.asfortranarray(
+            [
+                1.0,
+                55.0,
+                1485.0,
+                26235.0,
+                341055.0,
+                3478761.0,
+                28989675.0,
+                202927725.0,
+                1217566350.0,
+                6358402050.0,
+                29248649430.0,
+                119653565850.0,
+                438729741450.0,
+                1451182990950.0,
+                4353548972850.0,
+                11899700525790.0,
+                29749251314475.0,
+                68248282427325.0,
+                144079707346575.0,
+                280576272201225.0,
+                505037289962205.0,
+                841728816603675.0,
+                1300853625660225.0,
+                1866442158555975.0,
+                2488589544741300.0,
+                3085851035479212.0,
+                3560597348629860.0,
+                3824345300380220.0,
+                3824345300380220.0,
+                3560597348629860.0,
+                3085851035479212.0,
+                2488589544741300.0,
+                1866442158555975.0,
+                1300853625660225.0,
+                841728816603675.0,
+                505037289962205.0,
+                280576272201225.0,
+                144079707346575.0,
+                68248282427325.0,
+                29749251314475.0,
+                11899700525790.0,
+                4353548972850.0,
+                1451182990950.0,
+                438729741450.0,
+                119653565850.0,
+                29248649430.0,
+                6358402050.0,
+                1217566350.0,
+                202927725.0,
+                28989675.0,
+                3478761.0,
+                341055.0,
+                26235.0,
+                1485.0,
+                55.0,
+                1.0,
+            ],
+        )
+        evaluated = self._call_function_under_test(nodes, lamdba1, lamdba2)
+        binomial_coefficients = evaluated.flatten() * 2.0**degree
+        self.assertEqual(expected, binomial_coefficients)
+
+
+class Test_evaluate_multi_barycentric(utils.NumPyTestCase):
+    @staticmethod
+    def _call_function_under_test(nodes, lambda1, lambda2):
+        from bezier.hazmat import curve_helpers
+
+        return curve_helpers.evaluate_multi_barycentric(
+            nodes, lambda1, lambda2
+        )
+
+    def test_non_unity(self):
+        _evaluate_multi_non_unity(self)
+
+    def test_constant(self):
+        _evaluate_multi_constant(self)
+
+    def test_high_degree(self):
+        lamdba1 = np.asfortranarray([0.5])
+        lamdba2 = np.asfortranarray([0.5])
+        degree = 55
+        nodes = np.eye(degree + 1, order="F")
+
+        expected = np.asfortranarray(
+            [
+                1.0,
+                55.0,
+                1485.0,
+                26235.0,
+                341055.0,
+                3478761.0,
+                28989675.0,
+                202927725.0,
+                1217566350.0,
+                6358402050.0,
+                29248649430.0,
+                119653565850.0,
+                438729741450.0,
+                1451182990950.0,
+                4353548972850.0,
+                11899700525790.0,
+                29749251314475.0,
+                68248282427325.0,
+                144079707346575.0,
+                280576272201225.0,
+                505037289962205.0,
+                841728816603675.0,
+                1300853625660225.0,
+                1866442158555975.0,
+                2488589544741300.0,
+                3085851035479212.0,
+                3560597348629860.0,
+                3824345300380220.0,
+                3824345300380220.0,
+                3560597348629860.0,
+                3085851035479212.0,
+                2488589544741300.0,
+                1866442158555975.0,
+                1300853625660225.0,
+                841728816603675.0,
+                505037289962205.0,
+                280576272201225.0,
+                144079707346575.0,
+                68248282427325.0,
+                29749251314475.0,
+                11899700525790.0,
+                4353548972850.0,
+                1451182990950.0,
+                438729741450.0,
+                119653565850.0,
+                29248649430.0,
+                6358402050.0,
+                1217566350.0,
+                202927725.0,
+                28989675.0,
+                3478761.0,
+                341055.0,
+                26235.0,
+                1485.0,
+                55.0,
+                1.0,
+            ],
+        )
+        evaluated = self._call_function_under_test(nodes, lamdba1, lamdba2)
+        binomial_coefficients = evaluated.flatten() * 2.0**degree
+        self.assertEqual(expected, binomial_coefficients)
+
+
+class Test_evaluate_multi(utils.NumPyTestCase):
+    @staticmethod
+    def _call_function_under_test(nodes, s_vals):
+        from bezier.hazmat import curve_helpers
+
+        return curve_helpers.evaluate_multi(nodes, s_vals)
+
+    def test_linear(self):
+        num_vals = 129
+        s_vals = np.linspace(0.0, 1.0, num_vals)
+        # B(s) = [s + 1, 1 - 2 s, 3 s - 7]
+        nodes = np.asfortranarray([[1.0, 2.0], [1.0, -1.0], [-7.0, -4.0]])
+        result = self._call_function_under_test(nodes, s_vals)
+        expected = np.empty((3, num_vals), order="F")
+        expected[0, :] = 1.0 + s_vals
+        expected[1, :] = 1.0 - 2.0 * s_vals
+        expected[2, :] = -7.0 + 3.0 * s_vals
+        self.assertEqual(result, expected)
+
+    def test_quadratic(self):
+        num_vals = 65
+        s_vals = np.linspace(0.0, 1.0, num_vals)
+        # B(s) = [s(4 - s), 2s(2s - 1)]
+        nodes = np.asfortranarray([[0.0, 2.0, 3.0], [0.0, -1.0, 2.0]])
+        result = self._call_function_under_test(nodes, s_vals)
+        expected = np.empty((2, num_vals), order="F")
+        expected[0, :] = s_vals * (4.0 - s_vals)
+        expected[1, :] = 2.0 * s_vals * (2.0 * s_vals - 1.0)
+        self.assertEqual(result, expected)
 
 
 class Test_vec_size(unittest.TestCase):
@@ -647,7 +837,7 @@ class Test_locate_point(unittest.TestCase):
 
 
 class Test_reduce_pseudo_inverse(utils.NumPyTestCase):
-    EPS = 0.5 ** 52
+    EPS = 0.5**52
 
     @staticmethod
     def _call_function_under_test(nodes):
@@ -870,3 +1060,45 @@ class Test_full_reduce(utils.NumPyTestCase):
             self._call_function_under_test(nodes)
         self.assertEqual(exc_info.exception.degree, degree)
         self.assertEqual(exc_info.exception.supported, (0, 1, 2, 3, 4))
+
+
+class Test_discrete_turning_angle(utils.NumPyTestCase):
+    @staticmethod
+    def _call_function_under_test(nodes):
+        from bezier.hazmat import curve_helpers
+
+        return curve_helpers.discrete_turning_angle(nodes)
+
+    def test_linear(self):
+        nodes = np.asfortranarray(
+            [
+                [0.0, 1.0],
+                [0.0, 4.0],
+            ]
+        )
+        angle = self._call_function_under_test(nodes)
+        self.assertEqual(0.0, angle)
+
+    def test_overshoot_pi(self):
+        nodes = np.asfortranarray(
+            [
+                [1.125, 0.625, 0.125],
+                [0.5, -0.5, 0.5],
+            ]
+        )
+        angle = self._call_function_under_test(nodes)
+        expected = float.fromhex("0x1.1b6e192ebbe44p+1")
+        local_eps = abs(SPACING(expected))
+        self.assertAlmostEqual(expected, angle, delta=local_eps)
+
+    def test_undershoot_minus_pi(self):
+        nodes = np.asfortranarray(
+            [
+                [11.0, 7.0, 3.0],
+                [8.0, 10.0, 4.0],
+            ]
+        )
+        angle = self._call_function_under_test(nodes)
+        expected = float.fromhex("0x1.7249faa996a21p+0")
+        local_eps = abs(SPACING(expected))
+        self.assertAlmostEqual(expected, angle, delta=local_eps)

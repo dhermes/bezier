@@ -29,9 +29,12 @@ import bezier
 import bezier.curve
 from tests import utils as base_utils
 
+
 SPACING = np.spacing  # pylint: disable=no-member
 FNL_TESTS_DIR = os.path.abspath(os.path.dirname(__file__))
-_DOCS_DIR = os.path.abspath(os.path.join(FNL_TESTS_DIR, "..", "..", "docs"))
+_DOCS_DIR = os.path.abspath(
+    os.path.join(FNL_TESTS_DIR, os.pardir, os.pardir, "docs")
+)
 IMAGES_DIR = os.path.join(_DOCS_DIR, "images")
 
 
@@ -179,13 +182,13 @@ def id_func(value):
         str: The ID for a parameter in a parametrized test.
     """
     if isinstance(value, bezier.curve.IntersectionStrategy):
-        return "strategy: {}".format(value.name)
+        return f"strategy: {value.name}"
 
     else:
         return value.test_id
 
 
-def ulps_away(value1, value2, num_bits=1, eps=0.5 ** 40):
+def ulps_away(value1, value2, num_bits=1, eps=0.5**40):
     r"""Determines if ``value1`` is within ``n`` ULPs of ``value2``.
 
     Uses ``np.spacing`` to determine the unit of least precision (ULP)
@@ -247,7 +250,7 @@ class IncorrectCount(ValueError):
 
 
 class Config:
-    """Run-time configuration.
+    """Runtime configuration.
 
     This is a mutable stand-in to allow test set-up to modify
     global state.
@@ -281,9 +284,7 @@ class Config:
             approximated (float): The value that was computed.
             exact (float): The expected value.
         """
-        msg = "{} ~= {} to {:d} bits".format(
-            approximated.hex(), exact.hex(), self._wiggle
-        )
+        msg = f"{approximated.hex()} ~= {exact.hex()} to {self._wiggle:d} bits"
         assert ulps_away(exact, approximated, num_bits=self._wiggle), msg
 
 
@@ -341,13 +342,13 @@ class CurveIntersectionType(enum.Enum):
     ``curve_intersection.json`` JSON-schema.
     """
 
-    coincident = "coincident"
+    COINCIDENT = "coincident"
     """Curves lie on the same underlying algebraic curve."""
-    no_intersection = "no-intersection"
+    NO_INTERSECTION = "no-intersection"
     """Curves do not intersect."""
-    tangent = "tangent"
+    TANGENT = "tangent"
     """Curves are tangent at the point of intersection."""
-    standard = "standard"
+    STANDARD = "standard"
     """Intersection is not **any** of the other types."""
 
 
@@ -434,12 +435,12 @@ class CurveIntersectionInfo:
         (num_params,) = self.curve1_params.shape
         shape = (num_params,)
         if self.curve2_params.shape != shape:
-            msg = "Expected shape {} for ``curve2_params``.".format(shape)
+            msg = f"Expected shape {shape} for ``curve2_params``."
             raise ValueError(msg)
 
         shape = (2, num_params)
         if self.intersections.shape != shape:
-            msg = "Expected shape {} for ``intersections``.".format(shape)
+            msg = f"Expected shape {shape} for ``intersections``."
             raise ValueError(msg)
 
         if self.curve1_polys is not None:
@@ -480,16 +481,15 @@ class CurveIntersectionInfo:
     @property
     def test_id(self):
         """str: The ID for this intersection in functional tests."""
-        return "curves {!r} and {!r} (ID: {:d})".format(
-            self.curve1_info.id_, self.curve2_info.id_, self.id_
+        return (
+            f"curves {self.curve1_info.id_!r} and "
+            f"{self.curve2_info.id_!r} (ID: {self.id_:d})"
         )
 
     @property
     def img_filename(self):
         """str: Filename to use when saving images for this intersection."""
-        return "curves{}_and_{}".format(
-            self.curve1_info.id_, self.curve2_info.id_
-        )
+        return f"curves{self.curve1_info.id_}_and_{self.curve2_info.id_}"
 
     @property
     def params(self):
@@ -506,8 +506,6 @@ class CurveIntersectionInfo:
             * intersection points (2D ``N x 2`` array)
         """
         return self.curve1_params, self.curve2_params, self.intersections
-
-    # pylint: disable=missing-return-type-doc
 
     @property
     def curve1(self):
@@ -526,8 +524,6 @@ class CurveIntersectionInfo:
             ~bezier.curve.Curve: The second B |eacute| zier curve.
         """
         return self.curve2_info.curve
-
-    # pylint: enable=missing-return-type-doc
 
     @property
     def nodes1(self):
@@ -741,9 +737,7 @@ class CurvedPolygonInfo:
         if polynomials is None:
             return
 
-        err_msg1 = "Unexpected number of {} parameter polynomials.".format(
-            name
-        )
+        err_msg1 = f"Unexpected number of {name} parameter polynomials."
         template2 = "{} parameter polynomial should have integer coefficients."
         err_msg2 = template2.format(name)
         if len(polynomials) != num_nodes:
@@ -874,18 +868,17 @@ class TriangleIntersectionsInfo:
     @property
     def test_id(self):
         """str: The ID for this intersection in functional tests."""
-        return "triangles {!r} and {!r} (ID: {:d})".format(
-            self.triangle1_info.id_, self.triangle2_info.id_, self.id_
+        return (
+            f"triangles {self.triangle1_info.id_!r} and "
+            f"{self.triangle2_info.id_!r} (ID: {self.id_:d})"
         )
 
     @property
     def img_filename(self):
         """str: Filename to use when saving images for this intersection."""
-        return "triangles{}_and_{}".format(
-            self.triangle1_info.id_, self.triangle2_info.id_
+        return (
+            f"triangles{self.triangle1_info.id_}_and_{self.triangle2_info.id_}"
         )
-
-    # pylint: disable=missing-return-type-doc
 
     @property
     def triangle1(self):
@@ -904,8 +897,6 @@ class TriangleIntersectionsInfo:
             ~bezier.triangle.Triangle: The second B |eacute| zier triangle.
         """
         return self.triangle2_info.triangle
-
-    # pylint: enable=missing-return-type-doc
 
     @classmethod
     def from_json(cls, info, triangles):

@@ -16,7 +16,7 @@ Used in:
 
 .. code-block:: console
 
-   $ nox -s "update_generated(check=True)"
+   $ nox --session "update_generated(check=True)"
 """
 
 import os

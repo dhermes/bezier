@@ -62,10 +62,10 @@ def binary_round(value, num_bits):
     pre, hex_digits = hex_val.split("0x1.")
     hex_digits, post = hex_digits.split("p")
     assert len(hex_digits) == 13
-    all_bits = "{:052b}".format(int(hex_digits, 16))
+    all_bits = f"{int(hex_digits, 16):052b}"
     assert len(all_bits) == 52
     truncated_bits = all_bits[:num_bits] + "0" * (52 - num_bits)
-    truncated_hex = "{:013x}".format(int(truncated_bits, 2))
+    truncated_hex = f"{int(truncated_bits, 2):013x}"
     python_hex = pre + "0x1." + truncated_hex + "p" + post
     return float.fromhex(python_hex)
 
@@ -87,7 +87,7 @@ def ref_triangle_uniform_nodes(pts_exponent):
     # Using the exponent means that we will divide by
     # 2**exp, which can be done without roundoff (for small
     # enough exponents).
-    pts_per_side = 2 ** pts_exponent + 1
+    pts_per_side = 2**pts_exponent + 1
     total = ((pts_per_side + 1) * pts_per_side) // 2
     result = np.zeros((total, 2), order="F")
     index = 0
@@ -136,7 +136,7 @@ class NumPyTestCase(unittest.TestCase):
     def __init__(self, *args, **kwargs):
         import numpy as np
 
-        super(NumPyTestCase, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.addTypeEqualityFunc(np.ndarray, self.assertArrayEqual)
 
     def assertArrayEqual(self, arr1, arr2, msg=None):

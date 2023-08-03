@@ -22,19 +22,23 @@ Procedures
 
    :param num_nodes:
       **[Input]** The number of nodes :math:`N` we are bounding.
-   :type num_nodes: const int*
+   :type num_nodes: :c:expr:`const int*`
    :param nodes:
       **[Input]** The actual nodes as a :math:`2 \times N` array. This should
       be laid out in Fortran order, with :math:`2 N` total values.
-   :type nodes: const double*
-   :param double* left:
+   :type nodes: :c:expr:`const double*`
+   :param left:
       **[Output]** The minimal :math:`x`\-value :math:`m_x`.
-   :param double* right:
+   :type left: :c:expr:`double*`
+   :param right:
       **[Output]** The maximal :math:`x`\-value :math:`M_x`.
-   :param double* bottom:
+   :type right: :c:expr:`double*`
+   :param bottom:
       **[Output]** The minimal :math:`y`\-value :math:`m_y`.
-   :param double* top:
+   :type bottom: :c:expr:`double*`
+   :param top:
       **[Output]** The maximal :math:`y`\-value :math:`M_y`.
+   :type top: :c:expr:`double*`
 
    **Signature:**
 
@@ -59,20 +63,21 @@ Procedures
 
    :param num_nodes:
       **[Input]** The number of nodes :math:`N` define the bounding box.
-   :type num_nodes: const int*
+   :type num_nodes: :c:expr:`const int*`
    :param dimension:
       **[Input]** The dimension :math:`D` such that the nodes and point lie in
       :math:`\mathbf{R}^D`.
-   :type dimension: const int*
+   :type dimension: :c:expr:`const int*`
    :param nodes:
       **[Input]** The actual nodes as a :math:`D \times N` array. This should
       be laid out in Fortran order, with :math:`D N` total values.
-   :type nodes: const double*
+   :type nodes: :c:expr:`const double*`
    :param point:
       **[Input]** The point :math:`p` as an array containing :math:`D` values.
-   :type point: const double*
-   :param bool* predicate:
+   :type point: :c:expr:`const double*`
+   :param predicate:
       **[Output]** Flag indicating if the point lies inside the box.
+   :type predicate: :c:expr:`bool*`
 
    **Signature:**
 
@@ -96,12 +101,13 @@ Procedures
 
    :param vec0:
       **[Input]** The first vector :math:`v_1` in :math:`\mathbf{R}^2`.
-   :type vec0: const double*
+   :type vec0: :c:expr:`const double*`
    :param vec1:
       **[Input]** The second vector :math:`v_2` in :math:`\mathbf{R}^2`.
-   :type vec1: const double*
-   :param double* result:
+   :type vec1: :c:expr:`const double*`
+   :param result:
       **[Output]** The cross-product.
+   :type result: :c:expr:`double*`
 
    **Signature:**
 
@@ -120,14 +126,14 @@ Procedures
 
    :param value:
       **[Input]** The value :math:`v`.
-   :type value: const double*
+   :type value: :c:expr:`const double*`
    :param start:
       **[Input]** The start :math:`s` of the interval
       :math:`\left[s, e\right]`.
-   :type start: const double*
+   :type start: :c:expr:`const double*`
    :param end:
       **[Input]** The end :math:`e` of the interval :math:`\left[s, e\right]`.
-   :type end: const double*
+   :type end: :c:expr:`const double*`
    :returns: Flag indicating if :math:`v \in \left[s, e\right]`.
    :rtype: bool
 
@@ -150,20 +156,21 @@ Procedures
 
    :param polygon_size1:
       **[Input]** The number of sides :math:`N_1` in the first polygon.
-   :type polygon_size1: const int*
+   :type polygon_size1: :c:expr:`const int*`
    :param polygon1:
       **[Input]** The nodes of the first polygon as a :math:`2 \times N_1`
       array. This should be laid out in Fortran order.
-   :type polygon1: const double*
+   :type polygon1: :c:expr:`const double*`
    :param polygon_size2:
       **[Input]** The number of sides :math:`N_2` in the second polygon.
-   :type polygon_size2: const int*
+   :type polygon_size2: :c:expr:`const int*`
    :param polygon2:
       **[Input]** The nodes of the second polygon as a :math:`2 \times N_2`
       array. This should be laid out in Fortran order.
-   :type polygon2: const double*
-   :param bool* collision:
+   :type polygon2: :c:expr:`const double*`
+   :param collision:
       **[Output]** Flag indicating if the polygons collide.
+   :type collision: :c:expr:`bool*`
 
    **Signature:**
 
@@ -185,18 +192,20 @@ Procedures
 
    :param num_points:
       **[Input]** The number of points :math:`N`.
-   :type num_points: const int*
+   :type num_points: :c:expr:`const int*`
    :param points:
       **[Input]** The points being considered, as a :math:`2 \times N`
       array. This should be laid out in Fortran order.
-   :type points: const double*
-   :param int* polygon_size:
+   :type points: :c:expr:`const double*`
+   :param polygon_size:
       **[Output]** The number of sides :math:`M` in the convex hull. This
       will be at most :math:`N`.
-   :param double* polygon:
+   :type polygon_size: :c:expr:`int*`
+   :param polygon:
       **[Output]** The nodes in the convex hull, as a :math:`2 \times N`
       array laid out in Fortran order. This must be allocated by the caller
       and must be size :math:`N` to account for the extreme case.
+   :type polygon: :c:expr:`double*`
 
    **Signature:**
 
@@ -218,21 +227,21 @@ Procedures
    :param num_values:
       **[Input]** The dimension :math:`D` such that the vectors lie in
       :math:`\mathbf{R}^D`.
-   :type num_values: const int*
+   :type num_values: :c:expr:`const int*`
    :param vec1:
       **[Input]** The first vector :math:`v_1`, as an array of :math:`D`
       values.
-   :type vec1: const double*
+   :type vec1: :c:expr:`const double*`
    :param vec2:
       **[Input]** The second vector :math:`v_2`, as an array of :math:`D`
       values.
-   :type vec2: const double*
+   :type vec2: :c:expr:`const double*`
    :param eps:
       **[Input]** The tolerance :math:`\varepsilon` used when comparing
       :math:`\left\lVert v_1 - v_2 \right\rVert` to
       :math:`\left\lVert v_1 \right\rVert` and
       :math:`\left\lVert v_2 \right\rVert`.
-   :type eps: const double*
+   :type eps: :c:expr:`const double*`
    :returns:
       Flag indicating if :math:`v_1` and :math:`v_2` are close to the desired
       precision.
@@ -269,13 +278,15 @@ Procedures
 
    :param value:
       **[Input]** The value :math:`v` to be rounded.
-   :type value: const double*
-   :param double* result:
+   :type value: :c:expr:`const double*`
+   :param result:
       **[Output]** The rounded version of :math:`v`. If ``success`` is
       ``FALSE`` this is undefined.
-   :param bool* success:
+   :type result: :c:expr:`double*`
+   :param success:
       **[Output]** Flag indicating if :math:`v` was in the unit interval or
       sufficiently close to it.
+   :type success: :c:expr:`bool*`
 
    **Signature:**
 

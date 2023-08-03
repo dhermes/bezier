@@ -10,37 +10,32 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import email
+import importlib.metadata
 import unittest
-
-import pkg_resources
 
 
 class Test___version__(unittest.TestCase):
-
     # NOTE: The ``__version__`` is hard-coded in ``__init__.py`` to
-    #       accomodate builds where ``bezier`` is imported from source
+    #       accommodate builds where ``bezier`` is imported from source
     #       but not installed.
 
     def test_it(self):
         import bezier
 
         hardcoded_version = bezier.__version__
-        installed_version = pkg_resources.get_distribution("bezier").version
+        installed_version = importlib.metadata.distribution("bezier").version
         self.assertEqual(hardcoded_version, installed_version)
 
 
 class Test___author__(unittest.TestCase):
-
     # NOTE: The ``__author__`` is hard-coded in ``__init__.py`` to
-    #       accomodate builds where ``bezier`` is imported from source
+    #       accommodate builds where ``bezier`` is imported from source
     #       but not installed.
 
     def test_it(self):
         import bezier
 
         hardcoded_author = bezier.__author__
-        distrib = pkg_resources.get_distribution("bezier")
-        metadata = distrib.get_metadata(distrib.PKG_INFO)
-        installed_author = email.message_from_string(metadata).get("Author")
+        distrib = importlib.metadata.distribution("bezier")
+        installed_author = distrib.metadata.get("Author")
         self.assertEqual(hardcoded_author, installed_author)

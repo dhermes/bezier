@@ -29,21 +29,23 @@ Procedures
    :param num_nodes:
       **[Input]** The number of control points :math:`N` of a
       B |eacute| zier curve.
-   :type num_nodes: const int*
+   :type num_nodes: :c:expr:`const int*`
    :param dimension:
       **[Input]** The dimension :math:`D` such that the curve lies in
       :math:`\mathbf{R}^D`.
-   :type dimension: const int*
+   :type dimension: :c:expr:`const int*`
    :param nodes:
       **[Input]** The actual control points of the curve as a
       :math:`D \times N` array. This should be laid out in Fortran order,
       with :math:`D N` total values.
-   :type nodes: const double*
-   :param double* length:
+   :type nodes: :c:expr:`const double*`
+   :param length:
       **[Output]** The computed length :math:`\ell`.
-   :param int* error_val:
+   :type length: :c:expr:`double*`
+   :param error_val:
       **[Output]** An error status passed along from ``dqagse`` (a QUADPACK
       procedure).
+   :type error_val: :c:expr:`int*`
 
    **Signature:**
 
@@ -115,19 +117,20 @@ Procedures
    :param num_nodes:
       **[Input]** The number of control points :math:`N` of a
       B |eacute| zier curve.
-   :type num_nodes: const int*
+   :type num_nodes: :c:expr:`const int*`
    :param dimension:
       **[Input]** The dimension :math:`D` such that the curve lies in
       :math:`\mathbf{R}^D`.
-   :type dimension: const int*
+   :type dimension: :c:expr:`const int*`
    :param nodes:
       **[Input]** The actual control points of the curve as a
       :math:`D \times N` array. This should be laid out in Fortran order,
       with :math:`D N` total values.
-   :type nodes: const double*
-   :param double* elevated:
+   :type nodes: :c:expr:`const double*`
+   :param elevated:
       **[Output]** The control points of the degree-elevated curve as a
       :math:`D \times (N + 1)` array, laid out in Fortran order.
+   :type elevated: :c:expr:`double*`
 
    **Signature:**
 
@@ -206,32 +209,33 @@ Procedures
    :param num_nodes:
       **[Input]** The number of control points :math:`N` of a
       B |eacute| zier curve.
-   :type num_nodes: const int*
+   :type num_nodes: :c:expr:`const int*`
    :param dimension:
       **[Input]** The dimension :math:`D` such that the curve lies in
       :math:`\mathbf{R}^D`.
-   :type dimension: const int*
+   :type dimension: :c:expr:`const int*`
    :param nodes:
       **[Input]** The actual control points of the curve as a
       :math:`D \times N` array. This should be laid out in Fortran order,
       with :math:`D N` total values.
-   :type nodes: const double*
+   :type nodes: :c:expr:`const double*`
    :param num_vals:
       **[Input]** The number of values :math:`k` where the quantity will be
       evaluated.
-   :type num_vals: const int*
+   :type num_vals: :c:expr:`const int*`
    :param lambda1:
       **[Input]** An array of :math:`k` values used for the first parameter
       :math:`\lambda_1`.
-   :type lambda1: const double*
+   :type lambda1: :c:expr:`const double*`
    :param lambda2:
       **[Input]** An array of :math:`k` values used for the second parameter
       :math:`\lambda_2`.
-   :type lambda2: const double*
-   :param double* evaluated:
+   :type lambda2: :c:expr:`const double*`
+   :param evaluated:
       **[Output]** The evaluated quantites as a :math:`D \times k` array, laid
       out in Fortran order. Column :math:`j` of ``evaluated`` will contain
       :math:`Q\left(\lambda_1\left[j\right], \lambda_2\left[j\right]\right)`.
+   :type evaluated: :c:expr:`double*`
 
    **Signature:**
 
@@ -310,22 +314,23 @@ Procedures
    :param s:
       **[Input]** The parameter :math:`s` where the hodograph is being
       computed.
-   :type s: const double*
+   :type s: :c:expr:`const double*`
    :param num_nodes:
       **[Input]** The number of control points :math:`N` of a
       B |eacute| zier curve.
-   :type num_nodes: const int*
+   :type num_nodes: :c:expr:`const int*`
    :param dimension:
       **[Input]** The dimension :math:`D` such that the curve lies in
       :math:`\mathbf{R}^D`.
-   :type dimension: const int*
+   :type dimension: :c:expr:`const int*`
    :param nodes:
       **[Input]** The actual control points of the curve as a
       :math:`D \times N` array. This should be laid out in Fortran order,
       with :math:`D N` total values.
-   :type nodes: const double*
-   :param double* hodograph:
+   :type nodes: :c:expr:`const double*`
+   :param hodograph:
       **[Output]** The hodograph :math:`B'(s)` as a :math:`D \times 1` array.
+   :type hodograph: :c:expr:`double*`
 
    **Signature:**
 
@@ -391,27 +396,28 @@ Procedures
    :param num_nodes:
       **[Input]** The number of control points :math:`N` of a
       B |eacute| zier curve.
-   :type num_nodes: const int*
+   :type num_nodes: :c:expr:`const int*`
    :param dimension:
       **[Input]** The dimension :math:`D` such that the curve lies in
       :math:`\mathbf{R}^D`.
-   :type dimension: const int*
+   :type dimension: :c:expr:`const int*`
    :param nodes:
       **[Input]** The actual control points of the curve as a
       :math:`D \times N` array. This should be laid out in Fortran order,
       with :math:`D N` total values.
-   :type nodes: const double*
+   :type nodes: :c:expr:`const double*`
    :param num_vals:
       **[Input]** The number of values :math:`k` where the :math:`B(s)` will be
       evaluated.
-   :type num_vals: const int*
+   :type num_vals: :c:expr:`const int*`
    :param s_vals:
       **[Input]** An array of :math:`k` values :math:`s_j`.
-   :type s_vals: const double*
-   :param double* evaluated:
+   :type s_vals: :c:expr:`const double*`
+   :param evaluated:
       **[Output]** The evaluated points as a :math:`D \times k` array, laid
       out in Fortran order. Column :math:`j` of ``evaluated`` will contain
       :math:`B\left(s_j\right)`.
+   :type evaluated: :c:expr:`double*`
 
    **Signature:**
 
@@ -481,30 +487,32 @@ Procedures
    :param num_nodes:
       **[Input]** The number of control points :math:`N` of a
       B |eacute| zier curve.
-   :type num_nodes: const int*
+   :type num_nodes: :c:expr:`const int*`
    :param dimension:
       **[Input]** The dimension :math:`D` such that the curve lies in
       :math:`\mathbf{R}^D`.
-   :type dimension: const int*
+   :type dimension: :c:expr:`const int*`
    :param nodes:
       **[Input]** The actual control points of the curve as a
       :math:`D \times N` array. This should be laid out in Fortran order,
       with :math:`D N` total values.
-   :type nodes: const double*
+   :type nodes: :c:expr:`const double*`
    :param num_reduced_nodes:
       **[Output]** The number of control points :math:`M` of the fully reduced
       curve.
-   :type num_reduced_nodes: const int*
-   :param double* reduced:
+   :type num_reduced_nodes: :c:expr:`const int*`
+   :param reduced:
       **[Output]** The control points of the fully reduced curve as a
       :math:`D \times N` array. The first :math:`M` columns will contain the
       reduced nodes. ``reduced`` must be allocated by the caller and since
       :math:`M = N` occurs when no reduction is possible, this array must be
       :math:`D \times N`.
-   :param bool* not_implemented:
+   :type reduced: :c:expr:`double*`
+   :param not_implemented:
       **[Output]** Indicates if degree-reduction has been implemented for the
       current curve's degree. (Currently, the only degrees supported are 1,
       2, 3 and  4.)
+   :type not_implemented: :c:expr:`bool*`
 
    **Signature:**
 
@@ -577,23 +585,24 @@ Procedures
    :param num_nodes:
       **[Input]** The number of control points :math:`N` of a
       B |eacute| zier curve.
-   :type num_nodes: const int*
+   :type num_nodes: :c:expr:`const int*`
    :param nodes:
       **[Input]** The actual control points of the curve as a
       :math:`2 \times N` array. This should be laid out in Fortran order,
       with :math:`2 N` total values.
-   :type nodes: const double*
+   :type nodes: :c:expr:`const double*`
    :param tangent_vec:
       **[Input]** The hodograph :math:`B'(s)` as a :math:`2 \times 1` array.
       Note that this could be computed once :math:`s` and :math:`B` are known,
       but this allows the caller to re-use an already computed tangent vector.
-   :type tangent_vec: const double*
+   :type tangent_vec: :c:expr:`const double*`
    :param s:
       **[Input]** The parameter :math:`s` where the curvature is being
       computed.
-   :type s: const double*
-   :param double* curvature:
+   :type s: :c:expr:`const double*`
+   :param curvature:
       **[Output]** The signed curvature :math:`\kappa`.
+   :type curvature: :c:expr:`double*`
 
    **Signature:**
 
@@ -652,25 +661,26 @@ Procedures
    :param num_nodes:
       **[Input]** The number of control points :math:`N` of a
       B |eacute| zier curve.
-   :type num_nodes: const int*
+   :type num_nodes: :c:expr:`const int*`
    :param dimension:
       **[Input]** The dimension :math:`D` such that the curve lies in
       :math:`\mathbf{R}^D`.
-   :type dimension: const int*
+   :type dimension: :c:expr:`const int*`
    :param nodes:
       **[Input]** The actual control points of the curve as a
       :math:`D \times N` array. This should be laid out in Fortran order,
       with :math:`D N` total values.
-   :type nodes: const double*
+   :type nodes: :c:expr:`const double*`
    :param point:
       **[Input]** The point :math:`p` as a :math:`D \times 1` array.
-   :type point: const double*
-   :param double* s_approx:
+   :type point: :c:expr:`const double*`
+   :param s_approx:
       **[Output]** The parameter :math:`s` of the solution. If
       :math:`p` can't be located on the curve, then ``s_approx = -1.0``.
       If there are **multiple** parameters that satisfy :math:`B(s) = p`
       (indicating that :math:`B(s)` has a self-crossing) then
       ``s_approx = -2.0``.
+   :type s_approx: :c:expr:`double*`
 
    **Signature:**
 
@@ -755,26 +765,27 @@ Procedures
    :param num_nodes:
       **[Input]** The number of control points :math:`N` of a
       B |eacute| zier curve.
-   :type num_nodes: const int*
+   :type num_nodes: :c:expr:`const int*`
    :param dimension:
       **[Input]** The dimension :math:`D` such that the curve lies in
       :math:`\mathbf{R}^D`.
-   :type dimension: const int*
+   :type dimension: :c:expr:`const int*`
    :param nodes:
       **[Input]** The actual control points of the curve as a
       :math:`D \times N` array. This should be laid out in Fortran order,
       with :math:`D N` total values.
-   :type nodes: const double*
+   :type nodes: :c:expr:`const double*`
    :param point:
       **[Input]** The point :math:`p` as a :math:`D \times 1` array.
-   :type point: const double*
+   :type point: :c:expr:`const double*`
    :param s:
       **[Input]** The parameter :math:`s_n` of the current approximation
       of a solution.
-   :type s: const double*
-   :param double* updated_s:
+   :type s: :c:expr:`const double*`
+   :param updated_s:
       **[Output]** The parameter :math:`s_{n + 1}` of the updated
       approximation.
+   :type updated_s: :c:expr:`double*`
 
    **Signature:**
 
@@ -845,23 +856,25 @@ Procedures
    :param num_nodes:
       **[Input]** The number of control points :math:`N` of a
       B |eacute| zier curve.
-   :type num_nodes: const int*
+   :type num_nodes: :c:expr:`const int*`
    :param dimension:
       **[Input]** The dimension :math:`D` such that the curve lies in
       :math:`\mathbf{R}^D`.
-   :type dimension: const int*
+   :type dimension: :c:expr:`const int*`
    :param nodes:
       **[Input]** The actual control points of the curve as a
       :math:`D \times N` array. This should be laid out in Fortran order,
       with :math:`D N` total values.
-   :type nodes: const double*
-   :param double* reduced:
+   :type nodes: :c:expr:`const double*`
+   :param reduced:
       **[Output]** The control points of the degree-(pseudo)reduced curve
       :math:`D \times (N - 1)` array, laid out in Fortran order.
-   :param bool* not_implemented:
+   :type reduced: :c:expr:`double*`
+   :param not_implemented:
       **[Output]** Indicates if degree-reduction has been implemented for the
       current curve's degree. (Currently, the only degrees supported are 1,
       2, 3 and  4.)
+   :type not_implemented: :c:expr:`bool*`
 
    **Signature:**
 
@@ -933,25 +946,26 @@ Procedures
    :param num_nodes:
       **[Input]** The number of control points :math:`N` of a
       B |eacute| zier curve.
-   :type num_nodes: const int*
+   :type num_nodes: :c:expr:`const int*`
    :param dimension:
       **[Input]** The dimension :math:`D` such that the curve lies in
       :math:`\mathbf{R}^D`.
-   :type dimension: const int*
+   :type dimension: :c:expr:`const int*`
    :param nodes:
       **[Input]** The actual control points of the curve as a
       :math:`D \times N` array. This should be laid out in Fortran order,
       with :math:`D N` total values.
-   :type nodes: const double*
+   :type nodes: :c:expr:`const double*`
    :param start:
       **[Input]** The start :math:`a` of the specialized interval.
-   :type start: const double*
+   :type start: :c:expr:`const double*`
    :param end:
       **[Input]** The end :math:`b` of the specialized interval.
-   :type end: const double*
-   :param double* new_nodes:
+   :type end: :c:expr:`const double*`
+   :param new_nodes:
       **[Output]** The control points of the specialized curve, as a
       :math:`D \times N` array, laid out in Fortran order.
+   :type new_nodes: :c:expr:`double*`
 
    **Signature:**
 
@@ -1026,24 +1040,26 @@ Procedures
    :param num_nodes:
       **[Input]** The number of control points :math:`N` of a
       B |eacute| zier curve.
-   :type num_nodes: const int*
+   :type num_nodes: :c:expr:`const int*`
    :param dimension:
       **[Input]** The dimension :math:`D` such that the curve lies in
       :math:`\mathbf{R}^D`.
-   :type dimension: const int*
+   :type dimension: :c:expr:`const int*`
    :param nodes:
       **[Input]** The actual control points of the curve as a
       :math:`D \times N` array. This should be laid out in Fortran order,
       with :math:`D N` total values.
-   :type nodes: const double*
-   :param double* left_nodes:
+   :type nodes: :c:expr:`const double*`
+   :param left_nodes:
       **[Output]** The control points of the left half curve
       :math:`B\left(\left[0, \frac{1}{2}\right]\right)` as a
       :math:`D \times N` array, laid out in Fortran order.
-   :param double* right_nodes:
+   :type left_nodes: :c:expr:`double*`
+   :param right_nodes:
       **[Output]** The control points of the right half curve
       :math:`B\left(\left[\frac{1}{2}, 1\right]\right)` as a
       :math:`D \times N` array, laid out in Fortran order.
+   :type right_nodes: :c:expr:`double*`
 
    **Signature:**
 

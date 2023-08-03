@@ -3,7 +3,7 @@
 
     Helper for B |eacute| zier Curves, Triangles, and Higher Order Objects
 
-|circle-build| |travis-build| |appveyor-build| |coverage|{pypi}{versions}{docs}{zenodo}{joss}
+|linux-build| |macos-build| |windows-build| |coverage|{pypi}{versions}{docs}{zenodo}{joss}
 
 .. |eacute| unicode:: U+000E9 .. LATIN SMALL LETTER E WITH ACUTE
    :trim:
@@ -71,17 +71,17 @@ The ``bezier`` Python package can be installed with `pip`_:
 
 .. code-block:: console
 
-   $ python    -m pip install --upgrade bezier
-   $ python3.8 -m pip install --upgrade bezier
+   $ python     -m pip install --upgrade bezier
+   $ python3.11 -m pip install --upgrade bezier
    $ # To install optional dependencies, e.g. SymPy
-   $ python    -m pip install --upgrade bezier[full]
+   $ python     -m pip install --upgrade bezier[full]
 
 To install a pure Python version (i.e. with no binary extension):
 
 .. code-block:: console
 
    $ BEZIER_NO_EXTENSION=true \
-   >   python  -m pip install --upgrade bezier --no-binary=bezier
+   >   python   -m pip install --upgrade bezier --no-binary=bezier
 
 ``bezier`` is open-source, so you can alternatively grab the source
 code from `GitHub`_ and install from source.
@@ -96,6 +96,8 @@ For example, to create a curve:
 
 {code_block1}
 
+   >>> import bezier
+   >>> import numpy as np
    >>> nodes1 = np.asfortranarray([
    ...     [0.0, 0.5, 1.0],
    ...     [0.0, 1.0, 0.0],
@@ -176,15 +178,15 @@ details, see `the LICENSE`_.
 
 {extra_links}.. _the LICENSE: https://github.com/dhermes/bezier/blob/{revision}/LICENSE
 
-{docs_img}.. |circle-build| image:: {circleci_badge}
-   :target: https://circleci.com/gh/dhermes/bezier{circleci_path}
-   :alt: CircleCI Build
-.. |travis-build| image:: {travis_badge}
-   :target: https://travis-ci.org/dhermes/bezier{travis_path}
-   :alt: Travis Build
-.. |appveyor-build| image:: {appveyor_badge}
-   :target: https://ci.appveyor.com/project/dhermes/bezier{appveyor_path}
-   :alt: AppVeyor CI Build{pypi_img}{versions_img}
+{docs_img}.. |linux-build| image:: {linux_badge}
+   :target: https://github.com/dhermes/bezier/actions{linux_path}
+   :alt: Linux Build (GitHub Actions)
+.. |macos-build| image:: {macos_badge}
+   :target: https://github.com/dhermes/bezier/actions{macos_path}
+   :alt: macOS Build (GitHub Actions)
+.. |windows-build| image:: {windows_badge}
+   :target: https://github.com/dhermes/bezier/actions{windows_path}
+   :alt: Windows Build (GitHub Actions){pypi_img}{versions_img}
 .. |coverage| image:: {coveralls_badge}
    :target: https://coveralls.io/{coveralls_path}
    :alt: Code Coverage{zenodo_img}{joss_img}

@@ -62,7 +62,7 @@ def add_plot_boundary(ax, padding=0.125):
     )
 
 
-def add_patch(ax, color, pts_per_edge, *edges):
+def add_patch(ax, color, pts_per_edge, *edges, alpha=0.625):
     """Add a polygonal surface patch to a plot.
 
     Args:
@@ -70,9 +70,12 @@ def add_patch(ax, color, pts_per_edge, *edges):
         color (Tuple[float, float, float]): Color as RGB profile.
         pts_per_edge (int): Number of points to use in polygonal
             approximation of edge.
-        edges (Tuple[~bezier.curve.Curve, ...]): Curved edges defining
+        alpha (Optional[float]): Alpha value of patch center, between 0 and 1
+            inclusive.
+        *edges (Tuple[~bezier.curve.Curve, ...]): Curved edges defining
             a boundary.
     """
+    # pylint: disable=too-many-locals
     # pylint: disable=import-outside-toplevel
     from matplotlib import patches
     from matplotlib import path as _path_mod
@@ -99,6 +102,6 @@ def add_patch(ax, color, pts_per_edge, *edges):
     # column but ``Path()`` wants ``x-y`` points in each row.
     path = _path_mod.Path(polygon.T)
     patch = patches.PathPatch(
-        path, facecolor=color, edgecolor=color, alpha=0.625
+        path, facecolor=color, edgecolor=color, alpha=alpha
     )
     ax.add_patch(patch)

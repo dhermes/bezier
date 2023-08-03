@@ -72,8 +72,9 @@ class Base:
         Returns:
             str: Object representation.
         """
-        return "<{} (degree={:d}, dimension={:d})>".format(
-            self.__class__.__name__, self._degree, self._dimension
+        return (
+            f"<{self.__class__.__name__} "
+            f"(degree={self._degree:d}, dimension={self._dimension:d})>"
         )
 
 

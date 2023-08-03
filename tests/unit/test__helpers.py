@@ -61,17 +61,20 @@ class Test_speedup_cross_product(test_helpers.Test_cross_product):
 
 @utils.needs_speedup
 class Test_speedup_wiggle_interval(test_helpers.Test_wiggle_interval):
+    # pylint: disable=arguments-differ
     def _call_function_under_test(self, value, **kwargs):
         from bezier import _speedup
 
         self.assertEqual(kwargs, {})
         return _speedup.wiggle_interval(value, **kwargs)
 
+    # pylint: enable=arguments-differ
+
     def test_custom_wiggle(self):
         # Fortran implementation doesn't support optional wiggle. This
         # isn't because Fortran **can't** (just use "optional"), it's just
         # to allow the compiler to pre-compute 1 + wiggle / 1 - wiggle
-        # rather than having to deal with it at run-time.
+        # rather than having to deal with it at runtime.
         pass
 
 

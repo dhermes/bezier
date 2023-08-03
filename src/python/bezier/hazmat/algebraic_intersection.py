@@ -96,23 +96,22 @@ _CHEB10 = np.asfortranarray(
     ]
 )
 # Allow a buffer of sqrt(sqrt(machine precision)) for polynomial roots.
-_IMAGINARY_WIGGLE = 0.5 ** 13
-_UNIT_INTERVAL_WIGGLE_START = -(0.5 ** 13)
-_UNIT_INTERVAL_WIGGLE_END = 1.0 + 0.5 ** 13
-_SIGMA_THRESHOLD = 0.5 ** 20
-_SINGULAR_EPS = 0.5 ** 52
+_IMAGINARY_WIGGLE = 0.5**13
+_UNIT_INTERVAL_WIGGLE_START = -(0.5**13)
+_UNIT_INTERVAL_WIGGLE_END = 1.0 + 0.5**13
+_SIGMA_THRESHOLD = 0.5**20
+_SINGULAR_EPS = 0.5**52
 # Detect almost zero polynomials.
-_L2_THRESHOLD = 0.5 ** 40  # 4096 (machine precision)
-_ZERO_THRESHOLD = 0.5 ** 38  # 16384 (machine precision)
-_COEFFICIENT_THRESHOLD = 0.5 ** 26  # sqrt(machine precision)
-_NON_SIMPLE_THRESHOLD = 0.5 ** 48  # 16 (machine precision)
+_L2_THRESHOLD = 0.5**40  # 4096 (machine precision)
+_ZERO_THRESHOLD = 0.5**38  # 16384 (machine precision)
+_COEFFICIENT_THRESHOLD = 0.5**26  # sqrt(machine precision)
+_NON_SIMPLE_THRESHOLD = 0.5**48  # 16 (machine precision)
 _COINCIDENT_ERR = "Coincident curves not currently supported"
 _NON_SIMPLE_ERR = "Polynomial has non-simple roots"
 _POWER_BASIS_ERR = (
     "Currently only supporting degree pairs "
     "1-1, 1-2, 1-3, 1-4, 2-2, 2-3, 2-4 and 3-3."
 )
-_LINEARIZATION = geometric_intersection.Linearization
 _DISJOINT = geometric_intersection.BoxIntersectionType.DISJOINT
 
 
@@ -166,7 +165,7 @@ def evaluate(nodes, x_val, y_val):
 
     Raises:
         ValueError: If the curve is a point.
-        .UnsupportedDegree: If the degree is not 1, 2 or 3.
+        UnsupportedDegree: If the degree is not 1, 2 or 3.
     """
     _, num_nodes = nodes.shape
     if num_nodes == 1:
@@ -781,6 +780,7 @@ def bezier_roots(coeffs):
 
     .. doctest:: bezier-roots0
 
+       >>> import numpy as np
        >>> coeffs0 = np.asfortranarray([12.0, 11.0, 8.0])
        >>> companion0, _, _ = bernstein_companion(coeffs0)
        >>> companion0
@@ -1050,7 +1050,8 @@ def _reciprocal_condition_number(lu_mat, one_norm):
 
     # pylint: enable=import-outside-toplevel,no-name-in-module
 
-    rcond, info = scipy.linalg.lapack.dgecon(lu_mat, one_norm)
+    _dgecon = scipy.linalg.lapack.dgecon  # pylint: disable=no-member
+    rcond, info = _dgecon(lu_mat, one_norm)
     if info != 0:
         raise RuntimeError(
             "The reciprocal 1-norm condition number could not be computed."
@@ -1323,7 +1324,7 @@ def poly_to_power_basis(bezier_coeffs):
         numpy.ndarray: 1D array of coefficients in monomial basis.
 
     Raises:
-        .UnsupportedDegree: If the degree of the curve is not among
+        UnsupportedDegree: If the degree of the curve is not among
             0, 1, 2 or 3.
     """
     (num_coeffs,) = bezier_coeffs.shape

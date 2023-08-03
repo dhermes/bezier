@@ -3,7 +3,7 @@ Installation
 ############
 
 To build the Fortran shared library directly, use `CMake`_ version
-``3.1`` or later. By `default`_, the ``CMAKE_INSTALL_PREFIX`` will install
+``3.5`` or later. By `default`_, the ``CMAKE_INSTALL_PREFIX`` will install
 the package into ``/usr/local/``. For a more temporary install location,
 ``-DCMAKE_INSTALL_PREFIX:PATH`` can be provided at build time.
 
@@ -49,7 +49,6 @@ Linux
    print_tree = tests.utils.print_tree
 
 .. doctest:: libbezier-linux
-   :options: +NORMALIZE_WHITESPACE
    :linux-only:
 
    >>> print_tree(install_prefix)
@@ -67,9 +66,9 @@ Linux
        bezier.h
        bezier.hpp
      lib/
-       libbezier.so -> libbezier.so.2020
-       libbezier.so.2020 -> libbezier.so.2020.5.19
-       libbezier.so.2020.5.19
+       libbezier.so -> libbezier.so.2023
+       libbezier.so.2023 -> libbezier.so.2023.7.28
+       libbezier.so.2023.7.28
      share/
        bezier/
          cmake/
@@ -80,7 +79,6 @@ macOS
 =====
 
 .. doctest:: libbezier-macos
-   :options: +NORMALIZE_WHITESPACE
    :macos-only:
 
    >>> print_tree(install_prefix)
@@ -98,9 +96,9 @@ macOS
        bezier.h
        bezier.hpp
      lib/
-       libbezier.2020.5.19.dylib
-       libbezier.2020.dylib -> libbezier.2020.5.19.dylib
-       libbezier.dylib -> libbezier.2020.dylib
+       libbezier.2023.7.28.dylib
+       libbezier.2023.dylib -> libbezier.2023.7.28.dylib
+       libbezier.dylib -> libbezier.2023.dylib
      share/
        bezier/
          cmake/
@@ -111,7 +109,6 @@ Windows
 =======
 
 .. doctest:: libbezier-windows
-   :options: +NORMALIZE_WHITESPACE
    :windows-only:
 
    >>> print_tree(install_prefix)

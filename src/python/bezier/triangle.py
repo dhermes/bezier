@@ -156,6 +156,7 @@ class Triangle(_base.Base):
     .. doctest:: triangle-constructor
 
        >>> import bezier
+       >>> import numpy as np
        >>> nodes = np.asfortranarray([
        ...     [0.0, 0.5, 1.0 , 0.125, 0.375, 0.25],
        ...     [0.0, 0.0, 0.25, 0.5  , 0.375, 1.0 ],
@@ -186,14 +187,12 @@ class Triangle(_base.Base):
     """
 
     __slots__ = (
-        "_dimension",  # From base class
-        "_nodes",  # From base class
         "_degree",  # From constructor
         "_edges",  # Empty default
     )
 
     def __init__(self, nodes, degree, *, copy=True, verify=True):
-        super(Triangle, self).__init__(nodes, copy=copy)
+        super().__init__(nodes, copy=copy)
         self._degree = degree
         self._edges = None
         self._verify_degree(verify)
@@ -420,7 +419,7 @@ class Triangle(_base.Base):
                 "Weights must be positive", lambda1, lambda2, lambda3
             )
 
-    def evaluate_barycentric(self, lambda1, lambda2, lambda3, _verify=True):
+    def evaluate_barycentric(self, lambda1, lambda2, lambda3, verify=True):
         r"""Compute a point on the triangle.
 
         Evaluates :math:`B\left(\lambda_1, \lambda_2, \lambda_3\right)`.
@@ -477,16 +476,16 @@ class Triangle(_base.Base):
              ...
            ValueError: ('Weights do not sum to 1', 0.25, 0.25, 0.25)
 
-        However, these "invalid" inputs can be used if ``_verify`` is
+        However, these "invalid" inputs can be used if ``verify`` is
         :data:`False`.
 
         .. doctest:: triangle-barycentric-no-verify
            :options: +NORMALIZE_WHITESPACE
 
-           >>> triangle.evaluate_barycentric(-0.25, 0.75, 0.5, _verify=False)
+           >>> triangle.evaluate_barycentric(-0.25, 0.75, 0.5, verify=False)
            array([[0.6875  ],
                   [0.546875]])
-           >>> triangle.evaluate_barycentric(0.25, 0.25, 0.25, _verify=False)
+           >>> triangle.evaluate_barycentric(0.25, 0.25, 0.25, verify=False)
            array([[0.203125],
                   [0.1875  ]])
 
@@ -494,7 +493,7 @@ class Triangle(_base.Base):
             lambda1 (float): Parameter along the reference triangle.
             lambda2 (float): Parameter along the reference triangle.
             lambda3 (float): Parameter along the reference triangle.
-            _verify (Optional[bool]): Indicates if the barycentric coordinates
+            verify (Optional[bool]): Indicates if the barycentric coordinates
                 should be verified as summing to one and all non-negative (i.e.
                 verified as barycentric). Can either be used to evaluate at
                 points outside the domain, or to save time when the caller
@@ -507,17 +506,17 @@ class Triangle(_base.Base):
         Raises:
             ValueError: If the weights are not valid barycentric
                 coordinates, i.e. they don't sum to ``1``. (Won't raise if
-                ``_verify=False``.)
+                ``verify=False``.)
             ValueError: If some weights are negative. (Won't raise if
-                ``_verify=False``.)
+                ``verify=False``.)
         """
-        if _verify:
+        if verify:
             self._verify_barycentric(lambda1, lambda2, lambda3)
         return _triangle_helpers.evaluate_barycentric(
             self._nodes, self._degree, lambda1, lambda2, lambda3
         )
 
-    def evaluate_barycentric_multi(self, param_vals, _verify=True):
+    def evaluate_barycentric_multi(self, param_vals, verify=True):
         r"""Compute multiple points on the triangle.
 
         Assumes ``param_vals`` has three columns of barycentric coordinates.
@@ -556,7 +555,7 @@ class Triangle(_base.Base):
         Args:
             param_vals (numpy.ndarray): Array of parameter values (as a
                 ``N x 3`` array).
-            _verify (Optional[bool]): Indicates if the coordinates should be
+            verify (Optional[bool]): Indicates if the coordinates should be
                 verified. See :meth:`evaluate_barycentric`. Defaults to
                 :data:`True`. Will also double check that ``param_vals``
                 is the right shape.
@@ -566,9 +565,9 @@ class Triangle(_base.Base):
 
         Raises:
             ValueError: If ``param_vals`` is not a 2D array and
-                ``_verify=True``.
+                ``verify=True``.
         """
-        if _verify:
+        if verify:
             if param_vals.ndim != 2:
                 raise ValueError("Parameter values must be 2D array")
 
@@ -594,7 +593,7 @@ class Triangle(_base.Base):
         if s < 0.0 or t < 0.0 or s + t > 1.0:
             raise ValueError("Point lies outside reference triangle", s, t)
 
-    def evaluate_cartesian(self, s, t, _verify=True):
+    def evaluate_cartesian(self, s, t, verify=True):
         r"""Compute a point on the triangle.
 
         Evaluates :math:`B\left(1 - s - t, s, t\right)` by calling
@@ -626,7 +625,7 @@ class Triangle(_base.Base):
         Args:
             s (float): Parameter along the reference triangle.
             t (float): Parameter along the reference triangle.
-            _verify (Optional[bool]): Indicates if the coordinates should be
+            verify (Optional[bool]): Indicates if the coordinates should be
                 verified inside of the reference triangle. Defaults to
                 :data:`True`.
 
@@ -634,13 +633,13 @@ class Triangle(_base.Base):
             numpy.ndarray: The point on the triangle (as a two dimensional
             NumPy array).
         """
-        if _verify:
+        if verify:
             self._verify_cartesian(s, t)
         return _triangle_helpers.evaluate_barycentric(
             self._nodes, self._degree, 1.0 - s - t, s, t
         )
 
-    def evaluate_cartesian_multi(self, param_vals, _verify=True):
+    def evaluate_cartesian_multi(self, param_vals, verify=True):
         r"""Compute multiple points on the triangle.
 
         Assumes ``param_vals`` has two columns of Cartesian coordinates.
@@ -678,7 +677,7 @@ class Triangle(_base.Base):
         Args:
             param_vals (numpy.ndarray): Array of parameter values (as a
                 ``N x 2`` array).
-            _verify (Optional[bool]): Indicates if the coordinates should be
+            verify (Optional[bool]): Indicates if the coordinates should be
                 verified. See :meth:`evaluate_cartesian`. Defaults to
                 :data:`True`. Will also double check that ``param_vals``
                 is the right shape.
@@ -688,9 +687,9 @@ class Triangle(_base.Base):
 
         Raises:
             ValueError: If ``param_vals`` is not a 2D array and
-                ``_verify=True``.
+                ``verify=True``.
         """
-        if _verify:
+        if verify:
             if param_vals.ndim != 2:
                 raise ValueError("Parameter values must be 2D array")
 
@@ -700,7 +699,9 @@ class Triangle(_base.Base):
             self._nodes, self._degree, param_vals, self._dimension
         )
 
-    def plot(self, pts_per_edge, color=None, ax=None, with_nodes=False):
+    def plot(
+        self, pts_per_edge, color=None, ax=None, with_nodes=False, alpha=0.625
+    ):
         """Plot the current triangle.
 
         Args:
@@ -710,6 +711,8 @@ class Triangle(_base.Base):
                 to add plot to.
             with_nodes (Optional[bool]): Determines if the control points
                 should be added to the plot. Off by default.
+            alpha (Optional[float]): Alpha value of patch center, between 0 and
+                1 inclusive.
 
         Returns:
             matplotlib.artist.Artist: The axis containing the plot. This
@@ -727,7 +730,9 @@ class Triangle(_base.Base):
 
         if ax is None:
             ax = _plot_helpers.new_axis()
-        _plot_helpers.add_patch(ax, color, pts_per_edge, *self._get_edges())
+        _plot_helpers.add_patch(
+            ax, color, pts_per_edge, *self._get_edges(), alpha=alpha
+        )
         if with_nodes:
             ax.plot(
                 self._nodes[0, :],
@@ -926,7 +931,7 @@ class Triangle(_base.Base):
             "_edges": self._edges,
         }
 
-    def locate(self, point, _verify=True):
+    def locate(self, point, verify=True):
         r"""Find a point on the current triangle.
 
         Solves for :math:`s` and :math:`t` in :math:`B(s, t) = p`.
@@ -966,7 +971,7 @@ class Triangle(_base.Base):
         Args:
             point (numpy.ndarray): A (``D x 1``) point on the triangle,
                 where :math:`D` is the dimension of the triangle.
-            _verify (Optional[bool]): Indicates if extra caution should be
+            verify (Optional[bool]): Indicates if extra caution should be
                 used to verify assumptions about the inputs. Can be
                 disabled to speed up execution time. Defaults to :data:`True`.
 
@@ -980,7 +985,7 @@ class Triangle(_base.Base):
             ValueError: If the dimension of the ``point`` doesn't match the
                 dimension of the current triangle.
         """
-        if _verify:
+        if verify:
             if self._dimension != 2:
                 raise NotImplementedError("Only 2D triangles supported.")
 
@@ -997,7 +1002,7 @@ class Triangle(_base.Base):
             self._nodes, self._degree, point[0, 0], point[1, 0]
         )
 
-    def intersect(self, other, strategy=_STRATEGY.GEOMETRIC, _verify=True):
+    def intersect(self, other, strategy=_STRATEGY.GEOMETRIC, verify=True):
         """Find the common intersection with another triangle.
 
         Args:
@@ -1005,7 +1010,7 @@ class Triangle(_base.Base):
             strategy (Optional[ \
                 ~bezier.hazmat.intersection_helpers.IntersectionStrategy]): The
                 intersection algorithm to use. Defaults to geometric.
-            _verify (Optional[bool]): Indicates if extra caution should be
+            verify (Optional[bool]): Indicates if extra caution should be
                 used to verify assumptions about the algorithm as it
                 proceeds. Can be disabled to speed up execution time.
                 Defaults to :data:`True`.
@@ -1016,13 +1021,13 @@ class Triangle(_base.Base):
             empty).
 
         Raises:
-            TypeError: If ``other`` is not a triangle (and ``_verify=True``).
+            TypeError: If ``other`` is not a triangle (and ``verify=True``).
             NotImplementedError: If at least one of the triangles
-                isn't two-dimensional (and ``_verify=True``).
+                isn't two-dimensional (and ``verify=True``).
             ValueError: If ``strategy`` is not a valid
                 :class:`.IntersectionStrategy`.
         """
-        if _verify:
+        if verify:
             if not isinstance(other, Triangle):
                 raise TypeError(
                     "Can only intersect with another triangle",
@@ -1043,7 +1048,7 @@ class Triangle(_base.Base):
             raise ValueError("Unexpected strategy.", strategy)
 
         edge_infos, contained, all_edge_nodes = do_intersect(
-            self._nodes, self._degree, other._nodes, other._degree, _verify
+            self._nodes, self._degree, other._nodes, other._degree, verify
         )
         if edge_infos is None:
             if contained:
@@ -1150,9 +1155,6 @@ class Triangle(_base.Base):
         new_nodes /= denominator
         return Triangle(new_nodes, self._degree + 1, copy=False, verify=False)
 
-    # Return type doc appears missing to Pylint because of the use of the
-    # :class:`sympy.Matrix ...` aliases.
-    # pylint: disable=missing-return-type-doc
     def to_symbolic(self):
         """Convert to a SymPy matrix representing :math:`B(s, t)`.
 
@@ -1184,7 +1186,7 @@ class Triangle(_base.Base):
         return b_polynomial
 
     def implicitize(self):
-        r"""Implicitize the triangle .
+        r"""Implicitize the triangle.
 
         .. note::
 
@@ -1218,8 +1220,6 @@ class Triangle(_base.Base):
 
         return _symbolic.implicitize_triangle(self._nodes, self._degree)
 
-    # pylint: enable=missing-return-type-doc
-
 
 def _make_intersection(edge_info, all_edge_nodes):
     """Convert a description of edges into a curved polygon.
@@ -1248,5 +1248,5 @@ def _make_intersection(edge_info, all_edge_nodes):
         edge = _curve_mod.Curve(new_nodes, degree, copy=False, verify=False)
         edges.append(edge)
     return curved_polygon.CurvedPolygon(
-        *edges, metadata=edge_info, _verify=False
+        *edges, metadata=edge_info, verify=False
     )

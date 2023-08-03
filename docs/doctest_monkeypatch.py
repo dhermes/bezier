@@ -30,7 +30,7 @@ and skip a test based on the options.
 
 .. note::
 
-   This works with version(s) 1.6.4 of Sphinx, but may not work with
+   This works with version(s) 6.2.1 of Sphinx, but may not work with
    other versions (i.e. the monkey-patch relies on some knowledge of
    the implementation).
 """
@@ -41,6 +41,7 @@ import sys
 
 import docutils.parsers.rst
 import sphinx.ext.doctest
+
 
 IS_WINDOWS = os.name == "nt"
 IS_LINUX = sys.platform in ("linux", "linux2")

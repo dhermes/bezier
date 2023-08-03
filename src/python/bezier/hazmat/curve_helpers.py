@@ -24,9 +24,9 @@ from bezier.hazmat import helpers as _py_helpers
 
 
 _MAX_LOCATE_SUBDIVISIONS = 20
-_LOCATE_STD_CAP = 0.5 ** 20
+_LOCATE_STD_CAP = 0.5**20
 _FLOAT64 = np.float64  # pylint: disable=no-member
-_REDUCE_THRESHOLD = 0.5 ** 26  # sqrt(machine precision)
+_REDUCE_THRESHOLD = 0.5**26  # sqrt(machine precision)
 # Projections onto the space of degree-elevated nodes.
 # If v --> vE is the (right) elevation map, then P = E^T (E E^T)^{-1} E
 # is the (right) projection.
@@ -183,9 +183,6 @@ def subdivide_nodes(nodes):
 def evaluate_multi(nodes, s_vals):
     r"""Computes multiple points along a curve.
 
-    Does so via a modified Horner's method for each value in ``s_vals``
-    rather than using the de Casteljau algorithm.
-
     .. note::
 
        There is also a Fortran implementation of this function, which
@@ -205,8 +202,10 @@ def evaluate_multi(nodes, s_vals):
     return evaluate_multi_barycentric(nodes, one_less, s_vals)
 
 
-def evaluate_multi_barycentric(nodes, lambda1, lambda2):
+def evaluate_multi_vs(nodes, lambda1, lambda2):
     r"""Evaluates a B |eacute| zier type-function.
+
+    .. _VS Algorithm: https://doi.org/10.1016/0167-8396(86)90018-X
 
     Of the form
 
@@ -217,14 +216,21 @@ def evaluate_multi_barycentric(nodes, lambda1, lambda2):
 
     for some set of vectors :math:`v_j` given by ``nodes``.
 
-    Does so via a modified Horner's method for each pair of values
-    in ``lambda1`` and ``lambda2``, rather than using the
-    de Casteljau algorithm.
+    Does so via a modified Horner's method (the `VS Algorithm`_) for each
+    pair of values in ``lambda1`` and ``lambda2``.
 
-    .. note::
+    .. math::
 
-       There is also a Fortran implementation of this function, which
-       will be used if it can be built.
+       \begin{align*}
+       w_0 &= \lambda_1 v_0 \\
+       w_j &= \lambda_1 \left[w_{j - 1} +
+           \binom{n}{j} \lambda_2^j v_j\right] \\
+       w_n &= w_{n - 1} + \lambda_2^n v_n \\
+       B(\lambda_1, \lambda_2) &= w_n
+       \end{align*}
+
+    Additionally, binomial coefficients are computed by utilizing the fact that
+    :math:`\binom{n}{j} = \binom{n}{j - 1} \frac{n - j + 1}{j}`.
 
     Args:
         nodes (numpy.ndarray): The nodes defining a curve.
@@ -257,6 +263,112 @@ def evaluate_multi_barycentric(nodes, lambda1, lambda2):
         result *= lambda1
     result += lambda2 * lambda2_pow * nodes[:, [degree]]
     return result
+
+
+def evaluate_multi_de_casteljau(nodes, lambda1, lambda2):
+    r"""Evaluates a B |eacute| zier type-function.
+
+    Of the form
+
+    .. math::
+
+       B(\lambda_1, \lambda_2) = \sum_j \binom{n}{j}
+           \lambda_1^{n - j} \lambda_2^j \cdot v_j
+
+    for some set of vectors :math:`v_j` given by ``nodes``.
+
+    Does so via the de Castljau algorithm:
+
+    .. math::
+
+       \begin{align*}
+       v_j^{(n)} &= v_j \\
+       v_j^{(k)} &= \lambda_1 \cdot v_j^{(k + 1)} +
+           \lambda_2 \cdot v_{j + 1}^{(k + 1)} \\
+       B(\lambda_1, \lambda_2) &= v_0^{(0)}
+       \end{align*}
+
+    Args:
+        nodes (numpy.ndarray): The nodes defining a curve.
+        lambda1 (numpy.ndarray): Parameters along the curve (as a
+            1D array).
+        lambda2 (numpy.ndarray): Parameters along the curve (as a
+            1D array). Typically we have ``lambda1 + lambda2 == 1``.
+
+    Returns:
+        numpy.ndarray: The evaluated points as a two dimensional
+        NumPy array, with the columns corresponding to each pair of parameter
+        values and the rows to the dimension.
+    """
+    # NOTE: We assume but don't check that lambda2 has the same shape.
+    (num_vals,) = lambda1.shape
+    dimension, num_nodes = nodes.shape
+    degree = num_nodes - 1
+
+    lambda1_wide = np.empty((dimension, num_vals, degree), order="F")
+    lambda2_wide = np.empty((dimension, num_vals, degree), order="F")
+    workspace = np.empty((dimension, num_vals, degree), order="F")
+    for index in range(num_vals):
+        lambda1_wide[:, index, :] = lambda1[index]
+        lambda2_wide[:, index, :] = lambda2[index]
+        workspace[:, index, :] = (
+            lambda1[index] * nodes[:, :degree] + lambda2[index] * nodes[:, 1:]
+        )
+
+    for index in range(degree - 1, 0, -1):
+        workspace[:, :, :index] = (
+            lambda1_wide[:, :, :index] * workspace[:, :, :index]
+            + lambda2_wide[:, :, :index]
+            * workspace[:, :, 1 : (index + 1)]  # noqa: E203
+        )
+
+    # NOTE: This returns an array with `evaluated.flags.owndata` false, though
+    #       it is Fortran contiguous.
+    return workspace[:, :, 0]
+
+
+def evaluate_multi_barycentric(nodes, lambda1, lambda2):
+    r"""Evaluates a B |eacute| zier type-function.
+
+    Of the form
+
+    .. math::
+
+       B(\lambda_1, \lambda_2) = \sum_j \binom{n}{j}
+           \lambda_1^{n - j} \lambda_2^j \cdot v_j
+
+    for some set of vectors :math:`v_j` given by ``nodes``. This uses the
+    more efficient :func:`.evaluate_multi_vs` until degree 55, at which point
+    :math:`\binom{55}{26}` and other coefficients cannot be computed exactly.
+    For degree 55 and higher, the classical de Casteljau algorithm will be
+    used via :func:`.evaluate_multi_de_casteljau`.
+
+    .. note::
+
+       There is also a Fortran implementation of this function, which
+       will be used if it can be built.
+
+    Args:
+        nodes (numpy.ndarray): The nodes defining a curve.
+        lambda1 (numpy.ndarray): Parameters along the curve (as a
+            1D array).
+        lambda2 (numpy.ndarray): Parameters along the curve (as a
+            1D array). Typically we have ``lambda1 + lambda2 == 1``.
+
+    Returns:
+        numpy.ndarray: The evaluated points as a two dimensional
+        NumPy array, with the columns corresponding to each pair of parameter
+        values and the rows to the dimension.
+    """
+    _, num_nodes = nodes.shape
+    # NOTE: The computation of (degree C k) values in ``evaluate_multi_vs``
+    #       starts to introduce round-off when computing (55 C 26). For very
+    #       large degree, we ditch the VS algorithm and use de Casteljau
+    #       (which has quadratic runtime and cubic space usage).
+    if num_nodes > 55:
+        return evaluate_multi_de_casteljau(nodes, lambda1, lambda2)
+
+    return evaluate_multi_vs(nodes, lambda1, lambda2)
 
 
 def vec_size(nodes, s_val):
@@ -328,7 +440,7 @@ def compute_length(nodes):
         return np.linalg.norm(first_deriv[:, 0], ord=2)
 
     # NOTE: We import SciPy at runtime to avoid the import-time cost for users
-    #       that don't pure Python curve helpers (e.g. if the ``_speedup``
+    #       that don't need pure Python curve helpers (e.g. if the ``_speedup``
     #       module is available). The ``scipy`` import is a tad expensive.
     import scipy.integrate  # pylint: disable=import-outside-toplevel
 
@@ -506,6 +618,7 @@ def get_curvature(nodes, tangent_vec, s):
     .. doctest:: get-curvature
        :options: +NORMALIZE_WHITESPACE
 
+       >>> import numpy as np
        >>> nodes = np.asfortranarray([
        ...     [1.0, 0.75,  0.5, 0.25, 0.0],
        ...     [0.0, 2.0 , -2.0, 2.0 , 0.0],
@@ -611,6 +724,7 @@ def newton_refine(nodes, point, s):
     .. doctest:: newton-refine-curve
        :options: +NORMALIZE_WHITESPACE
 
+       >>> import bezier
        >>> nodes = np.asfortranarray([
        ...     [0.0, 1.0, 3.0],
        ...     [0.0, 2.0, 1.0],
@@ -813,7 +927,7 @@ def reduce_pseudo_inverse(nodes):
         numpy.ndarray: The reduced nodes.
 
     Raises:
-        .UnsupportedDegree: If the degree is not 1, 2, 3 or 4.
+        UnsupportedDegree: If the degree is not 1, 2, 3 or 4.
     """
     _, num_nodes = np.shape(nodes)
     if num_nodes == 2:
@@ -887,7 +1001,7 @@ def maybe_reduce(nodes):
         either the reduced ones or the original passed in.
 
     Raises:
-        .UnsupportedDegree: If the curve is degree 5 or higher.
+        UnsupportedDegree: If the curve is degree 5 or higher.
     """
     _, num_nodes = nodes.shape
     if num_nodes < 2:
@@ -937,3 +1051,68 @@ def full_reduce(nodes):
     while was_reduced:
         was_reduced, nodes = maybe_reduce(nodes)
     return nodes
+
+
+def discrete_turning_angle(nodes):
+    r"""Determine the absolute sum of B |eacute| zier node angles.
+
+    .. note::
+
+       This assumes, but does not check, that ``nodes`` is ``2 x N``.
+
+    For the set of vectors :math:`v_j` given by ``nodes``, the discrete
+    angles :math:`\theta_j` at each internal node is given by
+
+    .. math::
+
+       \left(v_{j} - v_{j - 1}\right) \cdot \left(v_{j + 1} - v_{j}\right) =
+         \| v_{j} - v_{j - 1} \|_2 \| v_{j + 1} - v_{j} \|_2 \cos \theta_j
+
+    and the discrete turning angle is :math:`\sum_{j} \left|\theta_j\right|`.
+    This approximates the exact turning angle
+
+    .. math::
+
+       \int_0^1 \left|\theta'(s)\right| \, ds.
+
+    This is done by considering how the angle of
+    :math:`B'(s) = \left[x'(s), y'(s)\right]^T` changes in small intervals
+    in the parameter space; where the angle is
+    :math:`\theta(s) = \arctan(y'(s) / x'(s))`. Computing
+    :math:`\theta(s + ds) - \theta(s)` as :math:`ds \longrightarrow 0` leaves
+    us with the **signed** angle change
+
+    .. math::
+
+       \theta'(s) = \frac{y''(s) x'(s) - x''(s) y'(s)}{x'(s)^2 + y'(s)^2}.
+
+    Args:
+        nodes (numpy.ndarray): The nodes in the curve.
+
+    Returns:
+        float: The (discrete) turning angle.
+    """
+    _, num_nodes = nodes.shape
+    if num_nodes < 3:
+        return 0.0
+
+    directed = nodes[:, 1:] - nodes[:, : (num_nodes - 1)]
+    vector_theta = np.arctan2(directed[1, :], directed[0, :])
+    # Two values in [-pi, pi] have a difference in [-2pi, 2pi]
+    angle_theta = vector_theta[1:] - vector_theta[: (num_nodes - 2)]
+
+    result = 0.0
+    for angle in angle_theta:
+        if angle > np.pi:
+            # Convert value in [pi, 2pi] back into [-pi, pi] and take
+            # absolute value
+            result += 2 * np.pi - angle
+        elif angle < -np.pi:
+            # Convert value in [-2pi, -pi] back into [-pi, pi] and take
+            # absolute value
+            result += 2 * np.pi + angle
+        else:
+            # Absolute value of value in [-pi, pi]
+            result += abs(angle)
+
+    return result

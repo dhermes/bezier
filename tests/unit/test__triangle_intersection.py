@@ -62,15 +62,13 @@ class Test_speedup_geometric_intersect(
         segment_ends_size, segments_size = sizes
         self.assertGreaterEqual(segment_ends_size, 2)
         self.assertGreaterEqual(segments_size, 6)
-        super_ = super(Test_speedup_geometric_intersect, self)
-        super_.test_two_curved_polygons()
+        super().test_two_curved_polygons()
         # Make sure the workspace was **not** resized.
         self.assertEqual(triangle_workspace_sizes(), sizes)
 
     def test_resize_both(self):
         reset_triangle_workspaces(segment_ends_size=1, segments_size=1)
-        super_ = super(Test_speedup_geometric_intersect, self)
-        super_.test_two_curved_polygons()
+        super().test_two_curved_polygons()
         # Make sure the sizes were resized from (1, 1).
         self.assertEqual(triangle_workspace_sizes(), (2, 6))
 

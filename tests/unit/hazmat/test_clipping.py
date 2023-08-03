@@ -15,9 +15,6 @@ import unittest
 import numpy as np
 
 
-SPACING = np.spacing  # pylint: disable=no-member
-
-
 class Test_compute_implicit_line(unittest.TestCase):
     @staticmethod
     def _call_function_under_test(nodes):
@@ -29,24 +26,22 @@ class Test_compute_implicit_line(unittest.TestCase):
         nodes = np.asfortranarray([[1.0, 5.0], [2.0, 2.0]])
         coeff_a, coeff_b, coeff_c = self._call_function_under_test(nodes)
         self.assertEqual(coeff_a, 0.0)
-        self.assertEqual(coeff_b, 1.0)
-        self.assertEqual(coeff_c, -2.0)
+        self.assertEqual(coeff_b, 4.0)
+        self.assertEqual(coeff_c, -8.0)
 
     def test_rational_length(self):
         nodes = np.asfortranarray([[3.0, 7.0], [2.0, 5.0]])
         coeff_a, coeff_b, coeff_c = self._call_function_under_test(nodes)
-        self.assertEqual(coeff_a, -3.0 / 5.0)
-        self.assertEqual(coeff_b, 4.0 / 5.0)
-        self.assertEqual(coeff_c, 1.0 / 5.0)
+        self.assertEqual(coeff_a, -3.0)
+        self.assertEqual(coeff_b, 4.0)
+        self.assertEqual(coeff_c, 1.0)
 
     def test_irrational_length(self):
         nodes = np.asfortranarray([[4.0, 5.0], [7.0, 8.0]])
         coeff_a, coeff_b, coeff_c = self._call_function_under_test(nodes)
-        sqrt_half = np.sqrt(0.5)
-        delta = SPACING(sqrt_half)  # pylint: disable=assignment-from-no-return
-        self.assertAlmostEqual(coeff_a, -sqrt_half, delta=delta)
-        self.assertAlmostEqual(coeff_b, sqrt_half, delta=delta)
-        self.assertAlmostEqual(coeff_c, -3 * sqrt_half, delta=4 * delta)
+        self.assertEqual(coeff_a, -1.0)
+        self.assertEqual(coeff_b, 1.0)
+        self.assertEqual(coeff_c, -3.0)
 
 
 class Test_compute_fat_line(unittest.TestCase):
@@ -61,8 +56,8 @@ class Test_compute_fat_line(unittest.TestCase):
         result = self._call_function_under_test(nodes)
         coeff_a, coeff_b, coeff_c, d_min, d_max = result
         self.assertEqual(coeff_a, 0.0)
-        self.assertEqual(coeff_b, 1.0)
-        self.assertEqual(coeff_c, -2.0)
+        self.assertEqual(coeff_b, 4.0)
+        self.assertEqual(coeff_c, -8.0)
         self.assertEqual(d_min, 0.0)
         self.assertEqual(d_max, 0.0)
 
@@ -70,10 +65,10 @@ class Test_compute_fat_line(unittest.TestCase):
         nodes = np.asfortranarray([[0.0, 1.0, 0.0], [0.0, 1.0, 2.0]])
         result = self._call_function_under_test(nodes)
         coeff_a, coeff_b, coeff_c, d_min, d_max = result
-        self.assertEqual(coeff_a, -1.0)
+        self.assertEqual(coeff_a, -2.0)
         self.assertEqual(coeff_b, 0.0)
         self.assertEqual(coeff_c, 0.0)
-        self.assertEqual(d_min, -1.0)
+        self.assertEqual(d_min, -2.0)
         self.assertEqual(d_max, 0.0)
 
     def test_many_interior(self):
@@ -83,10 +78,10 @@ class Test_compute_fat_line(unittest.TestCase):
         result = self._call_function_under_test(nodes)
         coeff_a, coeff_b, coeff_c, d_min, d_max = result
         self.assertEqual(coeff_a, 0.0)
-        self.assertEqual(coeff_b, 1.0)
+        self.assertEqual(coeff_b, 4.0)
         self.assertEqual(coeff_c, 0.0)
-        self.assertEqual(d_min, -4.0)
-        self.assertEqual(d_max, 4.0)
+        self.assertEqual(d_min, -16.0)
+        self.assertEqual(d_max, 16.0)
 
 
 class Test__update_parameters(unittest.TestCase):
@@ -132,10 +127,10 @@ class Test__update_parameters(unittest.TestCase):
             s_min, s_max, start0, end0, start1, end1
         )
 
-    def test_update_s_min(self):
-        s_min, s_max = self._update_helper(1.0, -1.0)
+    def test_update_both_unset(self):
+        s_min, s_max = self._update_helper(1.0, 0.0)
         self.assertEqual(s_min, 0.25)
-        self.assertEqual(s_max, -1.0)
+        self.assertEqual(s_max, 0.25)
 
     def test_update_s_max(self):
         s_min, s_max = self._update_helper(0.125, -1.0)
@@ -148,37 +143,6 @@ class Test__update_parameters(unittest.TestCase):
         self.assertEqual(s_max, 0.5)
 
 
-class Test__check_parameter_range(unittest.TestCase):
-    @staticmethod
-    def _call_function_under_test(s_min, s_max):
-        from bezier.hazmat import clipping
-
-        return clipping._check_parameter_range(s_min, s_max)
-
-    def test_default_both(self):
-        from bezier.hazmat import clipping
-
-        s_min, s_max = self._call_function_under_test(
-            clipping.DEFAULT_S_MIN, clipping.DEFAULT_S_MAX
-        )
-        self.assertEqual(s_min, 0.0)
-        self.assertEqual(s_max, 1.0)
-
-    def test_default_max(self):
-        from bezier.hazmat import clipping
-
-        s_min, s_max = self._call_function_under_test(
-            0.25, clipping.DEFAULT_S_MAX
-        )
-        self.assertEqual(s_min, 0.25)
-        self.assertEqual(s_max, 0.25)
-
-    def test_both_set(self):
-        s_min, s_max = self._call_function_under_test(0.25, 0.75)
-        self.assertEqual(s_min, 0.25)
-        self.assertEqual(s_max, 0.75)
-
-
 class Test_clip_range(unittest.TestCase):
     @staticmethod
     def _call_function_under_test(nodes1, nodes2):
@@ -186,7 +150,7 @@ class Test_clip_range(unittest.TestCase):
 
         return clipping.clip_range(nodes1, nodes2)
 
-    def test_it(self):
+    def test_simple(self):
         nodes1 = np.asfortranarray([[0.0, 1.0, 2.0], [0.0, 2.0, 0.0]])
         nodes2 = np.asfortranarray([[0.0, 2.0, 0.0], [-1.0, 1.0, 3.0]])
         start_s, end_s = self._call_function_under_test(nodes1, nodes2)
@@ -204,3 +168,38 @@ class Test_clip_range(unittest.TestCase):
             self._call_function_under_test(nodes1, nodes2)
         expected_args = (clipping.NO_PARALLEL,)
         self.assertEqual(exc_info.exception.args, expected_args)
+
+    def test_intersect_left_side(self):
+        # Due to a previous bug in ``_update_parameters``, this failed to set
+        # ``s_max`` one of the intersections.
+        nodes1 = np.asfortranarray(
+            [[2.0, 4.5, 2.5, 5.0], [0.0, 1.0, 3.0, 4.0]]
+        )
+        nodes2 = np.asfortranarray(
+            [[2.34375, 4.15625, 6.84375], [1.125, 0.875, 3.125]]
+        )
+        start_s, end_s = self._call_function_under_test(nodes1, nodes2)
+        self.assertEqual(start_s, 0.0)
+        self.assertEqual(end_s, 0.75)
+
+    def test_intersect_right_side(self):
+        nodes1 = np.asfortranarray(
+            [[2.0, 4.5, 2.5, 5.0], [0.0, 1.0, 3.0, 4.0]]
+        )
+        nodes2 = np.asfortranarray(
+            [[0.34375, 4.15625, 5.34375], [1.125, 0.875, 3.125]]
+        )
+        start_s, end_s = self._call_function_under_test(nodes1, nodes2)
+        self.assertEqual(start_s, 0.09375)
+        self.assertEqual(end_s, 1.0)
+
+    def test_fully_disjoint(self):
+        nodes1 = np.asfortranarray(
+            [[2.0, 4.5, 2.5, 5.0], [0.0, 1.0, 3.0, 4.0]]
+        )
+        nodes2 = np.asfortranarray(
+            [[0.34375, 2.15625, 2.59375], [3.125, 2.875, 4.125]]
+        )
+        start_s, end_s = self._call_function_under_test(nodes1, nodes2)
+        self.assertEqual(start_s, 1.0)
+        self.assertEqual(end_s, 0.0)

@@ -4,11 +4,9 @@ Binary Extension
 
 .. note::
 
-   This content was last updated May 19, 2020. Much of the content is tested
-   automatically to keep from getting stale, but some of the console code
-   blocks are not. As a result, this material may be out of date. If anything
-   does not seem correct --- or even if the explanation is insufficient ---
-   please `file an issue`_.
+   This content was last updated August 1, 2023. Much of the content is tested
+   automatically to keep from getting stale. If anything does not seem correct
+   --- or even if the explanation is insufficient --- please `file an issue`_.
 
    .. _file an issue: https://github.com/dhermes/bezier/issues/new
 
@@ -30,12 +28,19 @@ result, ``libbezier`` will depend on ``libgfortran``. This can be problematic
 due to version conflicts, ABI incompatibility, a desire to use a different
 Fortran compiler (e.g. Intel's ``ifort``) and a host of other reasons.
 
-Some of the standard tooling for distributing wheels tries to address this. On
-Linux and macOS, the tools address it by placing a copy of ``libgfortran`` (and
-potentially its dependencies) in the built wheel. (On Windows, there is no
-standard tooling beyond that provided by ``distutils`` and ``setuptools``.)
-This means that libraries that depend on ``libbezier`` may also need to link
-against these local copies of dependencies.
+There is standard tooling for distributing wheels that address this:
+
+* Linux: `auditwheel`_
+* macOS: `delocate`_
+* Windows: `delvewheel`_
+
+.. _auditwheel: https://github.com/pypa/auditwheel
+.. _delocate: https://github.com/matthew-brett/delocate
+.. _delvewheel: https://github.com/adang1345/delvewheel
+
+The tools address it by placing a copy of ``libgfortran`` (and potentially its
+dependencies) in the built wheel. This means that libraries that depend on
+``libbezier`` may also need to link against these local copies of dependencies.
 
 .. _pip: https://pip.pypa.io
 .. _Python wheel: https://wheel.readthedocs.io
@@ -63,15 +68,20 @@ The command line tool `auditwheel`_ adds a ``bezier.libs`` directory to
    # macOS specific.
    dylibs_directory = os.path.join(base_dir, ".dylibs")
    # Linux specific.
-   libs_directory = os.path.abspath(os.path.join(base_dir, "..", "bezier.libs"))
+   libs_directory = os.path.abspath(os.path.join(base_dir, os.pardir, "bezier.libs"))
 
 
-   def invoke_shell(*args):
+   def invoke_shell(*args, cwd=base_dir, replacements=()):
        print("$ " + " ".join(args))
        # NOTE: We print to the stdout of the doctest, rather than using
        #       ``subprocess.call()`` directly.
-       output_bytes = subprocess.check_output(args, cwd=base_dir)
-       print(output_bytes.decode("utf-8"), end="")
+       output_bytes = subprocess.check_output(args, cwd=cwd)
+       output_str = output_bytes.decode("utf-8")
+
+       for before, after in replacements:
+           output_str = output_str.replace(before, after)
+
+       print(output_str, end="")
 
 .. doctest:: linux-libs
    :linux-only:
@@ -80,30 +90,31 @@ The command line tool `auditwheel`_ adds a ``bezier.libs`` directory to
    '.../site-packages/bezier.libs'
    >>> print_tree(libs_directory)
    bezier.libs/
-     libbezier-28a97ca3.so.2020.5.19
-     libgfortran-2e0d59d6.so.5.0.0
-     libquadmath-2d0c479f.so.0.0.0
-     libz-eb09ad1d.so.1.2.3
+     libbezier-631d8eda.so.2023.7.28
+     libgfortran-040039e1.so.5.0.0
+     libquadmath-96973f99.so.0.0.0
 
 The ``bezier._speedup`` module depends on this local copy of ``libbezier``:
 
 .. testcode:: linux-readelf-py
    :hide:
 
-   invoke_shell("readelf", "-d", "_speedup.cpython-38-x86_64-linux-gnu.so")
+   invoke_shell("readelf", "-d", "_speedup.cpython-311-x86_64-linux-gnu.so")
 
 .. testoutput:: linux-readelf-py
    :linux-only:
+   :pyversion: >= 3.11
 
-   $ readelf -d _speedup.cpython-38-x86_64-linux-gnu.so
+   $ readelf -d _speedup.cpython-311-x86_64-linux-gnu.so
 
-   Dynamic section at offset 0x447000 contains 27 entries:
+   Dynamic section at offset 0x498000 contains 27 entries:
      Tag        Type                         Name/Value
     0x000000000000000f (RPATH)              Library rpath: [$ORIGIN/../bezier.libs]
-    0x0000000000000001 (NEEDED)             Shared library: [libbezier-28a97ca3.so.2020.5.19]
+    0x0000000000000001 (NEEDED)             Shared library: [libbezier-631d8eda.so.2023.7.28]
     0x0000000000000001 (NEEDED)             Shared library: [libpthread.so.0]
     0x0000000000000001 (NEEDED)             Shared library: [libc.so.6]
-    0x000000000000000c (INIT)               0x9d50
+    0x000000000000000c (INIT)               0x6000
+    0x000000000000000d (FINI)               0x7f050
    ...
 
 and the local copy of ``libbezier`` depends on the other dependencies in
@@ -112,42 +123,41 @@ and the local copy of ``libbezier`` depends on the other dependencies in
 .. testcode:: linux-readelf-lib
    :hide:
 
-   invoke_shell("readelf", "-d", "../bezier.libs/libbezier-28a97ca3.so.2020.5.19")
-   invoke_shell("readelf", "-d", "../bezier.libs/libgfortran-2e0d59d6.so.5.0.0")
+   invoke_shell("readelf", "-d", "../bezier.libs/libbezier-631d8eda.so.2023.7.28")
+   invoke_shell("readelf", "-d", "../bezier.libs/libgfortran-040039e1.so.5.0.0")
 
 .. testoutput:: linux-readelf-lib
    :linux-only:
 
-   $ readelf -d ../bezier.libs/libbezier-28a97ca3.so.2020.5.19
+   $ readelf -d ../bezier.libs/libbezier-631d8eda.so.2023.7.28
 
-   Dynamic section at offset 0x44dd8 contains 28 entries:
+   Dynamic section at offset 0x4adc8 contains 29 entries:
      Tag        Type                         Name/Value
-    0x0000000000000001 (NEEDED)             Shared library: [libgfortran-2e0d59d6.so.5.0.0]
+    0x0000000000000001 (NEEDED)             Shared library: [libgfortran-040039e1.so.5.0.0]
     0x0000000000000001 (NEEDED)             Shared library: [libm.so.6]
     0x0000000000000001 (NEEDED)             Shared library: [libgcc_s.so.1]
+    0x0000000000000001 (NEEDED)             Shared library: [libquadmath-96973f99.so.0.0.0]
     0x0000000000000001 (NEEDED)             Shared library: [libc.so.6]
-    0x000000000000000e (SONAME)             Library soname: [libbezier-28a97ca3.so.2020.5.19]
-    0x000000000000000c (INIT)               0x2be8
+    0x000000000000000e (SONAME)             Library soname: [libbezier-631d8eda.so.2023.7.28]
+    0x000000000000000c (INIT)               0x3000
    ...
-   $ readelf -d ../bezier.libs/libgfortran-2e0d59d6.so.5.0.0
+   $ readelf -d ../bezier.libs/libgfortran-040039e1.so.5.0.0
 
-   Dynamic section at offset 0x207db8 contains 31 entries:
+   Dynamic section at offset 0x275d78 contains 31 entries:
      Tag        Type                         Name/Value
-    0x0000000000000001 (NEEDED)             Shared library: [libquadmath-2d0c479f.so.0.0.0]
-    0x0000000000000001 (NEEDED)             Shared library: [libz-eb09ad1d.so.1.2.3]
+    0x0000000000000001 (NEEDED)             Shared library: [libquadmath-96973f99.so.0.0.0]
+    0x0000000000000001 (NEEDED)             Shared library: [libz.so.1]
     0x0000000000000001 (NEEDED)             Shared library: [libm.so.6]
     0x0000000000000001 (NEEDED)             Shared library: [libgcc_s.so.1]
     0x0000000000000001 (NEEDED)             Shared library: [libc.so.6]
-    0x000000000000000e (SONAME)             Library soname: [libgfortran-2e0d59d6.so.5.0.0]
-    0x000000000000000c (INIT)               0x19a78
+    0x000000000000000e (SONAME)             Library soname: [libgfortran-040039e1.so.5.0.0]
+    0x000000000000000c (INIT)               0x19a88
    ...
 
 .. note::
 
    The runtime path (``RPATH``) uses ``$ORIGIN`` to specify a path
    relative to the directory where the extension module (``.so`` file) is.
-
-.. _auditwheel: https://github.com/pypa/auditwheel
 
 macOS
 =====
@@ -163,8 +173,8 @@ with copies of ``libbezier``, ``libgfortran``, ``libquadmath`` and
    '.../site-packages/bezier/.dylibs'
    >>> print_tree(dylibs_directory)
    .dylibs/
-     libbezier.2020.5.19.dylib
-     libgcc_s.1.dylib
+     libbezier.2023.7.28.dylib
+     libgcc_s.1.1.dylib
      libgfortran.5.dylib
      libquadmath.0.dylib
 
@@ -174,16 +184,20 @@ of ``libbezier``:
 .. testcode:: macos-extension
    :hide:
 
-   invoke_shell("otool", "-L", "_speedup.cpython-38-darwin.so")
+   invoke_shell(
+      "otool",
+      "-L",
+      "_speedup.cpython-311-darwin.so",
+      replacements=(("\t", "        "),),
+   )
 
 .. testoutput:: macos-extension
-   :options: +NORMALIZE_WHITESPACE
    :macos-only:
-   :pyversion: >= 3.8
+   :pyversion: >= 3.11
 
-   $ otool -L _speedup.cpython-38-darwin.so
-   _speedup.cpython-38-darwin.so:
-           @loader_path/.dylibs/libbezier.2020.5.19.dylib (...)
+   $ otool -L _speedup.cpython-311-darwin.so
+   _speedup.cpython-311-darwin.so:
+           @loader_path/.dylibs/libbezier.2023.7.28.dylib (...)
            /usr/lib/libSystem.B.dylib (...)
 
 Though the Python extension module (``.so`` file) only depends on ``libbezier``
@@ -192,19 +206,22 @@ it indirectly depends on ``libgfortran``, ``libquadmath`` and ``libgcc_s``:
 .. testcode:: macos-delocated-libgfortran
    :hide:
 
-   invoke_shell("otool", "-L", ".dylibs/libbezier.2020.5.19.dylib")
+   invoke_shell(
+      "otool",
+      "-L",
+      ".dylibs/libbezier.2023.7.28.dylib",
+      replacements=(("\t", "        "),),
+   )
 
 .. testoutput:: macos-delocated-libgfortran
-   :options: +NORMALIZE_WHITESPACE
    :macos-only:
 
-   $ otool -L .dylibs/libbezier.2020.5.19.dylib
-   .dylibs/libbezier.2020.5.19.dylib:
-       /DLC/bezier/libbezier.2020.5.19.dylib (...)
-       @loader_path/libgfortran.5.dylib (...)
-       /usr/lib/libSystem.B.dylib (...)
-       @loader_path/libgcc_s.1.dylib (...)
-       @loader_path/libquadmath.0.dylib (...)
+   $ otool -L .dylibs/libbezier.2023.7.28.dylib
+   .dylibs/libbezier.2023.7.28.dylib:
+           /DLC/bezier/.dylibs/libbezier.2023.7.28.dylib (...)
+           @loader_path/libgfortran.5.dylib (...)
+           @loader_path/libquadmath.0.dylib (...)
+           /usr/lib/libSystem.B.dylib (...)
 
 .. note::
 
@@ -217,21 +234,59 @@ it indirectly depends on ``libgfortran``, ``libquadmath`` and ``libgcc_s``:
    the ``install_name`` of ``libbezier`` to avoid accidentally pointing
    to an existing file on the target system.
 
-.. _delocate: https://github.com/matthew-brett/delocate
-
 Windows
 =======
 
-A single Windows shared library (DLL) is provided: ``bezier.dll``.
-The Python extension module (``.pyd`` file) depends directly on this library:
+The command line tool `delvewheel`_ adds a ``bezier.libs`` directory to
+``site-packages`` (i.e. it is **next to** ``bezier``) with a modified
+``libbezier`` DLL
 
-.. testsetup:: windows-extension, windows-dll
+.. doctest:: windows-libs
+   :windows-only:
+
+   >>> libs_directory
+   '...\\site-packages\\bezier.libs'
+   >>> print_tree(libs_directory)
+   bezier.libs\
+     bezier-40ff1ce7372f05ba11436ffbadd11324.dll
+     libgcc_s_seh-1-5c71c85c0ca01174917203266ba98140.dll
+     libgfortran-5-08073c6868a1df2cbc5609e49cbe3ad8.dll
+     libquadmath-0-55d07eaa5b490be06911c864dcae60fd.dll
+     libwinpthread-1-737bdf20e708783437e6fdbd7b05edf7.dll
+
+The ``bezier._speedup`` module (``.pyd`` file) depends on this local copy of
+``libbezier``:
+
+.. testsetup:: windows-libs, windows-extension, windows-dll
 
    import distutils.ccompiler
    import os
+   import pathlib
+   import re
    import subprocess
 
    import bezier
+   import tests.utils
+
+
+   base_dir = os.path.abspath(os.path.dirname(bezier.__file__))
+   site_packages = os.path.abspath(os.path.join(base_dir, os.pardir))
+   libs_directory = os.path.join(site_packages, "bezier.libs")
+   # Use regex replacement to handle the fact that the ``bezier.dll``
+   # file contents are non-deterministic (across time / builds). The
+   # MinGW packages **are** deterministic (for a given version) but those
+   # may differ across different build machines so we replace them too.
+   dll_replacements = (
+      ("bezier-[0-9a-f]{32}.dll", "bezier-40ff1ce7372f05ba11436ffbadd11324.dll"),
+      ("libgcc_s_seh-1-[0-9a-f]{32}.dll", "libgcc_s_seh-1-5c71c85c0ca01174917203266ba98140.dll"),
+      ("libgfortran-5-[0-9a-f]{32}.dll", "libgfortran-5-08073c6868a1df2cbc5609e49cbe3ad8.dll"),
+      ("libquadmath-0-[0-9a-f]{32}.dll", "libquadmath-0-55d07eaa5b490be06911c864dcae60fd.dll"),
+      ("libwinpthread-1-[0-9a-f]{32}.dll", "libwinpthread-1-737bdf20e708783437e6fdbd7b05edf7.dll"),
+   )
+
+
+   def print_tree(directory):
+       return tests.utils.print_tree(directory, replacements=dll_replacements)
 
 
    if os.name == "nt":
@@ -246,8 +301,6 @@ The Python extension module (``.pyd`` file) depends directly on this library:
        # This won't matter if not on Windows.
        dumpbin_exe = None
 
-   bezier_directory = os.path.dirname(bezier.__file__)
-
 
    def replace_dumpbin(value):
        if value == "dumpbin":
@@ -256,59 +309,123 @@ The Python extension module (``.pyd`` file) depends directly on this library:
            return value
 
 
-   def invoke_shell(*args):
-       print("> " + " ".join(args))
+   def _transform_deps_sort_func(value):
+       if value.strip().startswith("lib"):
+           return 1, value.lower()
+
+       return 2, value.lower()
+
+
+   def transform_deps(output_str):
+       separator_before = "\n  Image has the following dependencies:\n\n"
+       separator_after = "\n\n  Summary\n"
+       before, partial = output_str.split(separator_before)
+       dependency_str, after = partial.split(separator_after)
+       dependencies = dependency_str.split("\n")
+       dependencies.sort(key=_transform_deps_sort_func)
+
+       modified = (
+           before
+           + separator_before
+           + "\n".join(dependencies)
+           + separator_after
+           + after
+       )
+       return modified
+
+
+   def invoke_shell(*args, cwd=base_dir, transform=None):
        # Replace ``"dumpbin"`` with ``dumpbin_exe``.
        cmd = tuple(map(replace_dumpbin, args))
        # NOTE: We print to the stdout of the doctest, rather than using
        #       ``subprocess.call()`` directly.
-       output_bytes = subprocess.check_output(cmd, cwd=bezier_directory)
-       print(output_bytes.decode("utf-8"), end="")
+       output_bytes = subprocess.check_output(cmd, cwd=cwd)
+
+       output_str = os.linesep.join(
+           [
+               "> " + " ".join(args),
+               output_bytes.decode("utf-8"),
+           ]
+       )
+
+       for pattern, replacement in dll_replacements:
+           output_str = re.sub(pattern, replacement, output_str)
+
+       # Normalize line endings (content is authored with UNIX-style)
+       output_str = output_str.replace(os.linesep, "\n")
+
+       if transform is not None:
+           output_str = transform(output_str)
+
+       print(output_str, end="")
 
 .. testcode:: windows-extension
    :hide:
 
-   invoke_shell("dumpbin", "/dependents", "_speedup.cp38-win_amd64.pyd")
+   invoke_shell("dumpbin", "/dependents", "_speedup.cp311-win_amd64.pyd")
 
 .. testoutput:: windows-extension
-   :options: +NORMALIZE_WHITESPACE
    :windows-only:
-   :pyversion: >= 3.8
+   :pyversion: >= 3.11
 
-   > dumpbin /dependents _speedup.cp38-win_amd64.pyd
+   > dumpbin /dependents _speedup.cp311-win_amd64.pyd
    Microsoft (R) COFF/PE Dumper Version ...
    Copyright (C) Microsoft Corporation.  All rights reserved.
 
 
-   Dump of file _speedup.cp38-win_amd64.pyd
+   Dump of file _speedup.cp311-win_amd64.pyd
 
    File Type: DLL
 
      Image has the following dependencies:
 
-       bezier-e5dbb97a.dll
-       python38.dll
+       bezier-40ff1ce7372f05ba11436ffbadd11324.dll
+       python311.dll
        KERNEL32.dll
        VCRUNTIME140.dll
        api-ms-win-crt-stdio-l1-1-0.dll
        api-ms-win-crt-heap-l1-1-0.dll
        api-ms-win-crt-runtime-l1-1-0.dll
+       api-ms-win-crt-math-l1-1-0.dll
+
+     Summary
    ...
 
-For built wheels, the dependency will be renamed from ``bezier.dll`` to a
-unique name containing the first 8 characters of the SHA256 hash of the DLL
-file (to avoid a name collision) and placed in a directory within the
-``bezier`` package: for example ``extra-dll/bezier-e5dbb97a.dll``.
+and the local copy of ``libbezier`` depends on the other dependencies in
+``bezier.libs/`` (both directly and indirectly):
 
-In order to ensure this DLL can be found, the ``bezier.__config__``
-module adds the ``extra-dll`` directory to the DLL search path on import.
-(``%PATH%`` is used on Windows as part of the DLL search path. For Python
-versions starting with 3.8, modifying ``os.environ["PATH"]`` **after** Python
-startup no longer works; instead the ``os.add_dll_directory()``
-`function <https://docs.python.org/3/library/os.html#os.add_dll_directory>`__
-achieves the same goal in a more official capacity.)
+.. testcode:: windows-dll
+   :hide:
 
-The ``libbezier`` DLL has **no external dependencies**, but does have
+   site_packages_path = pathlib.Path(site_packages)
+   dll_path, = site_packages_path.glob("bezier.libs/bezier-*.dll")
+   dll_path = dll_path.relative_to(site_packages_path)
+   dll_path = os.path.join(os.pardir, str(dll_path))
+   invoke_shell("dumpbin", "/dependents", dll_path, transform=transform_deps)
+
+.. testoutput:: windows-dll
+   :windows-only:
+
+   > dumpbin /dependents ..\bezier.libs\bezier-40ff1ce7372f05ba11436ffbadd11324.dll
+   Microsoft (R) COFF/PE Dumper Version ...
+   Copyright (C) Microsoft Corporation.  All rights reserved.
+
+
+   Dump of file ..\bezier.libs\bezier-40ff1ce7372f05ba11436ffbadd11324.dll
+
+   File Type: DLL
+
+     Image has the following dependencies:
+
+       libgcc_s_seh-1-5c71c85c0ca01174917203266ba98140.dll
+       libgfortran-5-08073c6868a1df2cbc5609e49cbe3ad8.dll
+       KERNEL32.dll
+       msvcrt.dll
+
+     Summary
+   ...
+
+To enable building the Python binary extension, the ``libbezier`` DLL also has
 a corresponding `import library`_ --- ``usr/lib/bezier.lib`` --- which is
 provided to specify the symbols in the DLL.
 
@@ -343,80 +460,6 @@ two compiler families (MSVC and MinGW) can be problematic because MinGW uses
 a fixed version of the C runtime (``MSVCRT.dll``) and this dependency cannot
 be easily dropped or changed.
 
-A Windows shared library (DLL) can be created after compiling
-each of the Fortran submodules:
-
-.. code-block:: console
-
-   $ gfortran \
-   >   -shared \
-   >   -o bezier.dll \
-   >   ${OBJ_FILES} \
-   >   -Wl,--output-def,bezier.def
-
-.. note::
-
-   Invoking ``gfortran`` **can** be done from the Windows command prompt (e.g.
-   it works just fine on AppVeyor), but it is easier to do from a shell that
-   explicitly supports MinGW, such as MSYS2.
-
-By default, the created shared library will depend on ``gcc`` libraries
-provided by MinGW:
-
-.. code-block:: rest
-
-   > dumpbin /dependents ...\bezier.dll
-   ...
-     Image has the following dependencies:
-
-       KERNEL32.dll
-       msvcrt.dll
-       libgcc_s_seh-1.dll
-       libgfortran-3.dll
-
-Unlike Linux and macOS, on Windows relocating and copying any dependencies
-on MinGW (at either compile, link or run time) is explicitly avoided. By adding
-the ``-static`` flag
-
-.. code-block:: console
-   :emphasize-lines: 2
-
-   $ gfortran \
-   >   -static \
-   >   -shared \
-   >   -o bezier.dll \
-   >   ${OBJ_FILES} \
-   >   -Wl,--output-def,bezier.def
-
-all the symbols used from ``libgfortran`` or ``libgcc_s`` are statically
-included and the resulting shared library ``bezier.dll`` has no dependency
-on MinGW:
-
-.. testcode:: windows-dll
-   :hide:
-
-   invoke_shell("dumpbin", "/dependents", "extra-dll\\bezier-e5dbb97a.dll")
-
-.. testoutput:: windows-dll
-   :options: +NORMALIZE_WHITESPACE
-   :windows-only:
-
-   > dumpbin /dependents extra-dll\bezier-e5dbb97a.dll
-   Microsoft (R) COFF/PE Dumper Version ...
-   Copyright (C) Microsoft Corporation.  All rights reserved.
-
-
-   Dump of file extra-dll\bezier-e5dbb97a.dll
-
-   File Type: DLL
-
-     Image has the following dependencies:
-
-       KERNEL32.dll
-       msvcrt.dll
-       USER32.dll
-   ...
-
 .. note::
 
    Although ``msvcrt.dll`` is a dependency of ``bezier.dll``, it is not
@@ -428,38 +471,11 @@ on MinGW:
    `deferred-shape`_ output variables. Any memory allocated in Fortran will be
    isolated within the Fortran code.
 
-   .. _deferred-shape: http://thinkingeek.com/2017/01/14/gfortran-array-descriptor/
+   .. _deferred-shape: https://thinkingeek.com/2017/01/14/gfortran-array-descriptor/
 
-   However, the dependency on ``msvcrt.dll`` can still be avoided if desired.
-   The MinGW ``gfortran`` default "specs file" can be captured:
-
-   .. code-block:: console
-
-      $ gfortran -dumpspecs > ${SPECS_FILENAME}
-
-   and modified to replace instances of ``-lmsvcrt`` with a substitute, e.g.
-   ``-lmsvcr90``. Then ``gfortran`` can be invoked with the flag
-   ``-specs=${SPECS_FILENAME}`` to use the custom spec. (Some
-   `other dependencies`_ may also indirectly depend on ``msvcrt.dll``,
-   such as ``-lmoldname``. `Removing dependencies`_ is not an easy process.)
-
-   .. _other dependencies: https://www.spiria.com/en/blog/desktop-software/building-mingw-w64-toolchain-links-specific-visual-studio-runtime-library
-   .. _Removing dependencies: http://www.pygame.org/wiki/PreparingMinGW
-
-From there, an `import library`_ must be created
-
-.. code-block:: rest
-
-   > lib /def:.\bezier.def /out:.\lib\bezier.lib /machine:${ARCH}
-
-.. note::
-
-   ``lib.exe`` is used from the same version of MSVC that compiled the
-   target Python. Luckily ``distutils`` enables this without difficulty.
-
-.. _version of MSVC: http://matthew-brett.github.io/pydagogue/python_msvc.html
-.. _largely fixed: http://stevedower.id.au/blog/building-for-python-3-5-part-two/
-.. _MinGW-w64: http://mingw-w64.org
+.. _version of MSVC: https://matthew-brett.github.io/pydagogue/python_msvc.html
+.. _largely fixed: https://stevedower.id.au/blog/building-for-python-3-5-part-two
+.. _MinGW-w64: https://mingw-w64.org
 
 Source
 ======

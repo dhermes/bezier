@@ -964,7 +964,7 @@ class Test_algebraic_intersect(Test_geometric_intersect):
         from bezier.hazmat import algebraic_intersection
 
         with self.assertRaises(NotImplementedError) as exc_info:
-            super(Test_algebraic_intersect, self).test_opposed_tangencies()
+            super().test_opposed_tangencies()
         exc_args = exc_info.exception.args
         self.assertEqual(len(exc_args), 2)
         self.assertEqual(exc_args[0], algebraic_intersection._NON_SIMPLE_ERR)
@@ -975,7 +975,7 @@ class Test_algebraic_intersect(Test_geometric_intersect):
         from bezier.hazmat import algebraic_intersection
 
         with self.assertRaises(NotImplementedError) as exc_info:
-            super(Test_algebraic_intersect, self).test_tangent_contained()
+            super().test_tangent_contained()
         exc_args = exc_info.exception.args
         self.assertEqual(len(exc_args), 2)
         self.assertEqual(exc_args[0], algebraic_intersection._NON_SIMPLE_ERR)

@@ -31,7 +31,7 @@ python scripts/rewrite_package_rst.py
 
 # If anything has changed
 if [[ -n "$(git diff -- docs/)" ]]; then
-    echo "sphinx-apidoc generated changes that are not checked in to version control."
+    echo "sphinx-apidoc generated changes that are not checked in to version control." >&2
     exit 1
 fi
 

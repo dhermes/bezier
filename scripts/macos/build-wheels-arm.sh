@@ -12,16 +12,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-SCRIPT_FI=$(readlink -f ${0})
-MANYLINUX_DIR=$(dirname ${SCRIPT_FI})
-SCRIPTS_DIR=$(dirname ${MANYLINUX_DIR})
-REPO_ROOT=$(dirname ${SCRIPTS_DIR})
-DOCKER_IMAGE=quay.io/pypa/manylinux2010_x86_64
-PRE_CMD=
+set -e -x
 
-docker run \
-    --rm \
-    --volume ${REPO_ROOT}:/io \
-    ${DOCKER_IMAGE} \
-    ${PRE_CMD} \
-    /io/scripts/manylinux/build-wheels.sh
+GIT_ROOT=$(git rev-parse --show-toplevel)
+cd "${GIT_ROOT}"
+
+export TARGET_NATIVE_ARCH=OFF
+nox --session libbezier-release --reuse-existing-virtualenvs
+
+export CIBW_BEFORE_BUILD='pip install numpy'
+export CIBW_BUILD='cp39-*arm64* cp310-*arm64* cp311-*arm64*'
+export CIBW_TEST_REQUIRES=pytest
+export CIBW_TEST_COMMAND='pytest {project}/tests/unit'
+BEZIER_INSTALL_PREFIX="$(pwd)/.nox/.cache/libbezier-release/usr"
+export BEZIER_INSTALL_PREFIX
+
+cibuildwheel --platform macos

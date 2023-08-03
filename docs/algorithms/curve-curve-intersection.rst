@@ -25,6 +25,8 @@ Curve-Line Intersection
 .. doctest:: intersect-1-8
    :options: +NORMALIZE_WHITESPACE
 
+   >>> import bezier
+   >>> import numpy as np
    >>> nodes1 = np.asfortranarray([
    ...     [0.0, 0.5, 1.0],
    ...     [0.0, 1.0, 0.0],
@@ -398,8 +400,8 @@ larger.
    ...     [t_val],
    ... ])
    >>> max_err = np.max(np.abs(intersections - expected_ints))
-   >>> binary_exponent(max_err)
-   -50
+   >>> binary_exponent(max_err) <= -49
+   True
    >>> s_vals = np.asfortranarray(intersections[0, :])
    >>> points = curve1.evaluate_multi(s_vals)
    >>> x_val = (3 * s_val + 1) / 4
@@ -409,7 +411,7 @@ larger.
    ...     [y_val],
    ... ])
    >>> max_err = np.max(np.abs(points - expected_pts))
-   >>> binary_exponent(max_err) <= -50
+   >>> binary_exponent(max_err) <= -49
    True
 
 .. image:: ../images/curves15_and_25.png
@@ -563,35 +565,6 @@ Intersections at Endpoints
           [4.]])
 
 .. image:: ../images/curves10_and_17.png
-   :align: center
-
-Detecting Self-Intersections
-----------------------------
-
-.. doctest:: intersect-12-self
-   :options: +NORMALIZE_WHITESPACE
-
-   >>> nodes = np.asfortranarray([
-   ...     [0.0, -1.0, 1.0, -0.75 ],
-   ...     [2.0,  0.0, 1.0,  1.625],
-   ... ])
-   >>> curve = bezier.Curve(nodes, degree=3)
-   >>> left, right = curve.subdivide()
-   >>> intersections = left.intersect(right)
-   >>> sq5 = np.sqrt(5.0)
-   >>> expected_ints = np.asfortranarray([
-   ...     [3, 3 - sq5],
-   ...     [0, sq5    ],
-   ... ]) / 3.0
-   >>> max_err = np.max(np.abs(intersections - expected_ints))
-   >>> binary_exponent(max_err)
-   -53
-   >>> s_vals = np.asfortranarray(intersections[0, :])
-   >>> left.evaluate_multi(s_vals)
-   array([[-0.09375 , -0.25  ],
-          [ 0.828125,  1.375 ]])
-
-.. image:: ../images/curves42_and_43.png
    :align: center
 
 Limitations

@@ -55,7 +55,7 @@ class TestCurvedPolygon(utils.NumPyTestCase):
         edge0 = bezier.Curve(self.NODES0, 2)
         with self.assertRaises(ValueError):
             self._make_one(edge0)
-        curved_poly = self._make_one(edge0, _verify=False)
+        curved_poly = self._make_one(edge0, verify=False)
         self.assertEqual(curved_poly._edges, (edge0,))
         self.assertEqual(curved_poly._num_sides, 1)
         self.assertIsNone(curved_poly._metadata)
@@ -130,7 +130,7 @@ class TestCurvedPolygon(utils.NumPyTestCase):
         # Verify mocks.
         new_axis_mock.assert_called_once_with()
         add_patch_mock.assert_called_once_with(
-            ax, None, pts_per_edge, *curved_poly._edges
+            ax, None, pts_per_edge, *curved_poly._edges, alpha=0.625
         )
 
     @unittest.mock.patch("bezier._plot_helpers.new_axis")
@@ -140,10 +140,13 @@ class TestCurvedPolygon(utils.NumPyTestCase):
         color = (0.5, 0.5, 0.5)
         curved_poly = self._make_default()
         pts_per_edge = 16
-        result = curved_poly.plot(pts_per_edge, color=color, ax=ax)
+        alpha = 0.5
+        result = curved_poly.plot(
+            pts_per_edge, color=color, ax=ax, alpha=alpha
+        )
         self.assertIs(result, ax)
         # Verify mocks.
         new_axis_mock.assert_not_called()
         add_patch_mock.assert_called_once_with(
-            ax, color, pts_per_edge, *curved_poly._edges
+            ax, color, pts_per_edge, *curved_poly._edges, alpha=alpha
         )

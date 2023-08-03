@@ -25,11 +25,11 @@ from bezier.hazmat import helpers as _py_helpers
 
 
 # For ``full_newton()``.
-ZERO_THRESHOLD = 0.5 ** 10  # ~1e-3
+ZERO_THRESHOLD = 0.5**10  # ~1e-3
 """float: The bound below values are considered to be "too close" to ``0``."""
 MAX_NEWTON_ITERATIONS = 10
 """int: The maximum number of iterations for Newton's method to converge."""
-NEWTON_ERROR_RATIO = 0.5 ** 36
+NEWTON_ERROR_RATIO = 0.5**36
 """float: Cap on error ratio during Newton's method
 
 Equal to :math:`2^{-36}`. See :func:`.newton_iterate` for more details.
@@ -141,6 +141,8 @@ def newton_refine(s, nodes1, t, nodes2):
 
     .. doctest:: newton-refine1
 
+       >>> import bezier
+       >>> import numpy as np
        >>> nodes1 = np.asfortranarray([
        ...     [0.0, 2.0, 4.0],
        ...     [0.0, 4.0, 0.0],

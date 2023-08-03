@@ -23,24 +23,25 @@ Procedures
    :param num_nodes1:
       **[Input]** The number of control points :math:`N_1` of the first
       B |eacute| zier curve.
-   :type num_nodes1: const int*
+   :type num_nodes1: :c:expr:`const int*`
    :param nodes1:
       **[Input]** The actual control points of the first curve as a
       :math:`2 \times N_1` array. This should be laid out in Fortran order,
       with :math:`2 N_1` total values.
-   :type nodes1: const double*
+   :type nodes1: :c:expr:`const double*`
    :param num_nodes2:
       **[Input]** The number of control points :math:`N_2` of the second
       B |eacute| zier curve.
-   :type num_nodes2: const int*
+   :type num_nodes2: :c:expr:`const int*`
    :param nodes2:
       **[Input]** The actual control points of the second curve as a
       :math:`2 \times N_2` array. This should be laid out in Fortran order,
       with :math:`2 N_2` total values.
-   :type nodes2: const double*
-   :param BoxIntersectionType* enum_:
+   :type nodes2: :c:expr:`const double*`
+   :param enum_:
       **[Output]** The type of intersection between the bounding boxes of the
       two curves.
+   :type enum_: :c:expr:`BoxIntersectionType*`
 
    **Signature:**
 
@@ -89,40 +90,43 @@ Procedures
    :param num_nodes_first:
       **[Input]** The number of control points :math:`N_1` of the first
       B |eacute| zier curve.
-   :type num_nodes_first: const int*
+   :type num_nodes_first: :c:expr:`const int*`
    :param nodes_first:
       **[Input]** The actual control points of the first curve as a
       :math:`2 \times N_1` array. This should be laid out in Fortran order,
       with :math:`2 N_1` total values.
-   :type nodes_first: const double*
+   :type nodes_first: :c:expr:`const double*`
    :param num_nodes_second:
       **[Input]** The number of control points :math:`N_2` of the second
       B |eacute| zier curve.
-   :type num_nodes_second: const int*
+   :type num_nodes_second: :c:expr:`const int*`
    :param nodes_second:
       **[Input]** The actual control points of the second curve as a
       :math:`2 \times N_2` array. This should be laid out in Fortran order,
       with :math:`2 N_2` total values.
-   :type nodes_second: const double*
+   :type nodes_second: :c:expr:`const double*`
    :param intersections_size:
       **[Input]** The size :math:`S` of ``intersections``, which must be
       pre-allocated by the caller. By B |eacute| zout's theorem, a hard upper
-      bound is :math:`S \leq (N_1 - 1)(N_2 - 2)` (since the degree of each
+      bound is :math:`S \leq (N_1 - 1)(N_2 - 1)` (since the degree of each
       curve is one less than the number of control points).
-   :type intersections_size: const int*
-   :param int* intersections:
+   :type intersections_size: :c:expr:`const int*`
+   :param intersections:
       **[Output]** The pairs of intersection points, as a :math:`2 \times S`
       array laid out in Fortran order. The first ``num_intersections``
       columns of ``intersections`` will be populated (unless the array is
       too small).
-   :param int* num_intersections:
+   :type intersections: :c:expr:`int*`
+   :param num_intersections:
       **[Output]** The number of intersections found.
-   :param bool* coincident:
+   :type num_intersections: :c:expr:`int*`
+   :param coincident:
       **[Output]** Flag indicating if the curves are coincident segments on
       the same algebraic curve. If they are, then ``intersections`` will
       contain two points: the beginning and end of the overlapping segment
       common to both curves.
-   :param Status* status:
+   :type coincident: :c:expr:`bool*`
+   :param status:
       **[Output]** The status code for the procedure. Will be
 
       * :c:data:`SUCCESS` on success.
@@ -136,6 +140,7 @@ Procedures
         coincident or that the intersection is a non-simple root.
       * :c:data:`BAD_MULTIPLICITY` if the curves have an intersection that
         doesn't converge to either a simple or double root via Newton's method.
+   :type status: :c:expr:`Status*`
 
    **Signature:**
 
@@ -175,41 +180,44 @@ Procedures
    :param s:
       **[Input]** The first parameter :math:`s_n` of the current approximation
       of a solution.
-   :type s: const double*
+   :type s: :c:expr:`const double*`
    :param num_nodes1:
       **[Input]** The number of control points :math:`N_1` of the first
       B |eacute| zier curve.
-   :type num_nodes1: const int*
+   :type num_nodes1: :c:expr:`const int*`
    :param nodes1:
       **[Input]** The actual control points of the first curve as a
       :math:`2 \times N_1` array. This should be laid out in Fortran order,
       with :math:`2 N_1` total values.
-   :type nodes1: const double*
+   :type nodes1: :c:expr:`const double*`
    :param t:
       **[Input]** The second parameter :math:`t_n` of the current approximation
       of a solution.
-   :type t: const double*
+   :type t: :c:expr:`const double*`
    :param num_nodes2:
       **[Input]** The number of control points :math:`N_2` of the second
       B |eacute| zier curve.
-   :type num_nodes2: const int*
+   :type num_nodes2: :c:expr:`const int*`
    :param nodes2:
       **[Input]** The actual control points of the second curve as a
       :math:`2 \times N_2` array. This should be laid out in Fortran order,
       with :math:`2 N_2` total values.
-   :type nodes2: const double*
-   :param double* new_s:
+   :type nodes2: :c:expr:`const double*`
+   :param new_s:
       **[Output]** The first parameter :math:`s_{n + 1}` of the updated
       approximation.
-   :param double* new_t:
+   :type new_s: :c:expr:`double*`
+   :param new_t:
       **[Output]** The second parameter :math:`t_{n + 1}` of the updated
       approximation.
-   :param Status* status:
+   :type new_t: :c:expr:`double*`
+   :param status:
       **[Output]** The status code for the procedure. Will be
 
       * :c:data:`SUCCESS` on success.
       * :c:data:`SINGULAR` if the computed Jacobian :math:`DF(s_n, t_n)` is
         singular to numerical precision.
+   :type status: :c:expr:`Status*`
 
    **Signature:**
 
@@ -243,23 +251,23 @@ Procedures
 Types
 *****
 
-.. c:type:: BoxIntersectionType
+.. c:enum:: BoxIntersectionType
 
    This enum is used to indicate how the bounding boxes of two B |eacute| zier
    curves intersect.
 
-   .. c:var:: INTERSECTION
+   .. c:enumerator:: INTERSECTION
 
       (``0``)
       The bounding boxes intersect in a rectangle with positive area.
 
-   .. c:var:: TANGENT
+   .. c:enumerator:: TANGENT
 
       (``1``)
       The bounding boxes are tangent, i.e. they intersect at a single point
       or along an edge and the region of intersection has zero area.
 
-   .. c:var:: DISJOINT
+   .. c:enumerator:: DISJOINT
 
       (``2``)
       The bounding boxes do not touch at any point.

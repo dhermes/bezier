@@ -3,7 +3,7 @@
 
     Helper for B |eacute| zier Curves, Triangles, and Higher Order Objects
 
-|circle-build| |travis-build| |appveyor-build| |coverage|
+|linux-build| |macos-build| |windows-build| |coverage|
 
 |zenodo| |JOSS|
 
@@ -91,17 +91,17 @@ The ``bezier`` Python package can be installed with `pip`_:
 
 .. code-block:: console
 
-   $ python    -m pip install --upgrade bezier
-   $ python3.8 -m pip install --upgrade bezier
+   $ python     -m pip install --upgrade bezier
+   $ python3.11 -m pip install --upgrade bezier
    $ # To install optional dependencies, e.g. SymPy
-   $ python    -m pip install --upgrade bezier[full]
+   $ python     -m pip install --upgrade bezier[full]
 
 To install a pure Python version (i.e. with no binary extension):
 
 .. code-block:: console
 
    $ BEZIER_NO_EXTENSION=true \
-   >   python  -m pip install --upgrade bezier --no-binary=bezier
+   >   python   -m pip install --upgrade bezier --no-binary=bezier
 
 ``bezier`` is open-source, so you can alternatively grab the source
 code from `GitHub`_ and install from source.
@@ -150,6 +150,8 @@ For example, to create a curve:
 
 .. doctest:: getting-started
 
+   >>> import bezier
+   >>> import numpy as np
    >>> nodes1 = np.asfortranarray([
    ...     [0.0, 0.5, 1.0],
    ...     [0.0, 1.0, 0.0],
@@ -251,15 +253,15 @@ details, see `the LICENSE`_.
 
 .. _the LICENSE: https://github.com/dhermes/bezier/blob/{version}/LICENSE
 
-.. |circle-build| image:: https://raw.githubusercontent.com/dhermes/bezier/{version}/docs/circleci-passing.svg?sanitize=true
-   :target: https://circleci.com/gh/dhermes/bezier/{circleci_build}
-   :alt: CircleCI Build
-.. |travis-build| image:: https://raw.githubusercontent.com/dhermes/bezier/{version}/docs/travis-passing.svg?sanitize=true
-   :target: https://travis-ci.org/dhermes/bezier/builds/{travis_build}
-   :alt: Travis Build
-.. |appveyor-build| image:: https://raw.githubusercontent.com/dhermes/bezier/{version}/docs/appveyor-passing.svg?sanitize=true
-   :target: https://ci.appveyor.com/project/dhermes/bezier/build/{appveyor_build}
-   :alt: AppVeyor CI Build
+.. |linux-build| image:: https://raw.githubusercontent.com/dhermes/bezier/{version}/docs/linux-passing.svg?sanitize=true
+   :target: https://github.com/dhermes/bezier/actions/runs/{linux_run}
+   :alt: Linux Build (GitHub Actions)
+.. |macos-build| image:: https://raw.githubusercontent.com/dhermes/bezier/{version}/docs/macos-passing.svg?sanitize=true
+   :target: https://github.com/dhermes/bezier/actions/runs/{macos_run}
+   :alt: macOS Build (GitHub Actions)
+.. |windows-build| image:: https://raw.githubusercontent.com/dhermes/bezier/{version}/docs/windows-passing.svg?sanitize=true
+   :target: https://github.com/dhermes/bezier/actions/runs/{windows_run}
+   :alt: Windows Build (GitHub Actions)
 .. |coverage| image:: https://s3.amazonaws.com/assets.coveralls.io/badges/coveralls_100.svg
    :target: https://coveralls.io/builds/{coveralls_build}
    :alt: Code Coverage

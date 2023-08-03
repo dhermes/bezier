@@ -43,7 +43,7 @@ ULPS_ALLOWED = 3.0
 # NOTE: Set a threshold for values that are "approximately" zero.
 #       This is an **absolute** error rather than a relative error
 #       since relative to zero error is always infinite.
-ZERO_THRESHOLD = 0.5 ** 52
+ZERO_THRESHOLD = 0.5**52
 ZERO_MISS = object()
 # NOTE: We use units of least precision (ULP) as error. These
 #       are for the very rare cases where the computed values
@@ -117,13 +117,14 @@ ULPS_ALLOWED_OVERRIDE = {
         },
         22: {
             (0, 0): 16,  # Established on CentOS 5 (i686 Docker image)
+            (0, 1): 7,  # Established on macOS (M1, Python 3.11)
             (1, 0): 38,  # Established on CentOS 5 (i686 Docker image)
-            (0, 1): 4,  # Established on CentOS 5 (i686 Docker image)
-            (1, 1): 4,  # Established on CentOS 5 (i686 Docker image)
+            (1, 1): 7,  # Established on macOS (M1, Python 3.11)
         },
         23: {
-            (0, 1): 4,  # Established on CentOS 5 (i686 Docker image)
+            (0, 1): 5,  # Established on macOS (M1, Python 3.11)
             (1, 0): 7,  # Established on Ubuntu 18.04
+            (1, 1): 5,  # Established on macOS (M1, Python 3.11)
         },
         25: {(4, 0): ZERO_MISS},  # Established on Ubuntu 16.04
         28: {(2, 0): 4},  # Established on CentOS 5 (i686 Docker image)
@@ -261,7 +262,7 @@ def incorrect_values(multipliers, errors, exact):
     # pylint: enable=unbalanced-tuple-unpacking
     failures = []
     for failure_row, failure_col in zip(failure_rows, failure_cols):
-        failures.append("* {:d}, {:d}".format(failure_row, failure_col))
+        failures.append(f"* {failure_row:d}, {failure_col:d}")
     failures = "\n".join(failures)
     zero_misses = np.where((exact == 0.0) & (observed_error_ulps != 0.0))
     observed_error_ulps[zero_misses] = np.nan
@@ -349,16 +350,16 @@ def test_intersect(strategy, intersection_info):
     if id_ in INCORRECT_COUNT[strategy]:
         with pytest.raises(utils.IncorrectCount):
             check_intersect(intersection_info, strategy)
-    elif intersection_type == CurveIntersectionType.tangent:
+    elif intersection_type == CurveIntersectionType.TANGENT:
         check_tangent(intersection_info, strategy)
     elif (
-        intersection_type == CurveIntersectionType.coincident
+        intersection_type == CurveIntersectionType.COINCIDENT
         or id_ in COINCIDENT_OVERRIDES[strategy]
     ):
         check_coincident(intersection_info, strategy)
-    elif intersection_type == CurveIntersectionType.standard:
+    elif intersection_type == CurveIntersectionType.STANDARD:
         check_intersect(intersection_info, strategy)
-    elif intersection_type == CurveIntersectionType.no_intersection:
+    elif intersection_type == CurveIntersectionType.NO_INTERSECTION:
         check_no_intersect(intersection_info, strategy)
     else:
         raise ValueError("Unexpected intersection type", intersection_type)

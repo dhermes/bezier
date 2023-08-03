@@ -73,7 +73,7 @@ module curve_intersection
   real(c_double), parameter :: LINEARIZATION_THRESHOLD = 0.5_dp**26
   integer(c_int), parameter :: MAX_INTERSECT_SUBDIVISIONS = 20
   real(c_double), parameter :: MIN_INTERVAL_WIDTH = 0.5_dp**40
-  ! Run-time parameters that can be modified. If multiple threads are used,
+  ! Runtime parameters that can be modified. If multiple threads are used,
   ! these **should** be thread-local (though it's expected that callers will
   ! update these values **before** beginning computation).
   integer(c_int), parameter :: MAX_CANDIDATES = 64

@@ -95,7 +95,7 @@ Breaking Changes
    The case where that failure was issued has now been handled as an acceptable
    ``TANGENT_BOTH`` classification for surface-surface intersection points.
    (See the ``classify_intersection()``
-   `function <http://bezier.readthedocs.io/en/0.8.0/algorithm-helpers.html#bezier._surface_helpers.classify_intersection>`__
+   `function <https://bezier.readthedocs.io/en/0.8.0/algorithm-helpers.html#bezier._surface_helpers.classify_intersection>`__
    for an example.)
 -  Adding ``BAD_INTERIOR`` status enum
    (`6348dc6 <https://github.com/dhermes/bezier/commit/6348dc63b5d11453fa8312997429448bbdad0a3f>`__).
@@ -109,7 +109,7 @@ Breaking Changes
    (`fe453c3 <https://github.com/dhermes/bezier/commit/fe453c3839b19ce4a85dfd0b5ad78f71a0973daf>`__).
    Now when doing geometric curve-curve intersection, parallel linearized
    segments are handled by checking if the convex hulls collide and then
-   (if they do) using a modifed Newton iteration to converge to a root.
+   (if they do) using a modified Newton iteration to converge to a root.
 -  Adding ``BAD_MULTIPLICITY`` status enum
    (`fe453c3 <https://github.com/dhermes/bezier/commit/fe453c3839b19ce4a85dfd0b5ad78f71a0973daf>`__).
    (This is a **breaking** change rather than additive because it re-uses
@@ -155,7 +155,7 @@ Python Changes
    fixed to account for the changes in data layout
    (`80bfaaa <https://github.com/dhermes/bezier/commit/80bfaaa74219f9053585aa8970131018baa516d1>`__).
 -  Added custom ``UnsupportedDegree``
-   `exception <http://bezier.readthedocs.io/en/0.8.0/reference/bezier.html#bezier.UnsupportedDegree>`__
+   `exception <https://bezier.readthedocs.io/en/0.8.0/reference/bezier.html#bezier.UnsupportedDegree>`__
    to be used by routines that have implementations that are hard-coded for
    specific degrees
    (`87a1f21 <https://github.com/dhermes/bezier/commit/87a1f2171f6b810516544ff1691856d7fadfa12f>`__).

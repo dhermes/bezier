@@ -12,7 +12,7 @@
 
 """Environment configuration for ``bezier`` runtime dependencies.
 
-Only needed for Windows, to add ``extra-dll`` directory to the DLL search
+Only needed for Windows, to add extra directory to the DLL search
 path so that the ``libbezier`` DLL can be located.
 """
 
@@ -20,94 +20,33 @@ import os
 
 
 # Error messages for ``handle_import_error``.
-TEMPLATE = "No module named 'bezier.{}'"  # 3.6, 3.7, 3.8, pypy3
-# NOTE: ``os.add_dll_directory()`` was added on Windows in Python 3.8.
-OS_ADD_DLL_DIRECTORY = getattr(os, "add_dll_directory", None)
+TEMPLATE = "No module named 'bezier.{}'"  # 3.9, 3.10, 3.11, pypy3
+EXTRA_DLL_ENV = "BEZIER_EXTRA_DLL"
+"""Environment variable used to add extra directory to DLL search path.
+
+This is intended to be used in tests and when building from source.
+"""
 
 
-def add_dll_directory(extra_dll_dir):
+def add_dll_directory():
     """Add a DLL directory.
 
-    This is only expected to be invoked on Windows. For Python versions before
-    3.8, this will update the ``%PATH%`` environment variable to include
-    ``extra_dll_dir`` and for 3.8 and later, it will invoke
-    ``os.add_dll_directory()``.
-
-    Args:
-        extra_dll_dir (str): The path to a directory ``extra-dll``.
-    """
-    if not os.path.isdir(extra_dll_dir):
-        return
-
-    if OS_ADD_DLL_DIRECTORY is not None:
-        OS_ADD_DLL_DIRECTORY(extra_dll_dir)  # pylint: disable=not-callable
-        return
-
-    path = os.environ.get("PATH", "")
-    values = [subdir for subdir in path.split(os.pathsep) if subdir]
-    values.append(extra_dll_dir)
-    os.environ["PATH"] = os.pathsep.join(values)
-
-
-def _is_extra_dll(path):
-    """Determine if a package path is the extra DLL on Windows.
-
-    Args:
-        path (importlib.metadata.PackagePath): A package path.
-
-    Returns:
-        bool: Indicating if this is the extra DLL on Windows.
-    """
-    return "extra-dll" in path.parts and path.name.endswith(".dll")
-
-
-def _get_extra_dll_dir(bezier_files):
-    """Determine if a package path is the extra DLL on Windows.
-
-    Args:
-        bezier_files (List[importlib.metadata.PackagePath]): List of package
-            paths.
-
-    Returns:
-        str: The path of the matching ``extra-dll`` directory.
-
-    Raises:
-        ImportError: If no match can be found.
-    """
-    for path in bezier_files:
-        if not _is_extra_dll(path):
-            continue
-
-        absolute_path = path.locate()
-        return str(absolute_path.parent)
-
-    raise ImportError("No DLL directory found", bezier_files)
-
-
-def modify_path():
-    """Add the DLL directory to the module search path.
-
-    This will only modify path if
-    * on Windows
-    * the ``extra-dll`` directory is in package file metadata
+    This is only expected to be invoked on Windows. It will invoke
+    ``os.add_dll_directory()``, which was added in Python 3.8.
     """
     if os.name != "nt":
         return
 
-    # pylint: disable=import-outside-toplevel
-    try:
-        import importlib.metadata as importlib_metadata
-    except ImportError:  # pragma: NO COVER
-        import importlib_metadata
-    # pylint: enable=import-outside-toplevel
-
-    try:
-        bezier_files = importlib_metadata.files("bezier")
-    except importlib_metadata.PackageNotFoundError:
+    bezier_extra_dll = os.environ.get(EXTRA_DLL_ENV)
+    if bezier_extra_dll is None:
         return
 
-    extra_dll_dir = _get_extra_dll_dir(bezier_files)
-    add_dll_directory(extra_dll_dir)
+    extra_dll_dirs = bezier_extra_dll.split(os.pathsep)
+    for extra_dll_dir in extra_dll_dirs:
+        if not os.path.isdir(extra_dll_dir):
+            continue
+
+        os.add_dll_directory(extra_dll_dir)
 
 
 def handle_import_error(caught_exc, name):
@@ -136,4 +75,4 @@ def handle_import_error(caught_exc, name):
     raise caught_exc
 
 
-modify_path()
+add_dll_directory()

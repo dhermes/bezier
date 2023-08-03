@@ -17,7 +17,7 @@ import bisect
 import numpy as np
 
 
-_EPS = 0.5 ** 40
+_EPS = 0.5**40
 
 
 def vector_close(vec1, vec2, eps=_EPS):
@@ -194,7 +194,7 @@ def matrix_product(mat1, mat2):
     return np.dot(mat2.T, mat1.T).T  # pylint: disable=no-member
 
 
-def wiggle_interval(value, wiggle=0.5 ** 44):
+def wiggle_interval(value, wiggle=0.5**44):
     r"""Check if ``value`` is in :math:`\left[0, 1\right]`.
 
     Allows a little bit of wiggle room outside the interval. A value
@@ -524,14 +524,11 @@ class UnsupportedDegree(NotImplementedError):
     a small subset of possible degrees, so the implementation is
     **degree-specific**:
 
-    .. testsetup:: unsupported-degree
-
-       import numpy as np
-       import bezier
-
     .. doctest:: unsupported-degree
        :options: +NORMALIZE_WHITESPACE
 
+       >>> import bezier
+       >>> import numpy as np
        >>> degree = 5
        >>> nodes = np.empty((2, degree + 1), order="F")
        >>> curve = bezier.Curve(nodes, degree=degree)
@@ -549,7 +546,7 @@ class UnsupportedDegree(NotImplementedError):
     """
 
     def __init__(self, degree, supported=()):
-        super(UnsupportedDegree, self).__init__()
+        super().__init__()
         self.degree = degree
         """int: The degree that the caller attempted to use."""
         self.supported = supported
@@ -558,9 +555,9 @@ class UnsupportedDegree(NotImplementedError):
     def __str__(self):
         num_supported = len(self.supported)
         if num_supported == 0:
-            return "degree={}".format(self.degree)
+            return f"degree={self.degree}"
 
-        degrees_str = ["{}".format(degree) for degree in self.supported]
+        degrees_str = [str(degree) for degree in self.supported]
         if num_supported == 1:
             msg = "The only degree supported at this time is " + degrees_str[0]
         else:
@@ -570,4 +567,4 @@ class UnsupportedDegree(NotImplementedError):
                 + " and "
                 + degrees_str[-1]
             )
-        return "{} (degree={})".format(msg, self.degree)
+        return f"{msg} (degree={self.degree})"

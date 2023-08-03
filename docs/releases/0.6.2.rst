@@ -10,7 +10,7 @@ Documentation
 ~~~~~~~~~~~~~
 
 -  Converted ``CHANGELOG.md`` file into a
-   `releases <http://bezier.readthedocs.io/en/0.6.2/releases/index.html>`__
+   `releases <https://bezier.readthedocs.io/en/0.6.2/releases/index.html>`__
    docs page
    (`0027cd7 <https://github.com/dhermes/bezier/commit/0027cd7b51433c6b3542f077b08c555ff287e10b>`__).
 

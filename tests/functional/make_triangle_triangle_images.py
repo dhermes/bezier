@@ -84,5 +84,5 @@ def main():
 
 
 if __name__ == "__main__":
-    seaborn.set()  # Required in `seaborn >= 0.8`
+    seaborn.set()
     main()

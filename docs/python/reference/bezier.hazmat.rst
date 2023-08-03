@@ -11,6 +11,7 @@ Submodules
 ----------
 
 .. toctree::
+   :maxdepth: 4
 
    bezier.hazmat.algebraic_intersection
    bezier.hazmat.clipping

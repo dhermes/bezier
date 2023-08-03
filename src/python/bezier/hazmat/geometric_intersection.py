@@ -30,7 +30,7 @@ from bezier.hazmat import intersection_helpers
 
 # Set the threshold for exponent at half the bits available, this way one round
 # of Newton's method can (usually) finish the job by squaring the error.
-_ERROR_VAL = 0.5 ** 26
+_ERROR_VAL = 0.5**26
 _MAX_INTERSECT_SUBDIVISIONS = 20
 _MAX_CANDIDATES = 64
 _UNHANDLED_LINES = (
@@ -45,7 +45,8 @@ _NO_CONVERGE_TEMPLATE = (
     "Curve intersection failed to converge to approximately linear "
     "subdivisions after {:d} iterations."
 )
-_MIN_INTERVAL_WIDTH = 0.5 ** 40
+_MIN_INTERVAL_WIDTH = 0.5**40
+_SPLIT_POINT = np.asfortranarray([[0.5], [0.5]])
 
 
 def bbox_intersect(nodes1, nodes2):
@@ -158,11 +159,11 @@ def linearization_error(nodes):
     .. testsetup:: linearization-error, linearization-error-fail
 
        import numpy as np
-       import bezier
        from bezier.hazmat.geometric_intersection import linearization_error
 
     .. doctest:: linearization-error
 
+       >>> import numpy as np
        >>> nodes = np.asfortranarray([
        ...     [0.0, 3.0, 9.0],
        ...     [0.0, 1.0, -2.0],
@@ -212,7 +213,7 @@ def linearization_error(nodes):
     intersect the linear approximations. Then the :math:`s`-values from
     the line-line intersection is lifted back to the curves. Thus
     the error :math:`\|B(s) - L(s)\|_2` is more relevant than the
-    underyling algebraic curve containing :math:`B(s)`.
+    underlying algebraic curve containing :math:`B(s)`.
 
     .. note::
 
@@ -1632,3 +1633,40 @@ class Linearization:
 
             else:
                 return shape
+
+
+def self_intersections(nodes):
+    r"""Determine the self-intersections of a planar B |eacute| zier curve.
+
+    See: https://doi.org/10.1016/0166-3615(89)90072-9
+
+    Args:
+        nodes (numpy.ndarray): The nodes in the curve.
+
+    Returns:
+        numpy.ndarray: Pairs of parameters along the curve where
+        self-intersections occur (as a 2D array).
+    """
+    angle = curve_helpers.discrete_turning_angle(nodes)
+    if angle < np.pi:
+        return np.empty((2, 0), order="F")
+
+    left_nodes, right_nodes = curve_helpers.subdivide_nodes(nodes)
+    #  left_nodes: [0.0, 0.5] <- [0.0, 1.0]
+    left_self = 0.5 * self_intersections(left_nodes)
+    # right_nodes: [0.5, 1.0] <- [0.0, 1.0]
+    right_self = 0.5 + 0.5 * self_intersections(right_nodes)
+
+    left_right_intersections, _ = all_intersections(left_nodes, right_nodes)
+    left_right_intersections[0, :] *= 0.5
+    left_right_intersections[1, :] *= 0.5
+    left_right_intersections[1, :] += 0.5
+
+    # ``left_right_intersections`` should contain a redundant intersection
+    # for the split point: left(1) = right(0).
+    compare_split = left_right_intersections == _SPLIT_POINT
+    keep_columns = ~np.all(compare_split, axis=0)
+    left_right_intersections = left_right_intersections[:, keep_columns]
+
+    result = np.hstack([left_self, left_right_intersections, right_self])
+    return np.asfortranarray(result)

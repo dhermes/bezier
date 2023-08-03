@@ -20,14 +20,11 @@ Plotting utilities are also provided.
 
 .. |eacute| unicode:: U+000E9 .. LATIN SMALL LETTER E WITH ACUTE
    :trim:
-
-.. autoclass:: Surface
 """
 
 # NOTE: ``__config__`` **must** be the first import because it (may)
 #       modify the search path used to locate shared libraries.
 from bezier import __config__
-from bezier._legacy import Surface
 from bezier.curve import Curve
 from bezier.curved_polygon import CurvedPolygon
 from bezier.hazmat.helpers import UnsupportedDegree
@@ -41,18 +38,17 @@ except ImportError as exc:  # pragma: NO COVER
     __config__.handle_import_error(exc, "_speedup")
     _HAS_SPEEDUP = False
 # NOTE: The ``__version__`` and ``__author__`` are hard-coded here, rather
-#       than using ``pkg_resources.get_distribution("bezier").version``
-#       and related. This is **entirely** to accomodate builds where
+#       than using ``importlib.metadata.distribution("bezier").version``
+#       and related. This is **entirely** to accommodate builds where
 #       ``bezier`` is imported from source (and not installed).
 __author__ = "Danny Hermes"
-__version__ = "2020.5.20.dev1"
+__version__ = "2023.7.29.dev1"
 """str: The current version of :mod:`bezier`."""
 __all__ = [
     "__author__",
     "__version__",
     "Curve",
     "CurvedPolygon",
-    "Surface",
     "Triangle",
     "UnsupportedDegree",
 ]

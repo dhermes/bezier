@@ -1,0 +1,157 @@
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+---
+name: Linux
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  schedule:
+    # Scheduled workflows run on the latest commit on the default or base branch
+    - cron: "0 0 1 * *"
+  workflow_dispatch:
+    inputs:
+      reason:
+        description: "Reason for manually triggering workflow"
+        required: true
+
+jobs:
+  tests:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/cache@v3
+        with:
+          path: ~/.cache/pip
+          key: ubuntu-tests-pip
+
+      - uses: actions/checkout@v3
+
+      # NOTE: The last specified version will be used as a default one.
+      - uses: actions/setup-python@v4
+        with:
+          python-version: |
+            pypy3.9
+            3.9
+            3.10
+            3.11
+
+      - name: Update host Python packaging
+        run: |
+          python -m pip install --upgrade nox pip
+
+      - name: Install OpenBLAS (for SciPy build in PyPy)
+        run: |
+          sudo apt-get update
+          sudo apt-get install libopenblas-dev
+
+      - name: Unit tests in Python 3.9
+        run: |
+          nox --session unit-3.9
+
+      - name: Sanity check Python 3.9 (ensure not resolved as PyPy by mistake)
+        run: |
+          IMPLEMENTATION_NAME=$(.nox/unit-3-9/bin/python -c 'import sys; print(sys.implementation.name)')
+
+          if [[ "${IMPLEMENTATION_NAME}" != "cpython" ]]; then
+              echo "Unexpected implementation (${IMPLEMENTATION_NAME}), expected CPython" >&2
+              exit 1
+          fi
+
+      - name: Unit tests in Python 3.10
+        run: |
+          nox --session unit-3.10
+
+      - name: Unit tests in pypy3
+        run: |
+          nox --session unit-pypy3
+
+      - name: Unit tests AND line coverage in Python 3.11
+        run: |
+          nox --session cover
+
+      - name: Functional tests in Python 3.11
+        run: |
+          nox --session functional-3.11
+
+      - name: Upload coverage to coveralls
+        if: github.event_name != 'pull_request'
+        env:
+          COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
+        run: |
+          ./scripts/upload-coveralls.sh
+
+  lint:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/cache@v3
+        with:
+          path: ~/.cache/pip
+          key: ubuntu-lint-pip
+
+      - uses: actions/checkout@v3
+
+      - uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+
+      - name: Update host Python packaging
+        run: |
+          python -m pip install --upgrade nox pip
+
+      - name: Check that all Cython generated files have been updated
+        run: |
+          nox --session "update_generated(check=True)"
+
+      - name: Lint code for style issues
+        run: |
+          nox --session lint
+
+      - name: Check that test case examples are valid for JSON schema
+        run: |
+          nox --session validate-functional-test-cases
+
+  docs:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/cache@v3
+        with:
+          path: ~/.cache/pip
+          key: ubuntu-docs-pip
+
+      - uses: actions/checkout@v3
+
+      # NOTE: The last specified version will be used as a default one.
+      - uses: actions/setup-python@v4
+        with:
+          python-version: |
+            3.9
+            3.11
+
+      - name: Update host Python packaging
+        run: |
+          python -m pip install --upgrade nox pip
+
+      - name: Run all doctests
+        env:
+          MATPLOTLIBRC: tests
+        run: |
+          nox --session doctest
+
+      - name: Build docs
+        env:
+          MATPLOTLIBRC: tests
+        run: |
+          nox --session docs
