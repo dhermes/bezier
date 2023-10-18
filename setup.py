@@ -190,7 +190,7 @@ def _check_python_version():
 
     major = sys.version_info.major
     minor = sys.version_info.minor
-    if (major, minor) in ((3, 9), (3, 10), (3, 11)):
+    if (major, minor) in ((3, 10), (3, 11), (3, 12)):
         return
 
     message = INVALID_VERSION_MESSAGE.format(
