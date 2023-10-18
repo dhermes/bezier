@@ -27,7 +27,7 @@ LOCAL_WHEELHOUSE=$(mktemp -d)
 DOCKER_IMAGE=quay.io/pypa/manylinux2014_x86_64
 DUMMY_CONTAINER_NAME="bezier-manylinux-$(openssl rand -hex 6)"
 # Variables within the container.
-PY_ROOT="/opt/python/cp311-cp311"
+PY_ROOT="/opt/python/cp312-cp312"
 # NOTE: This path determines the hash of `libbezier.so` (i.e. the builds
 #       are "deterministic" but not under relocation).
 BEZIER_ROOT="/var/code/bezier"
