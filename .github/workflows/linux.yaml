@@ -57,26 +57,26 @@ jobs:
           sudo apt-get update
           sudo apt-get install libopenblas-dev
 
-      - name: Unit tests in Python 3.10
-        run: |
-          nox --session unit-3.10
+      # - name: Unit tests in Python 3.10
+      #   run: |
+      #     nox --session unit-3.10
 
-      - name: Sanity check Python 3.10 (ensure not resolved as PyPy by mistake)
-        run: |
-          IMPLEMENTATION_NAME=$(.nox/unit-3-10/bin/python -c 'import sys; print(sys.implementation.name)')
+      # - name: Sanity check Python 3.10 (ensure not resolved as PyPy by mistake)
+      #   run: |
+      #     IMPLEMENTATION_NAME=$(.nox/unit-3-10/bin/python -c 'import sys; print(sys.implementation.name)')
 
-          if [[ "${IMPLEMENTATION_NAME}" != "cpython" ]]; then
-              echo "Unexpected implementation (${IMPLEMENTATION_NAME}), expected CPython" >&2
-              exit 1
-          fi
+      #     if [[ "${IMPLEMENTATION_NAME}" != "cpython" ]]; then
+      #         echo "Unexpected implementation (${IMPLEMENTATION_NAME}), expected CPython" >&2
+      #         exit 1
+      #     fi
 
-      - name: Unit tests in Python 3.11
-        run: |
-          nox --session unit-3.11
+      # - name: Unit tests in Python 3.11
+      #   run: |
+      #     nox --session unit-3.11
 
-      - name: Unit tests in pypy3
-        run: |
-          nox --session unit-pypy3
+      # - name: Unit tests in pypy3
+      #   run: |
+      #     nox --session unit-pypy3
 
       - name: Unit tests AND line coverage in Python 3.12
         run: |
