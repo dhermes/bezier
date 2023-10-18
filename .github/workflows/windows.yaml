@@ -34,10 +34,10 @@ jobs:
     strategy:
       matrix:
         nox-session:
-          - unit-3.9
           - unit-3.10
+          - unit-3.11
           - cover
-          - functional-3.11
+          - functional-3.12
           - doctest
     steps:
       - uses: actions/cache@v3
