@@ -17,7 +17,10 @@ import sys
 
 try:
     import numpy as np
-except ImportError:
+except ImportError as exc:
+    print(f"::: Failed to import NumPy: {exc}", file=sys.stderr, end="\n")
+    print(f"::: sys.executable: {sys.executable}", file=sys.stderr, end="\n")
+
     np = None
 import setuptools
 import setuptools.dist
