@@ -105,7 +105,7 @@ jobs:
 
       - uses: actions/setup-python@v4
         with:
-          python-version: "3.11"
+          python-version: "3.12"
 
       - name: Update host Python packaging
         run: |
@@ -136,9 +136,7 @@ jobs:
       # NOTE: The last specified version will be used as a default one.
       - uses: actions/setup-python@v4
         with:
-          python-version: |
-            3.10
-            3.12
+          python-version: "3.12"
 
       - name: Update host Python packaging
         run: |
