@@ -30,7 +30,7 @@ NUMPY_MESSAGE = """\
 Error: NumPy needs to be installed first. It can be installed via:
 
 $ python     -m pip install numpy
-$ python3.11 -m pip install numpy
+$ python3.12 -m pip install numpy
 $ # OR
 $ conda install numpy
 """
