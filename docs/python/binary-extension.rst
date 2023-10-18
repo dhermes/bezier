@@ -103,7 +103,7 @@ The ``bezier._speedup`` module depends on this local copy of ``libbezier``:
 
 .. testoutput:: linux-readelf-py
    :linux-only:
-   :pyversion: >= 3.11
+   :pyversion: >= 3.12
 
    $ readelf -d _speedup.cpython-311-x86_64-linux-gnu.so
 
@@ -193,7 +193,7 @@ of ``libbezier``:
 
 .. testoutput:: macos-extension
    :macos-only:
-   :pyversion: >= 3.11
+   :pyversion: >= 3.12
 
    $ otool -L _speedup.cpython-311-darwin.so
    _speedup.cpython-311-darwin.so:
@@ -366,7 +366,7 @@ The ``bezier._speedup`` module (``.pyd`` file) depends on this local copy of
 
 .. testoutput:: windows-extension
    :windows-only:
-   :pyversion: >= 3.11
+   :pyversion: >= 3.12
 
    > dumpbin /dependents _speedup.cp311-win_amd64.pyd
    Microsoft (R) COFF/PE Dumper Version ...
