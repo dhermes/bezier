@@ -17,7 +17,10 @@ import sys
 
 try:
     import numpy as np
-except ImportError:
+except ImportError as exc:
+    print(f"::: Failed to import NumPy: {exc}", file=sys.stderr, end="\n")
+    print(f"::: sys.executable: {sys.executable}", file=sys.stderr, end="\n")
+
     np = None
 import setuptools
 import setuptools.dist
@@ -30,7 +33,7 @@ NUMPY_MESSAGE = """\
 Error: NumPy needs to be installed first. It can be installed via:
 
 $ python     -m pip install numpy
-$ python3.11 -m pip install numpy
+$ python3.12 -m pip install numpy
 $ # OR
 $ conda install numpy
 """
@@ -158,7 +161,7 @@ def setup():
         install_requires=REQUIREMENTS,
         extras_require=EXTRAS_REQUIRE,
         ext_modules=extension_modules(),
-        python_requires=">=3.9",
+        python_requires=">=3.10",
         classifiers=[
             "Development Status :: 4 - Beta",
             "Intended Audience :: Developers",
@@ -167,9 +170,9 @@ def setup():
             "License :: OSI Approved :: Apache Software License",
             "Operating System :: OS Independent",
             "Programming Language :: Python :: 3",
-            "Programming Language :: Python :: 3.9",
             "Programming Language :: Python :: 3.10",
             "Programming Language :: Python :: 3.11",
+            "Programming Language :: Python :: 3.12",
             "Programming Language :: Python :: Implementation :: CPython",
             "Programming Language :: Python :: Implementation :: PyPy",
         ],
@@ -190,11 +193,11 @@ def _check_python_version():
 
     major = sys.version_info.major
     minor = sys.version_info.minor
-    if (major, minor) in ((3, 9), (3, 10), (3, 11)):
+    if (major, minor) in ((3, 10), (3, 11), (3, 12)):
         return
 
     message = INVALID_VERSION_MESSAGE.format(
-        major=major, minor=minor, versions="3.9, 3.10 and 3.11"
+        major=major, minor=minor, versions="3.10, 3.11 and 3.12"
     )
     print(message, file=sys.stderr, end="")
     sys.exit(1)

@@ -15,8 +15,8 @@
 set -e -x
 
 # NOTE: This is assumed to be running within an activated virtual environment.
-if [[ "$(python -c 'import sys; print(".".join(map(str, sys.version_info[:2])))')" != "3.11" ]]; then
-    echo "Python 3.11 required." >&2
+if [[ "$(python -c 'import sys; print(".".join(map(str, sys.version_info[:2])))')" != "3.12" ]]; then
+    echo "Python 3.12 required." >&2
     exit 1
 fi
 
@@ -27,7 +27,7 @@ LOCAL_WHEELHOUSE=$(mktemp -d)
 DOCKER_IMAGE=quay.io/pypa/manylinux2014_x86_64
 DUMMY_CONTAINER_NAME="bezier-manylinux-$(openssl rand -hex 6)"
 # Variables within the container.
-PY_ROOT="/opt/python/cp311-cp311"
+PY_ROOT="/opt/python/cp312-cp312"
 # NOTE: This path determines the hash of `libbezier.so` (i.e. the builds
 #       are "deterministic" but not under relocation).
 BEZIER_ROOT="/var/code/bezier"
