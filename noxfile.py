@@ -10,6 +10,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import functools
 import glob
 import os
 import pathlib
@@ -67,6 +68,7 @@ DEBUG_SESSION_NAME = "libbezier-debug"
 RELEASE_SESSION_NAME = "libbezier-release"
 INSTALL_PREFIX_ENV = "BEZIER_INSTALL_PREFIX"
 EXTRA_DLL_ENV = "BEZIER_EXTRA_DLL"
+_OS_MAKEDIRS_EXIST_OK = functools.partial(os.makedirs, exist_ok=True)
 
 
 def get_path(*names):
@@ -592,7 +594,7 @@ def _cmake_libbezier_root(session, build_type):
     relative_path = session.cache_dir / build_session_name
     # Convert to an absolute path.
     libbezier_root = get_path(relative_path)
-    session.run(os.makedirs, libbezier_root, exist_ok=True)
+    session.run(_OS_MAKEDIRS_EXIST_OK, libbezier_root)
     return libbezier_root
 
 
@@ -633,7 +635,7 @@ def _cmake(session, build_type):
     # Prepare build and install directories.
     build_dir = os.path.join(libbezier_root, "build")
     install_prefix = os.path.join(libbezier_root, "usr")
-    session.run_always(os.makedirs, build_dir, exist_ok=True)
+    session.run_always(_OS_MAKEDIRS_EXIST_OK, build_dir)
 
     # Run ``cmake`` to prepare for / configure the build.
     build_args = [
