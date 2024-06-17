@@ -629,13 +629,13 @@ def _cmake(session, build_type):
         session.install(DEPS["cmake"])
         cmake_external = False
     else:
-        session.run_always(print, "Using pre-installed ``cmake``")
-        session.run_always("cmake", "--version", external=cmake_external)
+        session.run_install(print, "Using pre-installed ``cmake``")
+        session.run_install("cmake", "--version", external=cmake_external)
 
     # Prepare build and install directories.
     build_dir = os.path.join(libbezier_root, "build")
     install_prefix = os.path.join(libbezier_root, "usr")
-    session.run_always(_OS_MAKEDIRS_EXIST_OK, build_dir)
+    session.run_install(_OS_MAKEDIRS_EXIST_OK, build_dir)
 
     # Run ``cmake`` to prepare for / configure the build.
     build_args = [
@@ -650,10 +650,10 @@ def _cmake(session, build_type):
         build_args.append("-DTARGET_NATIVE_ARCH:BOOL=OFF")
 
     build_args.extend(["-S", os.path.join("src", "fortran"), "-B", build_dir])
-    session.run_always(*build_args, external=cmake_external)
+    session.run_install(*build_args, external=cmake_external)
 
     # Build and install.
-    session.run_always(
+    session.run_install(
         "cmake",
         "--build",
         build_dir,
@@ -665,7 +665,7 @@ def _cmake(session, build_type):
     )
 
     # Get information on how the build was configured.
-    session.run_always("cmake", "-L", build_dir, external=cmake_external)
+    session.run_install("cmake", "-L", build_dir, external=cmake_external)
 
     return install_prefix
 
