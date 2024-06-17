@@ -69,6 +69,9 @@ RELEASE_SESSION_NAME = "libbezier-release"
 INSTALL_PREFIX_ENV = "BEZIER_INSTALL_PREFIX"
 EXTRA_DLL_ENV = "BEZIER_EXTRA_DLL"
 _OS_MAKEDIRS_EXIST_OK = functools.partial(os.makedirs, exist_ok=True)
+_SHUTIL_RMTREE_IGNORE_ERRORS = functools.partial(
+    shutil.rmtree, ignore_errors=True
+)
 
 
 def get_path(*names):
@@ -724,7 +727,7 @@ def clean(session):
         get_path("tests", "unit", "*.pyc"),
     )
     for dir_path in clean_dirs:
-        session.run(shutil.rmtree, dir_path, ignore_errors=True)
+        session.run(_SHUTIL_RMTREE_IGNORE_ERRORS, dir_path)
     for glob_path in clean_globs:
         for filename in glob.glob(glob_path):
             session.run(os.remove, filename)
