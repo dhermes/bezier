@@ -19,6 +19,10 @@ try:
     import numpy as np
 except ImportError as exc:
     print(f"::: Failed to import NumPy: {exc}", file=sys.stderr, end="\n")
+    if sys.path:
+        print("::: sys.path:", file=sys.stderr, end="\n")
+        for value in sys.path:
+            print(f":::   - {value}", file=sys.stderr, end="\n")
     print(f"::: sys.executable: {sys.executable}", file=sys.stderr, end="\n")
 
     np = None
