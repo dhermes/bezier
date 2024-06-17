@@ -33,7 +33,7 @@ DEPS = {
     "cmake-format": "cmake-format >= 0.6.13",
     "cmake": "cmake >= 3.27.0",
     "coverage": "coverage",
-    "Cython": "Cython >= 3.0.2",
+    "Cython": "Cython >= 3.0.10",
     "delocate": "delocate >= 0.10.4",
     "delvewheel": "delvewheel >= 1.4.0",
     "docutils": "docutils",
