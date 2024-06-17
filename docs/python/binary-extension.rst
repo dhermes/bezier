@@ -419,8 +419,15 @@ and the local copy of ``libbezier`` depends on the other dependencies in
 
        libgcc_s_seh-1-5c71c85c0ca01174917203266ba98140.dll
        libgfortran-5-08073c6868a1df2cbc5609e49cbe3ad8.dll
+       api-ms-win-crt-environment-l1-1-0.dll
+       api-ms-win-crt-heap-l1-1-0.dll
+       api-ms-win-crt-math-l1-1-0.dll
+       api-ms-win-crt-private-l1-1-0.dll
+       api-ms-win-crt-runtime-l1-1-0.dll
+       api-ms-win-crt-stdio-l1-1-0.dll
+       api-ms-win-crt-string-l1-1-0.dll
+       api-ms-win-crt-time-l1-1-0.dll
        KERNEL32.dll
-       msvcrt.dll
 
      Summary
    ...
