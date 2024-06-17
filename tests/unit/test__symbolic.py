@@ -124,12 +124,7 @@ class Test_implicitize_2d:
         f_polynomial = self._call_function_under_test(x_fn, y_fn, s)
 
         expected = (
-            x_sym**2
-            + 2 * x_sym * y_sym
-            - 3 * x_sym
-            + y_sym**2
-            - 4 * y_sym
-            + 3
+            x_sym**2 + 2 * x_sym * y_sym - 3 * x_sym + y_sym**2 - 4 * y_sym + 3
         )
         assert sympy_equal(f_polynomial, expected)
 

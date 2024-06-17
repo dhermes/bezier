@@ -249,9 +249,7 @@ class TestCurve(utils.NumPyTestCase):
         right = self._make_one(nodes_right, 2)
         result = left.intersect(right, **kwargs)
         expected = np.asfortranarray([[1.0], [2.0]]) / 3.0
-        self.assertTrue(
-            np.allclose(result, expected, atol=0.0, rtol=0.5**52)
-        )
+        self.assertTrue(np.allclose(result, expected, atol=0.0, rtol=0.5**52))
 
     def test_intersect(self):
         self._intersect_helper()
