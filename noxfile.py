@@ -291,6 +291,8 @@ def _macos_doctest_install(session, install_prefix):
     # 2. Build the wheel from source.
     basic_dir = tempfile.mkdtemp()
     session.run(
+        "python",
+        "-m",
         "pip",
         "wheel",
         ".",
@@ -313,7 +315,14 @@ def _macos_doctest_install(session, install_prefix):
     # 4. Install from the repaired wheel.
     session.run("ls", "-alFG", repaired_dir, external=True)  # Debug
     session.run(
-        "pip", "install", "bezier", "--no-index", "--find-links", repaired_dir
+        "python",
+        "-m",
+        "pip",
+        "install",
+        "bezier",
+        "--no-index",
+        "--find-links",
+        repaired_dir,
     )
     # 5. Clean up temporary directories.
     session.run(_SHUTIL_RMTREE_IGNORE_ERRORS, basic_dir)
@@ -326,6 +335,8 @@ def _windows_doctest_install(session, install_prefix):
     # 2. Build the wheel from source.
     basic_dir = tempfile.mkdtemp()
     session.run(
+        "python",
+        "-m",
         "pip",
         "wheel",
         ".",
@@ -348,7 +359,14 @@ def _windows_doctest_install(session, install_prefix):
     )
     # 4. Install from the repaired wheel.
     session.run(
-        "pip", "install", "bezier", "--no-index", "--find-links", repaired_dir
+        "python",
+        "-m",
+        "pip",
+        "install",
+        "bezier",
+        "--no-index",
+        "--find-links",
+        repaired_dir,
     )
     # 5. Clean up temporary directories.
     shutil.rmtree(basic_dir, ignore_errors=True)
