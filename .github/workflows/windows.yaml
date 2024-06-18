@@ -16,9 +16,9 @@ on:
   push:
     branches:
       - main
-  # pull_request:
-  #   branches:
-  #     - main
+  pull_request:
+    branches:
+      - main
   schedule:
     # Scheduled workflows run on the latest commit on the default or base branch
     - cron: "0 0 1 * *"

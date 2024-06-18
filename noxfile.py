@@ -313,13 +313,6 @@ def _macos_doctest_install(session, install_prefix):
         *wheels,
     )
     # 4. Install from the repaired wheel.
-    ### BEGIN: Debug
-    session.run("ls", "-alFG", repaired_dir, external=True)
-    session.run("python", "--version")
-    session.run("python", "-m", "pip", "debug", "--verbose")
-    session.run("python", "-c", "import sys; print(sys.implementation)")
-    session.run("python", "-c", "import sysconfig; print(sysconfig.get_platform())")
-    ### END: Debug
     session.run(
         "python",
         "-m",
@@ -331,8 +324,8 @@ def _macos_doctest_install(session, install_prefix):
         repaired_dir,
     )
     # 5. Clean up temporary directories.
-    session.run(_SHUTIL_RMTREE_IGNORE_ERRORS, basic_dir)
-    session.run(_SHUTIL_RMTREE_IGNORE_ERRORS, repaired_dir)
+    shutil.rmtree(basic_dir, ignore_errors=True)
+    shutil.rmtree(repaired_dir, ignore_errors=True)
 
 
 def _windows_doctest_install(session, install_prefix):
