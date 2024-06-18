@@ -240,7 +240,7 @@ def linearization_error(nodes):
     # max_{0 <= s <= 1} s(1 - s)/2 = 1/8 = 0.125
     multiplier = 0.125 * degree * (degree - 1)
     # NOTE: worst_case is 1D due to np.max(), so this is the vector norm.
-    return multiplier * np.linalg.norm(worst_case, ord=2)
+    return float(multiplier * np.linalg.norm(worst_case, ord=2))
 
 
 def segment_intersection(start0, end0, start1, end1):
@@ -408,7 +408,7 @@ def segment_intersection(start0, end0, start1, end1):
         start_delta = start1 - start0
         s = _py_helpers.cross_product(start_delta, delta1) / cross_d0_d1
         t = _py_helpers.cross_product(start_delta, delta0) / cross_d0_d1
-        return s, t, True
+        return float(s), float(t), True
 
 
 def parallel_lines_parameters(start0, end0, start1, end1):

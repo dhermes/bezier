@@ -102,7 +102,7 @@ def compute_implicit_line(nodes):
     coeff_b = delta[0]
     # c = - ax - by = delta[1] x - delta[0] y
     coeff_c = delta[1] * nodes[0, 0] - delta[0] * nodes[1, 0]
-    return coeff_a, coeff_b, coeff_c
+    return float(coeff_a), float(coeff_b), float(coeff_c)
 
 
 def compute_fat_line(nodes):
@@ -172,7 +172,7 @@ def compute_fat_line(nodes):
             d_min = curr_dist
         elif curr_dist > d_max:
             d_max = curr_dist
-    return coeff_a, coeff_b, coeff_c, d_min, d_max
+    return coeff_a, coeff_b, coeff_c, float(d_min), float(d_max)
 
 
 def _update_parameters(s_min, s_max, start0, end0, start1, end1):

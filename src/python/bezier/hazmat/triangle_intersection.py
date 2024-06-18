@@ -168,7 +168,7 @@ def newton_refine(nodes, degree, x_val, y_val, s, t):
        >>> triangle.is_valid
        True
        >>> (x_val,), (y_val,) = triangle.evaluate_cartesian(0.25, 0.5)
-       >>> x_val, y_val
+       >>> float(x_val), float(y_val)
        (1.25, 1.25)
        >>> s, t = 0.5, 0.25
        >>> new_s, new_t = newton_refine(nodes, 2, x_val, y_val, s, t)
@@ -215,7 +215,7 @@ def newton_refine(nodes, degree, x_val, y_val, s, t):
     delta_s, delta_t = newton_refine_solve(
         jac_both, x_val, triangle_x, y_val, triangle_y
     )
-    return s + delta_s, t + delta_t
+    return float(s + delta_s), float(t + delta_t)
 
 
 def update_locate_candidates(candidate, next_candidates, x_val, y_val, degree):

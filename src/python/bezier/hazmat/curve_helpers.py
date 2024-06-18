@@ -668,7 +668,7 @@ def get_curvature(nodes, tangent_vec, s):
     )
     # NOTE: We convert to 1D to make sure NumPy uses vector norm.
     curvature /= np.linalg.norm(tangent_vec[:, 0], ord=2) ** 3
-    return curvature
+    return float(curvature)
 
 
 def newton_refine(nodes, point, s):
@@ -765,22 +765,22 @@ def newton_refine(nodes, point, s):
        array([[0.],
               [0.]])
        >>> s_vals = [0.625, None, None, None, None, None]
-       >>> np.log2(abs(expected - s_vals[0]))
+       >>> float(np.log2(abs(expected - s_vals[0])))
        -3.0
        >>> s_vals[1] = newton_refine(nodes, point, s_vals[0])
-       >>> np.log2(abs(expected - s_vals[1]))
+       >>> float(np.log2(abs(expected - s_vals[1])))
        -3.983...
        >>> s_vals[2] = newton_refine(nodes, point, s_vals[1])
-       >>> np.log2(abs(expected - s_vals[2]))
+       >>> float(np.log2(abs(expected - s_vals[2])))
        -4.979...
        >>> s_vals[3] = newton_refine(nodes, point, s_vals[2])
-       >>> np.log2(abs(expected - s_vals[3]))
+       >>> float(np.log2(abs(expected - s_vals[3])))
        -5.978...
        >>> s_vals[4] = newton_refine(nodes, point, s_vals[3])
-       >>> np.log2(abs(expected - s_vals[4]))
+       >>> float(np.log2(abs(expected - s_vals[4])))
        -6.978...
        >>> s_vals[5] = newton_refine(nodes, point, s_vals[4])
-       >>> np.log2(abs(expected - s_vals[5]))
+       >>> float(np.log2(abs(expected - s_vals[5])))
        -7.978...
 
     .. testcleanup:: newton-refine-curve-cusp
@@ -842,7 +842,7 @@ def newton_refine(nodes, point, s):
     delta_s = np.vdot(pt_delta[:, 0], derivative[:, 0]) / np.vdot(
         derivative[:, 0], derivative[:, 0]
     )
-    return s + delta_s
+    return float(s + delta_s)
 
 
 def locate_point(nodes, point):

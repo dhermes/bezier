@@ -838,7 +838,7 @@ class Triangle(_base.Base):
                 self._degree, supported=(1, 2, 3)
             )
 
-        return poly_sign == 1
+        return bool(poly_sign == 1)
 
     @property
     def is_valid(self):
