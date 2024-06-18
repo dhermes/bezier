@@ -307,8 +307,6 @@ def _macos_doctest_install(session, install_prefix):
         "delocate-wheel",
         "--wheel-dir",
         repaired_dir,
-        "--require-archs",
-        "arm64",
         "--verbose",
         *wheels,
     )
