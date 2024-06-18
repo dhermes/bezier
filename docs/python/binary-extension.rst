@@ -259,11 +259,12 @@ The ``bezier._speedup`` module (``.pyd`` file) depends on this local copy of
 
 .. testsetup:: windows-libs, windows-extension, windows-dll
 
-   import distutils.ccompiler
    import os
    import pathlib
    import re
    import subprocess
+
+   import setuptools._distutils.ccompiler
 
    import bezier
    import tests.utils
@@ -290,7 +291,7 @@ The ``bezier._speedup`` module (``.pyd`` file) depends on this local copy of
 
 
    if os.name == "nt":
-       c_compiler = distutils.ccompiler.new_compiler()
+       c_compiler = setuptools._distutils.ccompiler.new_compiler()
        assert c_compiler.compiler_type == "msvc"
        c_compiler.initialize()
 
