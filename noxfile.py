@@ -313,7 +313,12 @@ def _macos_doctest_install(session, install_prefix):
         *wheels,
     )
     # 4. Install from the repaired wheel.
-    session.run("ls", "-alFG", repaired_dir, external=True)  # Debug
+    ### BEGIN: Debug
+    session.run("ls", "-alFG", repaired_dir, external=True)
+    session.run("python", "--version")
+    session.run("python", "-m", "pip", "debug", "--verbose")
+    session.run("python", "-c", "import sys; print(sys.implementation)")
+    ### END: Debug
     session.run(
         "python",
         "-m",
