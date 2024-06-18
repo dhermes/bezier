@@ -1159,9 +1159,10 @@ def free_triangle_intersections_workspace():
 
 
 def _type_info():
+    cdef segment = np.empty(1, dtype=SEGMENT_DTYPE)
     return (
         SEGMENT_DTYPE.isnative,
-        SEGMENT_DTYPE.itemsize,
+        segment.itemsize,
         SEGMENT_DTYPE.num,
         sizeof(CurvedPolygonSegment),
     )
