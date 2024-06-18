@@ -15,84 +15,6 @@ import os
 import sys
 
 
-NUMPY_2_INCOMPATIBLE = """\
-/* "Cython/Includes/numpy/__init__.pxd":794
- *     return PyArray_MultiIterNew(5, <void*>a, <void*>b, <void*>c, <void*> d, <void*> e)
- *
- * cdef inline tuple PyDataType_SHAPE(dtype d):             # <<<<<<<<<<<<<<
- *     if PyDataType_HASSUBARRAY(d):
- *         return <tuple>d.subarray.shape
- */
-
-static CYTHON_INLINE PyObject *__pyx_f_5numpy_PyDataType_SHAPE(PyArray_Descr *__pyx_v_d) {
-  PyObject *__pyx_r = NULL;
-  __Pyx_RefNannyDeclarations
-  int __pyx_t_1;
-  __Pyx_RefNannySetupContext("PyDataType_SHAPE", 1);
-
-  /* "Cython/Includes/numpy/__init__.pxd":795
- *
- * cdef inline tuple PyDataType_SHAPE(dtype d):
- *     if PyDataType_HASSUBARRAY(d):             # <<<<<<<<<<<<<<
- *         return <tuple>d.subarray.shape
- *     else:
- */
-  __pyx_t_1 = PyDataType_HASSUBARRAY(__pyx_v_d);
-  if (__pyx_t_1) {
-
-    /* "Cython/Includes/numpy/__init__.pxd":796
- * cdef inline tuple PyDataType_SHAPE(dtype d):
- *     if PyDataType_HASSUBARRAY(d):
- *         return <tuple>d.subarray.shape             # <<<<<<<<<<<<<<
- *     else:
- *         return ()
- */
-    __Pyx_XDECREF(__pyx_r);
-    __Pyx_INCREF(((PyObject*)__pyx_v_d->subarray->shape));
-    __pyx_r = ((PyObject*)__pyx_v_d->subarray->shape);
-    goto __pyx_L0;
-
-    /* "Cython/Includes/numpy/__init__.pxd":795
- *
- * cdef inline tuple PyDataType_SHAPE(dtype d):
- *     if PyDataType_HASSUBARRAY(d):             # <<<<<<<<<<<<<<
- *         return <tuple>d.subarray.shape
- *     else:
- */
-  }
-
-  /* "Cython/Includes/numpy/__init__.pxd":798
- *         return <tuple>d.subarray.shape
- *     else:
- *         return ()             # <<<<<<<<<<<<<<
- *
- *
- */
-  /*else*/ {
-    __Pyx_XDECREF(__pyx_r);
-    __Pyx_INCREF(__pyx_empty_tuple);
-    __pyx_r = __pyx_empty_tuple;
-    goto __pyx_L0;
-  }
-
-  /* "Cython/Includes/numpy/__init__.pxd":794
- *     return PyArray_MultiIterNew(5, <void*>a, <void*>b, <void*>c, <void*> d, <void*> e)
- *
- * cdef inline tuple PyDataType_SHAPE(dtype d):             # <<<<<<<<<<<<<<
- *     if PyDataType_HASSUBARRAY(d):
- *         return <tuple>d.subarray.shape
- */
-
-  /* function exit code */
-  __pyx_L0:;
-  __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_RefNannyFinishContext();
-  return __pyx_r;
-}
-
-"""
-
-
 def clean_file(c_source, virtualenv_dirname):
     """Strip trailing whitespace and clean up "local" names in C source.
 
@@ -112,20 +34,11 @@ def clean_file(c_source, virtualenv_dirname):
         ".nox", virtualenv_dirname, "lib", py_version, "site-packages", ""
     )
     contents = contents.replace(lib_path, "")
-
-    # Strip all trailing whitespace.
-    lines = [line.rstrip() for line in contents.split("\n")]
-    if lines[-1] != "":
-        lines.append("")
-    contents = "\n".join(lines)
-
-    # Remove the `PyDataType_SHAPE` block (incompatible with NumPy 2.0 and not
-    # used in the codebase).
-    contents = contents.replace(NUMPY_2_INCOMPATIBLE, "")
-
-    # Write the file back
+    # Write the files back, but strip all trailing whitespace.
+    lines = contents.split("\n")
     with open(c_source, "w") as file_obj:
-        file_obj.write(contents)
+        for line in lines:
+            file_obj.write(line.rstrip() + "\n")
 
 
 def main():
