@@ -308,7 +308,7 @@ def _macos_doctest_install(session, install_prefix):
         "--wheel-dir",
         repaired_dir,
         "--require-archs",
-        "x86_64",
+        "arm64",
         "--verbose",
         *wheels,
     )
