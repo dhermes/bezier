@@ -20,7 +20,7 @@ import os
 
 
 # Error messages for ``handle_import_error``.
-TEMPLATE = "No module named 'bezier.{}'"  # 3.9, 3.10, 3.11, pypy3
+TEMPLATE = "No module named 'bezier.{}'"  # 3.10, 3.11, 3.12, pypy3
 EXTRA_DLL_ENV = "BEZIER_EXTRA_DLL"
 """Environment variable used to add extra directory to DLL search path.
 

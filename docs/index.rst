@@ -93,7 +93,7 @@ The ``bezier`` Python package can be installed with `pip`_:
 .. code-block:: console
 
    $ python     -m pip install --upgrade bezier
-   $ python3.11 -m pip install --upgrade bezier
+   $ python3.12 -m pip install --upgrade bezier
    $ # To install optional dependencies, e.g. SymPy
    $ python     -m pip install --upgrade bezier[full]
 

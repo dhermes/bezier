@@ -34,10 +34,10 @@ jobs:
     strategy:
       matrix:
         nox-session:
-          - unit-3.9
           - unit-3.10
+          - unit-3.11
           - cover
-          - functional-3.11
+          - functional-3.12
           - doctest
     steps:
       - uses: actions/cache@v3
@@ -46,6 +46,10 @@ jobs:
           key: windows-pip
 
       - uses: actions/checkout@v3
+
+      - uses: actions/setup-python@v4
+        with:
+          python-version: "3.12"
 
       - name: Update host Python packaging
         shell: cmd

@@ -99,22 +99,22 @@ The ``bezier._speedup`` module depends on this local copy of ``libbezier``:
 .. testcode:: linux-readelf-py
    :hide:
 
-   invoke_shell("readelf", "-d", "_speedup.cpython-311-x86_64-linux-gnu.so")
+   invoke_shell("readelf", "-d", "_speedup.cpython-312-x86_64-linux-gnu.so")
 
 .. testoutput:: linux-readelf-py
    :linux-only:
-   :pyversion: >= 3.11
+   :pyversion: >= 3.12
 
-   $ readelf -d _speedup.cpython-311-x86_64-linux-gnu.so
+   $ readelf -d _speedup.cpython-312-x86_64-linux-gnu.so
 
-   Dynamic section at offset 0x49f000 contains 27 entries:
+   Dynamic section at offset 0x47b000 contains 27 entries:
      Tag        Type                         Name/Value
     0x000000000000000f (RPATH)              Library rpath: [$ORIGIN/../bezier.libs]
     0x0000000000000001 (NEEDED)             Shared library: [libbezier-631d8eda.so.2023.7.28]
     0x0000000000000001 (NEEDED)             Shared library: [libpthread.so.0]
     0x0000000000000001 (NEEDED)             Shared library: [libc.so.6]
     0x000000000000000c (INIT)               0x7000
-    0x000000000000000d (FINI)               0x809f0
+    0x000000000000000d (FINI)               0x7cd30
    ...
 
 and the local copy of ``libbezier`` depends on the other dependencies in
@@ -187,16 +187,16 @@ of ``libbezier``:
    invoke_shell(
       "otool",
       "-L",
-      "_speedup.cpython-311-darwin.so",
+      "_speedup.cpython-312-darwin.so",
       replacements=(("\t", "        "),),
    )
 
 .. testoutput:: macos-extension
    :macos-only:
-   :pyversion: >= 3.11
+   :pyversion: >= 3.12
 
-   $ otool -L _speedup.cpython-311-darwin.so
-   _speedup.cpython-311-darwin.so:
+   $ otool -L _speedup.cpython-312-darwin.so
+   _speedup.cpython-312-darwin.so:
            @loader_path/.dylibs/libbezier.2023.7.28.dylib (...)
            /usr/lib/libSystem.B.dylib (...)
 
@@ -259,11 +259,12 @@ The ``bezier._speedup`` module (``.pyd`` file) depends on this local copy of
 
 .. testsetup:: windows-libs, windows-extension, windows-dll
 
-   import distutils.ccompiler
    import os
    import pathlib
    import re
    import subprocess
+
+   import setuptools._distutils.ccompiler
 
    import bezier
    import tests.utils
@@ -290,7 +291,7 @@ The ``bezier._speedup`` module (``.pyd`` file) depends on this local copy of
 
 
    if os.name == "nt":
-       c_compiler = distutils.ccompiler.new_compiler()
+       c_compiler = setuptools._distutils.ccompiler.new_compiler()
        assert c_compiler.compiler_type == "msvc"
        c_compiler.initialize()
 
@@ -362,25 +363,25 @@ The ``bezier._speedup`` module (``.pyd`` file) depends on this local copy of
 .. testcode:: windows-extension
    :hide:
 
-   invoke_shell("dumpbin", "/dependents", "_speedup.cp311-win_amd64.pyd")
+   invoke_shell("dumpbin", "/dependents", "_speedup.cp312-win_amd64.pyd")
 
 .. testoutput:: windows-extension
    :windows-only:
-   :pyversion: >= 3.11
+   :pyversion: >= 3.12
 
-   > dumpbin /dependents _speedup.cp311-win_amd64.pyd
+   > dumpbin /dependents _speedup.cp312-win_amd64.pyd
    Microsoft (R) COFF/PE Dumper Version ...
    Copyright (C) Microsoft Corporation.  All rights reserved.
 
 
-   Dump of file _speedup.cp311-win_amd64.pyd
+   Dump of file _speedup.cp312-win_amd64.pyd
 
    File Type: DLL
 
      Image has the following dependencies:
 
        bezier-40ff1ce7372f05ba11436ffbadd11324.dll
-       python311.dll
+       python312.dll
        KERNEL32.dll
        VCRUNTIME140.dll
        api-ms-win-crt-stdio-l1-1-0.dll
