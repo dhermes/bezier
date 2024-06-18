@@ -1916,9 +1916,9 @@ def classify_intersection(intersection, edge_nodes1, edge_nodes2):
        >>> hodograph(curve2, t)
        array([[1.],
               [0.]])
-       >>> curvature(curve1, s)
+       >>> float(curvature(curve1, s))
        2.0
-       >>> curvature(curve2, t)
+       >>> float(curvature(curve2, t))
        2.0
        >>> intersection = Intersection(0, s, 0, t)
        >>> edge_nodes1 = (nodes1, None, None)

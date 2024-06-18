@@ -629,7 +629,7 @@ def get_curvature(nodes, tangent_vec, s):
        array([[-1.],
               [ 0.]])
        >>> curvature = get_curvature(nodes, tangent_vec, s)
-       >>> curvature
+       >>> float(curvature)
        -12.0
 
     .. testcleanup:: get-curvature
@@ -668,7 +668,7 @@ def get_curvature(nodes, tangent_vec, s):
     )
     # NOTE: We convert to 1D to make sure NumPy uses vector norm.
     curvature /= np.linalg.norm(tangent_vec[:, 0], ord=2) ** 3
-    return float(curvature)
+    return curvature
 
 
 def newton_refine(nodes, point, s):
@@ -736,7 +736,7 @@ def newton_refine(nodes, point, s):
               [0.8125]])
        >>> s = 0.75
        >>> new_s = newton_refine(nodes, point, s)
-       >>> 5 * (new_s - s)
+       >>> float(5 * (new_s - s))
        -2.0
 
     .. testcleanup:: newton-refine-curve
@@ -813,9 +813,9 @@ def newton_refine(nodes, point, s):
        ...     new_s = newton_refine(nodes, point, s_vals[-1])
        ...
        >>> terminal_s = s_vals[-1]
-       >>> terminal_s == newton_refine(nodes, point, terminal_s)
+       >>> bool(terminal_s == newton_refine(nodes, point, terminal_s))
        True
-       >>> 2.0**(-31) <= abs(terminal_s - 0.5) <= 2.0**(-28)
+       >>> 2.0**(-31) <= float(abs(terminal_s - 0.5)) <= 2.0**(-28)
        True
 
     Due to round-off near the cusp, the final error resembles
@@ -842,7 +842,7 @@ def newton_refine(nodes, point, s):
     delta_s = np.vdot(pt_delta[:, 0], derivative[:, 0]) / np.vdot(
         derivative[:, 0], derivative[:, 0]
     )
-    return float(s + delta_s)
+    return s + delta_s
 
 
 def locate_point(nodes, point):

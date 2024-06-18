@@ -967,7 +967,7 @@ def lu_companion(top_row, value):
        array([[ 1.   , -0.5  ,  0.   ],
               [ 0.   ,  1.   , -0.5  ],
               [-3.5  , -0.75 , -2.375]])
-       >>> one_norm
+       >>> float(one_norm)
        4.5
        >>> l_mat = np.tril(lu_mat, k=-1) + np.eye(3)
        >>> u_mat = np.triu(lu_mat)
@@ -999,7 +999,7 @@ def lu_companion(top_row, value):
     lu_mat = np.zeros((degree, degree), order="F")
     if degree == 1:
         lu_mat[0, 0] = top_row[0] - value
-        return lu_mat, float(abs(lu_mat[0, 0]))
+        return lu_mat, abs(lu_mat[0, 0])
 
     # Column 0: Special case since it doesn't have ``-t`` above the diagonal.
     horner_curr = top_row[0] - value
@@ -1022,7 +1022,7 @@ def lu_companion(top_row, value):
     one_norm = max(one_norm, abs(value) + abs(curr_coeff))
     lu_mat[last_row - 1, last_row] = -value
     lu_mat[last_row, last_row] = horner_curr
-    return lu_mat, float(one_norm)
+    return lu_mat, one_norm
 
 
 def _reciprocal_condition_number(lu_mat, one_norm):

@@ -153,9 +153,9 @@ def newton_refine(s, nodes1, t, nodes2):
        ... ])
        >>> s, t = 0.375, 0.25
        >>> new_s, new_t = newton_refine(s, nodes1, t, nodes2)
-       >>> 64.0 * (new_s - s)
+       >>> float(64.0 * (new_s - s))
        -9.0
-       >>> 64.0 * (new_t - t)
+       >>> float(64.0 * (new_t - t))
        18.0
 
     .. testcleanup:: newton-refine1
@@ -279,12 +279,12 @@ def newton_refine(s, nodes1, t, nodes2):
        >>> float(np.log2(0.5 - s1))
        -27.0
        >>> s2, t2 = newton_refine(s1, nodes1, t1, nodes2)
-       >>> s2 == t2
+       >>> bool(s2 == t2)
        True
        >>> float(np.log2(0.5 - s2))
        -28.0
        >>> s3, t3 = newton_refine(s2, nodes1, t2, nodes2)
-       >>> s3 == t3 == s2
+       >>> bool(s3 == t3 == s2)
        True
 
     Due to round-off near the point of tangency, the final error
@@ -417,7 +417,7 @@ def newton_refine(s, nodes1, t, nodes2):
     if singular:
         raise ValueError("Jacobian is singular.")
 
-    return float(s + delta_s), float(t + delta_t)
+    return s + delta_s, t + delta_t
 
 
 class NewtonSimpleRoot:  # pylint: disable=too-few-public-methods

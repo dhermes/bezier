@@ -168,7 +168,7 @@ def linearization_error(nodes):
        ...     [0.0, 3.0, 9.0],
        ...     [0.0, 1.0, -2.0],
        ... ])
-       >>> linearization_error(nodes)
+       >>> float(linearization_error(nodes))
        1.25
 
     .. testcleanup:: linearization-error
@@ -205,7 +205,7 @@ def linearization_error(nodes):
        ...     [0.0, 5.0, 10.0, 30.0],
        ...     [0.0, 12.0, 24.0, 72.0],
        ... ])
-       >>> linearization_error(nodes)
+       >>> float(linearization_error(nodes))
        29.25
 
     Though it may seem that ``0`` is a more appropriate answer, consider
@@ -240,7 +240,7 @@ def linearization_error(nodes):
     # max_{0 <= s <= 1} s(1 - s)/2 = 1/8 = 0.125
     multiplier = 0.125 * degree * (degree - 1)
     # NOTE: worst_case is 1D due to np.max(), so this is the vector norm.
-    return float(multiplier * np.linalg.norm(worst_case, ord=2))
+    return multiplier * np.linalg.norm(worst_case, ord=2)
 
 
 def segment_intersection(start0, end0, start1, end1):
@@ -313,9 +313,9 @@ def segment_intersection(start0, end0, start1, end1):
        >>> start1 = np.asfortranarray([-1.0, 2.0])
        >>> end1 = np.asfortranarray([1.0, 0.0])
        >>> s, t, _ = segment_intersection(start0, end0, start1, end1)
-       >>> s
+       >>> float(s)
        0.25
-       >>> t
+       >>> float(t)
        0.75
 
     .. testcleanup:: segment-intersection1
@@ -408,7 +408,7 @@ def segment_intersection(start0, end0, start1, end1):
         start_delta = start1 - start0
         s = _py_helpers.cross_product(start_delta, delta1) / cross_d0_d1
         t = _py_helpers.cross_product(start_delta, delta0) / cross_d0_d1
-        return float(s), float(t), True
+        return s, t, True
 
 
 def parallel_lines_parameters(start0, end0, start1, end1):
