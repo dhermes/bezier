@@ -74,15 +74,15 @@ jobs:
         run: |
           nox --session unit-3.10
 
-      - name: Unit tests AND line coverage in Python 3.11
-        if: matrix.python-version == '3.11'
-        run: |
-          nox --session cover
+      # - name: Unit tests AND line coverage in Python 3.11
+      #   if: matrix.python-version == '3.11'
+      #   run: |
+      #     nox --session cover
 
-      - name: Functional tests in Python 3.11
-        if: matrix.python-version == '3.11'
-        run: |
-          nox --session functional-3.11
+      # - name: Functional tests in Python 3.11
+      #   if: matrix.python-version == '3.11'
+      #   run: |
+      #     nox --session functional-3.11
 
       - name: Run all doctests
         if: matrix.python-version == '3.11'

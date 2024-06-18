@@ -311,7 +311,7 @@ def _macos_doctest_install(session, install_prefix):
         *wheels,
     )
     # 4. Install from the repaired wheel.
-    session.run("ls", "-alFG", repaired_dir)  # Debug
+    session.run("ls", "-alFG", repaired_dir, external=True)  # Debug
     session.run(
         "pip", "install", "bezier", "--no-index", "--find-links", repaired_dir
     )
