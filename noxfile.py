@@ -10,6 +10,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import functools
 import glob
 import os
 import pathlib
@@ -28,29 +29,29 @@ IS_LINUX = sys.platform in ("linux", "linux2")
 IS_MACOS = sys.platform == "darwin"
 IS_WINDOWS = os.name == "nt"
 DEPS = {
-    "black": "black >= 23.7.0",
+    "black": "black >= 24.4.2",
     "cmake-format": "cmake-format >= 0.6.13",
-    "cmake": "cmake >= 3.27.0",
+    "cmake": "cmake >= 3.29.5.1",
     "coverage": "coverage",
-    "Cython": "Cython >= 3.0.2",
-    "delocate": "delocate >= 0.10.4",
-    "delvewheel": "delvewheel >= 1.4.0",
+    "Cython": "Cython >= 3.0.10",
+    "delocate": "delocate >= 0.11.0",
+    "delvewheel": "delvewheel >= 1.6.0",
     "docutils": "docutils",
     "flake8": "flake8",
     "flake8-import-order": "flake8-import-order",
-    "jsonschema": "jsonschema >= 4.18.4",
+    "jsonschema": "jsonschema >= 4.22.0",
     "lcov-cobertura": "lcov-cobertura >= 2.0.2",
-    "matplotlib": "matplotlib >= 3.7.2",
-    "numpy": "numpy >= 1.25.2",
-    "pycobertura": "pycobertura >= 3.2.1",
+    "matplotlib": "matplotlib >= 3.9.0",
+    "numpy": "numpy >= 1.26.4, < 2",
+    "pycobertura": "pycobertura >= 3.3.2",
     "Pygments": "Pygments",
-    "pylint": "pylint >= 2.17.5",
-    "pytest": "pytest >= 7.4.0",
+    "pylint": "pylint >= 3.2.3",
+    "pytest": "pytest >= 8.2.2",
     "pytest-cov": "pytest-cov",
-    "referencing": "referencing >= 0.30.0",
-    "scipy": "scipy >= 1.11.1",
-    "sympy": "sympy >= 1.12",
-    "seaborn": "seaborn >= 0.12.2",
+    "referencing": "referencing >= 0.35.1",
+    "scipy": "scipy >= 1.13.1",
+    "sympy": "sympy >= 1.12.1",
+    "seaborn": "seaborn >= 0.13.2",
 }
 BASE_DEPS = (DEPS["numpy"], DEPS["pytest"])
 NOX_DIR = os.path.abspath(os.path.dirname(__file__))
@@ -67,6 +68,10 @@ DEBUG_SESSION_NAME = "libbezier-debug"
 RELEASE_SESSION_NAME = "libbezier-release"
 INSTALL_PREFIX_ENV = "BEZIER_INSTALL_PREFIX"
 EXTRA_DLL_ENV = "BEZIER_EXTRA_DLL"
+_OS_MAKEDIRS_EXIST_OK = functools.partial(os.makedirs, exist_ok=True)
+_SHUTIL_RMTREE_IGNORE_ERRORS = functools.partial(
+    shutil.rmtree, ignore_errors=True
+)
 
 
 def get_path(*names):
@@ -286,6 +291,8 @@ def _macos_doctest_install(session, install_prefix):
     # 2. Build the wheel from source.
     basic_dir = tempfile.mkdtemp()
     session.run(
+        "python",
+        "-m",
         "pip",
         "wheel",
         ".",
@@ -307,7 +314,14 @@ def _macos_doctest_install(session, install_prefix):
     )
     # 4. Install from the repaired wheel.
     session.run(
-        "pip", "install", "bezier", "--no-index", "--find-links", repaired_dir
+        "python",
+        "-m",
+        "pip",
+        "install",
+        "bezier",
+        "--no-index",
+        "--find-links",
+        repaired_dir,
     )
     # 5. Clean up temporary directories.
     shutil.rmtree(basic_dir, ignore_errors=True)
@@ -320,6 +334,8 @@ def _windows_doctest_install(session, install_prefix):
     # 2. Build the wheel from source.
     basic_dir = tempfile.mkdtemp()
     session.run(
+        "python",
+        "-m",
         "pip",
         "wheel",
         ".",
@@ -342,7 +358,14 @@ def _windows_doctest_install(session, install_prefix):
     )
     # 4. Install from the repaired wheel.
     session.run(
-        "pip", "install", "bezier", "--no-index", "--find-links", repaired_dir
+        "python",
+        "-m",
+        "pip",
+        "install",
+        "bezier",
+        "--no-index",
+        "--find-links",
+        repaired_dir,
     )
     # 5. Clean up temporary directories.
     shutil.rmtree(basic_dir, ignore_errors=True)
@@ -592,7 +615,7 @@ def _cmake_libbezier_root(session, build_type):
     relative_path = session.cache_dir / build_session_name
     # Convert to an absolute path.
     libbezier_root = get_path(relative_path)
-    session.run(os.makedirs, libbezier_root, exist_ok=True)
+    session.run(_OS_MAKEDIRS_EXIST_OK, libbezier_root)
     return libbezier_root
 
 
@@ -627,13 +650,13 @@ def _cmake(session, build_type):
         session.install(DEPS["cmake"])
         cmake_external = False
     else:
-        session.run_always(print, "Using pre-installed ``cmake``")
-        session.run_always("cmake", "--version", external=cmake_external)
+        session.run_install(print, "Using pre-installed ``cmake``")
+        session.run_install("cmake", "--version", external=cmake_external)
 
     # Prepare build and install directories.
     build_dir = os.path.join(libbezier_root, "build")
     install_prefix = os.path.join(libbezier_root, "usr")
-    session.run_always(os.makedirs, build_dir, exist_ok=True)
+    session.run_install(_OS_MAKEDIRS_EXIST_OK, build_dir)
 
     # Run ``cmake`` to prepare for / configure the build.
     build_args = [
@@ -644,14 +667,16 @@ def _cmake(session, build_type):
     ]
     if IS_WINDOWS:
         build_args.extend(["-G", "MinGW Makefiles"])
+    if IS_MACOS:
+        build_args.append("-DCMAKE_OSX_DEPLOYMENT_TARGET:STRING=13.0")
     if os.environ.get("TARGET_NATIVE_ARCH") == "OFF":
         build_args.append("-DTARGET_NATIVE_ARCH:BOOL=OFF")
 
     build_args.extend(["-S", os.path.join("src", "fortran"), "-B", build_dir])
-    session.run_always(*build_args, external=cmake_external)
+    session.run_install(*build_args, external=cmake_external)
 
     # Build and install.
-    session.run_always(
+    session.run_install(
         "cmake",
         "--build",
         build_dir,
@@ -663,7 +688,7 @@ def _cmake(session, build_type):
     )
 
     # Get information on how the build was configured.
-    session.run_always("cmake", "-L", build_dir, external=cmake_external)
+    session.run_install("cmake", "-L", build_dir, external=cmake_external)
 
     return install_prefix
 
@@ -722,7 +747,7 @@ def clean(session):
         get_path("tests", "unit", "*.pyc"),
     )
     for dir_path in clean_dirs:
-        session.run(shutil.rmtree, dir_path, ignore_errors=True)
+        session.run(_SHUTIL_RMTREE_IGNORE_ERRORS, dir_path)
     for glob_path in clean_globs:
         for filename in glob.glob(glob_path):
             session.run(os.remove, filename)

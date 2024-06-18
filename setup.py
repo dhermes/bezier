@@ -72,7 +72,7 @@ instructions for the C ABI (`libbezier`).
 """.format(
     install_prefix=INSTALL_PREFIX_ENV, no_extension=NO_EXTENSION_ENV
 )
-REQUIREMENTS = ("numpy >= 1.25.2",)
+REQUIREMENTS = ("numpy >= 1.26.4, < 2",)
 # See: https://www.python.org/dev/peps/pep-0508/
 #      Dependency specification for Python Software Packages
 EXTRAS_REQUIRE = {

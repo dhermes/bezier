@@ -715,9 +715,9 @@ def bernstein_companion(coeffs):
 
     companion = np.zeros((effective_degree, effective_degree), order="F")
     # pylint: disable=unsupported-assignment-operation
-    companion.flat[
-        effective_degree :: effective_degree + 1  # noqa: E203
-    ] = 1.0
+    companion.flat[effective_degree :: effective_degree + 1] = (  # noqa: E203
+        1.0
+    )
     # pylint: enable=unsupported-assignment-operation
     companion[0, :] = -sigma_coeffs[::-1]
     return companion, degree, effective_degree
