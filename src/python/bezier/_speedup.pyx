@@ -34,7 +34,6 @@ from libc.stdlib cimport free
 from libc.stdlib cimport malloc
 from libcpp cimport bool as bool_t
 import numpy as np
-cimport numpy as np
 from numpy cimport dtype as dtype_t
 from numpy cimport ndarray as ndarray_t
 
