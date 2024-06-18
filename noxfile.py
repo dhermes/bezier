@@ -318,6 +318,7 @@ def _macos_doctest_install(session, install_prefix):
     session.run("python", "--version")
     session.run("python", "-m", "pip", "debug", "--verbose")
     session.run("python", "-c", "import sys; print(sys.implementation)")
+    session.run("python", "-c", "import sysconfig; print(sysconfig.get_platform())")
     ### END: Debug
     session.run(
         "python",
@@ -673,6 +674,8 @@ def _cmake(session, build_type):
     ]
     if IS_WINDOWS:
         build_args.extend(["-G", "MinGW Makefiles"])
+    if IS_MACOS:
+        build_args.append("-DCMAKE_OSX_DEPLOYMENT_TARGET:STRING=13.0")
     if os.environ.get("TARGET_NATIVE_ARCH") == "OFF":
         build_args.append("-DTARGET_NATIVE_ARCH:BOOL=OFF")
 
