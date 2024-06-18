@@ -173,7 +173,7 @@ def install_bezier(session, debug=False, env=None):
 @nox.parametrize("check", [True, False])
 def update_generated(session, check):
     # Install all dependencies.
-    session.install(DEPS["Cython"])
+    session.install(DEPS["Cython"], DEPS["numpy"])
     if check:
         command = get_path("scripts", "remove_cython_files.py")
         session.run("python", command)
