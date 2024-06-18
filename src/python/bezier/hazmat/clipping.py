@@ -138,8 +138,10 @@ def compute_fat_line(nodes):
        ...     [2.0, 4.5, 2.5, 5.0],
        ... ])
        >>> coeff_a, coeff_b, coeff_c, d_min, d_max = compute_fat_line(nodes)
-       >>> float(coeff_a), float(coeff_b), float(coeff_c), float(d_min), float(d_max)
-       (-3.0, 4.0, -8.0, -7.0, 7.0)
+       >>> float(coeff_a), float(coeff_b), float(coeff_c)
+       (-3.0, 4.0, -8.0)
+       >>> float(d_min), float(d_max)
+       (-7.0, 7.0)
 
     .. testcleanup:: compute-fat-line
 
