@@ -34,8 +34,8 @@ jobs:
     strategy:
       matrix:
         nox-session:
-          # - unit-3.10
-          # - unit-3.11
+          - unit-3.10
+          - unit-3.11
           - cover
           - functional-3.12
           - doctest
