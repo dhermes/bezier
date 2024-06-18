@@ -315,8 +315,8 @@ def _macos_doctest_install(session, install_prefix):
         "pip", "install", "bezier", "--no-index", "--find-links", repaired_dir
     )
     # 5. Clean up temporary directories.
-    shutil.rmtree(basic_dir, ignore_errors=True)
-    shutil.rmtree(repaired_dir, ignore_errors=True)
+    session.run(_SHUTIL_RMTREE_IGNORE_ERRORS, basic_dir)
+    session.run(_SHUTIL_RMTREE_IGNORE_ERRORS, repaired_dir)
 
 
 def _windows_doctest_install(session, install_prefix):
