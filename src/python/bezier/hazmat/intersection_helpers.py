@@ -153,9 +153,9 @@ def newton_refine(s, nodes1, t, nodes2):
        ... ])
        >>> s, t = 0.375, 0.25
        >>> new_s, new_t = newton_refine(s, nodes1, t, nodes2)
-       >>> 64.0 * (new_s - s)
+       >>> float(64.0 * (new_s - s))
        -9.0
-       >>> 64.0 * (new_t - t)
+       >>> float(64.0 * (new_t - t))
        18.0
 
     .. testcleanup:: newton-refine1
@@ -187,16 +187,16 @@ def newton_refine(s, nodes1, t, nodes2):
        >>> expected, = realroots(28, -30, 9, -1)
        >>> s_vals = [0.625, None, None, None, None]
        >>> t = 0.625
-       >>> np.log2(abs(expected - s_vals[0]))
+       >>> float(np.log2(abs(expected - s_vals[0])))
        -4.399...
        >>> s_vals[1], t = newton_refine(s_vals[0], nodes1, t, nodes2)
-       >>> np.log2(abs(expected - s_vals[1]))
+       >>> float(np.log2(abs(expected - s_vals[1])))
        -7.901...
        >>> s_vals[2], t = newton_refine(s_vals[1], nodes1, t, nodes2)
-       >>> np.log2(abs(expected - s_vals[2]))
+       >>> float(np.log2(abs(expected - s_vals[2])))
        -16.010...
        >>> s_vals[3], t = newton_refine(s_vals[2], nodes1, t, nodes2)
-       >>> np.log2(abs(expected - s_vals[3]))
+       >>> float(np.log2(abs(expected - s_vals[3])))
        -32.110...
        >>> s_vals[4], t = newton_refine(s_vals[3], nodes1, t, nodes2)
        >>> np.allclose(s_vals[4], expected, rtol=6 * machine_eps, atol=0.0)
@@ -229,22 +229,22 @@ def newton_refine(s, nodes1, t, nodes2):
        >>> expected = 0.5
        >>> s_vals = [0.375, None, None, None, None, None]
        >>> t = 0.375
-       >>> np.log2(abs(expected - s_vals[0]))
+       >>> float(np.log2(abs(expected - s_vals[0])))
        -3.0
        >>> s_vals[1], t = newton_refine(s_vals[0], nodes1, t, nodes2)
-       >>> np.log2(abs(expected - s_vals[1]))
+       >>> float(np.log2(abs(expected - s_vals[1])))
        -4.0
        >>> s_vals[2], t = newton_refine(s_vals[1], nodes1, t, nodes2)
-       >>> np.log2(abs(expected - s_vals[2]))
+       >>> float(np.log2(abs(expected - s_vals[2])))
        -5.0
        >>> s_vals[3], t = newton_refine(s_vals[2], nodes1, t, nodes2)
-       >>> np.log2(abs(expected - s_vals[3]))
+       >>> float(np.log2(abs(expected - s_vals[3])))
        -6.0
        >>> s_vals[4], t = newton_refine(s_vals[3], nodes1, t, nodes2)
-       >>> np.log2(abs(expected - s_vals[4]))
+       >>> float(np.log2(abs(expected - s_vals[4])))
        -7.0
        >>> s_vals[5], t = newton_refine(s_vals[4], nodes1, t, nodes2)
-       >>> np.log2(abs(expected - s_vals[5]))
+       >>> float(np.log2(abs(expected - s_vals[5])))
        -8.0
 
     .. testcleanup:: newton-refine3
@@ -276,15 +276,15 @@ def newton_refine(s, nodes1, t, nodes2):
     .. doctest:: newton-refine3-continued
 
        >>> s1 = t1 = 0.5 - 0.5**27
-       >>> np.log2(0.5 - s1)
+       >>> float(np.log2(0.5 - s1))
        -27.0
        >>> s2, t2 = newton_refine(s1, nodes1, t1, nodes2)
-       >>> s2 == t2
+       >>> bool(s2 == t2)
        True
-       >>> np.log2(0.5 - s2)
+       >>> float(np.log2(0.5 - s2))
        -28.0
        >>> s3, t3 = newton_refine(s2, nodes1, t2, nodes2)
-       >>> s3 == t3 == s2
+       >>> bool(s3 == t3 == s2)
        True
 
     Due to round-off near the point of tangency, the final error
@@ -364,24 +364,24 @@ def newton_refine(s, nodes1, t, nodes2):
            RHS = helpers.matrix_product(DG_t, minus_G)
            delta_params = np.linalg.solve(LHS, RHS)
            delta_s, delta_t = delta_params.flatten()
-           return s + delta_s, t + delta_t
+           return float(s + delta_s), float(t + delta_t)
 
     .. doctest:: newton-refine4
 
        >>> s0, t0 = 0.375, 0.375
-       >>> np.log2(0.5 - s0)
+       >>> float(np.log2(0.5 - s0))
        -3.0
        >>> s1, t1 = modified_update(s0, t0)
        >>> s1 == t1
        True
        >>> 1040.0 * s1
        519.0
-       >>> np.log2(0.5 - s1)
+       >>> float(np.log2(0.5 - s1))
        -10.022...
        >>> s2, t2 = modified_update(s1, t1)
        >>> s2 == t2
        True
-       >>> np.log2(0.5 - s2)
+       >>> float(np.log2(0.5 - s2))
        -31.067...
        >>> s3, t3 = modified_update(s2, t2)
        >>> s3 == t3 == 0.5

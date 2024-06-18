@@ -28,7 +28,7 @@ See :doc:`../../algorithms/curve-curve-intersection` for examples using the
            return -np.inf
        _, result = np.frexp(value)
        # Shift [1/2, 1) --> [1, 2) borrows one from exponent
-       return result - 1
+       return int(result - 1)
 """
 
 import numpy as np
@@ -764,10 +764,10 @@ class Curve(_base.Base):
 
            >>> left, right = curve.subdivide()
            >>> also_left = curve.specialize(0.0, 0.5)
-           >>> np.all(also_left.nodes == left.nodes)
+           >>> bool(np.all(also_left.nodes == left.nodes))
            True
            >>> also_right = curve.specialize(0.5, 1.0)
-           >>> np.all(also_right.nodes == right.nodes)
+           >>> bool(np.all(also_right.nodes == right.nodes))
            True
 
         Args:

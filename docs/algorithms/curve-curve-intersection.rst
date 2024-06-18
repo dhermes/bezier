@@ -11,7 +11,7 @@ Curve-Curve Intersection
            return -np.inf
        _, result = np.frexp(value)
        # Shift [1/2, 1) --> [1, 2) borrows one from exponent
-       return result - 1
+       return int(result - 1)
 
 The problem of intersecting two curves is a difficult one
 in computational geometry. The :meth:`.Curve.intersect` method (when using

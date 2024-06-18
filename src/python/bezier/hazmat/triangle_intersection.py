@@ -165,16 +165,16 @@ def newton_refine(nodes, degree, x_val, y_val, s, t):
        ...     [0.0, 0.0, 0.0, 1.0, 2.0, 2.0],
        ... ])
        >>> triangle = bezier.Triangle(nodes, degree=2)
-       >>> triangle.is_valid
+       >>> bool(triangle.is_valid)
        True
        >>> (x_val,), (y_val,) = triangle.evaluate_cartesian(0.25, 0.5)
-       >>> x_val, y_val
+       >>> float(x_val), float(y_val)
        (1.25, 1.25)
        >>> s, t = 0.5, 0.25
        >>> new_s, new_t = newton_refine(nodes, 2, x_val, y_val, s, t)
-       >>> 32 * (new_s - s)
+       >>> float(32 * (new_s - s))
        -10.0
-       >>> 32 * (new_t - t)
+       >>> float(32 * (new_t - t))
        7.0
 
     .. testcleanup:: newton-refine-triangle

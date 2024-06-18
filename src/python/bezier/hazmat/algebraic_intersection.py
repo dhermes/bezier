@@ -967,7 +967,7 @@ def lu_companion(top_row, value):
        array([[ 1.   , -0.5  ,  0.   ],
               [ 0.   ,  1.   , -0.5  ],
               [-3.5  , -0.75 , -2.375]])
-       >>> one_norm
+       >>> float(one_norm)
        4.5
        >>> l_mat = np.tril(lu_mat, k=-1) + np.eye(3)
        >>> u_mat = np.triu(lu_mat)
@@ -976,7 +976,7 @@ def lu_companion(top_row, value):
        array([[ 1. , -0.5,  0. ],
               [ 0. ,  1. , -0.5],
               [-3.5,  1. , -2. ]])
-       >>> np.linalg.norm(a_mat, ord=1)
+       >>> float(np.linalg.norm(a_mat, ord=1))
        4.5
 
     Args:

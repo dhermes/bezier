@@ -42,7 +42,7 @@ DEPS = {
     "jsonschema": "jsonschema >= 4.22.0",
     "lcov-cobertura": "lcov-cobertura >= 2.0.2",
     "matplotlib": "matplotlib >= 3.9.0",
-    "numpy": "numpy >= 1.26.4, < 2",
+    "numpy": "numpy >= 2.0.0",
     "pycobertura": "pycobertura >= 3.3.2",
     "Pygments": "Pygments",
     "pylint": "pylint >= 3.2.3",

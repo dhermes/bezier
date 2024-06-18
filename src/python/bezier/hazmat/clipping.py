@@ -76,7 +76,8 @@ def compute_implicit_line(nodes):
        ...     [0.0, 1.0, 3.0, 4.0],
        ...     [0.0, 2.5, 0.5, 3.0],
        ... ])
-       >>> compute_implicit_line(nodes)
+       >>> coeff_a, coeff_b, coeff_c = compute_implicit_line(nodes)
+       >>> float(coeff_a), float(coeff_b), float(coeff_c)
        (-3.0, 4.0, 0.0)
 
     .. testcleanup:: compute-implicit-line
@@ -136,13 +137,16 @@ def compute_fat_line(nodes):
        ...     [0.0, 1.0, 3.0, 4.0],
        ...     [2.0, 4.5, 2.5, 5.0],
        ... ])
-       >>> info = compute_fat_line(nodes)
-       >>> info
-       (-3.0, 4.0, -8.0, -7.0, 7.0)
+       >>> coeff_a, coeff_b, coeff_c, d_min, d_max = compute_fat_line(nodes)
+       >>> float(coeff_a), float(coeff_b), float(coeff_c)
+       (-3.0, 4.0, -8.0)
+       >>> float(d_min), float(d_max)
+       (-7.0, 7.0)
 
     .. testcleanup:: compute-fat-line
 
        import make_images
+       info = coeff_a, coeff_b, coeff_c, d_min, d_max
        make_images.compute_fat_line(nodes, info)
 
     Args:
@@ -335,7 +339,8 @@ def clip_range(nodes1, nodes2):
     .. doctest:: clip-range
        :options: +NORMALIZE_WHITESPACE
 
-       >>> clip_range(nodes1, nodes2)
+       >>> s_min, s_max = clip_range(nodes1, nodes2)
+       >>> float(s_min), float(s_max)
        (0.25, 0.875)
 
     .. testcleanup:: clip-range

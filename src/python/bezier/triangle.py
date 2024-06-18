@@ -863,7 +863,7 @@ class Triangle(_base.Base):
            ...     [0.0, 1.0, 2.0],
            ... ])
            >>> triangle = bezier.Triangle(nodes, degree=1)
-           >>> triangle.is_valid
+           >>> bool(triangle.is_valid)
            False
 
         .. testcleanup:: triangle-is-valid1
@@ -883,7 +883,7 @@ class Triangle(_base.Base):
            ...     [0.0, 0.125, 0.0,  0.5  , 0.5, 1.0],
            ... ])
            >>> triangle = bezier.Triangle(nodes, degree=2)
-           >>> triangle.is_valid
+           >>> bool(triangle.is_valid)
            True
 
         .. testcleanup:: triangle-is-valid2

@@ -629,7 +629,7 @@ def get_curvature(nodes, tangent_vec, s):
        array([[-1.],
               [ 0.]])
        >>> curvature = get_curvature(nodes, tangent_vec, s)
-       >>> curvature
+       >>> float(curvature)
        -12.0
 
     .. testcleanup:: get-curvature
@@ -736,7 +736,7 @@ def newton_refine(nodes, point, s):
               [0.8125]])
        >>> s = 0.75
        >>> new_s = newton_refine(nodes, point, s)
-       >>> 5 * (new_s - s)
+       >>> float(5 * (new_s - s))
        -2.0
 
     .. testcleanup:: newton-refine-curve
@@ -765,22 +765,22 @@ def newton_refine(nodes, point, s):
        array([[0.],
               [0.]])
        >>> s_vals = [0.625, None, None, None, None, None]
-       >>> np.log2(abs(expected - s_vals[0]))
+       >>> float(np.log2(abs(expected - s_vals[0])))
        -3.0
        >>> s_vals[1] = newton_refine(nodes, point, s_vals[0])
-       >>> np.log2(abs(expected - s_vals[1]))
+       >>> float(np.log2(abs(expected - s_vals[1])))
        -3.983...
        >>> s_vals[2] = newton_refine(nodes, point, s_vals[1])
-       >>> np.log2(abs(expected - s_vals[2]))
+       >>> float(np.log2(abs(expected - s_vals[2])))
        -4.979...
        >>> s_vals[3] = newton_refine(nodes, point, s_vals[2])
-       >>> np.log2(abs(expected - s_vals[3]))
+       >>> float(np.log2(abs(expected - s_vals[3])))
        -5.978...
        >>> s_vals[4] = newton_refine(nodes, point, s_vals[3])
-       >>> np.log2(abs(expected - s_vals[4]))
+       >>> float(np.log2(abs(expected - s_vals[4])))
        -6.978...
        >>> s_vals[5] = newton_refine(nodes, point, s_vals[4])
-       >>> np.log2(abs(expected - s_vals[5]))
+       >>> float(np.log2(abs(expected - s_vals[5])))
        -7.978...
 
     .. testcleanup:: newton-refine-curve-cusp
@@ -813,9 +813,9 @@ def newton_refine(nodes, point, s):
        ...     new_s = newton_refine(nodes, point, s_vals[-1])
        ...
        >>> terminal_s = s_vals[-1]
-       >>> terminal_s == newton_refine(nodes, point, terminal_s)
+       >>> bool(terminal_s == newton_refine(nodes, point, terminal_s))
        True
-       >>> 2.0**(-31) <= abs(terminal_s - 0.5) <= 2.0**(-28)
+       >>> 2.0**(-31) <= float(abs(terminal_s - 0.5)) <= 2.0**(-28)
        True
 
     Due to round-off near the cusp, the final error resembles
