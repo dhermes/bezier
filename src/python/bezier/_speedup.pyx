@@ -49,9 +49,6 @@ from bezier._triangle_intersection cimport CurvedPolygonSegment
 from bezier._triangle_intersection cimport TriangleContained
 
 
-np.import_array()
-
-
 cdef double EPS = 0.5**40
 cdef double LOCATE_MISS = -1.0
 cdef double LOCATE_INVALID = -2.0
