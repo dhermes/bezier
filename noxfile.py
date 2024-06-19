@@ -668,7 +668,12 @@ def _cmake(session, build_type):
     if IS_WINDOWS:
         build_args.extend(["-G", "MinGW Makefiles"])
     if IS_MACOS:
-        build_args.append("-DCMAKE_OSX_DEPLOYMENT_TARGET:STRING=13.0")
+        build_args.extend(
+            [
+                "-DCMAKE_OSX_DEPLOYMENT_TARGET:STRING=13.0",
+                "-DCMAKE_OSX_ARCHITECTURES=x86_64",
+            ]
+        )
     if os.environ.get("TARGET_NATIVE_ARCH") == "OFF":
         build_args.append("-DTARGET_NATIVE_ARCH:BOOL=OFF")
 
