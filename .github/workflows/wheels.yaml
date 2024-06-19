@@ -112,11 +112,14 @@ jobs:
           echo '$ otool -L .nox/.cache/libbezier-release/usr/lib/libbezier.2023.7.28.dylib'
           otool -L .nox/.cache/libbezier-release/usr/lib/libbezier.2023.7.28.dylib
 
+          echo '$ lipo -archs .nox/.cache/libbezier-release/usr/lib/libbezier.2023.7.28.dylib'
+          lipo -archs .nox/.cache/libbezier-release/usr/lib/libbezier.2023.7.28.dylib
+
       - name: Build wheels
         uses: pypa/cibuildwheel@932529cab190fafca8c735a551657247fa8f8eaf # v2.19.1
         env:
           BEZIER_INSTALL_PREFIX: ./.nox/.cache/libbezier-release/usr
-          CIBW_ARCHS: x86_64 # "x86_64 arm64"
+          CIBW_ARCHS: arm64 # "x86_64 arm64"
           CIBW_BEFORE_BUILD: |
             python -m pip install numpy
           CIBW_BUILD: >-
