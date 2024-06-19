@@ -32,7 +32,7 @@ jobs:
   tests:
     runs-on: ubuntu-20.04
     steps:
-      - uses: actions/cache@v3
+      - uses: actions/cache@0c45773b623bea8c8e75f6c82b208c3cf94ea4f9 # v4.0.2
         with:
           path: ~/.cache/pip
           key: ubuntu-tests-pip
@@ -96,7 +96,7 @@ jobs:
   lint:
     runs-on: ubuntu-20.04
     steps:
-      - uses: actions/cache@v3
+      - uses: actions/cache@0c45773b623bea8c8e75f6c82b208c3cf94ea4f9 # v4.0.2
         with:
           path: ~/.cache/pip
           key: ubuntu-lint-pip
@@ -126,7 +126,7 @@ jobs:
   docs:
     runs-on: ubuntu-20.04
     steps:
-      - uses: actions/cache@v3
+      - uses: actions/cache@0c45773b623bea8c8e75f6c82b208c3cf94ea4f9 # v4.0.2
         with:
           path: ~/.cache/pip
           key: ubuntu-docs-pip
