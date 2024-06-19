@@ -31,7 +31,6 @@ on:
 
 jobs:
   linux:
-    if: ${{ false }} # BEGIN: Temporary
     runs-on: ubuntu-22.04
     strategy:
       matrix:
@@ -82,6 +81,7 @@ jobs:
           path: ./wheelhouse/*.whl
 
   macos-intel:
+    if: ${{ false }} # BEGIN: Temporary
     runs-on: macos-14
 
     steps:
