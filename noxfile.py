@@ -670,7 +670,7 @@ def _cmake(session, build_type):
     if IS_MACOS:
         build_args.extend(
             [
-                "-DCMAKE_OSX_DEPLOYMENT_TARGET:STRING=11.0",
+                "-DCMAKE_OSX_DEPLOYMENT_TARGET:STRING=13.0",
                 "-DCMAKE_OSX_ARCHITECTURES=arm64",
             ]
         )
