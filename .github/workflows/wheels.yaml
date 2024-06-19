@@ -133,7 +133,7 @@ jobs:
             cp311-*
             cp312-*
           CIBW_ENVIRONMENT: >-
-            MACOSX_DEPLOYMENT_TARGET=14.0
+            MACOSX_DEPLOYMENT_TARGET=13.0
           CIBW_TEST_COMMAND: pytest {project}/tests/unit
           CIBW_TEST_REQUIRES: pytest
 
