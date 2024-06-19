@@ -49,14 +49,14 @@ jobs:
               cp312-*
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
 
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
+        uses: docker/setup-qemu-action@68827325e0b33c7199eb31dd4e31fbe9023e06e3 # v3.0.0
         if: matrix.cibw-archs == 'aarch64'
 
       - name: Build wheels
-        uses: pypa/cibuildwheel@v2.14.1
+        uses: pypa/cibuildwheel@f21bb8376a051ffb6cb5604b28ccaef7b90e8ab7 # v2.14.1
         env:
           CIBW_ARCHS: ${{ matrix.cibw-archs }}
           CIBW_BEFORE_BUILD: |
@@ -71,7 +71,7 @@ jobs:
           CIBW_TEST_REQUIRES: pytest
           CIBW_SKIP: "*musllinux*"
 
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808 # v4.3.3
         with:
           name: ${{ matrix.artifact-name }}
           path: ./wheelhouse/*.whl
@@ -82,9 +82,9 @@ jobs:
     runs-on: macos-13
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
 
-      - uses: actions/setup-python@v4
+      - uses: actions/setup-python@82c7e631bb3cdc910f68e0081d67478d79c6982d # v5.1.0
         with:
           python-version: "3.12"
 
@@ -102,7 +102,7 @@ jobs:
           nox --session libbezier-release
 
       - name: Build wheels
-        uses: pypa/cibuildwheel@v2.14.1
+        uses: pypa/cibuildwheel@f21bb8376a051ffb6cb5604b28ccaef7b90e8ab7 #v2.14.1
         env:
           BEZIER_INSTALL_PREFIX: ./.nox/.cache/libbezier-release/usr
           CIBW_BEFORE_BUILD: |
@@ -114,7 +114,7 @@ jobs:
           CIBW_TEST_COMMAND: pytest {project}/tests/unit
           CIBW_TEST_REQUIRES: pytest
 
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808 # v4.3.3
         with:
           name: macos-intel
           path: ./wheelhouse/*.whl
@@ -123,9 +123,9 @@ jobs:
     runs-on: ubuntu-22.04
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
 
-      - uses: actions/setup-python@v4
+      - uses: actions/setup-python@82c7e631bb3cdc910f68e0081d67478d79c6982d # v5.1.0
         with:
           python-version: "3.12"
 
@@ -135,7 +135,7 @@ jobs:
         run: |
           python3.12 setup.py sdist
 
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808 # v4.3.3
         with:
           name: sdist
           path: ./dist/*.tar.gz
@@ -144,9 +144,9 @@ jobs:
     runs-on: windows-2022
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
 
-      - uses: actions/setup-python@v4
+      - uses: actions/setup-python@82c7e631bb3cdc910f68e0081d67478d79c6982d # v5.1.0
         with:
           python-version: "3.12"
 
@@ -167,7 +167,7 @@ jobs:
           "C:\ProgramData\chocolatey\lib\mingw\tools\install\mingw64\bin" >> $env:GITHUB_PATH
 
       - name: Build wheels
-        uses: pypa/cibuildwheel@v2.14.1
+        uses: pypa/cibuildwheel@f21bb8376a051ffb6cb5604b28ccaef7b90e8ab7 #v2.14.1
         env:
           BEZIER_INSTALL_PREFIX: .\.nox\.cache\libbezier-release\usr
           CIBW_ARCHS: AMD64
@@ -185,7 +185,7 @@ jobs:
           CIBW_TEST_COMMAND: pytest {project}/tests/unit
           CIBW_TEST_REQUIRES: pytest
 
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808 # v4.3.3
         with:
           name: windows-intel
           path: .\wheelhouse\*.whl

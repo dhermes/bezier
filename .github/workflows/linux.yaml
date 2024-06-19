@@ -32,15 +32,15 @@ jobs:
   tests:
     runs-on: ubuntu-20.04
     steps:
-      - uses: actions/cache@v3
+      - uses: actions/cache@0c45773b623bea8c8e75f6c82b208c3cf94ea4f9 # v4.0.2
         with:
           path: ~/.cache/pip
           key: ubuntu-tests-pip
 
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
 
       # NOTE: The last specified version will be used as a default one.
-      - uses: actions/setup-python@v4
+      - uses: actions/setup-python@82c7e631bb3cdc910f68e0081d67478d79c6982d # v5.1.0
         with:
           python-version: |
             pypy3.10
@@ -96,14 +96,14 @@ jobs:
   lint:
     runs-on: ubuntu-20.04
     steps:
-      - uses: actions/cache@v3
+      - uses: actions/cache@0c45773b623bea8c8e75f6c82b208c3cf94ea4f9 # v4.0.2
         with:
           path: ~/.cache/pip
           key: ubuntu-lint-pip
 
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
 
-      - uses: actions/setup-python@v4
+      - uses: actions/setup-python@82c7e631bb3cdc910f68e0081d67478d79c6982d # v5.1.0
         with:
           python-version: "3.12"
 
@@ -126,15 +126,15 @@ jobs:
   docs:
     runs-on: ubuntu-20.04
     steps:
-      - uses: actions/cache@v3
+      - uses: actions/cache@0c45773b623bea8c8e75f6c82b208c3cf94ea4f9 # v4.0.2
         with:
           path: ~/.cache/pip
           key: ubuntu-docs-pip
 
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
 
       # NOTE: The last specified version will be used as a default one.
-      - uses: actions/setup-python@v4
+      - uses: actions/setup-python@82c7e631bb3cdc910f68e0081d67478d79c6982d # v5.1.0
         with:
           python-version: "3.12"
 
