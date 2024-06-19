@@ -82,7 +82,7 @@ jobs:
           path: ./wheelhouse/*.whl
 
   macos-intel:
-    runs-on: macos-14-large
+    runs-on: macos-13
 
     steps:
       - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
