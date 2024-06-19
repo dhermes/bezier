@@ -106,6 +106,12 @@ jobs:
 
       - name: Inspect built dylib (temporary)
         run: |
+          echo '$ /usr/bin/which gfortran'
+          /usr/bin/which gfortran
+
+          echo '$ ls -alFG $(dirname $(readlink -f $(/usr/bin/which gfortran)))'
+          ls -alFG $(dirname $(readlink -f $(/usr/bin/which gfortran)))
+
           echo '$ file .nox/.cache/libbezier-release/usr/lib/libbezier.2023.7.28.dylib'
           file .nox/.cache/libbezier-release/usr/lib/libbezier.2023.7.28.dylib
 
