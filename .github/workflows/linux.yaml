@@ -37,7 +37,7 @@ jobs:
           path: ~/.cache/pip
           key: ubuntu-tests-pip
 
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
 
       # NOTE: The last specified version will be used as a default one.
       - uses: actions/setup-python@v4
@@ -101,7 +101,7 @@ jobs:
           path: ~/.cache/pip
           key: ubuntu-lint-pip
 
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
 
       - uses: actions/setup-python@v4
         with:
@@ -131,7 +131,7 @@ jobs:
           path: ~/.cache/pip
           key: ubuntu-docs-pip
 
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
 
       # NOTE: The last specified version will be used as a default one.
       - uses: actions/setup-python@v4
