@@ -40,7 +40,7 @@ jobs:
       - uses: actions/checkout@v3
 
       # NOTE: The last specified version will be used as a default one.
-      - uses: actions/setup-python@v4
+      - uses: actions/setup-python@v5
         with:
           python-version: |
             pypy3.10
@@ -103,7 +103,7 @@ jobs:
 
       - uses: actions/checkout@v3
 
-      - uses: actions/setup-python@v4
+      - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
 
@@ -134,7 +134,7 @@ jobs:
       - uses: actions/checkout@v3
 
       # NOTE: The last specified version will be used as a default one.
-      - uses: actions/setup-python@v4
+      - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
 
