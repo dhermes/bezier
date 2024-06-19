@@ -671,7 +671,7 @@ def _cmake(session, build_type):
         build_args.extend(
             [
                 "-DCMAKE_OSX_DEPLOYMENT_TARGET:STRING=14.0",
-                "-DCMAKE_OSX_ARCHITECTURES=arm64",
+                "-DCMAKE_OSX_ARCHITECTURES=x86_64",
             ]
         )
     if os.environ.get("TARGET_NATIVE_ARCH") == "OFF":

@@ -31,6 +31,7 @@ on:
 
 jobs:
   linux:
+    if: ${{ false }} # BEGIN: Temporary
     runs-on: ubuntu-22.04
     strategy:
       matrix:
@@ -81,8 +82,7 @@ jobs:
           path: ./wheelhouse/*.whl
 
   macos-intel:
-    if: ${{ false }} # BEGIN: Temporary
-    runs-on: macos-14
+    runs-on: macos-14-large
 
     steps:
       - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
@@ -125,7 +125,7 @@ jobs:
         uses: pypa/cibuildwheel@932529cab190fafca8c735a551657247fa8f8eaf # v2.19.1
         env:
           BEZIER_INSTALL_PREFIX: ./.nox/.cache/libbezier-release/usr
-          CIBW_ARCHS: arm64 # "x86_64 arm64"
+          CIBW_ARCHS: x86_64 # "x86_64 arm64"
           CIBW_BEFORE_BUILD: |
             python -m pip install numpy
           CIBW_BUILD: >-
