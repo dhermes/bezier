@@ -108,7 +108,7 @@ jobs:
           nox --session libbezier-release
 
       - name: Build wheels
-        uses: pypa/cibuildwheel@932529cab190fafca8c735a551657247fa8f8eaf #v2.19.1
+        uses: pypa/cibuildwheel@932529cab190fafca8c735a551657247fa8f8eaf # v2.19.1
         env:
           BEZIER_INSTALL_PREFIX: ./.nox/.cache/libbezier-release/usr
           CIBW_BEFORE_BUILD: |
@@ -178,7 +178,7 @@ jobs:
           "C:\ProgramData\chocolatey\lib\mingw\tools\install\mingw64\bin" >> $env:GITHUB_PATH
 
       - name: Build wheels
-        uses: pypa/cibuildwheel@932529cab190fafca8c735a551657247fa8f8eaf #v2.19.1
+        uses: pypa/cibuildwheel@932529cab190fafca8c735a551657247fa8f8eaf # v2.19.1
         env:
           BEZIER_INSTALL_PREFIX: .\.nox\.cache\libbezier-release\usr
           CIBW_ARCHS: AMD64
