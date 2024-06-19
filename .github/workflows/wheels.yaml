@@ -71,7 +71,7 @@ jobs:
           CIBW_TEST_REQUIRES: pytest
           CIBW_SKIP: "*musllinux*"
 
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808 # v4.3.3
         with:
           name: ${{ matrix.artifact-name }}
           path: ./wheelhouse/*.whl
@@ -114,7 +114,7 @@ jobs:
           CIBW_TEST_COMMAND: pytest {project}/tests/unit
           CIBW_TEST_REQUIRES: pytest
 
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808 # v4.3.3
         with:
           name: macos-intel
           path: ./wheelhouse/*.whl
@@ -135,7 +135,7 @@ jobs:
         run: |
           python3.12 setup.py sdist
 
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808 # v4.3.3
         with:
           name: sdist
           path: ./dist/*.tar.gz
@@ -185,7 +185,7 @@ jobs:
           CIBW_TEST_COMMAND: pytest {project}/tests/unit
           CIBW_TEST_REQUIRES: pytest
 
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808 # v4.3.3
         with:
           name: windows-intel
           path: .\wheelhouse\*.whl
