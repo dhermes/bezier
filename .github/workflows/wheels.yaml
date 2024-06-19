@@ -104,6 +104,14 @@ jobs:
           python3.12 -m pip install cmake nox
           nox --session libbezier-release
 
+      - name: Inspect built dylib (temporary)
+        run: |
+          echo '$ file .nox/.cache/libbezier-release/usr/lib/libbezier.2023.7.28.dylib'
+          file .nox/.cache/libbezier-release/usr/lib/libbezier.2023.7.28.dylib
+
+          echo '$ otool -L .nox/.cache/libbezier-release/usr/lib/libbezier.2023.7.28.dylib'
+          otool -L .nox/.cache/libbezier-release/usr/lib/libbezier.2023.7.28.dylib
+
       - name: Build wheels
         uses: pypa/cibuildwheel@932529cab190fafca8c735a551657247fa8f8eaf # v2.19.1
         env:
