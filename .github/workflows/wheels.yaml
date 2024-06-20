@@ -103,7 +103,7 @@ jobs:
 
       - name: Install `gcc` in x86_64 `homebrew
         run: |
-          arch -x86_64 brew install gcc
+          arch -x86_64 /usr/local/bin/brew install gcc
 
       - name: Build `libbezier` (x86_64)
         env:
