@@ -668,17 +668,16 @@ def _cmake(session, build_type):
     if IS_WINDOWS:
         build_args.extend(["-G", "MinGW Makefiles"])
 
+    cmake_osx_deployment_target = os.environ.get("CMAKE_OSX_DEPLOYMENT_TARGET")
+    if cmake_osx_deployment_target is not None:
+        build_args.append(
+            f"-DCMAKE_OSX_DEPLOYMENT_TARGET={cmake_osx_deployment_target}"
+        )
+
     cmake_fortran_compiler = os.environ.get("CMAKE_FORTRAN_COMPILER")
     if cmake_fortran_compiler is not None:
         build_args.append(f"-DCMAKE_Fortran_COMPILER={cmake_fortran_compiler}")
 
-    # if IS_MACOS:
-    #     build_args.extend(
-    #         [
-    #             "-DCMAKE_OSX_DEPLOYMENT_TARGET:STRING=13.0",
-    #             "-DCMAKE_OSX_ARCHITECTURES=x86_64",
-    #         ]
-    #     )
     if os.environ.get("TARGET_NATIVE_ARCH") == "OFF":
         build_args.append("-DTARGET_NATIVE_ARCH:BOOL=OFF")
 
