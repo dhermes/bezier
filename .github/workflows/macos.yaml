@@ -30,7 +30,7 @@ on:
 
 jobs:
   ci:
-    runs-on: macos-14
+    runs-on: macos-13
     strategy:
       matrix:
         python-version:
@@ -87,6 +87,6 @@ jobs:
       - name: Run all doctests
         if: matrix.python-version == '3.12'
         env:
-          CMAKE_OSX_DEPLOYMENT_TARGET: "14.0"
+          CMAKE_OSX_DEPLOYMENT_TARGET: "13.0"
         run: |
           nox --session doctest
