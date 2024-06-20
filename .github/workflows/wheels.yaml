@@ -68,7 +68,7 @@ jobs:
             LD_LIBRARY_PATH=/project/.nox/.cache/libbezier-release/usr/lib
             TARGET_NATIVE_ARCH=OFF
           CIBW_TEST_COMMAND: pytest {project}/tests/unit
-          CIBW_TEST_REQUIRES: pytest
+          CIBW_TEST_REQUIRES: "pytest scipy sympy"
           CIBW_SKIP: "*musllinux*"
 
       - uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808 # v4.3.3
@@ -76,10 +76,8 @@ jobs:
           name: ${{ matrix.artifact-name }}
           path: ./wheelhouse/*.whl
 
-  macos-intel:
-    # NOTE: For now `scripts/macos/build-wheels-arm.sh` must be used for
-    #       the ARM (M1) wheels.
-    runs-on: macos-13
+  macos-arm64:
+    runs-on: macos-14
 
     steps:
       - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
@@ -102,21 +100,72 @@ jobs:
           nox --session libbezier-release
 
       - name: Build wheels
-        uses: pypa/cibuildwheel@932529cab190fafca8c735a551657247fa8f8eaf #v2.19.1
+        uses: pypa/cibuildwheel@932529cab190fafca8c735a551657247fa8f8eaf # v2.19.1
         env:
           BEZIER_INSTALL_PREFIX: ./.nox/.cache/libbezier-release/usr
+          CIBW_ARCHS: arm64
           CIBW_BEFORE_BUILD: |
             python -m pip install numpy
           CIBW_BUILD: >-
             cp310-*
             cp311-*
             cp312-*
+          CIBW_ENVIRONMENT: >-
+            MACOSX_DEPLOYMENT_TARGET=14.0
           CIBW_TEST_COMMAND: pytest {project}/tests/unit
-          CIBW_TEST_REQUIRES: pytest
+          CIBW_TEST_REQUIRES: "pytest scipy sympy"
 
       - uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808 # v4.3.3
         with:
-          name: macos-intel
+          name: macos-arm64
+          path: ./wheelhouse/*.whl
+
+  macos-x86-64:
+    runs-on: macos-14
+
+    steps:
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+
+      - uses: actions/setup-python@82c7e631bb3cdc910f68e0081d67478d79c6982d # v5.1.0
+        with:
+          python-version: "3.12"
+
+      - name: Install `homebrew` in x86_64 arch
+        run: |
+          arch -x86_64 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+
+      - name: Install `gcc` in x86_64 `homebrew
+        run: |
+          arch -x86_64 /usr/local/bin/brew install gcc
+
+      - name: Build `libbezier`
+        env:
+          TARGET_NATIVE_ARCH: "OFF"
+          # NOTE: Could also use $(brew --prefix gcc)/bin/gfortran
+          CMAKE_FORTRAN_COMPILER: /usr/local/bin/gfortran
+        run: |
+          python3.12 -m pip install cmake nox
+          nox --session libbezier-release
+
+      - name: Build wheels
+        uses: pypa/cibuildwheel@932529cab190fafca8c735a551657247fa8f8eaf # v2.19.1
+        env:
+          BEZIER_INSTALL_PREFIX: ./.nox/.cache/libbezier-release/usr
+          CIBW_ARCHS: x86_64
+          CIBW_BEFORE_BUILD: |
+            python -m pip install numpy
+          CIBW_BUILD: >-
+            cp310-*
+            cp311-*
+            cp312-*
+          CIBW_ENVIRONMENT: >-
+            MACOSX_DEPLOYMENT_TARGET=14.0
+          CIBW_TEST_COMMAND: pytest {project}/tests/unit
+          CIBW_TEST_REQUIRES: "pytest scipy sympy"
+
+      - uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808 # v4.3.3
+        with:
+          name: macos-x86-64
           path: ./wheelhouse/*.whl
 
   sdist:
@@ -129,11 +178,15 @@ jobs:
         with:
           python-version: "3.12"
 
+      - name: Install build dependencies
+        run: |
+          python3.12 -m pip install build
+
       - name: Generate sdist (source distribution)
         env:
           BEZIER_NO_EXTENSION: "True"
         run: |
-          python3.12 setup.py sdist
+          python3.12 -m build --sdist .
 
       - uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808 # v4.3.3
         with:
@@ -167,7 +220,7 @@ jobs:
           "C:\ProgramData\chocolatey\lib\mingw\tools\install\mingw64\bin" >> $env:GITHUB_PATH
 
       - name: Build wheels
-        uses: pypa/cibuildwheel@932529cab190fafca8c735a551657247fa8f8eaf #v2.19.1
+        uses: pypa/cibuildwheel@932529cab190fafca8c735a551657247fa8f8eaf # v2.19.1
         env:
           BEZIER_INSTALL_PREFIX: .\.nox\.cache\libbezier-release\usr
           CIBW_ARCHS: AMD64
@@ -183,7 +236,7 @@ jobs:
             --add-path .\.nox\.cache\libbezier-release\usr\bin
             {wheel}
           CIBW_TEST_COMMAND: pytest {project}/tests/unit
-          CIBW_TEST_REQUIRES: pytest
+          CIBW_TEST_REQUIRES: "pytest scipy sympy"
 
       - uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808 # v4.3.3
         with:

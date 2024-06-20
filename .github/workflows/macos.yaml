@@ -31,6 +31,8 @@ on:
 jobs:
   ci:
     runs-on: macos-13
+    env:
+      CMAKE_OSX_DEPLOYMENT_TARGET: "13.0"
     strategy:
       matrix:
         python-version:
