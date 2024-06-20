@@ -68,7 +68,7 @@ jobs:
             LD_LIBRARY_PATH=/project/.nox/.cache/libbezier-release/usr/lib
             TARGET_NATIVE_ARCH=OFF
           CIBW_TEST_COMMAND: pytest {project}/tests/unit
-          CIBW_TEST_REQUIRES: 'pytest scipy sympy'
+          CIBW_TEST_REQUIRES: "pytest scipy sympy"
           CIBW_SKIP: "*musllinux*"
 
       - uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808 # v4.3.3
@@ -113,7 +113,7 @@ jobs:
           CIBW_ENVIRONMENT: >-
             MACOSX_DEPLOYMENT_TARGET=14.0
           CIBW_TEST_COMMAND: pytest {project}/tests/unit
-          CIBW_TEST_REQUIRES: 'pytest scipy sympy'
+          CIBW_TEST_REQUIRES: "pytest scipy sympy"
 
       - uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808 # v4.3.3
         with:
@@ -161,7 +161,7 @@ jobs:
           CIBW_ENVIRONMENT: >-
             MACOSX_DEPLOYMENT_TARGET=14.0
           CIBW_TEST_COMMAND: pytest {project}/tests/unit
-          CIBW_TEST_REQUIRES: 'pytest scipy sympy'
+          CIBW_TEST_REQUIRES: "pytest scipy sympy"
 
       - uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808 # v4.3.3
         with:
@@ -236,7 +236,7 @@ jobs:
             --add-path .\.nox\.cache\libbezier-release\usr\bin
             {wheel}
           CIBW_TEST_COMMAND: pytest {project}/tests/unit
-          CIBW_TEST_REQUIRES: 'pytest scipy sympy'
+          CIBW_TEST_REQUIRES: "pytest scipy sympy"
 
       - uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808 # v4.3.3
         with:
