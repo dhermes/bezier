@@ -31,7 +31,6 @@ on:
 
 jobs:
   linux:
-    if: ${{ false }} # BEGIN: Temporary
     runs-on: ubuntu-22.04
     strategy:
       matrix:
@@ -174,7 +173,6 @@ jobs:
           path: ./wheelhouse/*.whl
 
   sdist:
-    if: ${{ false }} # BEGIN: Temporary
     runs-on: ubuntu-22.04
 
     steps:
@@ -200,7 +198,6 @@ jobs:
           path: ./dist/*.tar.gz
 
   windows-intel:
-    if: ${{ false }} # BEGIN: Temporary
     runs-on: windows-2022
 
     steps:
