@@ -81,8 +81,8 @@ jobs:
           name: ${{ matrix.artifact-name }}
           path: ./wheelhouse/*.whl
 
-  macos-intel:
-    runs-on: macos-13
+  macos:
+    runs-on: macos-14
 
     steps:
       - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
@@ -104,36 +104,19 @@ jobs:
           python3.12 -m pip install cmake nox
           nox --session libbezier-release
 
-      - name: Inspect built dylib (temporary)
-        run: |
-          echo '$ /usr/bin/which gfortran'
-          /usr/bin/which gfortran
-
-          echo '$ ls -alFG $(dirname $(readlink -f $(/usr/bin/which gfortran)))'
-          ls -alFG $(dirname $(readlink -f $(/usr/bin/which gfortran)))
-
-          echo '$ file .nox/.cache/libbezier-release/usr/lib/libbezier.2023.7.28.dylib'
-          file .nox/.cache/libbezier-release/usr/lib/libbezier.2023.7.28.dylib
-
-          echo '$ otool -L .nox/.cache/libbezier-release/usr/lib/libbezier.2023.7.28.dylib'
-          otool -L .nox/.cache/libbezier-release/usr/lib/libbezier.2023.7.28.dylib
-
-          echo '$ lipo -archs .nox/.cache/libbezier-release/usr/lib/libbezier.2023.7.28.dylib'
-          lipo -archs .nox/.cache/libbezier-release/usr/lib/libbezier.2023.7.28.dylib
-
       - name: Build wheels
         uses: pypa/cibuildwheel@932529cab190fafca8c735a551657247fa8f8eaf # v2.19.1
         env:
           BEZIER_INSTALL_PREFIX: ./.nox/.cache/libbezier-release/usr
-          CIBW_ARCHS: x86_64 # "x86_64 arm64"
+          CIBW_ARCHS: arm64 # "x86_64 arm64"
           CIBW_BEFORE_BUILD: |
             python -m pip install numpy
           CIBW_BUILD: >-
             cp310-*
             cp311-*
             cp312-*
-          CIBW_ENVIRONMENT: >-
-            MACOSX_DEPLOYMENT_TARGET=13.0
+          # CIBW_ENVIRONMENT: >-
+          #   MACOSX_DEPLOYMENT_TARGET=14.0
           CIBW_TEST_COMMAND: pytest {project}/tests/unit
           CIBW_TEST_REQUIRES: pytest
 
