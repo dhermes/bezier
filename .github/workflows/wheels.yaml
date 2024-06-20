@@ -97,9 +97,19 @@ jobs:
           brew unlink gcc
           brew link gcc
 
-      - name: Build `libbezier`
+      - name: Install `homebrew` in x86_64 arch
+        run: |
+          arch -x86_64 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+
+      - name: Install `gcc` in x86_64 `homebrew
+        run: |
+          arch -x86_64 brew install gcc
+
+      - name: Build `libbezier` (x86_64)
         env:
           TARGET_NATIVE_ARCH: "OFF"
+          # NOTE: Could also use $(brew --prefix gcc)/bin/gfortran
+          CMAKE_FORTRAN_COMPILER: /usr/local/bin/gfortran
         run: |
           python3.12 -m pip install cmake nox
           nox --session libbezier-release
@@ -108,7 +118,7 @@ jobs:
         uses: pypa/cibuildwheel@932529cab190fafca8c735a551657247fa8f8eaf # v2.19.1
         env:
           BEZIER_INSTALL_PREFIX: ./.nox/.cache/libbezier-release/usr
-          CIBW_ARCHS: arm64 # "x86_64 arm64"
+          CIBW_ARCHS: x86_64 # "x86_64 arm64"
           CIBW_BEFORE_BUILD: |
             python -m pip install numpy
           CIBW_BUILD: >-
@@ -122,7 +132,7 @@ jobs:
 
       - uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808 # v4.3.3
         with:
-          name: macos-intel
+          name: macos
           path: ./wheelhouse/*.whl
 
   sdist:

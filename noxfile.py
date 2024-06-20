@@ -667,6 +667,11 @@ def _cmake(session, build_type):
     ]
     if IS_WINDOWS:
         build_args.extend(["-G", "MinGW Makefiles"])
+
+    cmake_fortran_compiler = os.environ.get("CMAKE_FORTRAN_COMPILER")
+    if cmake_fortran_compiler is not None:
+        build_args.append(f"-DCMAKE_Fortran_COMPILER={cmake_fortran_compiler}")
+
     # if IS_MACOS:
     #     build_args.extend(
     #         [
