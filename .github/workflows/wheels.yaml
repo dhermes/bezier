@@ -14,10 +14,6 @@ name: Building Wheels
 
 on:
   push:
-    # BEGIN: Temporary
-    branches:
-      - dhermes/python-3.12-wheels
-    # END: Temporary
     tags:
       - "*"
   schedule:
