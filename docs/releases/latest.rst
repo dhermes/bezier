@@ -9,7 +9,7 @@ Latest Release (``2024.6.20``)
 Packaging
 ~~~~~~~~~
 
--  Stop building with `-static` on Windows
+-  Stop building with ``-static`` on Windows
    (`#311 <https://github.com/dhermes/bezier/pull/311>`__).
    This is entirely enabled by the amazing
    `delvewheel <https://github.com/adang1345/delvewheel>`__ project (non-static
@@ -31,7 +31,7 @@ Packaging
 Documentation
 -------------
 
--  Add `DEVELOPMENT.rst` section about configuring a shell and compilers for
+-  Add ``DEVELOPMENT.rst`` section about configuring a shell and compilers for
    Windows development
    (`#311 <https://github.com/dhermes/bezier/pull/311>`__). This had been a
    hodge podge of local and remote (CI) development for the last 5+ years, so
