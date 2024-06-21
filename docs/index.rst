@@ -5,6 +5,8 @@
 
 |linux-build| |macos-build| |windows-build| |coverage|
 
+|pypi| |versions|
+
 |zenodo| |JOSS|
 
 .. |eacute| unicode:: U+000E9 .. LATIN SMALL LETTER E WITH ACUTE
@@ -250,19 +252,25 @@ License
 ``bezier`` is made available under the Apache 2.0 License. For more
 details, see `the LICENSE`_.
 
-.. _the LICENSE: https://github.com/dhermes/bezier/blob/2024.6.20/LICENSE
+.. _the LICENSE: https://github.com/dhermes/bezier/blob/main/LICENSE
 
-.. |linux-build| image:: https://raw.githubusercontent.com/dhermes/bezier/2024.6.20/docs/linux-passing.svg?sanitize=true
-   :target: https://github.com/dhermes/bezier/actions/runs/9607943395
+.. |linux-build| image:: https://github.com/dhermes/bezier/workflows/Linux/badge.svg?branch=main&event=push
+   :target: https://github.com/dhermes/bezier/actions?query=workflow%3ALinux
    :alt: Linux Build (GitHub Actions)
-.. |macos-build| image:: https://raw.githubusercontent.com/dhermes/bezier/2024.6.20/docs/macos-passing.svg?sanitize=true
-   :target: https://github.com/dhermes/bezier/actions/runs/9607943397
+.. |macos-build| image:: https://github.com/dhermes/bezier/workflows/macOS/badge.svg?branch=main&event=push
+   :target: https://github.com/dhermes/bezier/actions?query=workflow%3AmacOS
    :alt: macOS Build (GitHub Actions)
-.. |windows-build| image:: https://raw.githubusercontent.com/dhermes/bezier/2024.6.20/docs/windows-passing.svg?sanitize=true
-   :target: https://github.com/dhermes/bezier/actions/runs/9607943396
+.. |windows-build| image:: https://github.com/dhermes/bezier/workflows/Windows/badge.svg?branch=main&event=push
+   :target: https://github.com/dhermes/bezier/actions?query=workflow%3AWindows
    :alt: Windows Build (GitHub Actions)
-.. |coverage| image:: https://s3.amazonaws.com/assets.coveralls.io/badges/coveralls_100.svg
-   :target: https://coveralls.io/builds/68215528
+.. |pypi| image:: https://img.shields.io/pypi/v/bezier.svg
+   :target: https://pypi.org/project/bezier/
+   :alt: PyPI Latest
+.. |versions| image:: https://img.shields.io/pypi/pyversions/bezier.svg
+   :target: https://pypi.org/project/bezier/
+   :alt: Package Versions
+.. |coverage| image:: https://coveralls.io/repos/github/dhermes/bezier/badge.svg
+   :target: https://coveralls.io/github/dhermes/bezier
    :alt: Code Coverage
 .. |zenodo| image:: https://zenodo.org/badge/73047402.svg
    :target: https://zenodo.org/badge/latestdoi/73047402
