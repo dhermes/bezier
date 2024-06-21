@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.5)
 
 project(
   bezier
-  VERSION 2023.7.28
+  VERSION 2024.6.20
   LANGUAGES Fortran C)
 set(AUTHOR "Danny Hermes")
 set(AUTHOR_DETAILS "daniel.j.hermes@gmail.com")
@@ -57,7 +57,7 @@ if(${BUILD_SHARED_LIBS})
   set_target_properties(
     bezier
     PROPERTIES VERSION ${bezier_VERSION}
-               SOVERSION 2023
+               SOVERSION 2024
                POSITION_INDEPENDENT_CODE ON)
 endif()
 

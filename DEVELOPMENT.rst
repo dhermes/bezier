@@ -493,9 +493,8 @@ reasons:
   completed (will be the build that occurred when the tag was pushed). If
   the builds pushed to PyPI automatically, a build would need to
   link to itself **while** being run.
-* Wheels need be built for Linux, macOS and Windows. Building wheels
-  occurs **largely** via the `Building Wheels workflow`_, but still requires
-  access to an ARM macOS (M1) machine. After being built, each wheel will be
+* Wheels need to be built for Linux, macOS and Windows. Building wheels occurs
+  via the `Building Wheels workflow`_. After being built, each wheel will be
   pushed directly to PyPI via `twine`_.
 * The release will be manually pushed to `TestPyPI`_ so the landing
   page can be visually inspected and the package can be installed
