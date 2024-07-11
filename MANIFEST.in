@@ -1,7 +1,0 @@
-include README.rst LICENSE
-graft src/python/bezier
-global-exclude *.so *.pyd
-global-exclude *.o *.obj
-global-exclude *.a *.def *.exp
-global-exclude *.pyx
-global-exclude *.pyc __pycache__
