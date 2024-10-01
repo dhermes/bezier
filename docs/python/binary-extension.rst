@@ -114,7 +114,7 @@ The ``bezier._speedup`` module depends on this local copy of ``libbezier``:
     0x0000000000000001 (NEEDED)             Shared library: [libpthread.so.0]
     0x0000000000000001 (NEEDED)             Shared library: [libc.so.6]
     0x000000000000000c (INIT)               0x7000
-    0x000000000000000d (FINI)               0x7cd30
+    0x000000000000000d (FINI)               0x7cc20
    ...
 
 and the local copy of ``libbezier`` depends on the other dependencies in
