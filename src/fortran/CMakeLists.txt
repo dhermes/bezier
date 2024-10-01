@@ -61,7 +61,9 @@ if(${BUILD_SHARED_LIBS})
                POSITION_INDEPENDENT_CODE ON)
 endif()
 
-target_include_directories(bezier PUBLIC $<INSTALL_INTERFACE:include>)
+target_include_directories(bezier PUBLIC
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<INSTALL_INTERFACE:include>)
 
 if(CMAKE_Fortran_COMPILER_ID STREQUAL "GNU")
   # ``-Wextra`` includes ``no-compare-reals``, but we have comparisons like
