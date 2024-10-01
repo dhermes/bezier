@@ -42,6 +42,8 @@ ignore-long-lines=
 max-args=7
 # Maximum number of attributes for a class (see R0902).
 max-attributes=8
+# Maximum number of positional arguments for a function or method (see R0917).
+max-positional-arguments=11
 
 [VARIABLES]
 dummy-variables-rgx=(_+[a-zA-Z0-9]*?$)|dummy|^unused_

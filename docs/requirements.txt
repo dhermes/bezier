@@ -1,8 +1,8 @@
 # NumPy is required for building `bezier` from source.
-numpy >= 2.0.0
-setuptools >= 70.0.0
+numpy >= 2.1.1
+setuptools >= 75.1.0
 # Sphinx and related are required for building documentation.
-Sphinx >= 7.3.7
+Sphinx >= 8.0.2
 # See: https://github.com/readthedocs/sphinx_rtd_theme/issues/1463
 sphinx-copybutton >= 0.5.2
 sphinx-docstring-typing >= 0.0.4
