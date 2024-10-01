@@ -6,4 +6,4 @@ Sphinx >= 8.0.2
 # See: https://github.com/readthedocs/sphinx_rtd_theme/issues/1463
 sphinx-copybutton >= 0.5.2
 sphinx-docstring-typing >= 0.0.4
-sphinx-rtd-theme >= 2.0.0
+sphinx-rtd-theme >= 3.0.0rc3
