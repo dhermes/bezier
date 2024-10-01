@@ -26,8 +26,6 @@ import doctest
 import os
 import sys
 
-import sphinx_rtd_theme
-
 import bezier  # ``bezier`` must be installed to build the docs.
 
 # If extensions (or modules to document with autodoc) are in another directory,
@@ -39,7 +37,7 @@ sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
 
 # If your documentation needs a minimal Sphinx version, state it here.
 #
-needs_sphinx = "6.2.1"
+needs_sphinx = "8.0.2"
 # See: https://github.com/readthedocs/sphinx_rtd_theme/issues/1463
 
 nitpicky = True
@@ -153,8 +151,10 @@ todo_include_todos = False
 #
 html_theme = "sphinx_rtd_theme"
 ON_READ_THE_DOCS = os.environ.get("READTHEDOCS") == "True"
-if not ON_READ_THE_DOCS:
-    html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
+if ON_READ_THE_DOCS:
+    if "html_context" not in globals():
+        html_context = {}
+    html_context["READTHEDOCS"] = True
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
