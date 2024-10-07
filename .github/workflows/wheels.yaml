@@ -56,7 +56,7 @@ jobs:
         if: matrix.cibw-archs == 'aarch64'
 
       - name: Build wheels
-        uses: pypa/cibuildwheel@d4a2945fcc8d13f20a1b99d461b8e844d5fc6e23 # v2.21.1
+        uses: pypa/cibuildwheel@f1859528322d7b29d4493ee241a167807661dfb4 # v2.21.2
         env:
           CIBW_ARCHS: ${{ matrix.cibw-archs }}
           CIBW_BEFORE_BUILD: |
@@ -100,7 +100,7 @@ jobs:
           nox --session libbezier-release
 
       - name: Build wheels
-        uses: pypa/cibuildwheel@d4a2945fcc8d13f20a1b99d461b8e844d5fc6e23 # v2.21.1
+        uses: pypa/cibuildwheel@f1859528322d7b29d4493ee241a167807661dfb4 # v2.21.2
         env:
           BEZIER_INSTALL_PREFIX: ./.nox/.cache/libbezier-release/usr
           CIBW_ARCHS: arm64
@@ -148,7 +148,7 @@ jobs:
           nox --session libbezier-release
 
       - name: Build wheels
-        uses: pypa/cibuildwheel@d4a2945fcc8d13f20a1b99d461b8e844d5fc6e23 # v2.21.1
+        uses: pypa/cibuildwheel@f1859528322d7b29d4493ee241a167807661dfb4 # v2.21.2
         env:
           BEZIER_INSTALL_PREFIX: ./.nox/.cache/libbezier-release/usr
           CIBW_ARCHS: x86_64
@@ -220,7 +220,7 @@ jobs:
           "C:\ProgramData\chocolatey\lib\mingw\tools\install\mingw64\bin" >> $env:GITHUB_PATH
 
       - name: Build wheels
-        uses: pypa/cibuildwheel@d4a2945fcc8d13f20a1b99d461b8e844d5fc6e23 # v2.21.1
+        uses: pypa/cibuildwheel@f1859528322d7b29d4493ee241a167807661dfb4 # v2.21.2
         env:
           BEZIER_INSTALL_PREFIX: .\.nox\.cache\libbezier-release\usr
           CIBW_ARCHS: AMD64
