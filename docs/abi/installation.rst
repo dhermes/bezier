@@ -56,12 +56,15 @@ Linux
      include/
        bezier/
          curve.h
+         curve.hpp
          curve_intersection.h
          helpers.h
+         helpers.hpp
          status.h
          triangle.h
          triangle_intersection.h
        bezier.h
+       bezier.hpp
      lib/
        libbezier.so -> libbezier.so.2024
        libbezier.so.2024 -> libbezier.so.2024.6.20
@@ -83,12 +86,15 @@ macOS
      include/
        bezier/
          curve.h
+         curve.hpp
          curve_intersection.h
          helpers.h
+         helpers.hpp
          status.h
          triangle.h
          triangle_intersection.h
        bezier.h
+       bezier.hpp
      lib/
        libbezier.2024.6.20.dylib
        libbezier.2024.dylib -> libbezier.2024.6.20.dylib
@@ -112,12 +118,15 @@ Windows
      include\
        bezier\
          curve.h
+         curve.hpp
          curve_intersection.h
          helpers.h
+         helpers.hpp
          status.h
          triangle.h
          triangle_intersection.h
        bezier.h
+       bezier.hpp
      lib\
        bezier.lib
      share\

@@ -18,6 +18,7 @@
 
    python/index
    abi/index
+   cpp/index
    algorithms/index
    development
    releases/index
